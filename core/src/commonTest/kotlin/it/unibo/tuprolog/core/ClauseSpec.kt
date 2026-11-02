@@ -1,15 +1,16 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.FactUtils
 import it.unibo.tuprolog.core.testutils.RuleUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 private class ClauseCase(
     val id: String,
@@ -72,11 +73,11 @@ class ClauseSpec :
         }
 
         test("clause-of-null-head-and-no-varargs-complains") {
-            assertFailsWith<IllegalArgumentException> { Clause.of() }
+            shouldThrow<IllegalArgumentException> { Clause.of() }
         }
 
         test("notable-functor-correct") {
-            assertEquals(listOf(",", ";", "->"), Clause.notableFunctors.toList())
+            Clause.notableFunctors.toList() shouldBe listOf(",", ";", "->")
         }
 
         withTests(
@@ -84,8 +85,8 @@ class ClauseSpec :
             clauseCases(RuleUtils.wellFormedRuleCases, DirectiveUtils.wellFormedDirectiveCases),
         ) { case ->
             val clause = case.expected
-            assertTrue("${clause.body} bodyWellFormedVisitor should return true") {
-                clause.body.accept(Clause.bodyWellFormedVisitor)
+            withClue("${clause.body} bodyWellFormedVisitor should return true") {
+                clause.body.accept(Clause.bodyWellFormedVisitor).shouldBeTrue()
             }
         }
 
@@ -94,17 +95,14 @@ class ClauseSpec :
             clauseCases(RuleUtils.nonWellFormedRuleCases, DirectiveUtils.nonWellFormedDirectiveCases),
         ) { case ->
             val clause = case.expected
-            assertFalse("${clause.body} bodyWellFormedVisitor should return false") {
-                clause.body.accept(Clause.bodyWellFormedVisitor)
+            withClue("${clause.body} bodyWellFormedVisitor should return false") {
+                clause.body.accept(Clause.bodyWellFormedVisitor).shouldBeFalse()
             }
         }
 
         withTests(nameFn = { "default-preparation-for-execution-visitor/${it.id}" }, wellFormedClauseCases) { case ->
             val clause = case.expected
-            assertEquals(
-                replaceCorrectVarWithCalls(clause),
-                clause.accept(Clause.defaultPreparationForExecutionVisitor),
-            )
+            clause.accept(Clause.defaultPreparationForExecutionVisitor) shouldBe replaceCorrectVarWithCalls(clause)
         }
 
         test("default-preparation-for-execution-visitor-works-with-variables-in-head") {
@@ -128,26 +126,26 @@ class ClauseSpec :
                     aRuleWithVarInHeadAfterPreparation,
                 )
 
-            assertEquals(correct, toBeTested)
+            toBeTested shouldBe correct
         }
 
         withTests(nameFn = { "prepare-for-execution/${it.id}" }, wellFormedClauseCases) { case ->
             val clause = case.expected
-            assertEquals(replaceCorrectVarWithCalls(clause), clause.prepareForExecution())
+            clause.prepareForExecution() shouldBe replaceCorrectVarWithCalls(clause)
         }
 
         withTests(nameFn = { "prepare-for-execution-is-idempotent/${it.id}" }, wellFormedClauseCases) { case ->
             val clause = case.expected
-            assertEquals(clause.prepareForExecution(), clause.prepareForExecution().prepareForExecution())
+            clause.prepareForExecution().prepareForExecution() shouldBe clause.prepareForExecution()
         }
 
         test("of-sequence/without-head-is-a-directive") {
-            assertTrue(Clause.of(null, sequenceOf(Atom.of("a"))).isDirective)
+            Clause.of(null, sequenceOf(Atom.of("a"))).isDirective.shouldBeTrue()
         }
 
         test("of-sequence/with-head-is-a-rule") {
             val clause = Clause.of(Atom.of("h"), sequenceOf(Atom.of("a"), Atom.of("b")))
-            assertEquals(Rule.of(Atom.of("h"), Atom.of("a"), Atom.of("b")), clause)
-            assertEquals(clause, Rule.of(Atom.of("h"), sequenceOf(Atom.of("a"), Atom.of("b"))))
+            clause shouldBe Rule.of(Atom.of("h"), Atom.of("a"), Atom.of("b"))
+            Rule.of(Atom.of("h"), sequenceOf(Atom.of("a"), Atom.of("b"))) shouldBe clause
         }
     })

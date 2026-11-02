@@ -2,6 +2,11 @@ package it.unibo.tuprolog.theory
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.testutils.TheoryUtils
@@ -11,11 +16,6 @@ import it.unibo.tuprolog.utils.clearTags
 import it.unibo.tuprolog.utils.plus
 import it.unibo.tuprolog.utils.setTag
 import it.unibo.tuprolog.utils.setTags
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class TheoryMetadataSpec :
     FunSpec({
@@ -68,19 +68,19 @@ class TheoryMetadataSpec :
         ) = theories(property) { case ->
             val untaggedTheory = case.theory()
             val taggedTheory = case.taggedTheory()
-            assertEquals(untaggedTheory, taggedTheory)
-            assertNotEquals(untaggedTheory.tags, taggedTheory.tags)
-            assertEquals(0, untaggedTheory.tags.size)
-            assertEquals(1, taggedTheory.tags.size)
+            taggedTheory shouldBe untaggedTheory
+            taggedTheory.tags shouldNotBe untaggedTheory.tags
+            untaggedTheory.tags.size shouldBe 0
+            taggedTheory.tags.size shouldBe 1
             for (untaggedClause in untaggedTheory) {
                 val untaggedClauses = untaggedTheory.clone().access(untaggedClause).toList()
                 val taggedClauses = taggedTheory.clone().access(untaggedClause).toList()
-                assertEquals(untaggedClauses, taggedClauses)
+                taggedClauses shouldBe untaggedClauses
                 for ((untagged, tagged) in untaggedClauses.zip(taggedClauses)) {
-                    assertEquals(untagged, tagged)
-                    assertNotEquals(untagged.tags, tagged.tags)
-                    assertEquals(0, untagged.tags.size)
-                    assertEquals(2, tagged.tags.size)
+                    tagged shouldBe untagged
+                    tagged.tags shouldNotBe untagged.tags
+                    untagged.tags.size shouldBe 0
+                    tagged.tags.size shouldBe 2
                 }
             }
         }
@@ -93,25 +93,25 @@ class TheoryMetadataSpec :
         ) = theories(property) { case ->
             val untaggedTheory = case.theory()
             val taggedTheory = case.taggedTheory()
-            assertEquals(untaggedTheory, taggedTheory)
-            assertNotEquals(untaggedTheory.tags, taggedTheory.tags)
-            assertEquals(0, untaggedTheory.tags.size)
-            assertEquals(1, taggedTheory.tags.size)
+            taggedTheory shouldBe untaggedTheory
+            taggedTheory.tags shouldNotBe untaggedTheory.tags
+            untaggedTheory.tags.size shouldBe 0
+            taggedTheory.tags.size shouldBe 1
             for (clause in clausesSource) {
                 val untaggedEdited = untaggedTheory.clone().edit(clause)
                 val taggedEdited = taggedTheory.clone().edit(clause)
-                assertEquals(untaggedEdited, taggedEdited)
-                assertNotEquals(untaggedEdited.tags, taggedEdited.tags)
-                assertEquals(0, untaggedEdited.tags.size)
-                assertEquals(1, taggedEdited.tags.size)
+                taggedEdited shouldBe untaggedEdited
+                taggedEdited.tags shouldNotBe untaggedEdited.tags
+                untaggedEdited.tags.size shouldBe 0
+                taggedEdited.tags.size shouldBe 1
                 for (untagged in untaggedEdited) {
-                    assertEquals(emptyMap(), untagged.tags)
+                    untagged.tags shouldBe emptyMap()
                 }
                 for (tagged in taggedEdited) {
                     if (clausesShouldBeUntaggedAfterEdit && tagged == clause) {
-                        assertEquals(clause.tags, tagged.tags)
+                        tagged.tags shouldBe clause.tags
                     } else {
-                        assertEquals(2, tagged.tags.size)
+                        tagged.tags.size shouldBe 2
                     }
                 }
             }
@@ -123,33 +123,33 @@ class TheoryMetadataSpec :
         ) = theories(property) { case ->
             val nonTagged = case.theory()
             val tagged = case.theory().tag()
-            assertEquals(nonTagged, tagged)
-            assertEquals(nonTagged.hashCode(), tagged.hashCode())
-            assertTrue { nonTagged.tags.isEmpty() }
-            assertTrue { tagged.tags.isNotEmpty() }
+            tagged shouldBe nonTagged
+            tagged.hashCode() shouldBe nonTagged.hashCode()
+            nonTagged.tags.isEmpty().shouldBeTrue()
+            tagged.tags.isNotEmpty().shouldBeTrue()
         }
 
         theories("tags-stick-to-theories") { case ->
             val theory = case.theory()
-            assertNull(theory.getTag<MetadataValue<Boolean?>>(someKey))
-            assertFalse { theory.containsTag(someKey) }
+            (theory.getTag<MetadataValue<Boolean?>>(someKey)).shouldBeNull()
+            theory.containsTag(someKey).shouldBeFalse()
             val tagged = theory.setTag(someKey, someValue1)
-            assertFalse { theory.containsTag(someKey) }
-            assertNull(theory.getTag<MetadataValue<Boolean?>>(someKey))
-            assertTrue { tagged.containsTag(someKey) }
-            assertEquals(someValue1, tagged.getTag<MetadataValue<Boolean?>>(someKey))
-            assertEquals(emptyMap(), theory.tags)
-            assertEquals(mapOf(someKey to someValue1), tagged.tags)
+            theory.containsTag(someKey).shouldBeFalse()
+            (theory.getTag<MetadataValue<Boolean?>>(someKey)).shouldBeNull()
+            tagged.containsTag(someKey).shouldBeTrue()
+            (tagged.getTag<MetadataValue<Boolean?>>(someKey)) shouldBe someValue1
+            theory.tags shouldBe emptyMap()
+            tagged.tags shouldBe mapOf(someKey to someValue1)
         }
 
         theories("cloning-theories-preserves-tags") { case ->
             val taggedTheory = case.taggedTheory()
             val clone = taggedTheory.clone()
-            assertEquals(taggedTheory, clone)
-            assertEquals(taggedTheory.tags, clone.tags)
+            clone shouldBe taggedTheory
+            clone.tags shouldBe taggedTheory.tags
             for ((clause, clonedClause) in taggedTheory.zip(clone)) {
-                assertEquals(clause, clonedClause)
-                assertEquals(clause.tags, clonedClause.tags)
+                clonedClause shouldBe clause
+                clonedClause.tags shouldBe clause.tags
             }
         }
 
@@ -157,8 +157,8 @@ class TheoryMetadataSpec :
             val theory = case.theory().setTag(someKey, someValue1)
             val tags = mapOf<String, Any>(someKey to someValue2, someOtherKey to someOtherValue)
             val replaced = theory.replaceTags(tags)
-            assertEquals(mapOf(someKey to someValue1), theory.tags)
-            assertEquals(tags, replaced.tags)
+            theory.tags shouldBe mapOf(someKey to someValue1)
+            replaced.tags shouldBe tags
         }
 
         taggingPreservesEquality("adding-tags-preserves-equality") { addTag(someKey, someValue1) }
@@ -174,10 +174,10 @@ class TheoryMetadataSpec :
         theories("clearing-tags-preserves-equality") { case ->
             val tagged = case.theory().setTags(someKey to someValue1, someOtherKey to someOtherValue)
             val cleared = tagged.clearTags()
-            assertEquals(tagged, cleared)
-            assertEquals(tagged.hashCode(), cleared.hashCode())
-            assertTrue { cleared.tags.isEmpty() }
-            assertTrue { tagged.tags.isNotEmpty() }
+            cleared shouldBe tagged
+            cleared.hashCode() shouldBe tagged.hashCode()
+            cleared.tags.isEmpty().shouldBeTrue()
+            tagged.tags.isNotEmpty().shouldBeTrue()
         }
 
         theories("adding-an-existing-tag-replaces-that-tag") { case ->
@@ -186,7 +186,7 @@ class TheoryMetadataSpec :
                     .theory()
                     .setTags(someKey to someValue1, someOtherKey to someOtherValue)
                     .addTag(someKey, someValue2)
-            assertEquals(someValue2, replaced.getTag<MetadataValue<Boolean?>>(someKey))
+            (replaced.getTag<MetadataValue<Boolean?>>(someKey)) shouldBe someValue2
         }
 
         theories("setting-an-existing-tag-replaces-that-tag") { case ->
@@ -195,7 +195,7 @@ class TheoryMetadataSpec :
                     .theory()
                     .setTags(someKey to someValue1, someOtherKey to someOtherValue)
                     .setTag(someKey, someValue2)
-            assertEquals(someValue2, replaced.getTag<MetadataValue<Boolean?>>(someKey))
+            (replaced.getTag<MetadataValue<Boolean?>>(someKey)) shouldBe someValue2
         }
 
         accessingClausesFromATheoryPreservesClausesTags("reading-clauses-from-a-theory-preserves-clauses-tags") {

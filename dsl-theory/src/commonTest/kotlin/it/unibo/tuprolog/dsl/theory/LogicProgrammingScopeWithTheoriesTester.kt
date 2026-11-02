@@ -1,21 +1,21 @@
 package it.unibo.tuprolog.dsl.theory
 
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.dsl.BaseLogicProgrammingScope
 import it.unibo.tuprolog.dsl.LogicProgrammingScopeTester
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class LogicProgrammingScopeWithTheoriesTester<S : BaseLogicProgrammingScope<*>>(
     createLogicProgrammingScope: () -> S,
 ) : LogicProgrammingScopeTester<S>(createLogicProgrammingScope) {
     fun LogicProgrammingScopeWithTheories<*>.theoryAssertions(theory: Theory) {
-        assertEquals(3, theory.size)
-        assertTrue(factOf(structOf("f", varOf("X"))) in theory)
-        assertTrue(ruleOf(structOf("f", varOf("X")), atomOf("a")) in theory)
-        assertTrue(directiveOf(structOf("f", varOf("X"))) in theory)
+        theory.size shouldBe 3
+        (factOf(structOf("f", varOf("X"))) in theory).shouldBeTrue()
+        (ruleOf(structOf("f", varOf("X")), atomOf("a")) in theory).shouldBeTrue()
+        (directiveOf(structOf("f", varOf("X"))) in theory).shouldBeTrue()
         val rules = theory.rules.toList()
-        assertEquals(2, rules.size)
+        rules.size shouldBe 2
         assertStructurallyEquals(rules[0].head, rules[1].head)
         assertStructurallyEquals(
             rules[0].head,

@@ -2,15 +2,15 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.utils.addTag
 import it.unibo.tuprolog.utils.clearTags
 import it.unibo.tuprolog.utils.plus
 import it.unibo.tuprolog.utils.setTag
 import it.unibo.tuprolog.utils.setTags
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 private class TaggableTermCase(
     val id: String,
@@ -62,26 +62,26 @@ class TermMetadataSpec :
         fun alterationPreservesTags(
             property: String,
             alter: Term.() -> Term,
-        ) = terms(property) { term -> assertEquals(term.tags, term.alter().tags) }
+        ) = terms(property) { term -> term.alter().tags shouldBe term.tags }
 
         terms("tags-stick-to-terms") { term ->
-            assertNull(term.getTag<TermTag<Int>>(someKey))
-            assertFalse { term.containsTag(someKey) }
+            (term.getTag<TermTag<Int>>(someKey)).shouldBeNull()
+            term.containsTag(someKey).shouldBeFalse()
             val tagged = term.setTag(someKey, someValue1)
-            assertFalse { term.containsTag(someKey) }
-            assertNull(term.getTag<TermTag<Int>>(someKey))
-            assertTrue { tagged.containsTag(someKey) }
-            assertEquals(someValue1, tagged.getTag<TermTag<Int>>(someKey))
-            assertEquals(emptyMap(), term.tags)
-            assertEquals(mapOf(someKey to someValue1), tagged.tags)
+            term.containsTag(someKey).shouldBeFalse()
+            (term.getTag<TermTag<Int>>(someKey)).shouldBeNull()
+            tagged.containsTag(someKey).shouldBeTrue()
+            (tagged.getTag<TermTag<Int>>(someKey)) shouldBe someValue1
+            term.tags shouldBe emptyMap()
+            tagged.tags shouldBe mapOf(someKey to someValue1)
         }
 
         terms("tags-can-be-replaced") {
             val term = it.setTag(someKey, someValue1)
             val tags = mapOf<String, Any>(someKey to someValue2, someOtherKey to someOtherValue)
             val replaced = term.replaceTags(tags)
-            assertEquals(mapOf(someKey to someValue1), term.tags)
-            assertEquals(tags, replaced.tags)
+            term.tags shouldBe mapOf(someKey to someValue1)
+            replaced.tags shouldBe tags
         }
 
         fun taggingPreservesEquality(
@@ -89,10 +89,10 @@ class TermMetadataSpec :
             tag: Term.() -> Term,
         ) = terms(property) { nonTagged ->
             val tagged = nonTagged.tag()
-            assertEquals(nonTagged, tagged)
-            assertEquals(nonTagged.hashCode(), tagged.hashCode())
-            assertTrue { nonTagged.tags.isEmpty() }
-            assertTrue { tagged.tags.isNotEmpty() }
+            tagged shouldBe nonTagged
+            tagged.hashCode() shouldBe nonTagged.hashCode()
+            nonTagged.tags.isEmpty().shouldBeTrue()
+            tagged.tags.isNotEmpty().shouldBeTrue()
         }
 
         taggingPreservesEquality("adding-tags-preserves-equality") { addTag(someKey, someValue1) }
@@ -108,22 +108,22 @@ class TermMetadataSpec :
         terms("clearing-tags-preserves-equality") {
             val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
             val cleared = tagged.clearTags()
-            assertEquals(tagged, cleared)
-            assertEquals(tagged.hashCode(), cleared.hashCode())
-            assertTrue { cleared.tags.isEmpty() }
-            assertTrue { tagged.tags.isNotEmpty() }
+            cleared shouldBe tagged
+            cleared.hashCode() shouldBe tagged.hashCode()
+            cleared.tags.isEmpty().shouldBeTrue()
+            tagged.tags.isNotEmpty().shouldBeTrue()
         }
 
         terms("adding-an-existing-tag-replaces-that-tag") {
             val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
             val replaced = tagged.addTag(someKey, someValue2)
-            assertEquals(someValue2, replaced.getTag<TermTag<Int>>(someKey))
+            (replaced.getTag<TermTag<Int>>(someKey)) shouldBe someValue2
         }
 
         terms("setting-an-existing-tag-replaces-that-tag") {
             val tagged = it.setTags(someKey to someValue1, someOtherKey to someOtherValue)
             val replaced = tagged.setTag(someKey, someValue2)
-            assertEquals(someValue2, replaced.getTag<TermTag<Int>>(someKey))
+            (replaced.getTag<TermTag<Int>>(someKey)) shouldBe someValue2
         }
 
         alterationPreservesTags("fresh-copy-preserves-tags") { freshCopy() }

@@ -1,11 +1,12 @@
 package it.unibo.tuprolog.core.operators
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.core.operators.testutils.OperatorSetUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [OperatorSet]
@@ -31,54 +32,50 @@ class OperatorSetSpec :
         test("constructing-operator-set-with-equals-operators-takes-only-first") {
             val toBeTested = OperatorSet(fakePlusOperator, overridingFakePlusOperator)
 
-            assertTrue { toBeTested.any { it === fakePlusOperator } }
-            assertTrue { toBeTested.none { it === overridingFakePlusOperator } }
+            (toBeTested.any { it === fakePlusOperator }).shouldBeTrue()
+            (toBeTested.none { it === overridingFakePlusOperator }).shouldBeTrue()
         }
 
         test("plus-operator") {
             val toBeTested = operatorSet + overridingFakePlusOperator
 
-            assertTrue { toBeTested.any { it === overridingFakePlusOperator } }
-            assertTrue { toBeTested.none { it === fakePlusOperator } }
+            (toBeTested.any { it === overridingFakePlusOperator }).shouldBeTrue()
+            (toBeTested.none { it === fakePlusOperator }).shouldBeTrue()
         }
 
         test("plus-operator-set") {
             val toBeTested = operatorSet + overridingOperatorSet
 
-            assertTrue { toBeTested.any { it === overridingFakePlusOperator } }
-            assertTrue { toBeTested.none { it === fakePlusOperator } }
+            (toBeTested.any { it === overridingFakePlusOperator }).shouldBeTrue()
+            (toBeTested.none { it === fakePlusOperator }).shouldBeTrue()
         }
 
         test("minus-operator") {
             val toBeTested = operatorSet - fakePlusOperator
 
-            assertTrue { toBeTested.none { it === fakePlusOperator } }
-            assertTrue { toBeTested.none { it === overridingFakePlusOperator } }
+            (toBeTested.none { it === fakePlusOperator }).shouldBeTrue()
+            (toBeTested.none { it === overridingFakePlusOperator }).shouldBeTrue()
         }
 
         test("minus-operator-set") {
             val toBeTested = operatorSet - OperatorSet(fakePlusOperator)
 
-            assertTrue { toBeTested.none { it === fakePlusOperator } }
-            assertTrue { toBeTested.none { it === overridingFakePlusOperator } }
+            (toBeTested.none { it === fakePlusOperator }).shouldBeTrue()
+            (toBeTested.none { it === overridingFakePlusOperator }).shouldBeTrue()
         }
 
         test("same-contents-operator-sets-are-equals") {
-            assertEquals(OperatorSet(), OperatorSet())
-            assertEquals(
-                operatorSet,
-                OperatorSet(fakePlusOperator, fakeMinusOperator, fakeTimesOperator, fakeDivisionOperator),
-            )
-            assertEquals(
-                operatorSet,
-                OperatorSet(fakeMinusOperator, fakePlusOperator, fakeDivisionOperator, fakeTimesOperator),
-            )
+            OperatorSet() shouldBe OperatorSet()
+            OperatorSet(fakePlusOperator, fakeMinusOperator, fakeTimesOperator, fakeDivisionOperator) shouldBe
+                operatorSet
+            OperatorSet(fakeMinusOperator, fakePlusOperator, fakeDivisionOperator, fakeTimesOperator) shouldBe
+                operatorSet
 
-            assertNotEquals(operatorSet, OperatorSet())
+            OperatorSet() shouldNotBe operatorSet
         }
 
         test("predefined-operators-count") {
-            assertEquals(OperatorSet.DEFAULT.count(), OperatorSetUtils.defaultOperatorCases.count())
+            OperatorSetUtils.defaultOperatorCases.count() shouldBe OperatorSet.DEFAULT.count()
         }
 
         withTests(nameFn = { "predefined-operators/${it.id}" }, OperatorSetUtils.defaultOperatorCases) { case ->
@@ -86,20 +83,17 @@ class OperatorSetSpec :
             val actualOperator =
                 OperatorSet.DEFAULT.single { it == Operator(case.functor, case.specifier, case.priority) }
 
-            assertEquals(
-                case.functor,
-                actualOperator.functor,
-                "$actualOperator functor expected to be: ${case.functor}",
-            )
-            assertEquals(
-                case.specifier,
-                actualOperator.specifier,
-                "$actualOperator specifier expected to be: ${case.specifier}",
-            )
-            assertEquals(
-                case.priority,
-                actualOperator.priority,
-                "$actualOperator priority expected to be: ${case.priority}",
-            )
+            withClue("$actualOperator functor expected to be: ${case.functor}") {
+                actualOperator.functor shouldBe
+                    case.functor
+            }
+            withClue("$actualOperator specifier expected to be: ${case.specifier}") {
+                actualOperator.specifier shouldBe
+                    case.specifier
+            }
+            withClue("$actualOperator priority expected to be: ${case.priority}") {
+                actualOperator.priority shouldBe
+                    case.priority
+            }
         }
     })

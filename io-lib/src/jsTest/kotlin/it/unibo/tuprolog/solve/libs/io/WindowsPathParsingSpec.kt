@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 
 /**
  * Regression coverage for parsing native Windows absolute paths (drive letter, `\`-separated)
@@ -18,29 +18,29 @@ class WindowsPathParsingSpec :
         test("plain-backslash-path-no-forward-slash-at-all") {
             // The common case for a genuine Windows path: no `/` anywhere for a naive parser to anchor on.
             val url = Url.of("""file://C:\Users\me\theory.pl""")
-            assertEquals("file", url.protocol)
-            assertEquals("", url.host)
-            assertEquals("/C:/Users/me/theory.pl", url.path)
+            url.protocol shouldBe "file"
+            url.host shouldBe ""
+            url.path shouldBe "/C:/Users/me/theory.pl"
         }
 
         test("two-slash-convention-with-mixed-separators") {
             // Mirrors what jsTest's ResourceUtils.kt builds: process.cwd() (native separators) glued to
             // a forward-slash-only literal suffix.
             val url = Url.of("""file://D:\a\2p-kt\io-lib/kotlin/it/unibo/tuprolog/solve/libs/io/Parents.pl""")
-            assertEquals("file", url.protocol)
-            assertEquals("/D:/a/2p-kt/io-lib/kotlin/it/unibo/tuprolog/solve/libs/io/Parents.pl", url.path)
+            url.protocol shouldBe "file"
+            url.path shouldBe "/D:/a/2p-kt/io-lib/kotlin/it/unibo/tuprolog/solve/libs/io/Parents.pl"
         }
 
         test("three-slash-uri-convention-also-works") {
             val url = Url.of("""file:///D:\a\2p-kt\io-lib\Parents.pl""")
-            assertEquals("file", url.protocol)
-            assertEquals("/D:/a/2p-kt/io-lib/Parents.pl", url.path)
+            url.protocol shouldBe "file"
+            url.path shouldBe "/D:/a/2p-kt/io-lib/Parents.pl"
         }
 
         test("forward-slash-only-windows-path-still-works") {
             val url = Url.of("file:///D:/a/2p-kt/io-lib/Parents.pl")
-            assertEquals("file", url.protocol)
-            assertEquals("/D:/a/2p-kt/io-lib/Parents.pl", url.path)
+            url.protocol shouldBe "file"
+            url.path shouldBe "/D:/a/2p-kt/io-lib/Parents.pl"
         }
 
         test("raw-windows-path-without-any-scheme-falls-back-to-file-url") {
@@ -48,8 +48,8 @@ class WindowsPathParsingSpec :
             // this "successfully" as scheme "c" (single-letter schemes are otherwise valid URI syntax),
             // so it must be explicitly rejected to force Url.of's file:// fallback.
             val url = Url.of("""C:\Users\me\theory.pl""")
-            assertEquals("file", url.protocol)
-            assertEquals("/C:/Users/me/theory.pl", url.path)
+            url.protocol shouldBe "file"
+            url.path shouldBe "/C:/Users/me/theory.pl"
         }
 
         test("round-trip-through-to-string-matches-what-consult-does") {
@@ -59,14 +59,14 @@ class WindowsPathParsingSpec :
             // and doing so is still portable: both sides resolve against the same (current) host.
             val original = Url.file("""D:\a\2p-kt\io-lib\kotlin\Parents.pl""")
             val roundTripped = Url.of(original.toString())
-            assertEquals(original.protocol, roundTripped.protocol)
-            assertEquals(original.toLocalPath().toString(), roundTripped.toLocalPath().toString())
+            roundTripped.protocol shouldBe original.protocol
+            roundTripped.toLocalPath().toString() shouldBe original.toLocalPath().toString()
         }
 
         test("plain-unix-path-is-unaffected") {
             val url = Url.of("file:///home/user/theory.pl")
-            assertEquals("file", url.protocol)
-            assertEquals("/home/user/theory.pl", url.path)
+            url.protocol shouldBe "file"
+            url.path shouldBe "/home/user/theory.pl"
         }
 
         test("unix-shaped-absolute-path-resolves-locally-on-windows-too") {
@@ -76,7 +76,7 @@ class WindowsPathParsingSpec :
             // fall back gracefully instead of propagating that crash (this is exactly the shape of path
             // the "missing theory"/"missing include" test fixtures use, on every platform).
             val url = Url.of("/path/to/missing/resource.pl")
-            assertEquals("file", url.protocol)
+            url.protocol shouldBe "file"
             // Must not throw.
             url.toLocalPath()
         }
@@ -85,9 +85,9 @@ class WindowsPathParsingSpec :
             // Regression check: the file:-URL/drive-letter handling above must not affect http parsing.
             // Non-default port: standard URL parsers normalize away a port matching the scheme default.
             val url = Url.of("http://www.example.com:1234/")
-            assertEquals("http", url.protocol)
-            assertEquals("www.example.com", url.host)
-            assertEquals(1234, url.port)
-            assertEquals("/", url.path)
+            url.protocol shouldBe "http"
+            url.host shouldBe "www.example.com"
+            url.port shouldBe 1234
+            url.path shouldBe "/"
         }
     })

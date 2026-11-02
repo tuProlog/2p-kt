@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertTrue
+import io.kotest.matchers.booleans.shouldBeTrue
 
 /**
  * Test class for [currentTimeInstant] common behaviour
@@ -19,11 +19,13 @@ class TimeRepresentationKtSpec :
                     currentTimeInstant().takeIf { it < startTime + timeLag }
                 }.chunked(2)
 
-            assertTrue {
-                timeInstantsSequence
-                    .fold(true) { timeFlowedAheadTillNow, times ->
-                        timeFlowedAheadTillNow && times.first() <= times.last()
-                    }
-            }
+            (
+                run {
+                    timeInstantsSequence
+                        .fold(true) { timeFlowedAheadTillNow, times ->
+                            timeFlowedAheadTillNow && times.first() <= times.last()
+                        }
+                }
+            ).shouldBeTrue()
         }
     })

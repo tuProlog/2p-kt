@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -12,7 +13,6 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
-import kotlin.test.assertEquals
 
 class TimeoutExceptionSpec :
     FunSpec({
@@ -24,13 +24,12 @@ class TimeoutExceptionSpec :
             )
 
         test("to-string") {
-            assertEquals(
+            exception.toString() shouldBe (
                 "${TimeOutException::class.simpleName}(" +
                     "message=dummy message, " +
                     "exceededDuration=${DummyContext.maxDuration}, " +
                     "contexts=[${DummyContext::class.simpleName}]" +
-                    ")",
-                exception.toString(),
+                    ")"
             )
         }
 

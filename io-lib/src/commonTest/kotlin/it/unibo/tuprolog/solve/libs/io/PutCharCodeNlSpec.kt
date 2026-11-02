@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
@@ -12,7 +13,6 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.yes
-import kotlin.test.assertEquals
 
 /**
  * Covers `put_char/1,2`, `put_code/1,2` and `nl/1` (Character input/output). All are output-only:
@@ -31,7 +31,7 @@ class PutCharCodeNlSpec :
                 val query = "put_char"("t") and "put_char"("o")
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("to", output.toString())
+                output.toString() shouldBe "to"
             }
         }
 
@@ -66,7 +66,7 @@ class PutCharCodeNlSpec :
                 val query = "put_char"("mickey", "t")
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("t", mickey.toString())
+                mickey.toString() shouldBe "t"
             }
         }
 
@@ -99,7 +99,7 @@ class PutCharCodeNlSpec :
                 val query = "put_code"(intOf('X'.code))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("X", output.toString())
+                output.toString() shouldBe "X"
             }
         }
 
@@ -132,7 +132,7 @@ class PutCharCodeNlSpec :
                 val query = "put_code"("mickey", intOf('X'.code))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("X", mickey.toString())
+                mickey.toString() shouldBe "X"
             }
         }
 
@@ -143,7 +143,7 @@ class PutCharCodeNlSpec :
                 val query = "put_char"("mickey", "a") and ("nl"("mickey") and "put_char"("mickey", "b"))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("a\nb", mickey.toString())
+                mickey.toString() shouldBe "a\nb"
             }
         }
 

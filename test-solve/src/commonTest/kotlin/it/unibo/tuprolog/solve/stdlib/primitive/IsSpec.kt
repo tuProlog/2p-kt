@@ -1,15 +1,16 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.stdlib.primitive.testutils.ArithmeticUtils.isQueryToResult
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Test class for [Is]
@@ -26,21 +27,21 @@ class IsSpec :
                         Is.implementation.solve(input)
                         fail("Expected: $expectedResult but no exception was thrown")
                     } catch (e: ResolutionException) {
-                        assertEquals(expectedResult, e::class)
+                        e::class shouldBe expectedResult
                     }
                 }
                 is Substitution.Unifier -> {
                     Is.implementation.solve(input).single().solution.let {
-                        assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-                            it is Solution.Yes
+                        withClue("Requesting ${input.query} should result in $expectedResult response!") {
+                            it.shouldBeInstanceOf<Solution.Yes>()
                         }
-                        assertEquals(expectedResult, it.substitution)
+                        it.substitution shouldBe expectedResult
                     }
                 }
                 is Substitution.Fail -> {
                     Is.implementation.solve(input).single().solution.let {
-                        assertTrue("Requesting ${input.query} should result in $expectedResult response!") {
-                            it is Solution.No
+                        withClue("Requesting ${input.query} should result in $expectedResult response!") {
+                            it.shouldBeInstanceOf<Solution.No>()
                         }
                     }
                 }

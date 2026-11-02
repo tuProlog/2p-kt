@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.dsl
 
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.funSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
-import kotlin.test.assertEquals
-import kotlin.test.assertFails
 
 fun <T1 : Any, T2 : Any> operatorsTests(
     first: T1,
@@ -21,7 +21,7 @@ fun <T1 : Any, T2 : Any> operatorsTests(
             ) = logicProgramming {
                 val actualResult = operation(left, right)
                 val expectedResult = structOf(operator, left.toTerm(), right.toTerm())
-                assertEquals(expectedResult, actualResult)
+                actualResult shouldBe expectedResult
             }
 
             val third = 1
@@ -110,7 +110,7 @@ fun <T1 : Any, T2 : Any> operatorsTests(
                 logicProgramming {
                     val expected = tupleOf(sequenceOf(first, second, third).map { it.toTerm() })
                     val actual = first and second and third
-                    assertEquals(expected, actual)
+                    actual shouldBe expected
                 }
             }
 
@@ -120,7 +120,7 @@ fun <T1 : Any, T2 : Any> operatorsTests(
                     if (firstTerm is Struct) {
                         testBinaryExpression(first, second, ":-") { a, b -> a impliedBy b }
                     } else {
-                        assertFails {
+                        shouldThrowAny {
                             first impliedBy second
                         }
                     }
@@ -129,8 +129,8 @@ fun <T1 : Any, T2 : Any> operatorsTests(
 
             test("plus-on-lists-is-append") {
                 logicProgramming {
-                    assertEquals(listOf(1, 2, 3), listOf(1, 2) + 3)
-                    assertEquals(listOf(1, 2, 3), listOf(1, 2) + listOf(3))
+                    (listOf(1, 2) + 3) shouldBe listOf(1, 2, 3)
+                    (listOf(1, 2) + listOf(3)) shouldBe listOf(1, 2, 3)
                 }
             }
 
@@ -140,9 +140,9 @@ fun <T1 : Any, T2 : Any> operatorsTests(
                     if (firstTerm is Struct) {
                         val expected = ruleOf(firstTerm, second.toTerm(), third.toTerm())
                         val actual = firstTerm.impliedBy(second, third)
-                        assertEquals(expected, actual)
+                        actual shouldBe expected
                     } else {
-                        assertFails {
+                        shouldThrowAny {
                             first.impliedBy(second, third)
                         }
                     }
@@ -155,7 +155,7 @@ fun <T1 : Any, T2 : Any> operatorsTests(
                     if (firstTerm is Struct) {
                         testBinaryExpression(first, second, ":-") { a, b -> a `if` b }
                     } else {
-                        assertFails {
+                        shouldThrowAny {
                             first `if` second
                         }
                     }

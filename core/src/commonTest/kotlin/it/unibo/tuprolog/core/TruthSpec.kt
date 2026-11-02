@@ -2,12 +2,12 @@
 
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.impl.TruthImpl
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
 
 /**
  * Test class for [Truth] companion object
@@ -23,33 +23,33 @@ class TruthSpec :
         val FALSE = TruthImpl(Terms.FALSE_FUNCTOR, false)
 
         test("true-truth-creation") {
-            assertSame(Truth.TRUE, Truth.of(true))
+            Truth.of(true) shouldBeSameInstanceAs Truth.TRUE
         }
 
         test("true-truth-retrieval") {
-            assertEquals(TRUE, Truth.TRUE)
+            Truth.TRUE shouldBe TRUE
         }
 
         test("false-truth-creation") {
-            assertSame(Truth.FALSE, Truth.of(false))
+            Truth.of(false) shouldBeSameInstanceAs Truth.FALSE
         }
 
         test("false-truth-retrieval") {
-            assertEquals(FALSE, Truth.FALSE)
+            Truth.FALSE shouldBe FALSE
         }
 
         test("fail-truth-retrieval") {
-            assertEquals(FAIL, Truth.FAIL)
+            Truth.FAIL shouldBe FAIL
         }
 
         withTests(
             nameFn = { "of-string/${it.first}" },
             listOf("true" to Truth.TRUE, "false" to Truth.FALSE, "fail" to Truth.FAIL),
         ) { (string, truth) ->
-            assertSame(truth, Truth.of(string))
+            Truth.of(string) shouldBeSameInstanceAs truth
         }
 
         test("of-string/rejects-other-atoms") {
-            assertFailsWith<IllegalArgumentException> { Truth.of("maybe") }
+            shouldThrow<IllegalArgumentException> { Truth.of("maybe") }
         }
     })

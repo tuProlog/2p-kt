@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.collections
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
@@ -9,8 +12,6 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 private val unificator = Unificator.default
 
@@ -106,13 +107,13 @@ class ClauseCollectionFactoriesSpec :
     FunSpec({
         withTests(nameFn = { it.id }, factoryCases) { case ->
             val collection = case.build()
-            assertTrue(case.type.isInstance(collection), "${collection::class} is not a ${case.type}")
+            withClue("${collection::class} is not a ${case.type}") { case.type.isInstance(collection).shouldBeTrue() }
             val expected = if (case.empty) emptyList() else clauses
             if (case.ordered) {
-                assertEquals(expected, collection.toList())
+                collection.toList() shouldBe expected
             } else {
-                assertEquals(expected.groupingBy { it }.eachCount(), collection.groupingBy { it }.eachCount())
+                (collection.groupingBy { it }.eachCount()) shouldBe (expected.groupingBy { it }.eachCount())
             }
-            assertEquals(expected.size, collection.size)
+            collection.size shouldBe expected.size
         }
     })

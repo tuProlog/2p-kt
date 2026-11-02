@@ -3,6 +3,10 @@
 package it.unibo.tuprolog.ui.web
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.ui.gui.application.buildGuiApplication
@@ -20,9 +24,6 @@ import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 // Dispatchers.Default drives a throwaway CoroutineScope local to each test case; there is nothing downstream
 // to inject a dispatcher into here, unlike the production code this test exercises.
@@ -69,10 +70,10 @@ class WorkspacePersistenceSpec :
                 )
 
                 val snapshot = capturePersistedWorkspace(controller.state.value, fontSize = 18)
-                assertEquals(18, snapshot.fontSize)
+                snapshot.fontSize shouldBe 18
                 WebWorkspacePersistence.save(snapshot)
                 val loaded = WebWorkspacePersistence.load()
-                assertEquals(snapshot, loaded)
+                loaded shouldBe snapshot
 
                 val application2 = testApplication("test2")
                 application2.start()
@@ -81,10 +82,10 @@ class WorkspacePersistenceSpec :
                     val restoredPage =
                         application2.controller.state.value.workspace.pages
                             .single()
-                    assertTrue(restoredPage.content is PageContent.DocumentReference)
-                    assertEquals("p(X).", restoredPage.query.text)
-                    assertEquals(listOf("p(1)."), restoredPage.query.history.entries)
-                    assertEquals(1, restoredPage.history.resolutions.size)
+                    restoredPage.content.shouldBeInstanceOf<PageContent.DocumentReference>()
+                    restoredPage.query.text shouldBe "p(X)."
+                    restoredPage.query.history.entries shouldBe listOf("p(1).")
+                    restoredPage.history.resolutions.size shouldBe 1
                 } finally {
                     application2.close()
                 }
@@ -96,8 +97,8 @@ class WorkspacePersistenceSpec :
 
         test("delete removes the persisted entry and load then reports nothing saved") {
             WebWorkspacePersistence.save(capturePersistedWorkspaceStub())
-            assertTrue(WebWorkspacePersistence.delete())
-            assertNull(WebWorkspacePersistence.load())
-            assertEquals(false, WebWorkspacePersistence.delete())
+            WebWorkspacePersistence.delete().shouldBeTrue()
+            WebWorkspacePersistence.load().shouldBeNull()
+            WebWorkspacePersistence.delete() shouldBe false
         }
     })

@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.solve.prolog
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -18,28 +22,22 @@ import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.yes
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 class AbstractPrologSolverSpec :
     FunSpec({
         test("state-machine/preserves-custom-unificator") {
             val solver = DebuggablePrologSolver(theoryInvolvingAllStates)
-            assertSame(CustomUnificator, solver.unificator)
+            solver.unificator shouldBeSameInstanceAs CustomUnificator
             val goal = Struct.of("count", Integer.of(4))
-            assertEquals(
-                listOf(goal.yes()),
-                solver.solveList(goal),
-            )
+            solver.solveList(goal) shouldBe listOf(goal.yes())
         }
 
         test("hijackable-iterator/without-hijacking-solves-as-usual") {
             val transitions = mutableListOf<Long>()
             val solver = HijackingSolver(transitions) { _, destination, _ -> destination }
             val goal = Struct.of("p", Integer.of(1))
-            assertEquals(listOf(goal.yes()), solver.solveList(goal))
-            assertTrue(transitions.isNotEmpty())
+            solver.solveList(goal) shouldBe listOf(goal.yes())
+            transitions.isNotEmpty().shouldBeTrue()
         }
 
         test("hijackable-iterator/hijacking-replaces-the-next-state") {
@@ -52,7 +50,7 @@ class AbstractPrologSolverSpec :
                     }
                 }
             val goal = Struct.of("p", Integer.of(1))
-            assertEquals(listOf(goal.no()), solver.solveList(goal))
+            solver.solveList(goal) shouldBe listOf(goal.no())
         }
     })
 
@@ -75,14 +73,11 @@ private class DebuggablePrologSolver(
                 println(dst)
             }
             for (state in listOf(src, dst)) {
-                assertSame(
-                    expected = state.context.unificator,
-                    actual = CustomUnificator,
-                    message =
-                        "Unificator is unexpectedly reset after $i steps while transitioning from\n" +
-                            "      source=$src\n" +
-                            " destination=$dst",
-                )
+                withClue(
+                    "Unificator is unexpectedly reset after $i steps while transitioning from\n" +
+                        "      source=$src\n" +
+                        " destination=$dst",
+                ) { CustomUnificator shouldBeSameInstanceAs state.context.unificator }
             }
             onStateTransition(src, dst, i)
         }

@@ -2,6 +2,9 @@
 
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -18,8 +21,6 @@ import it.unibo.tuprolog.solve.DirectiveTestsUtils.staticDirective
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /** Conformance tests for directive clauses (`:- Goal.`), covering `dynamic/1`, `static/1`, `initialization/1`, `solve/1`, `set_flag/2`, `set_prolog_flag/2`, `op/3`, malformed directives, and directives that fail or raise during theory loading. */
 fun directivesContract(
@@ -53,18 +54,18 @@ fun directivesContract(
 
             val solver = solverFactory.solverOf(staticKb = initialStaticKb)
 
-            assertEquals(expectedStatic, solver.staticKb)
-            assertEquals(expectedDynamic, solver.dynamicKb)
+            solver.staticKb shouldBe expectedStatic
+            solver.dynamicKb shouldBe expectedDynamic
 
             val mutableSolver = solverFactory.mutableSolverOf()
 
-            assertEquals(emptyTheory(), mutableSolver.staticKb)
-            assertEquals(emptyMutableTheory(), mutableSolver.dynamicKb)
+            mutableSolver.staticKb shouldBe emptyTheory()
+            mutableSolver.dynamicKb shouldBe emptyMutableTheory()
 
             mutableSolver.loadStaticKb(initialStaticKb)
 
-            assertEquals(expectedStatic, mutableSolver.staticKb)
-            assertEquals(expectedDynamic, mutableSolver.dynamicKb)
+            mutableSolver.staticKb shouldBe expectedStatic
+            mutableSolver.dynamicKb shouldBe expectedDynamic
         }
     }
 
@@ -94,18 +95,18 @@ fun directivesContract(
 
             val solver = solverFactory.solverOf(staticKb = emptyTheory(), dynamicKb = initialDynamicKb)
 
-            assertEquals(expectedStatic, solver.staticKb)
-            assertEquals(expectedDynamic, solver.dynamicKb)
+            solver.staticKb shouldBe expectedStatic
+            solver.dynamicKb shouldBe expectedDynamic
 
             val mutableSolver = solverFactory.mutableSolverOf()
 
-            assertEquals(emptyTheory(), mutableSolver.staticKb)
-            assertEquals(emptyMutableTheory(), mutableSolver.dynamicKb)
+            mutableSolver.staticKb shouldBe emptyTheory()
+            mutableSolver.dynamicKb shouldBe emptyMutableTheory()
 
             mutableSolver.loadDynamicKb(initialDynamicKb)
 
-            assertEquals(expectedStatic, mutableSolver.staticKb)
-            assertEquals(expectedDynamic, mutableSolver.dynamicKb)
+            mutableSolver.staticKb shouldBe expectedStatic
+            mutableSolver.dynamicKb shouldBe expectedDynamic
         }
     }
 
@@ -142,14 +143,11 @@ fun directivesContract(
                     )
                 val solver = solverOf(theory)
 
-                assertEquals(
-                    listOf<Any>(),
-                    events,
-                )
+                events shouldBe (listOf<Any>())
 
                 sequenceOf(solver.staticKb, solver.dynamicKb)
                     .single { it.size > 0 }
-                    .let { assertEquals(theory, it) }
+                    .let { it shouldBe theory }
             }
         }
     }
@@ -174,10 +172,10 @@ fun directivesContract(
                         ),
                     )
 
-                assertTrue { solver.flags.size >= 3 }
-                assertEquals(Integer.of(1), solver.flags["a"])
-                assertEquals(Integer.of(2), solver.flags["b"])
-                assertEquals(Integer.of(3), solver.flags["c"])
+                (solver.flags.size >= 3).shouldBeTrue()
+                solver.flags["a"] shouldBe Integer.of(1)
+                solver.flags["b"] shouldBe Integer.of(2)
+                solver.flags["c"] shouldBe Integer.of(3)
             }
         }
     }
@@ -195,10 +193,10 @@ fun directivesContract(
                         ),
                     )
 
-                assertTrue { solver.flags.size >= 3 }
-                assertEquals(Integer.of(1), solver.flags["a"])
-                assertEquals(Integer.of(2), solver.flags["b"])
-                assertEquals(Integer.of(3), solver.flags["c"])
+                (solver.flags.size >= 3).shouldBeTrue()
+                solver.flags["a"] shouldBe Integer.of(1)
+                solver.flags["b"] shouldBe Integer.of(2)
+                solver.flags["c"] shouldBe Integer.of(3)
             }
         }
     }
@@ -231,7 +229,7 @@ fun directivesContract(
                     )
 
                 for (operator in expectedOperators) {
-                    assertTrue { operator in solver.operators }
+                    (operator in solver.operators).shouldBeTrue()
                 }
             }
         }
@@ -286,10 +284,7 @@ private fun ContractScope.testInit(initGoal: String) =
         for ((solverOf, writeEvents) in solverInitializersWithEventsList(solverFactory)) {
             val solver = solverOf(theory)
 
-            assertEquals(
-                listOf<Any>("a", "f(1)", "f(2)", "b"),
-                writeEvents,
-            )
+            writeEvents shouldBe (listOf<Any>("a", "f(1)", "f(2)", "b"))
 
             val query = "f"(X)
             val expectedSolutions =
@@ -298,10 +293,7 @@ private fun ContractScope.testInit(initGoal: String) =
                     query.yes(X to 2),
                 )
 
-            assertEquals(
-                expectedSolutions,
-                solver.solve(query).toList(),
-            )
+            solver.solve(query).toList() shouldBe expectedSolutions
         }
     }
 
@@ -318,11 +310,11 @@ private fun ContractScope.testFailingInit(initGoal: String) =
 
             sequenceOf(solver.staticKb, solver.dynamicKb)
                 .single { it.size > 0 }
-                .let { assertEquals(theory, it) }
+                .let { it shouldBe theory }
 
-            assertTrue { events.size == 1 }
-            assertTrue { events[0] is InitializationIssue }
-            assertTrue { (events[0] as? InitializationIssue)?.message?.contains("failure") ?: false }
+            events.size shouldBe 1
+            events[0].shouldBeInstanceOf<InitializationIssue>()
+            ((events[0] as? InitializationIssue)?.message?.contains("failure") ?: false).shouldBeTrue()
         }
     }
 
@@ -339,12 +331,14 @@ private fun ContractScope.testExceptionalInit(initGoal: String) =
 
             sequenceOf(solver.staticKb, solver.dynamicKb)
                 .single { it.size > 0 }
-                .let { assertEquals(theory, it) }
+                .let { it shouldBe theory }
 
-            assertTrue { events.size == 1 }
-            assertTrue { events[0] is InitializationIssue }
-            assertTrue {
-                (events[0] as? InitializationIssue)?.message?.contains(InstantiationError.typeFunctor) ?: false
-            }
+            events.size shouldBe 1
+            events[0].shouldBeInstanceOf<InitializationIssue>()
+            (
+                (events[0] as? InitializationIssue)?.message?.contains(
+                    InstantiationError.typeFunctor,
+                ) ?: false
+            ).shouldBeTrue()
         }
     }

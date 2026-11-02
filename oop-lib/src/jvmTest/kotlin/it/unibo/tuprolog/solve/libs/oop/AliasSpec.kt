@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -21,7 +23,6 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
 import org.gciatto.kt.math.BigDecimal
 import org.gciatto.kt.math.BigInteger
 import kotlin.reflect.KClass
-import kotlin.test.assertTrue
 
 class AliasSpec :
     FunSpec({
@@ -164,8 +165,8 @@ class AliasSpec :
                     listOf(registerQuery1.yes()),
                     solver.solveList(registerQuery1),
                 )
-                assertTrue { bInstanceAlias.implementation in solver.staticKb }
-                assertTrue { solver.dynamicKb.size == 0L }
+                (bInstanceAlias.implementation in solver.staticKb).shouldBeTrue()
+                solver.dynamicKb.size shouldBe 0L
 
                 val aliasQuery1 = bInstanceAlias.implementation.head
                 assertSolutionEquals(
@@ -178,8 +179,8 @@ class AliasSpec :
                     listOf(registerQuery2.yes()),
                     solver.solveList(registerQuery2),
                 )
-                assertTrue { bTypeAlias.implementation in solver.staticKb }
-                assertTrue { solver.dynamicKb.size == 0L }
+                (bTypeAlias.implementation in solver.staticKb).shouldBeTrue()
+                solver.dynamicKb.size shouldBe 0L
 
                 val aliasQuery2 = bTypeAlias.implementation.head
                 assertSolutionEquals(

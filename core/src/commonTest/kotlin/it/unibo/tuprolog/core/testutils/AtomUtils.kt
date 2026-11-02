@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.core.testutils
 
+import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.Atom
-import kotlin.test.assertTrue
 
 /**
  * Utils singleton for testing [Atom]
@@ -48,8 +48,11 @@ internal object AtomUtils {
 
     /** Asserts that no arguments are present in an Atom */
     internal fun assertNoArguments(atom: Atom) {
-        assertTrue(atom.args.isEmpty())
-        assertTrue(atom.args.isEmpty())
-        assertTrue(atom.argsSequence.toList().isEmpty())
+        atom.args.isEmpty().shouldBeTrue()
+        atom.args.isEmpty().shouldBeTrue()
+        atom.argsSequence
+            .toList()
+            .isEmpty()
+            .shouldBeTrue()
     }
 }

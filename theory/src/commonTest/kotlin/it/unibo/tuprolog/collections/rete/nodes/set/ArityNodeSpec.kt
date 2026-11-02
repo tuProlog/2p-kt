@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.collections.rete.nodes.set
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.collections.rete.generic.set.ArityNode
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Empty
@@ -16,10 +20,6 @@ import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNodeRespectingPartialOrder
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [ArityNode]
@@ -48,7 +48,7 @@ class ArityNodeSpec :
         ) { (arity, case) -> test(arity, case) }
 
         test("arity-node-cannot-accept-negative-arity-upon-construction") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 ArityNode(
                     -1,
                 )
@@ -56,11 +56,11 @@ class ArityNodeSpec :
         }
 
         arities("empty-node-has-empty-children-collection") {
-            assertTrue { ArityNode(it).children.isEmpty() }
+            ArityNode(it).children.isEmpty().shouldBeTrue()
         }
 
         arities("filled-node-has-non-empty-children-collection") {
-            assertTrue { filledArityNode(it).children.isNotEmpty() }
+            filledArityNode(it).children.isNotEmpty().shouldBeTrue()
         }
 
         arities("clauses-correct") {
@@ -72,7 +72,7 @@ class ArityNodeSpec :
             // notice that no check is made, at this level, to ensure that inserted clause has correct "arity"
             val node = ArityNode(it).apply { put(aRule) }
 
-            assertEquals(aRule, node.indexedElements.single())
+            node.indexedElements.single() shouldBe aRule
         }
 
         arities("put-clause-inserts-relatively-after-by-default") {
@@ -92,7 +92,7 @@ class ArityNodeSpec :
             node.put(Fact.of(Struct.of("f", Atom.of("a"), Empty.list())))
             node.put(Fact.of(Struct.of("f", Atom.of("b"), Empty.list())))
 
-            assertEquals(2, node.children.count())
+            node.children.count() shouldBe 2
         }
 
         arities("put-clause-reuses-children-with-equals-first-argument") {
@@ -100,7 +100,7 @@ class ArityNodeSpec :
             node.put(Fact.of(Struct.of("f", Atom.of("a"), Atom.of("b"))))
             node.put(Fact.of(Struct.of("f", Atom.of("a"), Atom.of("a"))))
 
-            assertEquals(1, node.children.count())
+            node.children.count() shouldBe 1
         }
 
         arities("put-clause-reuses-structurally-equals-children") {
@@ -108,7 +108,7 @@ class ArityNodeSpec :
             node.put(Fact.of(Struct.of("f", Var.of("A"), Atom.of("a"))))
             node.put(Fact.of(Struct.of("f", Var.anonymous(), Atom.of("a"))))
 
-            assertEquals(1, node.children.count())
+            node.children.count() shouldBe 1
         }
 
         arities("put-clause-reuses-children-for-different-arity-but-same-first-arg") {
@@ -116,7 +116,7 @@ class ArityNodeSpec :
             node.put(Fact.of(Struct.of("f", Atom.of("a"))))
             node.put(Fact.of(Struct.of("f", Atom.of("a"), Empty.list())))
 
-            assertEquals(1, node.children.count())
+            node.children.count() shouldBe 1
         }
 
         queries("get-clause") { arity, case ->
@@ -177,6 +177,6 @@ class ArityNodeSpec :
 
             val independentCopy = node.deepCopy()
 
-            assertSame(node.indexedElements.single(), independentCopy.indexedElements.single())
+            independentCopy.indexedElements.single() shouldBeSameInstanceAs node.indexedElements.single()
         }
     })

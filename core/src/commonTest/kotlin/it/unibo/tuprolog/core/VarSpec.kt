@@ -2,17 +2,17 @@ package it.unibo.tuprolog.core
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.impl.VarImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualsUsingVariablesSimpleNames
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
 import it.unibo.tuprolog.core.testutils.VarUtils
 import it.unibo.tuprolog.core.testutils.VarUtils.assertDifferentVariableExceptForName
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Var] companion object
@@ -22,11 +22,11 @@ import kotlin.test.assertTrue
 class VarSpec :
     FunSpec({
         withTests(nameFn = { "name-pattern-matches/${it.id}" }, VarUtils.correctlyNamedVarCases) { case ->
-            assertTrue(case.name matches Var.NAME_PATTERN)
+            (case.name matches Var.NAME_PATTERN).shouldBeTrue()
         }
 
         withTests(nameFn = { "name-pattern-does-not-match/${it.id}" }, VarUtils.incorrectlyNamedVarCases) { case ->
-            assertFalse(case.name matches Var.NAME_PATTERN)
+            (case.name matches Var.NAME_PATTERN).shouldBeFalse()
         }
 
         withTests(nameFn = { "of/${it.id}" }, VarUtils.mixedVarCases) { case ->
@@ -35,7 +35,7 @@ class VarSpec :
 
         test("anonymous-works-as-expected") {
             val anonymousVarInstance = Var.anonymous()
-            assertEquals("_", anonymousVarInstance.name)
+            anonymousVarInstance.name shouldBe "_"
 
             assertEqualities(anonymousVarInstance, anonymousVarInstance)
 
@@ -44,41 +44,41 @@ class VarSpec :
             assertEqualsUsingVariablesSimpleNames(Var.anonymous(), anonymousVarInstance)
             assertStructurallyEquals(Var.anonymous(), anonymousVarInstance)
 
-            assertNotEquals(Var.of("_"), anonymousVarInstance)
-            assertNotSame(Var.of("_"), anonymousVarInstance)
-            assertNotEquals(Var.anonymous(), anonymousVarInstance)
-            assertNotSame(Var.anonymous(), anonymousVarInstance)
+            anonymousVarInstance shouldNotBe Var.of("_")
+            anonymousVarInstance shouldNotBeSameInstanceAs Var.of("_")
+            anonymousVarInstance shouldNotBe Var.anonymous()
+            anonymousVarInstance shouldNotBeSameInstanceAs Var.anonymous()
         }
 
         test("wildcard-works-as-expected") {
-            assertTrue(Var.anonymous().isWildcard)
-            assertTrue(Var.of("_").isWildcard)
-            assertTrue(Var.of("_P").isWildcard)
-            assertTrue(Var.of("_Foo").isWildcard)
-            assertFalse(Var.of("X").isWildcard)
-            assertFalse(Var.of("Foo").isWildcard)
+            Var.anonymous().isWildcard.shouldBeTrue()
+            Var.of("_").isWildcard.shouldBeTrue()
+            Var.of("_P").isWildcard.shouldBeTrue()
+            Var.of("_Foo").isWildcard.shouldBeTrue()
+            Var.of("X").isWildcard.shouldBeFalse()
+            Var.of("Foo").isWildcard.shouldBeFalse()
 
-            assertTrue(Var.of("_P").isWildcard && !Var.of("_P").isAnonymous)
-            assertTrue(Var.anonymous().let { it.isWildcard && it.isAnonymous })
+            (Var.of("_P").isWildcard && !Var.of("_P").isAnonymous).shouldBeTrue()
+            (Var.anonymous().let { it.isWildcard && it.isAnonymous }).shouldBeTrue()
         }
 
         test("named-vars-works-as-expected") {
             val instance = Var.of("X")
-            assertEquals("X", instance.name)
+            instance.name shouldBe "X"
 
             assertEqualities(instance, instance)
 
             assertEqualsUsingVariablesSimpleNames(Var.of("X"), instance)
             assertStructurallyEquals(Var.of("X"), instance)
 
-            assertNotEquals(Var.of("X"), instance)
-            assertNotSame(Var.of("X"), instance)
+            instance shouldNotBe Var.of("X")
+            instance shouldNotBeSameInstanceAs Var.of("X")
         }
 
         withTests(
             nameFn = { "escape-name-if-necessary/${it.first}" },
             listOf("well-formed" to ("X" to "X"), "lower-case" to ("x" to "`x`"), "spaces" to ("A B" to "`A B`")),
         ) { (_, io) ->
-            assertEquals(io.second, Var.escapeNameIfNecessary(io.first))
+            Var.escapeNameIfNecessary(io.first) shouldBe io.second
         }
     })

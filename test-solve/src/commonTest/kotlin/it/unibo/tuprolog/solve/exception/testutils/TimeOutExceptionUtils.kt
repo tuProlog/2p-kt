@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.exception.testutils
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.TimeOutException
-import kotlin.test.assertEquals
 
 /**
  * Utils singleton to help testing [TimeOutException]
@@ -33,6 +33,6 @@ internal object TimeOutExceptionUtils {
             expectedContext,
             actualException,
         )
-        assertEquals(expectedExceededTimeDuration, actualException.exceededDuration)
+        actualException.exceededDuration shouldBe expectedExceededTimeDuration
     }
 }

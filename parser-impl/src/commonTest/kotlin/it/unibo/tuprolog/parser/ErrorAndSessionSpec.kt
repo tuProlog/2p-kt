@@ -1,6 +1,13 @@
 package it.unibo.tuprolog.parser
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.parser.exceptions.MissingClauseTerminatorException
 import it.unibo.tuprolog.parser.exceptions.MissingOperatorOperandException
 import it.unibo.tuprolog.parser.exceptions.NestingLimitExceededException
@@ -13,95 +20,88 @@ import it.unibo.tuprolog.parser.tokens.Token
 import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
 import it.unibo.tuprolog.parser.tree.StructureNode
 import it.unibo.tuprolog.parser.tree.SyntaxNode
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class ErrorAndSessionSpec :
     FunSpec({
         test("option-safety-limits-must-be-positive") {
-            assertFailsWith<IllegalArgumentException> { LexerOptions(maximumRetainedTokens = 0) }
-            assertFailsWith<IllegalArgumentException> { LexerOptions(maximumRetainedTokens = -1) }
-            assertFailsWith<IllegalArgumentException> { ParserOptions(maximumNestingDepth = 0) }
-            assertFailsWith<IllegalArgumentException> { ParserOptions(maximumNestingDepth = -1) }
+            shouldThrow<IllegalArgumentException> { LexerOptions(maximumRetainedTokens = 0) }
+            shouldThrow<IllegalArgumentException> { LexerOptions(maximumRetainedTokens = -1) }
+            shouldThrow<IllegalArgumentException> { ParserOptions(maximumNestingDepth = 0) }
+            shouldThrow<IllegalArgumentException> { ParserOptions(maximumNestingDepth = -1) }
         }
 
         test("unexpected-tokens-expose-structured-diagnostic-data") {
             val error =
-                assertFailsWith<UnexpectedTokenException> {
+                shouldThrow<UnexpectedTokenException> {
                     parseTerm("f()")
                 }
-            assertEquals(SyntaxErrorCode.UNEXPECTED_TOKEN, error.code)
-            assertEquals(")", error.offendingText)
-            assertTrue(error.expected.any { "argument" in it.description })
-            assertTrue(error.rulePath.contains("arguments"))
+            error.code shouldBe SyntaxErrorCode.UNEXPECTED_TOKEN
+            error.offendingText shouldBe ")"
+            (error.expected.any { "argument" in it.description }).shouldBeTrue()
+            error.rulePath.contains("arguments").shouldBeTrue()
         }
 
         test("incomplete-structures-report-unexpected-end-of-input") {
-            val error = assertFailsWith<UnexpectedEndOfInputException> { parseTerm("f(a") }
-            assertEquals(SyntaxErrorCode.UNEXPECTED_END_OF_INPUT, error.code)
-            assertEquals(null, error.offendingText)
-            assertTrue(error.expected.any { "parenthesis" in it.description })
-            assertTrue(error.rulePath.contains("arguments"))
+            val error = shouldThrow<UnexpectedEndOfInputException> { parseTerm("f(a") }
+            error.code shouldBe SyntaxErrorCode.UNEXPECTED_END_OF_INPUT
+            error.offendingText shouldBe null
+            (error.expected.any { "parenthesis" in it.description }).shouldBeTrue()
+            error.rulePath.contains("arguments").shouldBeTrue()
         }
 
         test("non-prefix-operators-at-expression-start-report-a-missing-left-operand") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
             val error =
-                assertFailsWith<MissingOperatorOperandException> {
+                shouldThrow<MissingOperatorOperandException> {
                     parseExpression("+ a", operators)
                 }
-            assertEquals("left", error.side)
+            error.side shouldBe "left"
         }
 
         test("missing-operator-operands-have-their-own-exception") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
             val error =
-                assertFailsWith<MissingOperatorOperandException> {
+                shouldThrow<MissingOperatorOperandException> {
                     parseExpression("a +", operators)
                 }
-            assertEquals("right", error.side)
-            assertEquals(Associativity.YFX, error.definition.specifier)
-            assertEquals(SyntaxErrorCode.MISSING_OPERATOR_OPERAND, error.code)
+            error.side shouldBe "right"
+            error.definition.specifier shouldBe Associativity.YFX
+            error.code shouldBe SyntaxErrorCode.MISSING_OPERATOR_OPERAND
         }
 
         test("clauses-require-a-terminating-full-stop") {
             val error =
-                assertFailsWith<MissingClauseTerminatorException> {
+                shouldThrow<MissingClauseTerminatorException> {
                     testParser.parseClause(lex("a"))
                 }
-            assertEquals(SyntaxErrorCode.MISSING_CLAUSE_TERMINATOR, error.code)
-            assertEquals(1, error.span.start.offset)
+            error.code shouldBe SyntaxErrorCode.MISSING_CLAUSE_TERMINATOR
+            error.span.start.offset shouldBe 1
         }
 
         test("diagnostics-retain-line-and-column-after-trivia") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
             val error =
-                assertFailsWith<MissingOperatorOperandException> {
+                shouldThrow<MissingOperatorOperandException> {
                     parseExpression("a\n  + % no rhs\n", operators)
                 }
-            assertEquals(1, error.span.start.line)
-            assertEquals(2, error.span.start.column)
+            error.span.start.line shouldBe 1
+            error.span.start.column shouldBe 2
         }
 
         test("nesting-depth-is-controlled-by-a-parser-option") {
             val parser = PrologParser.default(ParserOptions(maximumNestingDepth = 3))
             val error =
-                assertFailsWith<NestingLimitExceededException> {
+                shouldThrow<NestingLimitExceededException> {
                     parser.parseExpression(lex("((((a))))"))
                 }
-            assertEquals(3, error.maximumDepth)
+            error.maximumDepth shouldBe 3
         }
 
         test("theory-parsing-uses-one-fixed-operator-table") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
             val theory = testParser.parseTheory(lex("a + b.\nc + d."), operators).root
-            assertEquals(2, theory.clauses.size)
-            assertTrue(theory.clauses.all { it.expression is OperatorExpressionNode })
+            theory.clauses.size shouldBe 2
+            (theory.clauses.all { it.expression is OperatorExpressionNode }).shouldBeTrue()
         }
 
         test("an-op-directive-can-drive-the-following-clause") {
@@ -113,17 +113,21 @@ class ErrorAndSessionSpec :
                 )
 
             val directive = session.parseNextClause()!!.root.expression
-            val directiveOperator = assertIs<OperatorExpressionNode>(directive)
-            assertEquals(":-", directiveOperator.operator.definition.name)
-            val declaration = assertIs<StructureNode>(directiveOperator.rightOperand)
-            assertEquals("op", declaration.functor)
-            assertEquals(3, declaration.arguments.size)
-            assertEquals("++", assertIs<StructureNode>(declaration.arguments[2]).functor)
+            val directiveOperator = directive.shouldBeInstanceOf<OperatorExpressionNode>()
+            directiveOperator.operator.definition.name shouldBe ":-"
+            val declaration = directiveOperator.rightOperand.shouldBeInstanceOf<StructureNode>()
+            declaration.functor shouldBe "op"
+            declaration.arguments.size shouldBe 3
+            (declaration.arguments[2].shouldBeInstanceOf<StructureNode>().functor) shouldBe "++"
 
             session.operators.define("++", Associativity.YFX, 500)
             val following = session.parseNextClause()!!.root.expression
-            assertEquals("++", assertIs<OperatorExpressionNode>(following).operator.definition.name)
-            assertTrue(session.isAtEnd)
+            (
+                following
+                    .shouldBeInstanceOf<OperatorExpressionNode>()
+                    .operator.definition.name
+            ) shouldBe "++"
+            session.isAtEnd.shouldBeTrue()
         }
 
         test("parse-sessions-observe-operator-mutations-without-relexing") {
@@ -131,35 +135,38 @@ class ErrorAndSessionSpec :
             val originalTokenKinds = input.tokens.map(Token::kind)
             val session = testParser.openSession(input)
 
-            val first = assertNotNull(session.parseNextClause())
-            assertEquals("first", structureNode(first.root.expression).functor)
+            val first = session.parseNextClause().shouldNotBeNull()
+            structureNode(first.root.expression).functor shouldBe "first"
 
             session.operators.define("++", Associativity.YFX, 500)
-            assertIs<OperatorExpressionNode>(session.parseNextClause()!!.root.expression)
+            session
+                .parseNextClause()!!
+                .root.expression
+                .shouldBeInstanceOf<OperatorExpressionNode>()
 
             session.operators.removeAll("++")
-            assertFailsWith<MissingClauseTerminatorException> {
+            shouldThrow<MissingClauseTerminatorException> {
                 session.parseNextClause()
             }
 
-            assertEquals(originalTokenKinds, input.tokens.map(Token::kind))
+            input.tokens.map(Token::kind) shouldBe originalTokenKinds
         }
 
         test("failed-session-parsing-restores-the-cursor") {
             val session = testParser.openSession(lex("a + ."), OperatorTables.of(op("+", Associativity.YFX, 500)))
             val before = session.currentPosition
-            assertFailsWith<MissingOperatorOperandException> { session.parseNextClause() }
-            assertEquals(before, session.currentPosition)
-            assertFailsWith<MissingOperatorOperandException> { session.parseNextClause() }
-            assertEquals(before, session.currentPosition)
+            shouldThrow<MissingOperatorOperandException> { session.parseNextClause() }
+            session.currentPosition shouldBe before
+            shouldThrow<MissingOperatorOperandException> { session.parseNextClause() }
+            session.currentPosition shouldBe before
         }
 
         test("session-reports-end-of-input-after-the-last-clause") {
             val session = testParser.openSession(lex("a."))
-            assertFalse(session.isAtEnd)
-            assertNotNull(session.parseNextClause())
-            assertTrue(session.isAtEnd)
-            assertNull(session.parseNextClause())
+            session.isAtEnd.shouldBeFalse()
+            session.parseNextClause().shouldNotBeNull()
+            session.isAtEnd.shouldBeTrue()
+            session.parseNextClause().shouldBeNull()
         }
 
         test("node-spans-enclose-all-children") {
@@ -172,8 +179,8 @@ class ErrorAndSessionSpec :
 
             fun verify(node: SyntaxNode) {
                 for (child in node.children) {
-                    assertTrue(child.span.start.offset >= node.span.start.offset)
-                    assertTrue(child.span.endExclusive.offset <= node.span.endExclusive.offset)
+                    (child.span.start.offset >= node.span.start.offset).shouldBeTrue()
+                    (child.span.endExclusive.offset <= node.span.endExclusive.offset).shouldBeTrue()
                     verify(child)
                 }
             }
@@ -182,10 +189,7 @@ class ErrorAndSessionSpec :
 
         test("source-spans-exclude-trailing-trivia-and-optional-full-stops") {
             val tree = testParser.parseExpression(lex("a + b.   "), OperatorTables.of(op("+", Associativity.YFX, 500)))
-            assertEquals(5, tree.root.span.endExclusive.offset)
-            assertEquals(
-                "a + b",
-                tree.source.text(tree.root.span),
-            )
+            tree.root.span.endExclusive.offset shouldBe 5
+            tree.source.text(tree.root.span) shouldBe "a + b"
         }
     })

@@ -1,15 +1,16 @@
 package it.unibo.tuprolog.theory.parsing
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.unify.Unificator
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class ClausesParserSpec :
     FunSpec({
@@ -22,10 +23,10 @@ class ClausesParserSpec :
             val rules = db.rules.toList()
             val directives = db.directives.toList()
 
-            assertEquals(3, rules.size)
-            assertEquals(2, rules.filterIsInstance<Fact>().count())
-            assertEquals(rules[0], logicProgramming { factOf("f"(1)) })
-            assertEquals(rules[1], logicProgramming { factOf("f"(2)) })
+            rules.size shouldBe 3
+            (rules.filterIsInstance<Fact>().count()) shouldBe 2
+            (logicProgramming { factOf("f"(1)) }) shouldBe rules[0]
+            (logicProgramming { factOf("f"(2)) }) shouldBe rules[1]
             assertMatch(rules[2]) {
                 "f"("X") impliedBy "g"("X")
             }
@@ -42,9 +43,9 @@ class ClausesParserSpec :
                 }
                 fail("${ParseException::class} should be thrown")
             } catch (e: ParseException) {
-                assertEquals(2, e.line)
-                assertEquals(5, e.column)
-                assertEquals(input, e.input)
+                e.line shouldBe 2
+                e.column shouldBe 5
+                e.input shouldBe input
             }
         }
 
@@ -120,9 +121,9 @@ private fun assertMatch(
     expected: Term,
     actual: Term,
 ) {
-    assertTrue("Term `$actual` does not unify with `$expected`") {
-        Unificator.default.match(expected, actual)
-    }
+    withClue(
+        "Term `$actual` does not unify with `$expected`",
+    ) { Unificator.default.match(expected, actual).shouldBeTrue() }
 }
 
 private fun assertMatch(

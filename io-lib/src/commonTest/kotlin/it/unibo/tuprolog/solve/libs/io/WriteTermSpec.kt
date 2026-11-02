@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.io
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
@@ -10,7 +11,6 @@ import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.yes
-import kotlin.test.assertEquals
 
 /**
  * Covers `write/2`, `writeq/1,2`, `write_canonical/1,2` and `write_term/2,3` (Term input/output).
@@ -29,7 +29,7 @@ class WriteTermSpec :
                 val query = "write"("mickey", structOf("+", 1, 2))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("1 + 2", mickey.toString())
+                mickey.toString() shouldBe "1 + 2"
             }
         }
 
@@ -40,7 +40,7 @@ class WriteTermSpec :
                 val query = "write"("mickey", "A b")
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("A b", mickey.toString())
+                mickey.toString() shouldBe "A b"
             }
         }
 
@@ -73,7 +73,7 @@ class WriteTermSpec :
                 val query = "writeq"("A b")
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("'A b'", output.toString())
+                output.toString() shouldBe "'A b'"
             }
         }
 
@@ -84,7 +84,7 @@ class WriteTermSpec :
                 val query = "writeq"("mickey", "A b")
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("'A b'", mickey.toString())
+                mickey.toString() shouldBe "'A b'"
             }
         }
 
@@ -95,7 +95,7 @@ class WriteTermSpec :
                 val query = "write_canonical"(structOf("+", 1, 2))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("'+'(1, 2)", output.toString())
+                output.toString() shouldBe "'+'(1, 2)"
             }
         }
 
@@ -106,7 +106,7 @@ class WriteTermSpec :
                 val query = "write_canonical"("mickey", structOf("+", 1, 2))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("'+'(1, 2)", mickey.toString())
+                mickey.toString() shouldBe "'+'(1, 2)"
             }
         }
 
@@ -117,7 +117,7 @@ class WriteTermSpec :
                 val query = "write_term"("A b", logicListOf("quoted"(true)))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("'A b'", output.toString())
+                output.toString() shouldBe "'A b'"
             }
         }
 
@@ -128,7 +128,7 @@ class WriteTermSpec :
                 val query = "write_term"(structOf("+", 1, 2), logicListOf("ignore_ops"(true)))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("+(1, 2)", output.toString())
+                output.toString() shouldBe "+(1, 2)"
             }
         }
 
@@ -163,7 +163,7 @@ class WriteTermSpec :
                 val query = "write_term"("mickey", "A b", logicListOf("quoted"(true)))
                 val solutions = solver.solve(query).toList()
                 assertSolutionEquals(listOf(query.yes()), solutions)
-                assertEquals("'A b'", mickey.toString())
+                mickey.toString() shouldBe "'A b'"
             }
         }
 

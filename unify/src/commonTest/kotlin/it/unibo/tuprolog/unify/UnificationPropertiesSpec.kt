@@ -1,8 +1,11 @@
 package it.unibo.tuprolog.unify
 
+import io.kotest.assertions.withClue
 import io.kotest.common.ExperimentalKotest
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.choice
@@ -11,8 +14,6 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.testutils.TermArbs
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalKotest::class)
 private val config = PropTestConfig(seed = 1017L, iterations = 500)
@@ -28,7 +29,7 @@ private fun assertSound(
     second: Term,
 ) {
     val mgu = unificator.mgu(first, second)
-    if (mgu.isSuccess) assertEquals(first[mgu], second[mgu], "mgu($first, $second) = $mgu")
+    if (mgu.isSuccess) withClue("mgu($first, $second) = $mgu") { second[mgu] shouldBe first[mgu] }
 }
 
 /** Applying an mgu twice is the same as applying it once: no bound variable occurs in its range. */
@@ -39,14 +40,20 @@ private fun assertIdempotent(
     val mgu = unificator.mgu(first, second)
     if (mgu.isFailed) return
     val bound = mgu.keys
-    assertTrue(mgu.values.none { value -> value.variables.any { it in bound } }, "mgu($first, $second) = $mgu")
-    assertEquals(first[mgu], first[mgu][mgu])
+    withClue("mgu($first, $second) = $mgu") {
+        (
+            mgu.values.none { value ->
+                value.variables.any { it in bound }
+            }
+        ).shouldBeTrue()
+    }
+    first[mgu][mgu] shouldBe first[mgu]
 }
 
 private fun assertSymmetric(
     first: Term,
     second: Term,
-) = assertEquals(unificator.match(first, second), unificator.match(second, first), "match($first, $second)")
+) = withClue("match($first, $second)") { unificator.match(second, first) shouldBe unificator.match(first, second) }
 
 /** A hand-picked pair, built in one [Scope] so that equally named variables are the same variable. */
 private class PairCase(
@@ -73,7 +80,7 @@ class UnificationPropertiesSpec :
         test("a-term-unifies-with-itself-by-the-empty-substitution") {
             checkAll(config, TermArbs.nonGroundTerms()) { term ->
                 val mgu = unificator.mgu(term, term)
-                assertTrue(mgu.isSuccess && mgu.isEmpty(), "mgu($term, $term) = $mgu")
+                withClue("mgu($term, $term) = $mgu") { (mgu.isSuccess && mgu.isEmpty()).shouldBeTrue() }
             }
         }
 
@@ -91,25 +98,27 @@ class UnificationPropertiesSpec :
 
         test("a-term-unifies-with-its-instances") {
             checkAll(config, TermArbs.instancePairs()) { (term, instance) ->
-                assertTrue(unificator.match(term, instance), "match($term, $instance)")
+                withClue("match($term, $instance)") { unificator.match(term, instance).shouldBeTrue() }
             }
         }
 
         test("ground-terms-unify-iff-equal") {
             checkAll(config, TermArbs.groundTerms(), TermArbs.groundTerms()) { first, second ->
-                assertEquals(first == second, unificator.match(first, second), "match($first, $second)")
+                withClue("match($first, $second)") { unificator.match(first, second) shouldBe (first == second) }
             }
         }
 
         test("a-term-unifies-with-its-fresh-copy") {
             checkAll(config, TermArbs.nonGroundTerms()) { term ->
-                assertTrue(unificator.match(term, term.freshCopy()), "match($term, ${term.freshCopy()})")
+                withClue(
+                    "match($term, ${term.freshCopy()})",
+                ) { unificator.match(term, term.freshCopy()).shouldBeTrue() }
             }
         }
 
         test("applying-the-empty-substitution-is-the-identity") {
             checkAll(config, TermArbs.nonGroundTerms()) { term ->
-                assertEquals(term, term[Substitution.empty()])
+                term[Substitution.empty()] shouldBe term
             }
         }
 

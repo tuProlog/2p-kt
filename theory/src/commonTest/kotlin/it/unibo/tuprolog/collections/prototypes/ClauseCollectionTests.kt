@@ -2,6 +2,9 @@ package it.unibo.tuprolog.collections.prototypes
 
 import io.kotest.core.spec.style.funSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.collections.ClauseCollection
 import it.unibo.tuprolog.collections.RetrieveResult
 import it.unibo.tuprolog.core.Atom
@@ -16,9 +19,6 @@ import it.unibo.tuprolog.testutils.TheoryUtils.deepClause
 import it.unibo.tuprolog.testutils.TheoryUtils.deepQueryCases
 import it.unibo.tuprolog.testutils.TheoryUtils.member
 import it.unibo.tuprolog.testutils.TheoryUtils.memberClause
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
 
 fun clauseCollectionTests(
@@ -142,53 +142,53 @@ fun clauseCollectionTests(
     }
 
     test("collection-has-the-correct-size") {
-        assertEquals(0, emptyCollection.size)
-        assertEquals(clauses.count(), collectionGenerator(clauses).size)
+        emptyCollection.size shouldBe 0
+        collectionGenerator(clauses).size shouldBe clauses.count()
     }
 
     test("empty-collection-is-empty") {
-        assertTrue(emptyCollection.isEmpty())
+        emptyCollection.isEmpty().shouldBeTrue()
     }
 
     test("filled-collection-is-not-empty") {
-        assertFalse(collectionGenerator(clauses).isEmpty())
+        collectionGenerator(clauses).isEmpty().shouldBeFalse()
     }
 
     test("collection-is-empty-after-removing-every-element") {
         val emptiedCollection = collectionGenerator(clauses).retrieveAll(fFamilySelector).collection
 
-        assertTrue(emptiedCollection.isEmpty())
+        emptiedCollection.isEmpty().shouldBeTrue()
     }
 
     test("collection-contains-element") {
-        assertTrue(collectionGenerator(clauses).contains(presentClause))
+        collectionGenerator(clauses).contains(presentClause).shouldBeTrue()
     }
 
     test("collection-does-not-contain-element") {
-        assertFalse(collectionGenerator(clauses).contains(absentClause))
+        collectionGenerator(clauses).contains(absentClause).shouldBeFalse()
     }
 
     test("collection-contains-all-element") {
-        assertTrue(collectionGenerator(clauses).containsAll(clauses))
+        collectionGenerator(clauses).containsAll(clauses).shouldBeTrue()
     }
 
     test("collection-does-not-contain-all-element") {
         val absentClauses = clauses + absentClause
 
-        assertFalse(collectionGenerator(clauses).containsAll(absentClauses))
+        collectionGenerator(clauses).containsAll(absentClauses).shouldBeFalse()
     }
 
     test("single-clause-addition-to-collection-works-correctly") {
         val collectionAfterAddition = collectionGenerator(clauses).add(newClause)
 
-        assertTrue(collectionAfterAddition.contains(newClause))
-        assertTrue(collectionAfterAddition.containsAll(clauses))
+        collectionAfterAddition.contains(newClause).shouldBeTrue()
+        collectionAfterAddition.containsAll(clauses).shouldBeTrue()
     }
 
     test("multiple-clause-addition-to-collection-works-correctly") {
         val collectionAfterMultipleAddition = collectionGenerator(clauses).addAll(newClauses)
 
-        assertTrue(collectionAfterMultipleAddition.containsAll(clauses + newClauses))
+        collectionAfterMultipleAddition.containsAll(clauses + newClauses).shouldBeTrue()
     }
 
     test("retrieving-present-single-clause-retrieves-the-clause") {

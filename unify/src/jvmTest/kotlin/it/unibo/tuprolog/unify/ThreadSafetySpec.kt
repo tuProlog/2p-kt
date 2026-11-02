@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.unify
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.successfulUnifications
 import java.util.Collections
@@ -8,7 +9,6 @@ import java.util.LinkedList
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import kotlin.test.assertTrue
 
 class ThreadSafetySpec :
     FunSpec({
@@ -28,7 +28,7 @@ class ThreadSafetySpec :
             executors.shutdown()
             executors.awaitTermination(1, TimeUnit.MINUTES)
             for (res in results) {
-                assertTrue { res.get() is Substitution.Unifier }
+                res.get().shouldBeInstanceOf<Substitution.Unifier>()
             }
         }
     })

@@ -2,6 +2,9 @@ package it.unibo.tuprolog.collections.rete.nodes.set
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.collections.rete.generic.set.DirectiveNode
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Truth
@@ -11,9 +14,6 @@ import it.unibo.tuprolog.testutils.ReteNodeUtils.assertNoChangesInReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertRemovedFromReteNode
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeClausesCorrect
 import it.unibo.tuprolog.testutils.ReteNodeUtils.assertReteNodeEmpty
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 /**
  * Test class for [DirectiveNode]
@@ -36,8 +36,8 @@ class DirectiveNodeSpec :
         beforeTest { init() }
 
         test("children-empty") {
-            assertTrue(emptyDirectiveNode.children.isEmpty())
-            assertTrue(filledDirectiveNode.children.isEmpty())
+            emptyDirectiveNode.children.isEmpty().shouldBeTrue()
+            filledDirectiveNode.children.isEmpty().shouldBeTrue()
         }
 
         test("clauses-correct") {
@@ -48,23 +48,23 @@ class DirectiveNodeSpec :
         test("put-clause-inserts-directive") {
             emptyDirectiveNode.put(aDirective)
 
-            assertEquals(aDirective, emptyDirectiveNode.indexedElements.single())
+            emptyDirectiveNode.indexedElements.single() shouldBe aDirective
         }
 
         test("put-clause-inserts-after-by-default") {
             filledDirectiveNode.put(aDirective)
 
-            assertEquals(aDirective, filledDirectiveNode.indexedElements.last())
+            filledDirectiveNode.indexedElements.last() shouldBe aDirective
         }
 
         test("put-clause-inserts-before-all-if-specified") {
             filledDirectiveNode.put(aDirective, true)
 
-            assertEquals(aDirective, filledDirectiveNode.indexedElements.first())
+            filledDirectiveNode.indexedElements.first() shouldBe aDirective
         }
 
         withTests(nameFn = { "get-clause/${it.id}" }, ReteNodeUtils.directiveQueryCases) { case ->
-            assertEquals(case.expected, filledDirectiveNode.get(case.query).toList())
+            filledDirectiveNode.get(case.query).toList() shouldBe case.expected
         }
 
         withTests(nameFn = {
@@ -114,6 +114,6 @@ class DirectiveNodeSpec :
 
             val independentCopy = emptyDirectiveNode.deepCopy()
 
-            assertSame(emptyDirectiveNode.indexedElements.single(), independentCopy.indexedElements.single())
+            independentCopy.indexedElements.single() shouldBeSameInstanceAs emptyDirectiveNode.indexedElements.single()
         }
     })

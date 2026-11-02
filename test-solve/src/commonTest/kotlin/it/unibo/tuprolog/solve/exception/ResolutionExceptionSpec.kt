@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.exception
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.solve.exception.testutils.TuPrologRuntimeExceptionUtils.aCause
 import it.unibo.tuprolog.solve.exception.testutils.TuPrologRuntimeExceptionUtils.aContext
 import it.unibo.tuprolog.solve.exception.testutils.TuPrologRuntimeExceptionUtils.aDifferentContext
 import it.unibo.tuprolog.solve.exception.testutils.TuPrologRuntimeExceptionUtils.aMessage
 import it.unibo.tuprolog.solve.exception.testutils.TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
 
 /**
  * Test class for [ResolutionException]
@@ -21,11 +21,11 @@ class ResolutionExceptionSpec :
         test("constructor-inserts-message-if-only-cause-specified") {
             val exception = ResolutionException(aCause, aContext)
 
-            assertEquals(aCause.toString(), exception.message)
+            exception.message shouldBe aCause.toString()
         }
 
         test("logic-stack-trace-accesses-context-corresponding-field") {
-            assertSame(emptyList(), exception.logicStackTrace)
+            exception.logicStackTrace shouldBeSameInstanceAs emptyList<Nothing>()
         }
 
         test("update-context-returns-exception-with-same-contents-but-updated-context") {

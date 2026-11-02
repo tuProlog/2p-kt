@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.error.SystemError
@@ -7,8 +9,6 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.LastCallOptimization
 import it.unibo.tuprolog.solve.flags.LastCallOptimization.OFF
 import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /** Conformance tests exercising recursive rules, both to check that recursion (with backtracking-driven mutable state, and deep tail recursion) actually resolves correctly, and that [it.unibo.tuprolog.solve.flags.LastCallOptimization] measurably affects how deep the logic stack trace grows on a failing recursive computation. */
 fun recursionContract(
@@ -102,18 +102,12 @@ private fun ContractScope.testRecursion(
 
         val sol = solver.solveOnce(atomOf("check_temperature"), mediumDuration)
 
-        assertTrue { sol.isYes }
+        sol.isYes.shouldBeTrue()
 
         if (init <= range.first) {
-            assertEquals(
-                (init..range.first + 1).map { it.toString() },
-                prints,
-            )
+            prints shouldBe ((init..range.first + 1).map { it.toString() })
         } else if (init >= range.last) {
-            assertEquals(
-                (range.last - 1..init).toList().asReversed().map { it.toString() },
-                prints,
-            )
+            prints shouldBe ((range.last - 1..init).toList().asReversed().map { it.toString() })
         }
     }
 }
@@ -145,7 +139,7 @@ private fun ContractScope.testTailRecursion(
                 stdOut = OutputChannel.of { prints.add(it) },
             )
 
-        assertEquals(if (lastCallOptimization) ON else OFF, solver.flags[LastCallOptimization])
+        solver.flags[LastCallOptimization] shouldBe (if (lastCallOptimization) ON else OFF)
 
         val query = "recursive"(n)
 
@@ -161,9 +155,9 @@ private fun ContractScope.testTailRecursion(
             sol,
         )
         if (lastCallOptimization) {
-            assertEquals(2, (sol as Solution.Halt).exception.logicStackTrace.size)
+            (sol as Solution.Halt).exception.logicStackTrace.size shouldBe 2
         } else {
-            assertEquals(n + 2, (sol as Solution.Halt).exception.logicStackTrace.size)
+            (sol as Solution.Halt).exception.logicStackTrace.size shouldBe (n + 2)
         }
     }
 }

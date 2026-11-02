@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.core.testutils
 
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
@@ -17,9 +20,6 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertStructurallyEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotSame
-import kotlin.test.assertSame
 
 /**
  * Utils singleton for testing [Struct]
@@ -36,8 +36,8 @@ internal object StructUtils {
         val copy = withVariables.freshCopy()
 
         assertStructurallyEquals(withVariables, copy)
-        assertNotEquals(withVariables, copy)
-        assertNotSame(withVariables, copy)
+        copy shouldNotBe withVariables
+        copy shouldNotBeSameInstanceAs withVariables
     }
 
     /**
@@ -51,8 +51,8 @@ internal object StructUtils {
         val secondVarBefore = termWithSameVarName.args[1]
 
         assertStructurallyEquals(firstVarBefore, secondVarBefore)
-        assertNotEquals(firstVarBefore, secondVarBefore)
-        assertNotSame(firstVarBefore, secondVarBefore)
+        secondVarBefore shouldNotBe firstVarBefore
+        secondVarBefore shouldNotBeSameInstanceAs firstVarBefore
 
         val consCopied = termWithSameVarName.freshCopy()
 
@@ -60,7 +60,7 @@ internal object StructUtils {
         val secondVarAfter = consCopied.args[1]
 
         AssertionUtils.assertEqualities(firstVarAfter, secondVarAfter)
-        assertSame(firstVarAfter, secondVarAfter)
+        secondVarAfter shouldBeSameInstanceAs firstVarAfter
     }
 
     /** A named [Struct] functor and arguments pair, for parameterized tests */

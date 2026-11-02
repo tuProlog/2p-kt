@@ -1,6 +1,13 @@
 package it.unibo.tuprolog.ui.swing
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
 import it.unibo.tuprolog.ui.gui.presentation.Diagnostic
 import it.unibo.tuprolog.ui.gui.presentation.DiagnosticSeverity
@@ -44,12 +51,6 @@ import javax.swing.SwingUtilities
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.TreePath
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -61,48 +62,39 @@ class SwingIdeComponentsSpec :
                 editor.text = "parent(X) :- child(X), X = 42. % comment"
                 editor.highlight(emptyList())
 
-                assertEquals("FUNCTOR", editor.categoryAt(0))
-                assertEquals("VARIABLE", editor.categoryAt(editor.text.indexOf('X')))
-                assertEquals("OPERATOR", editor.categoryAt(editor.text.indexOf(":-")))
-                assertEquals("NUMBER", editor.categoryAt(editor.text.indexOf("42")))
-                assertEquals("COMMENT", editor.categoryAt(editor.text.indexOf('%')))
-                assertTrue(RTextScrollPane(editor, true).lineNumbersEnabled)
+                editor.categoryAt(0) shouldBe "FUNCTOR"
+                editor.categoryAt(editor.text.indexOf('X')) shouldBe "VARIABLE"
+                editor.categoryAt(editor.text.indexOf(":-")) shouldBe "OPERATOR"
+                editor.categoryAt(editor.text.indexOf("42")) shouldBe "NUMBER"
+                editor.categoryAt(editor.text.indexOf('%')) shouldBe "COMMENT"
+                RTextScrollPane(editor, true).lineNumbersEnabled.shouldBeTrue()
                 val initialFontSize = editor.font.size
                 editor.actionMap.get("zoom-in").actionPerformed(null)
-                assertEquals(initialFontSize + 1, editor.font.size)
+                editor.font.size shouldBe (initialFontSize + 1)
 
                 editor.text = "parent(X"
                 editor.highlight(emptyList())
-                assertTrue(editor.diagnostics.isNotEmpty())
-                assertTrue(editor.parserNotices.isNotEmpty())
+                editor.diagnostics.isNotEmpty().shouldBeTrue()
+                editor.parserNotices.isNotEmpty().shouldBeTrue()
             }
         }
 
         test("analyzer handles empty input custom operators and syntax errors") {
-            assertEquals(SyntaxAnalysis("", emptyList(), emptyList()), PrologSyntaxAnalyzer.analyze("", emptyList()))
+            PrologSyntaxAnalyzer.analyze("", emptyList()) shouldBe SyntaxAnalysis("", emptyList(), emptyList())
             val analysis = PrologSyntaxAnalyzer.analyze("a ++ b.", listOf(OperatorPresentation("++", 500, "xfx")))
-            assertEquals(SemanticCategory.OPERATOR, analysis.tokens.first { it.range.start.offset == 2 }.category)
+            (analysis.tokens.first { it.range.start.offset == 2 }.category) shouldBe SemanticCategory.OPERATOR
             val invalid = PrologSyntaxAnalyzer.analyze("a(", emptyList())
-            assertTrue(invalid.tokens.isNotEmpty())
-            assertEquals(DiagnosticSeverity.ERROR, invalid.diagnostics.single().severity)
+            invalid.tokens.isNotEmpty().shouldBeTrue()
+            invalid.diagnostics.single().severity shouldBe DiagnosticSeverity.ERROR
         }
 
         test("completion suggestions are distinct and preserve reverse source order") {
             val source = "foo(X, atom), foo(Y, atom)."
             val analysis = PrologSyntaxAnalyzer.analyze(source, emptyList())
             val suggestions = sourceIdentifierSuggestions(analysis)
-            assertEquals(
-                suggestions.map(SourceSuggestion::text).distinct(),
-                suggestions.map(SourceSuggestion::text),
-            )
-            assertEquals(
-                setOf("X", "Y", "foo", "atom"),
-                suggestions.map(SourceSuggestion::text).toSet(),
-            )
-            assertEquals(
-                setOf("variable", "functor", "atom"),
-                suggestions.map(SourceSuggestion::category).toSet(),
-            )
+            suggestions.map(SourceSuggestion::text) shouldBe suggestions.map(SourceSuggestion::text).distinct()
+            suggestions.map(SourceSuggestion::text).toSet() shouldBe setOf("X", "Y", "foo", "atom")
+            suggestions.map(SourceSuggestion::category).toSet() shouldBe setOf("variable", "functor", "atom")
         }
 
         test("syntax parser converts diagnostics into notices") {
@@ -122,9 +114,9 @@ class SwingIdeComponentsSpec :
                         listOf(diagnostic),
                     )
                 }.parse(document, "")
-            assertEquals(1, result.notices.size)
-            assertEquals(ParserNotice.Level.WARNING, result.notices.single().level)
-            assertEquals(1, result.notices.single().offset)
+            result.notices.size shouldBe 1
+            result.notices.single().level shouldBe ParserNotice.Level.WARNING
+            result.notices.single().offset shouldBe 1
         }
 
         test("solutions are presented as expandable nodes grouped by query") {
@@ -156,15 +148,15 @@ class SwingIdeComponentsSpec :
                 val binding = solution.getChildAt(0) as DefaultMutableTreeNode
                 val ellipsis = queryNode.getChildAt(1) as DefaultMutableTreeNode
 
-                assertEquals(2, queryNode.childCount)
-                assertEquals(1, solution.childCount)
-                assertTrue(tree.isExpanded(TreePath(queryNode.path)))
-                assertEquals("?- member(X, [a]).", queryNode.toString())
-                assertEquals("1. yes: member(a, [a])", solution.toString())
-                assertTrue(binding.toString().contains("X = a"))
-                assertTrue(ellipsis.isLeaf)
+                queryNode.childCount shouldBe 2
+                solution.childCount shouldBe 1
+                tree.isExpanded(TreePath(queryNode.path)).shouldBeTrue()
+                queryNode.toString() shouldBe "?- member(X, [a])."
+                solution.toString() shouldBe "1. yes: member(a, [a])"
+                binding.toString().contains("X = a").shouldBeTrue()
+                ellipsis.isLeaf.shouldBeTrue()
                 tree.selectionPath = TreePath(solution.path)
-                assertEquals("member(X, [a]).", selectedQuery)
+                selectedQuery shouldBe "member(X, [a])."
             }
         }
 
@@ -185,7 +177,7 @@ class SwingIdeComponentsSpec :
                 val queryNode = root.getChildAt(0) as DefaultMutableTreeNode
                 val solution = queryNode.getChildAt(0) as DefaultMutableTreeNode
 
-                assertEquals("1. yes.", solution.toString())
+                solution.toString() shouldBe "1. yes."
             }
         }
 
@@ -202,9 +194,9 @@ class SwingIdeComponentsSpec :
                 val root = tree.model.root as DefaultMutableTreeNode
                 val first = root.getChildAt(0) as DefaultMutableTreeNode
                 val second = root.getChildAt(1) as DefaultMutableTreeNode
-                assertTrue(!tree.isExpanded(TreePath(first.path)))
-                assertTrue(tree.isExpanded(TreePath(second.path)))
-                assertEquals("?- second.", second.toString())
+                tree.isExpanded(TreePath(first.path)).shouldBeFalse()
+                tree.isExpanded(TreePath(second.path)).shouldBeTrue()
+                second.toString() shouldBe "?- second."
             }
         }
 
@@ -214,9 +206,9 @@ class SwingIdeComponentsSpec :
                 // before any row has ever gone through getTreeCellRendererComponent(); a null read there is
                 // remembered as "this tree has no icons" for the tree's entire lifetime on some of them.
                 val renderer = SolutionTree().cellRenderer as DefaultTreeCellRenderer
-                assertNotNull(renderer.leafIcon)
-                assertNotNull(renderer.openIcon)
-                assertNotNull(renderer.closedIcon)
+                renderer.leafIcon.shouldNotBeNull()
+                renderer.openIcon.shouldNotBeNull()
+                renderer.closedIcon.shouldNotBeNull()
             }
         }
 
@@ -247,11 +239,11 @@ class SwingIdeComponentsSpec :
                 val resultIcon = iconFor(resultNode)
                 val ellipsisIcon = iconFor(ellipsisNode)
 
-                assertNotNull(queryIcon)
-                assertNotNull(resultIcon)
-                assertNotNull(ellipsisIcon)
-                assertNotEquals(queryIcon, resultIcon)
-                assertNotEquals(resultIcon, ellipsisIcon)
+                queryIcon.shouldNotBeNull()
+                resultIcon.shouldNotBeNull()
+                ellipsisIcon.shouldNotBeNull()
+                resultIcon shouldNotBe queryIcon
+                ellipsisIcon shouldNotBe resultIcon
             }
         }
 
@@ -284,8 +276,8 @@ class SwingIdeComponentsSpec :
                 renderer.getTreeCellRendererComponent(tree, detailNode, false, false, true, 1, false)
                 val detailIcon = renderer.leafIcon
 
-                assertIs<BlankIcon>(detailIcon)
-                assertNotEquals(resultIcon, detailIcon)
+                detailIcon.shouldBeInstanceOf<BlankIcon>()
+                detailIcon shouldNotBe resultIcon
             }
         }
 
@@ -305,13 +297,13 @@ class SwingIdeComponentsSpec :
                 )
                 val root = tree.model.root as DefaultMutableTreeNode
                 val library = root.getChildAt(0) as DefaultMutableTreeNode
-                assertEquals("lib", library.toString())
-                assertEquals(3, library.childCount)
+                library.toString() shouldBe "lib"
+                library.childCount shouldBe 3
                 val predicates = library.getChildAt(0) as DefaultMutableTreeNode
-                assertTrue(predicates.toString() == "Predicates")
-                assertEquals("p/1 — Holds for X.", predicates.getChildAt(0).toString())
-                assertEquals("f/1", library.getChildAt(1).getChildAt(0).toString())
-                assertEquals("+ (yfx, priority 500) — Adds.", library.getChildAt(2).getChildAt(0).toString())
+                predicates.toString() shouldBe "Predicates"
+                predicates.getChildAt(0).toString() shouldBe "p/1 — Holds for X."
+                library.getChildAt(1).getChildAt(0).toString() shouldBe "f/1"
+                library.getChildAt(2).getChildAt(0).toString() shouldBe "+ (yfx, priority 500) — Adds."
             }
         }
 
@@ -329,8 +321,8 @@ class SwingIdeComponentsSpec :
                     ),
                 )
                 val rows = (0 until tree.rowCount).map { tree.getPathForRow(it).lastPathComponent.toString() }
-                assertEquals(listOf("lib", "Predicates", "p/1", "q/2", "Functions", "f/1", "Operators"), rows.take(7))
-                assertEquals(8, rows.size)
+                rows.take(7) shouldBe listOf("lib", "Predicates", "p/1", "q/2", "Functions", "f/1", "Operators")
+                rows.size shouldBe 8
             }
         }
 
@@ -348,7 +340,9 @@ class SwingIdeComponentsSpec :
                     ),
                 )
                 val entry = (tree.model.root as DefaultMutableTreeNode).getChildAt(0).getChildAt(0).getChildAt(0)
-                assertTrue(entry.toString().endsWith("Holds for X."), "preview truncated by length: $entry")
+                withClue(
+                    "preview truncated by length: $entry",
+                ) { entry.toString().endsWith("Holds for X.").shouldBeTrue() }
                 tree.setSize(400, 300)
             }
             for (width in listOf(400, 250)) {
@@ -356,9 +350,13 @@ class SwingIdeComponentsSpec :
                 SwingUtilities.invokeAndWait {
                     val rows = (0 until tree.rowCount).map { tree.getRowBounds(it) }
                     val lineHeight = tree.getFontMetrics(tree.font).height
-                    assertTrue(rows.all { it.maxX <= width }, "rows overflow $width px: $rows")
-                    assertEquals(width, rows.last().maxX.toInt(), "the preview row does not reach the right edge")
-                    assertTrue(rows.all { it.height < 2 * lineHeight }, "rows span several lines: $rows")
+                    withClue("rows overflow $width px: $rows") { (rows.all { it.maxX <= width }).shouldBeTrue() }
+                    withClue(
+                        "the preview row does not reach the right edge",
+                    ) { rows.last().maxX.toInt() shouldBe width }
+                    withClue(
+                        "rows span several lines: $rows",
+                    ) { (rows.all { it.height < 2 * lineHeight }).shouldBeTrue() }
                     tree.setSize(250, 300)
                 }
             }
@@ -370,7 +368,7 @@ class SwingIdeComponentsSpec :
                 val window = Window.getWindows().filterIsInstance<JDialog>().last { it.name == "documentationWindow" }
                 val escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0)
                 window.rootPane.getActionForKeyStroke(escape).actionPerformed(ActionEvent(window, 0, null))
-                assertFalse(window.isDisplayable, "escape did not dispose the documentation window")
+                withClue("escape did not dispose the documentation window") { window.isDisplayable.shouldBeFalse() }
             }
         }
 
@@ -387,7 +385,7 @@ class SwingIdeComponentsSpec :
                     )
                 list.render(listOf(diagnostic))
                 list.selectedIndex = 0
-                assertEquals(diagnostic, selected)
+                selected shouldBe diagnostic
                 val rendered =
                     list.cellRenderer.getListCellRendererComponent(
                         list,
@@ -396,7 +394,7 @@ class SwingIdeComponentsSpec :
                         false,
                         false,
                     ) as javax.swing.JLabel
-                assertTrue(rendered.text.contains("line 1"))
+                rendered.text.contains("line 1").shouldBeTrue()
             }
         }
 
@@ -409,11 +407,11 @@ class SwingIdeComponentsSpec :
                 operators.model.setValueAt("joins", 1, 0)
                 operators.model.setValueAt("500", 1, 1)
                 operators.model.setValueAt("yfx", 1, 2)
-                assertEquals(OperatorPresentation("joins", 500, "yfx"), added)
+                added shouldBe OperatorPresentation("joins", 500, "yfx")
 
                 val flags = FlagsTable()
                 flags.render(listOf(FlagPresentation("unknown", "warning", "`flag(unknown)`\n\nWhat to do.")))
-                assertIs<javax.swing.DefaultCellEditor>(flags.getCellEditor(0, 1))
+                flags.getCellEditor(0, 1).shouldBeInstanceOf<javax.swing.DefaultCellEditor>()
                 flags.setSize(200, 100)
                 val hover =
                     java.awt.event.MouseEvent(
@@ -426,28 +424,25 @@ class SwingIdeComponentsSpec :
                         0,
                         false,
                     )
-                assertEquals("What to do.", flags.getToolTipText(hover))
+                flags.getToolTipText(hover) shouldBe "What to do."
             }
         }
 
         test("BigInteger bounds outside Int range are clamped rather than wrapped") {
-            assertEquals(42, BigInteger.of(42).toIntClamped())
-            assertEquals(Int.MAX_VALUE, BigInteger.of(Int.MAX_VALUE).toIntClamped())
-            assertEquals(Int.MIN_VALUE, BigInteger.of(Int.MIN_VALUE).toIntClamped())
-            assertEquals(Int.MAX_VALUE, (BigInteger.of(Int.MAX_VALUE) + BigInteger.of(100)).toIntClamped())
-            assertEquals(Int.MIN_VALUE, (BigInteger.of(Int.MIN_VALUE) - BigInteger.of(100)).toIntClamped())
+            BigInteger.of(42).toIntClamped() shouldBe 42
+            BigInteger.of(Int.MAX_VALUE).toIntClamped() shouldBe Int.MAX_VALUE
+            BigInteger.of(Int.MIN_VALUE).toIntClamped() shouldBe Int.MIN_VALUE
+            (BigInteger.of(Int.MAX_VALUE) + BigInteger.of(100)).toIntClamped() shouldBe Int.MAX_VALUE
+            (BigInteger.of(Int.MIN_VALUE) - BigInteger.of(100)).toIntClamped() shouldBe Int.MIN_VALUE
         }
 
         test("timeout labels use the largest meaningful units") {
-            assertEquals("Timeout: no limit", durationLabel(Duration.ZERO))
-            assertEquals(
-                "Timeout: 1 week 2 days 3 hours 4 minutes 5 seconds 6 ms",
-                durationLabel(788_645_006.milliseconds),
-            )
-            assertEquals(90_000_000L.milliseconds, parseDurationInput("1d 1h"))
-            assertEquals(1_500L.milliseconds, parseDurationInput("1s 500ms"))
-            assertEquals("1h 30m", formatDurationInput(5_400_000L.milliseconds))
-            assertEquals(null, parseDurationInput("1w 1ms"))
-            assertEquals(null, parseDurationInput("1s 2s"))
+            durationLabel(Duration.ZERO) shouldBe "Timeout: no limit"
+            durationLabel(788_645_006.milliseconds) shouldBe "Timeout: 1 week 2 days 3 hours 4 minutes 5 seconds 6 ms"
+            parseDurationInput("1d 1h") shouldBe 90_000_000L.milliseconds
+            parseDurationInput("1s 500ms") shouldBe 1_500L.milliseconds
+            formatDurationInput(5_400_000L.milliseconds) shouldBe "1h 30m"
+            parseDurationInput("1w 1ms") shouldBe null
+            parseDurationInput("1s 2s") shouldBe null
         }
     })

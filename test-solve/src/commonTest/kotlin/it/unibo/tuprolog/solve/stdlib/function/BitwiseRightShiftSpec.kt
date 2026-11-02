@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.stdlib.function
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
-import kotlin.test.assertEquals
 
 /**
  * Test class for [BitwiseRightShift]
@@ -15,17 +15,14 @@ import kotlin.test.assertEquals
 class BitwiseRightShiftSpec :
     FunSpec({
         test("functor-name-correct") {
-            assertEquals(Signature(">>", 2), BitwiseRightShift.signature)
+            BitwiseRightShift.signature shouldBe Signature(">>", 2)
         }
 
         test("computation-correct") {
-            assertEquals(
-                Integer.of(4),
-                BitwiseRightShift.computeOf(
-                    Integer.of(16),
-                    Integer.of(2),
-                ),
-            )
+            BitwiseRightShift.computeOf(
+                Integer.of(16),
+                Integer.of(2),
+            ) shouldBe Integer.of(4)
         }
 
         test("rejected-inputs") {

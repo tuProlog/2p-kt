@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.unify
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Empty
@@ -18,10 +22,6 @@ import it.unibo.tuprolog.unify.testutils.EquationUtils.assertAnyContradiction
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertNoComparisons
 import it.unibo.tuprolog.unify.testutils.EquationUtils.assertNoIdentities
 import it.unibo.tuprolog.unify.testutils.EquationUtils.countDeepGeneratedEquations
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List as LogicList
 
 /**
@@ -49,52 +49,52 @@ class EquationSpec :
             isComparison: Boolean = false,
             isContradiction: Boolean = false,
         ) {
-            assertEquals(isIdentity, equation.isIdentity)
-            assertEquals(isAssignment, equation.isAssignment)
-            assertEquals(isLeftAssignment, equation.isLeftAssignment)
-            assertEquals(isRightAssignment, equation.isRightAssignment)
-            assertEquals(isComparison, equation.isComparison)
-            assertEquals(isContradiction, equation.isContradiction)
+            equation.isIdentity shouldBe isIdentity
+            equation.isAssignment shouldBe isAssignment
+            equation.isLeftAssignment shouldBe isLeftAssignment
+            equation.isRightAssignment shouldBe isRightAssignment
+            equation.isComparison shouldBe isComparison
+            equation.isContradiction shouldBe isContradiction
 
-            assertEquals(isIdentity, equation.asIdentity() === equation)
-            assertEquals(isAssignment, equation.asAssignment() === equation)
-            assertEquals(isLeftAssignment, equation.asLeftAssignment() === equation)
-            assertEquals(isRightAssignment, equation.asRightAssignment() === equation)
-            assertEquals(isComparison, equation.asComparison() === equation)
-            assertEquals(isContradiction, equation.asContradiction() === equation)
+            (equation.asIdentity() === equation) shouldBe isIdentity
+            (equation.asAssignment() === equation) shouldBe isAssignment
+            (equation.asLeftAssignment() === equation) shouldBe isLeftAssignment
+            (equation.asRightAssignment() === equation) shouldBe isRightAssignment
+            (equation.asComparison() === equation) shouldBe isComparison
+            (equation.asContradiction() === equation) shouldBe isContradiction
 
-            assertEquals(isIdentity, runCatching { equation.castToIdentity() }.getOrNull() === equation)
-            assertEquals(isAssignment, runCatching { equation.castToAssignment() }.getOrNull() === equation)
-            assertEquals(isLeftAssignment, runCatching { equation.castToLeftAssignment() }.getOrNull() === equation)
-            assertEquals(isRightAssignment, runCatching { equation.castToRightAssignment() }.getOrNull() === equation)
-            assertEquals(isComparison, runCatching { equation.castToComparison() }.getOrNull() === equation)
-            assertEquals(isContradiction, runCatching { equation.castToContradiction() }.getOrNull() === equation)
+            (runCatching { equation.castToIdentity() }.getOrNull() === equation) shouldBe isIdentity
+            (runCatching { equation.castToAssignment() }.getOrNull() === equation) shouldBe isAssignment
+            (runCatching { equation.castToLeftAssignment() }.getOrNull() === equation) shouldBe isLeftAssignment
+            (runCatching { equation.castToRightAssignment() }.getOrNull() === equation) shouldBe isRightAssignment
+            (runCatching { equation.castToComparison() }.getOrNull() === equation) shouldBe isComparison
+            (runCatching { equation.castToContradiction() }.getOrNull() === equation) shouldBe isContradiction
         }
 
         // region construction
         test("identity-constructor-preserves-lhs-and-rhs") {
             val (lhs, rhs) = Atom.of("a") to Atom.of("a")
-            assertEquals(lhs to rhs, Equation.Identity(lhs, rhs).let { it.lhs to it.rhs })
+            (Equation.Identity(lhs, rhs).let { it.lhs to it.rhs }) shouldBe (lhs to rhs)
         }
 
         test("left-assignment-constructor-preserves-lhs-and-rhs") {
             val (lhs, rhs) = Var.of("X") to Atom.of("a")
-            assertEquals(lhs to rhs, Equation.LeftAssignment(lhs, rhs).let { it.lhs to it.rhs })
+            (Equation.LeftAssignment(lhs, rhs).let { it.lhs to it.rhs }) shouldBe (lhs to rhs)
         }
 
         test("right-assignment-constructor-preserves-lhs-and-rhs") {
             val (lhs, rhs) = Atom.of("a") to Var.of("X")
-            assertEquals(lhs to rhs, Equation.RightAssignment(lhs, rhs).let { it.lhs to it.rhs })
+            (Equation.RightAssignment(lhs, rhs).let { it.lhs to it.rhs }) shouldBe (lhs to rhs)
         }
 
         test("comparison-constructor-preserves-lhs-and-rhs") {
             val (lhs, rhs) = Struct.of("f", Var.of("X")) to Struct.of("f", Var.of("Y"))
-            assertEquals(lhs to rhs, Equation.Comparison(lhs, rhs).let { it.lhs to it.rhs })
+            (Equation.Comparison(lhs, rhs).let { it.lhs to it.rhs }) shouldBe (lhs to rhs)
         }
 
         test("contradiction-constructor-preserves-lhs-and-rhs") {
             val (lhs, rhs) = Atom.of("a") to Atom.of("b")
-            assertEquals(lhs to rhs, Equation.Contradiction(lhs, rhs).let { it.lhs to it.rhs })
+            (Equation.Contradiction(lhs, rhs).let { it.lhs to it.rhs }) shouldBe (lhs to rhs)
         }
 
         // endregion
@@ -104,8 +104,8 @@ class EquationSpec :
             val term = Atom.of("a")
             val equation = Equation.LeftAssignment(variable, term)
 
-            assertEquals(variable, equation.variable)
-            assertEquals(term, equation.term)
+            equation.variable shouldBe variable
+            equation.term shouldBe term
         }
 
         test("right-assignment-variable-and-term-mirror-rhs-and-lhs") {
@@ -113,8 +113,8 @@ class EquationSpec :
             val term = Atom.of("a")
             val equation = Equation.RightAssignment(term, variable)
 
-            assertEquals(variable, equation.variable)
-            assertEquals(term, equation.term)
+            equation.variable shouldBe variable
+            equation.term shouldBe term
         }
 
         // endregion
@@ -155,66 +155,56 @@ class EquationSpec :
         withTests(nameFn = { "clone-without-arguments/${it.id}" }, oneInstancePerType) { case ->
             val equation = case.equation()
             val cloned = equation.clone()
-            assertEquals(equation, cloned)
-            assertEquals(equation::class, cloned::class)
+            cloned shouldBe equation
+            cloned::class shouldBe equation::class
         }
 
         test("clone-with-new-arguments-replaces-lhs-and-rhs") {
-            assertEquals(
-                Equation.Identity(Atom.of("b"), Atom.of("c")),
-                Equation.Identity(Atom.of("a"), Atom.of("a")).clone(Atom.of("b"), Atom.of("c")),
-            )
+            Equation.Identity(Atom.of("a"), Atom.of("a")).clone(Atom.of("b"), Atom.of("c")) shouldBe
+                Equation.Identity(Atom.of("b"), Atom.of("c"))
             val newLeftVar = Var.of("Y")
-            assertEquals(
-                Equation.LeftAssignment(newLeftVar, Atom.of("b")),
-                Equation.LeftAssignment(Var.of("X"), Atom.of("a")).clone(newLeftVar, Atom.of("b")),
-            )
+            Equation.LeftAssignment(Var.of("X"), Atom.of("a")).clone(newLeftVar, Atom.of("b")) shouldBe
+                Equation.LeftAssignment(newLeftVar, Atom.of("b"))
             val newRightVar = Var.of("Y")
-            assertEquals(
-                Equation.RightAssignment(Atom.of("b"), newRightVar),
-                Equation.RightAssignment(Atom.of("a"), Var.of("X")).clone(Atom.of("b"), newRightVar),
-            )
-            assertEquals(
-                Equation.Comparison(Atom.of("b"), Atom.of("c")),
-                Equation.Comparison(Atom.of("a"), Atom.of("a")).clone(Atom.of("b"), Atom.of("c")),
-            )
-            assertEquals(
-                Equation.Contradiction(Atom.of("b"), Atom.of("c")),
-                Equation.Contradiction(Atom.of("a"), Atom.of("a")).clone(Atom.of("b"), Atom.of("c")),
-            )
+            Equation.RightAssignment(Atom.of("a"), Var.of("X")).clone(Atom.of("b"), newRightVar) shouldBe
+                Equation.RightAssignment(Atom.of("b"), newRightVar)
+            Equation.Comparison(Atom.of("a"), Atom.of("a")).clone(Atom.of("b"), Atom.of("c")) shouldBe
+                Equation.Comparison(Atom.of("b"), Atom.of("c"))
+            Equation.Contradiction(Atom.of("a"), Atom.of("a")).clone(Atom.of("b"), Atom.of("c")) shouldBe
+                Equation.Contradiction(Atom.of("b"), Atom.of("c"))
         }
 
         // endregion
         withTests(nameFn = { "to-contradiction/${it.id}" }, oneInstancePerType) { case ->
             val equation = case.equation()
-            assertEquals(Equation.Contradiction(equation.lhs, equation.rhs), equation.toContradiction())
+            equation.toContradiction() shouldBe Equation.Contradiction(equation.lhs, equation.rhs)
         }
 
         // region toAssignmentPair
         test("to-assignment-pair-on-left-assignment-returns-variable-and-term") {
             val variable = Var.of("X")
             val term = Atom.of("a")
-            assertEquals(variable to term, Equation.LeftAssignment(variable, term).toAssignmentPair())
+            Equation.LeftAssignment(variable, term).toAssignmentPair() shouldBe (variable to term)
         }
 
         test("to-assignment-pair-on-right-assignment-returns-variable-and-term") {
             val variable = Var.of("X")
             val term = Atom.of("a")
-            assertEquals(variable to term, Equation.RightAssignment(term, variable).toAssignmentPair())
+            Equation.RightAssignment(term, variable).toAssignmentPair() shouldBe (variable to term)
         }
 
         test("to-assignment-pair-on-non-assignment-falls-back-to-whichever-side-is-a-variable") {
             val variable = Var.of("X")
             val term = Atom.of("a")
-            assertEquals(variable to term, Equation.Identity(variable, term).toAssignmentPair())
-            assertEquals(variable to term, Equation.Comparison(term, variable).toAssignmentPair())
+            Equation.Identity(variable, term).toAssignmentPair() shouldBe (variable to term)
+            Equation.Comparison(term, variable).toAssignmentPair() shouldBe (variable to term)
         }
 
         test("to-assignment-pair-throws-when-neither-side-is-a-variable") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Equation.Contradiction(Atom.of("a"), Atom.of("b")).toAssignmentPair()
             }
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Equation.Comparison(Atom.of("a"), Atom.of("a")).toAssignmentPair()
             }
         }
@@ -224,28 +214,36 @@ class EquationSpec :
         test("to-substitution-on-left-assignment-binds-variable-to-term") {
             val variable = Var.of("X")
             val term = Atom.of("a")
-            assertEquals(Substitution.of(variable, term), Equation.LeftAssignment(variable, term).toSubstitution())
+            Equation.LeftAssignment(variable, term).toSubstitution() shouldBe Substitution.of(variable, term)
         }
 
         test("to-substitution-on-right-assignment-binds-variable-to-term") {
             val variable = Var.of("X")
             val term = Atom.of("a")
-            assertEquals(Substitution.of(variable, term), Equation.RightAssignment(term, variable).toSubstitution())
+            Equation.RightAssignment(term, variable).toSubstitution() shouldBe Substitution.of(variable, term)
         }
 
         test("to-substitution-on-contradiction-is-always-failed-regardless-of-content") {
-            assertTrue(Equation.Contradiction(Atom.of("a"), Atom.of("b")).toSubstitution().isFailed)
-            assertTrue(Equation.Contradiction(Var.of("X"), Var.of("X")).toSubstitution().isFailed)
+            Equation
+                .Contradiction(Atom.of("a"), Atom.of("b"))
+                .toSubstitution()
+                .isFailed
+                .shouldBeTrue()
+            Equation
+                .Contradiction(Var.of("X"), Var.of("X"))
+                .toSubstitution()
+                .isFailed
+                .shouldBeTrue()
         }
 
         test("to-substitution-on-non-assignment-falls-back-to-whichever-side-is-a-variable") {
             val variable = Var.of("X")
             val term = Atom.of("a")
-            assertEquals(Substitution.of(variable, term), Equation.Identity(variable, term).toSubstitution())
+            Equation.Identity(variable, term).toSubstitution() shouldBe Substitution.of(variable, term)
         }
 
         test("to-substitution-throws-when-neither-side-is-a-variable") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Equation.Comparison(Atom.of("a"), Atom.of("a")).toSubstitution()
             }
         }
@@ -253,28 +251,28 @@ class EquationSpec :
         // endregion
         withTests(nameFn = { "to-term/${it.id}" }, oneInstancePerType) { case ->
             val equation = case.equation()
-            assertEquals(Struct.of("=", equation.lhs, equation.rhs), equation.toTerm())
+            equation.toTerm() shouldBe Struct.of("=", equation.lhs, equation.rhs)
         }
 
         // region toPair
         test("to-pair-on-base-equation-types-returns-lhs-then-rhs") {
             val a = Atom.of("a")
             val b = Atom.of("b")
-            assertEquals(a to b, Equation.Identity(a, b).toPair())
-            assertEquals(a to b, Equation.Comparison(a, b).toPair())
-            assertEquals(a to b, Equation.Contradiction(a, b).toPair())
+            Equation.Identity(a, b).toPair() shouldBe (a to b)
+            Equation.Comparison(a, b).toPair() shouldBe (a to b)
+            Equation.Contradiction(a, b).toPair() shouldBe (a to b)
         }
 
         test("to-pair-on-left-assignment-returns-variable-then-term") {
             val variable = Var.of("X")
             val term = Atom.of("a")
-            assertEquals(variable to term, Equation.LeftAssignment(variable, term).toPair())
+            Equation.LeftAssignment(variable, term).toPair() shouldBe (variable to term)
         }
 
         test("to-pair-on-right-assignment-returns-term-then-variable") {
             val variable = Var.of("X")
             val term = Atom.of("a")
-            assertEquals(term to variable, Equation.RightAssignment(term, variable).toPair())
+            Equation.RightAssignment(term, variable).toPair() shouldBe (term to variable)
         }
 
         // endregion
@@ -283,18 +281,16 @@ class EquationSpec :
             // two differently-formatted but numerically-equal terms, so swap must reclassify both orderings as Identity
             val real1 = Real.of("1.5")
             val real2 = Real.of("1.500")
-            assertEquals(Equation.Identity(real2, real1), Equation.Identity(real1, real2).swap())
+            Equation.Identity(real1, real2).swap() shouldBe Equation.Identity(real2, real1)
 
             val a = Atom.of("a")
             val b = Atom.of("b")
-            assertEquals(Equation.Contradiction(b, a), Equation.Contradiction(a, b).swap())
+            Equation.Contradiction(a, b).swap() shouldBe Equation.Contradiction(b, a)
 
             val x = Var.of("X")
             val y = Var.of("Y")
-            assertEquals(
-                Equation.Comparison(Struct.of("f", y), Struct.of("f", x)),
-                Equation.Comparison(Struct.of("f", x), Struct.of("f", y)).swap(),
-            )
+            Equation.Comparison(Struct.of("f", x), Struct.of("f", y)).swap() shouldBe
+                Equation.Comparison(Struct.of("f", y), Struct.of("f", x))
         }
 
         test("swap-turns-left-assignment-into-right-assignment-preserving-variable-and-term") {
@@ -302,8 +298,8 @@ class EquationSpec :
             val term = Atom.of("a")
             val swapped = Equation.LeftAssignment(variable, term).swap()
 
-            assertEquals(Equation.RightAssignment(term, variable), swapped)
-            assertEquals(variable to term, swapped.toAssignmentPair())
+            swapped shouldBe Equation.RightAssignment(term, variable)
+            swapped.toAssignmentPair() shouldBe (variable to term)
         }
 
         test("swap-turns-right-assignment-into-left-assignment-preserving-variable-and-term") {
@@ -311,8 +307,8 @@ class EquationSpec :
             val term = Atom.of("a")
             val swapped = Equation.RightAssignment(term, variable).swap()
 
-            assertEquals(Equation.LeftAssignment(variable, term), swapped)
-            assertEquals(variable to term, swapped.toAssignmentPair())
+            swapped shouldBe Equation.LeftAssignment(variable, term)
+            swapped.toAssignmentPair() shouldBe (variable to term)
         }
 
         test("swap-on-var-to-var-assignment-always-produces-left-assignment") {
@@ -320,12 +316,12 @@ class EquationSpec :
             val y = Var.of("Y")
             val swapped = Equation.LeftAssignment(x, y).swap()
 
-            assertEquals(Equation.LeftAssignment(y, x), swapped)
+            swapped shouldBe Equation.LeftAssignment(y, x)
         }
 
         withTests(nameFn = { "double-swap/${it.id}" }, oneInstancePerType) { case ->
             val equation = case.equation()
-            assertEquals(equation, equation.swap().swap())
+            equation.swap().swap() shouldBe equation
         }
 
         // endregion
@@ -334,14 +330,14 @@ class EquationSpec :
             val x = Var.of("X")
             val a = Atom.of("a")
 
-            assertEquals(Equation.Identity(a, a), Equation.LeftAssignment(x, a).apply(Substitution.of(x, a)))
+            Equation.LeftAssignment(x, a).apply(Substitution.of(x, a)) shouldBe Equation.Identity(a, a)
         }
 
         test("apply-on-right-assignment-reclassifies-to-identity-when-substitution-matches") {
             val x = Var.of("X")
             val a = Atom.of("a")
 
-            assertEquals(Equation.Identity(a, a), Equation.RightAssignment(a, x).apply(Substitution.of(x, a)))
+            Equation.RightAssignment(a, x).apply(Substitution.of(x, a)) shouldBe Equation.Identity(a, a)
         }
 
         test("apply-leaves-unrelated-assignment-unchanged") {
@@ -349,7 +345,7 @@ class EquationSpec :
             val y = Var.of("Y")
             val a = Atom.of("a")
 
-            assertEquals(Equation.LeftAssignment(x, a), Equation.LeftAssignment(x, a).apply(Substitution.of(y, a)))
+            Equation.LeftAssignment(x, a).apply(Substitution.of(y, a)) shouldBe Equation.LeftAssignment(x, a)
         }
 
         test("apply-uses-provided-equality-checker-to-test-identity") {
@@ -358,119 +354,121 @@ class EquationSpec :
 
             val applied = Equation.LeftAssignment(x, a).apply(Substitution.of(x, a)) { _, _ -> false }
 
-            assertFalse(applied.isIdentity)
-            assertTrue(applied.isContradiction)
+            applied.isIdentity.shouldBeFalse()
+            applied.isContradiction.shouldBeTrue()
         }
 
         // endregion
         // region companion `of`
         test("of-classifies-equal-variables-as-identity") {
             val x = Var.of("X")
-            assertEquals(Equation.Identity(x, x), Equation.of(x, x))
+            Equation.of(x, x) shouldBe Equation.Identity(x, x)
         }
 
         test("of-classifies-different-variables-as-left-assignment-never-right-assignment") {
             val x = Var.of("X")
             val y = Var.of("Y")
-            assertEquals(Equation.LeftAssignment(x, y), Equation.of(x, y))
-            assertEquals(Equation.LeftAssignment(y, x), Equation.of(y, x))
+            Equation.of(x, y) shouldBe Equation.LeftAssignment(x, y)
+            Equation.of(y, x) shouldBe Equation.LeftAssignment(y, x)
         }
 
         test("of-classifies-variable-and-term-with-variable-on-lhs-as-left-assignment") {
             val x = Var.of("X")
             val a = Atom.of("a")
-            assertEquals(Equation.LeftAssignment(x, a), Equation.of(x, a))
+            Equation.of(x, a) shouldBe Equation.LeftAssignment(x, a)
         }
 
         test("of-classifies-variable-and-term-with-variable-on-rhs-as-right-assignment") {
             val x = Var.of("X")
             val a = Atom.of("a")
-            assertEquals(Equation.RightAssignment(a, x), Equation.of(a, x))
+            Equation.of(a, x) shouldBe Equation.RightAssignment(a, x)
         }
 
         test("of-classifies-equal-constants-as-identity") {
-            assertEquals(Equation.Identity(Integer.of(1), Integer.of(1)), Equation.of(Integer.of(1), Integer.of(1)))
+            Equation.of(Integer.of(1), Integer.of(1)) shouldBe Equation.Identity(Integer.of(1), Integer.of(1))
         }
 
         test("of-classifies-different-constants-as-contradiction") {
-            assertEquals(
-                Equation.Contradiction(Integer.of(1), Integer.of(2)),
-                Equation.of(Integer.of(1), Integer.of(2)),
-            )
+            Equation.of(Integer.of(1), Integer.of(2)) shouldBe Equation.Contradiction(Integer.of(1), Integer.of(2))
         }
 
         test("of-classifies-constant-and-non-constant-non-var-term-as-contradiction") {
             val result = Equation.of(Integer.of(1), Struct.of("f", Atom.of("a")))
-            assertTrue(result.isContradiction)
+            result.isContradiction.shouldBeTrue()
         }
 
         test("of-classifies-structs-with-matching-functor-and-arity-as-comparison") {
             val lhs = Struct.of("f", Var.of("X"))
             val rhs = Struct.of("f", Var.of("Y"))
-            assertEquals(Equation.Comparison(lhs, rhs), Equation.of(lhs, rhs))
+            Equation.of(lhs, rhs) shouldBe Equation.Comparison(lhs, rhs)
         }
 
         test("of-classifies-structs-with-mismatched-arity-as-contradiction") {
             val lhs = Struct.of("f", Var.of("X"))
             val rhs = Struct.of("f", Var.of("X"), Var.of("Y"))
-            assertEquals(Equation.Contradiction(lhs, rhs), Equation.of(lhs, rhs))
+            Equation.of(lhs, rhs) shouldBe Equation.Contradiction(lhs, rhs)
         }
 
         test("of-classifies-structs-with-mismatched-functor-as-contradiction") {
             val lhs = Struct.of("f", Var.of("X"))
             val rhs = Struct.of("g", Var.of("X"))
-            assertEquals(Equation.Contradiction(lhs, rhs), Equation.of(lhs, rhs))
+            Equation.of(lhs, rhs) shouldBe Equation.Contradiction(lhs, rhs)
         }
 
         test("of-pair-delegates-to-of-with-lhs-and-rhs") {
             val x = Var.of("X")
             val a = Atom.of("a")
-            assertEquals(Equation.of(x, a), Equation.of(x to a))
-            assertEquals(Equation.of(a, x), Equation.of(a to x))
+            Equation.of(x to a) shouldBe Equation.of(x, a)
+            Equation.of(a to x) shouldBe Equation.of(a, x)
         }
 
         test("of-with-always-false-equality-checker-never-produces-identity") {
-            assertFalse(Equation.of(Atom.of("a"), Atom.of("a")) { _, _ -> false }.isIdentity)
-            assertTrue(Equation.of(Var.of("X"), Var.of("X")) { _, _ -> false }.isLeftAssignment)
+            (Equation.of(Atom.of("a"), Atom.of("a")) { _, _ -> false }.isIdentity).shouldBeFalse()
+            (Equation.of(Var.of("X"), Var.of("X")) { _, _ -> false }.isLeftAssignment).shouldBeTrue()
         }
 
         test("of-with-always-true-equality-checker-only-affects-var-var-and-constant-constant-branches") {
-            assertTrue(Equation.of(Integer.of(1), Integer.of(2)) { _, _ -> true }.isIdentity)
-            assertTrue(Equation.of(Var.of("X"), Var.of("Y")) { _, _ -> true }.isIdentity)
+            (Equation.of(Integer.of(1), Integer.of(2)) { _, _ -> true }.isIdentity).shouldBeTrue()
+            (Equation.of(Var.of("X"), Var.of("Y")) { _, _ -> true }.isIdentity).shouldBeTrue()
             // struct arity/functor mismatch and struct/struct comparisons never consult the equality checker
-            assertTrue(
+            (
                 Equation
                     .of(
                         Struct.of("f", Atom.of("a")),
                         Struct.of("g", Atom.of("a")),
                     ) { _, _ -> true }
-                    .isContradiction,
-            )
-            assertTrue(
-                Equation.of(Struct.of("f", Var.of("X")), Struct.of("f", Var.of("Y"))) { _, _ -> true }.isComparison,
-            )
+                    .isContradiction
+            ).shouldBeTrue()
+            (
+                Equation
+                    .of(
+                        Struct.of("f", Var.of("X")),
+                        Struct.of("f", Var.of("Y")),
+                    ) { _, _ -> true }
+                    .isComparison
+            ).shouldBeTrue()
         }
 
         // endregion
         // region companion `from`
         test("from-sequence-flat-maps-all-of-over-every-pair") {
             val pairs = sequenceOf(Var.of("X") to Atom.of("a"), Atom.of("a") to Atom.of("a"))
-            assertEquals(pairs.flatMap { Equation.allOf(it) }.toList(), Equation.from(pairs).toList())
+            Equation.from(pairs).toList() shouldBe (pairs.flatMap { Equation.allOf(it) }.toList())
         }
 
         test("from-iterable-and-vararg-delegate-to-from-sequence") {
             val pairList = listOf(Var.of("X") to Atom.of("a"), Atom.of("a") to Atom.of("a"))
             val expected = Equation.from(pairList.asSequence()).toList()
 
-            assertEquals(expected, Equation.from(pairList).toList())
-            assertEquals(expected, Equation.from(*pairList.toTypedArray()).toList())
+            Equation.from(pairList).toList() shouldBe expected
+            Equation.from(*pairList.toTypedArray()).toList() shouldBe expected
         }
 
         // endregion
         // region companion `allOf`
         test("all-of-on-atoms-produces-a-single-equation") {
             val a = Atom.of("a")
-            assertEquals(listOf(Equation.Identity(a, a)), Equation.allOf(a, a).toList())
+            Equation.allOf(a, a).toList() shouldBe listOf(Equation.Identity(a, a))
         }
 
         test("all-of-on-proper-lists-compares-elements-pairwise-and-terminators-identically") {
@@ -479,14 +477,12 @@ class EquationSpec :
             val lhs = LogicList.of(Atom.of("a"), x)
             val rhs = LogicList.of(Atom.of("a"), y)
 
-            assertEquals(
+            Equation.allOf(lhs, rhs).toList() shouldBe
                 listOf(
                     Equation.Identity(Atom.of("a"), Atom.of("a")),
                     Equation.LeftAssignment(x, y),
                     Equation.Identity(Empty.list(), Empty.list()),
-                ),
-                Equation.allOf(lhs, rhs).toList(),
-            )
+                )
         }
 
         test("all-of-on-lists-with-mismatched-length-yields-a-contradiction") {
@@ -502,10 +498,8 @@ class EquationSpec :
             val lhs = Cons.of(Atom.of("a"), v)
             val rhs = Cons.of(Atom.of("a"), w)
 
-            assertEquals(
-                listOf(Equation.Identity(Atom.of("a"), Atom.of("a")), Equation.LeftAssignment(v, w)),
-                Equation.allOf(lhs, rhs).toList(),
-            )
+            Equation.allOf(lhs, rhs).toList() shouldBe
+                listOf(Equation.Identity(Atom.of("a"), Atom.of("a")), Equation.LeftAssignment(v, w))
         }
 
         test("all-of-on-tuples-compares-left-elements-pairwise") {
@@ -514,10 +508,8 @@ class EquationSpec :
             val lhs = Tuple.of(Atom.of("a"), x)
             val rhs = Tuple.of(Atom.of("a"), y)
 
-            assertEquals(
-                listOf(Equation.Identity(Atom.of("a"), Atom.of("a")), Equation.LeftAssignment(x, y)),
-                Equation.allOf(lhs, rhs).toList(),
-            )
+            Equation.allOf(lhs, rhs).toList() shouldBe
+                listOf(Equation.Identity(Atom.of("a"), Atom.of("a")), Equation.LeftAssignment(x, y))
         }
 
         test("all-of-on-structs-with-matching-functor-and-arity-recurses-into-arguments") {
@@ -526,34 +518,32 @@ class EquationSpec :
             val lhs = Struct.of("f", Atom.of("a"), x)
             val rhs = Struct.of("f", Atom.of("a"), y)
 
-            assertEquals(
-                listOf(Equation.Identity(Atom.of("a"), Atom.of("a")), Equation.LeftAssignment(x, y)),
-                Equation.allOf(lhs, rhs).toList(),
-            )
+            Equation.allOf(lhs, rhs).toList() shouldBe
+                listOf(Equation.Identity(Atom.of("a"), Atom.of("a")), Equation.LeftAssignment(x, y))
         }
 
         test("all-of-on-structs-with-mismatched-arity-or-functor-yields-a-single-contradiction") {
             val mismatchedArity = Equation.allOf(Struct.of("f", Var.of("X")), Struct.of("f", Var.of("X"), Var.of("Y")))
             val mismatchedFunctor = Equation.allOf(Struct.of("f", Var.of("X")), Struct.of("g", Var.of("X")))
 
-            assertEquals(1, mismatchedArity.count())
-            assertTrue(mismatchedArity.single().isContradiction)
-            assertEquals(1, mismatchedFunctor.count())
-            assertTrue(mismatchedFunctor.single().isContradiction)
+            mismatchedArity.count() shouldBe 1
+            mismatchedArity.single().isContradiction.shouldBeTrue()
+            mismatchedFunctor.count() shouldBe 1
+            mismatchedFunctor.single().isContradiction.shouldBeTrue()
         }
 
         test("all-of-never-produces-a-bare-comparison-even-when-of-would") {
             val lhs = Struct.of("f", Var.of("X"))
             val rhs = Struct.of("f", Var.of("Y"))
 
-            assertTrue(Equation.of(lhs, rhs).isComparison)
+            Equation.of(lhs, rhs).isComparison.shouldBeTrue()
             assertNoComparisons(Equation.allOf(lhs, rhs))
         }
 
         test("all-of-pair-delegates-to-all-of-with-lhs-and-rhs") {
             val lhs = Struct.of("f", Var.of("X"))
             val rhs = Struct.of("f", Var.of("Y"))
-            assertEquals(Equation.allOf(lhs, rhs).toList(), Equation.allOf(lhs to rhs).toList())
+            Equation.allOf(lhs to rhs).toList() shouldBe Equation.allOf(lhs, rhs).toList()
         }
 
         test("all-of-uses-provided-equality-checker-for-leaf-equations") {
@@ -568,7 +558,7 @@ class EquationSpec :
             nameFn = { "of-classifies-shallow-fixtures/${it.id}" },
             EquationUtils.shallowIdentityEquations,
         ) { case ->
-            assertEquals(Equation.Identity(case.lhs, case.rhs), Equation.of(case.pair))
+            Equation.of(case.pair) shouldBe Equation.Identity(case.lhs, case.rhs)
         }
 
         withTests(
@@ -581,18 +571,18 @@ class EquationSpec :
                 } else {
                     Equation.RightAssignment(case.lhs, case.rhs.castToVar())
                 }
-            assertEquals(expected, Equation.of(case.pair))
+            Equation.of(case.pair) shouldBe expected
         }
 
         withTests(nameFn = { "of-classifies-shallow-fixtures/${it.id}" }, EquationUtils.comparisonEquations) { case ->
-            assertEquals(Equation.Comparison(case.lhs, case.rhs), Equation.of(case.pair))
+            Equation.of(case.pair) shouldBe Equation.Comparison(case.lhs, case.rhs)
         }
 
         withTests(
             nameFn = { "of-classifies-shallow-fixtures/${it.id}" },
             EquationUtils.shallowContradictionEquations,
         ) { case ->
-            assertEquals(Equation.Contradiction(case.lhs, case.rhs), Equation.of(case.pair))
+            Equation.of(case.pair) shouldBe Equation.Contradiction(case.lhs, case.rhs)
         }
 
         withTests(
@@ -600,7 +590,7 @@ class EquationSpec :
             EquationUtils.assignmentEquationsShuffled,
         ) { case ->
             val original = if (case.lhs.isVar) case else case.swapped()
-            assertEquals(Equation.of(original.pair).toAssignmentPair(), Equation.of(case.pair).toAssignmentPair())
+            Equation.of(case.pair).toAssignmentPair() shouldBe Equation.of(original.pair).toAssignmentPair()
         }
 
         withTests(nameFn = { "all-of-classifies-fixtures/${it.id}" }, EquationUtils.allIdentityEquations) { case ->
@@ -630,7 +620,7 @@ class EquationSpec :
             nameFn = { "all-of-produces-one-equation-per-leaf/${it.id}" },
             EquationUtils.allIdentityEquations,
         ) { case ->
-            assertEquals(countDeepGeneratedEquations(case.lhs), Equation.allOf(case.pair).count())
+            Equation.allOf(case.pair).count() shouldBe countDeepGeneratedEquations(case.lhs)
         }
 
         withTests(
@@ -638,10 +628,8 @@ class EquationSpec :
             EquationUtils.assignmentEquationsShuffled,
         ) { case ->
             val original = if (case.lhs.isVar) case else case.swapped()
-            assertEquals(
-                Equation.allOf(original.pair).map { it.toAssignmentPair() }.toList(),
-                Equation.allOf(case.pair).map { it.toAssignmentPair() }.toList(),
-            )
+            (Equation.allOf(case.pair).map { it.toAssignmentPair() }.toList()) shouldBe
+                (Equation.allOf(original.pair).map { it.toAssignmentPair() }.toList())
         }
 
         withTests(nameFn = {
@@ -654,7 +642,7 @@ class EquationSpec :
             nameFn = { "swap-preserves-assignment-mapping/${it.id}" },
             EquationUtils.assignmentEquations.filterNot { it.lhs.isVar && it.rhs.isVar },
         ) { case ->
-            assertEquals(Equation.of(case.pair).toAssignmentPair(), Equation.of(case.pair).swap().toAssignmentPair())
+            Equation.of(case.pair).swap().toAssignmentPair() shouldBe Equation.of(case.pair).toAssignmentPair()
         }
 
         withTests(
@@ -662,7 +650,7 @@ class EquationSpec :
             EquationUtils.allIdentityEquations + EquationUtils.allContradictionEquations +
                 EquationUtils.comparisonEquations,
         ) { case ->
-            assertEquals(Equation.of(case.rhs to case.lhs), Equation.of(case.pair).swap())
+            Equation.of(case.pair).swap() shouldBe Equation.of(case.rhs to case.lhs)
         }
 
         withTests(nameFn = { "of-uses-provided-equality-checker/${it.id}" }, EquationUtils.mixedAllEquations) { case ->
@@ -677,7 +665,7 @@ class EquationSpec :
         }
 
         withTests(nameFn = { "to-substitution/${it.id}" }, EquationUtils.assignmentEquations) { case ->
-            assertEquals(Substitution.of(case.pair), Equation.of(case.pair).toSubstitution())
+            Equation.of(case.pair).toSubstitution() shouldBe Substitution.of(case.pair)
         }
 
         // endregion
@@ -685,21 +673,21 @@ class EquationSpec :
         test("eq-infix-delegates-to-equation-of") {
             val x = Var.of("X")
             val a = Atom.of("a")
-            assertEquals(Equation.of(x, a), x eq a)
-            assertEquals(Equation.of(a, x), a eq x)
+            (x eq a) shouldBe Equation.of(x, a)
+            (a eq x) shouldBe Equation.of(a, x)
         }
 
         test("iterable-of-equations-to-substitution-merges-all-assignments") {
             val pairs = EquationUtils.assignmentEquations.map { it.pair }
-            assertEquals(Substitution.of(pairs), pairs.map { Equation.of(it) }.toSubstitution())
+            (pairs.map { Equation.of(it) }.toSubstitution()) shouldBe Substitution.of(pairs)
         }
 
         test("substitution-to-equations-always-produces-left-assignments") {
             val pairs = EquationUtils.assignmentEquations.map { it.pair }
             val equations = Substitution.of(pairs).toEquations()
 
-            assertTrue(equations.all { it.isLeftAssignment })
-            assertEquals(pairs.map { Equation.of(it) }, equations)
+            (equations.all { it.isLeftAssignment }).shouldBeTrue()
+            equations shouldBe (pairs.map { Equation.of(it) })
         }
     })
 

@@ -2,6 +2,7 @@
 
 package it.unibo.tuprolog.solve.concurrent
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
@@ -13,7 +14,6 @@ import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.theory.Theory
-import kotlin.test.assertEquals
 
 fun concurrentStackTraceContract() =
     concurrentContract {
@@ -39,10 +39,8 @@ fun concurrentStackTraceContract() =
 
                 expected.assertingEquals(solutions)
 
-                assertEquals(
-                    listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1),
-                    (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
-                )
+                ((solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }) shouldBe
+                    listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "?-" / 1)
             }
         }
 
@@ -68,10 +66,8 @@ fun concurrentStackTraceContract() =
 
                 expected.assertingEquals(solutions)
 
-                assertEquals(
-                    listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1),
-                    (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
-                )
+                ((solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }) shouldBe
+                    listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "findall" / 3, "?-" / 1)
             }
         }
 
@@ -97,10 +93,8 @@ fun concurrentStackTraceContract() =
 
                 expected.assertingEquals(solutions)
 
-                assertEquals(
-                    listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
-                    (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
-                )
+                ((solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }) shouldBe
+                    listOf("is" / 2, "baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1)
             }
         }
 
@@ -125,10 +119,8 @@ fun concurrentStackTraceContract() =
 
                 expected.assertingEquals(solutions)
 
-                assertEquals(
-                    listOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1),
-                    (solution as Solution.Halt).exception.logicStackTrace.map { it.indicator },
-                )
+                ((solution as Solution.Halt).exception.logicStackTrace.map { it.indicator }) shouldBe
+                    listOf("baz" / 1, "bar" / 1, "foo" / 1, "bagof" / 3, "findall" / 3, "?-" / 1)
             }
         }
     }

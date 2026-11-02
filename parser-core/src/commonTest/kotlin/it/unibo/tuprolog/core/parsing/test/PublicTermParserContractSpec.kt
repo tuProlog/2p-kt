@@ -1,6 +1,11 @@
 package it.unibo.tuprolog.core.parsing.test
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
@@ -9,43 +14,38 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.core.parsing.InvalidTermTypeException
 import it.unibo.tuprolog.core.parsing.TermParser
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 class PublicTermParserContractSpec :
     FunSpec({
         val parser = TermParser.withNoOperator()
 
         test("typed-entry-points-accept-matching-terms") {
-            assertIs<Atom>(parser.parseAtom("atom"))
-            assertIs<Var>(parser.parseVar("Variable"))
-            assertIs<Integer>(parser.parseInteger("42"))
-            assertIs<Real>(parser.parseReal("3.25"))
-            assertIs<Struct>(parser.parseStruct("f(a)"))
+            parser.parseAtom("atom").shouldBeInstanceOf<Atom>()
+            parser.parseVar("Variable").shouldBeInstanceOf<Var>()
+            parser.parseInteger("42").shouldBeInstanceOf<Integer>()
+            parser.parseReal("3.25").shouldBeInstanceOf<Real>()
+            parser.parseStruct("f(a)").shouldBeInstanceOf<Struct>()
         }
 
         test("typed-entry-points-reject-mismatching-terms-with-structured-error") {
-            val error = assertFailsWith<InvalidTermTypeException> { parser.parseInteger("atom") }
-            assertEquals("atom", error.input)
-            assertIs<Atom>(error.term)
-            assertEquals(Integer::class, error.type)
+            val error = shouldThrow<InvalidTermTypeException> { parser.parseInteger("atom") }
+            error.input shouldBe "atom"
+            error.term.shouldBeInstanceOf<Atom>()
+            error.type shouldBe Integer::class
         }
 
         test("parser-factories-expose-the-requested-default-operator-set") {
-            assertEquals(OperatorSet.EMPTY, TermParser.withNoOperator().defaultOperatorSet)
-            assertEquals(OperatorSet.STANDARD, TermParser.withStandardOperators().defaultOperatorSet)
-            assertEquals(OperatorSet.DEFAULT, TermParser.withDefaultOperators().defaultOperatorSet)
+            TermParser.withNoOperator().defaultOperatorSet shouldBe OperatorSet.EMPTY
+            TermParser.withStandardOperators().defaultOperatorSet shouldBe OperatorSet.STANDARD
+            TermParser.withDefaultOperators().defaultOperatorSet shouldBe OperatorSet.DEFAULT
         }
 
         test("anonymous-variables-in-the-same-term-are-distinct") {
             val variables = parser.parseTerm("f(_, _)").variables.toList()
 
-            assertEquals(2, variables.size)
-            assertTrue(variables.all(Var::isAnonymous))
-            assertNotEquals(variables[0], variables[1])
+            variables.size shouldBe 2
+            variables.all(Var::isAnonymous).shouldBeTrue()
+            variables[1] shouldNotBe variables[0]
         }
 
         test("anonymous-variables-in-the-same-clause-are-distinct") {
@@ -56,8 +56,8 @@ class PublicTermParserContractSpec :
                     .variables
                     .toList()
 
-            assertEquals(2, variables.size)
-            assertTrue(variables.all(Var::isAnonymous))
-            assertNotEquals(variables[0], variables[1])
+            variables.size shouldBe 2
+            variables.all(Var::isAnonymous).shouldBeTrue()
+            variables[1] shouldNotBe variables[0]
         }
     })

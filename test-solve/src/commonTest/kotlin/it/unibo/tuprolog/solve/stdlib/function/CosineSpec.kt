@@ -1,12 +1,13 @@
 package it.unibo.tuprolog.solve.stdlib.function
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.stdlib.function.testutils.FunctionUtils.computeOf
 import kotlin.math.PI
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Test class for [Cosine]
@@ -16,7 +17,7 @@ import kotlin.test.assertTrue
 class CosineSpec :
     FunSpec({
         test("functor-name-correct") {
-            assertEquals(Signature("cos", 1), Cosine.signature)
+            Cosine.signature shouldBe Signature("cos", 1)
         }
 
         test("computation-correct") {
@@ -26,8 +27,11 @@ class CosineSpec :
                     .castToNumeric()
                     .decimalValue
                     .toDouble()
-            assertTrue("Cosine of \"PI/2\" should be closer to Zero") {
-                toBeTested < 6.123233995736767E-17 && toBeTested > 6.123233995736765E-17
+            withClue("Cosine of \"PI/2\" should be closer to Zero") {
+                (
+                    toBeTested < 6.123233995736767E-17 &&
+                        toBeTested > 6.123233995736765E-17
+                ).shouldBeTrue()
             }
         }
     })

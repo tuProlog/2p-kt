@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.exception
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.exception.testutils.HaltExceptionUtils.aCause
 import it.unibo.tuprolog.solve.exception.testutils.HaltExceptionUtils.aContext
 import it.unibo.tuprolog.solve.exception.testutils.HaltExceptionUtils.aDifferentContext
 import it.unibo.tuprolog.solve.exception.testutils.HaltExceptionUtils.aMessage
 import it.unibo.tuprolog.solve.exception.testutils.HaltExceptionUtils.anExitStatus
 import it.unibo.tuprolog.solve.exception.testutils.HaltExceptionUtils.assertSameMessageCauseContextStatus
-import kotlin.test.assertEquals
 
 /**
  * Test class for [HaltException]
@@ -25,7 +25,7 @@ class HaltExceptionSpec :
         test("constructor-inserts-message-if-only-cause-specified") {
             val exception = HaltException(anExitStatus, aCause, aContext)
 
-            assertEquals(aCause.toString(), exception.message)
+            exception.message shouldBe aCause.toString()
         }
 
         test("update-context-returns-exception-with-same-contents-but-updated-context") {

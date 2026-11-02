@@ -2,6 +2,7 @@ package it.unibo.tuprolog.collections.rete.custom
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.allChunksOfSize
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmptyAndOrdered
@@ -17,7 +18,6 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator
-import kotlin.test.assertEquals
 
 class OrderedReteTreeSpec :
     FunSpec({
@@ -31,14 +31,14 @@ class OrderedReteTreeSpec :
             val tree = reteTreeOf(defaultClauses)
 
             assertIsNonEmpty(tree)
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
         }
 
         test("an-ordered-tree-preserves-the-total-order-of-clauses1") {
             val tree = reteTreeOf(defaultClauses)
 
             assertIsNonEmpty(tree)
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
             assertItemsAreEquals(defaultClauses.asSequence(), tree.clauses)
         }
 
@@ -52,7 +52,7 @@ class OrderedReteTreeSpec :
                 assertIsNonEmpty(tree)
             }
 
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
             assertItemsAreEquals(defaultClauses.asSequence(), tree.clauses)
         }
 
@@ -66,7 +66,7 @@ class OrderedReteTreeSpec :
                 assertIsNonEmpty(tree)
             }
 
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
             assertItemsAreEquals(defaultClauses.asReversed().asSequence(), tree.clauses)
         }
 
@@ -263,11 +263,11 @@ class OrderedReteTreeSpec :
                 assertIsEmptyAndOrdered(tree)
 
                 tree.assertZ(aClause)
-                assertEquals(1, tree.size)
+                tree.size shouldBe 1
                 assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
 
                 tree.assertZ(aClause)
-                assertEquals(2, tree.size)
+                tree.size shouldBe 2
                 assertItemsAreEquals(sequenceOf(aClause, aClause), tree.get(aClause))
             }
         }
@@ -279,11 +279,11 @@ class OrderedReteTreeSpec :
                 assertIsEmptyAndOrdered(tree)
 
                 tree.assertA(aClause)
-                assertEquals(1, tree.size)
+                tree.size shouldBe 1
                 assertItemsAreEquals(sequenceOf(aClause), tree.get(aClause))
 
                 tree.assertA(aClause)
-                assertEquals(2, tree.size)
+                tree.size shouldBe 2
                 assertItemsAreEquals(sequenceOf(aClause, aClause), tree.get(aClause))
             }
         }
@@ -300,7 +300,7 @@ class OrderedReteTreeSpec :
                 tree.assertZ(fact)
             }
 
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
 
             assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
             assertItemsAreEquals(family.asSequence(), tree.get(template))
@@ -317,7 +317,7 @@ class OrderedReteTreeSpec :
                 tree.assertA(clause)
             }
 
-            assertEquals(factsAndRules.size, tree.size)
+            tree.size shouldBe factsAndRules.size
 
             assertPartialOrderIsTheSame(family.asReversed().asSequence(), tree.clauses)
             assertItemsAreEquals(family.asReversed().asSequence(), tree.get(template))
@@ -363,7 +363,7 @@ class OrderedReteTreeSpec :
             val tree = reteTreeOf(defaultClauses)
 
             assertIsNonEmpty(tree)
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
             assertItemsAreEquals(defaultClauses.asSequence(), tree.clauses)
 
             for (clause in defaultClauses) {
@@ -378,7 +378,7 @@ class OrderedReteTreeSpec :
             val tree = reteTreeOf(factsAndRules)
 
             assertIsNonEmpty(tree)
-            assertEquals(factsAndRules.size, tree.size)
+            tree.size shouldBe factsAndRules.size
 
             assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
             assertItemsAreEquals(family.asSequence(), tree.get(template))

@@ -1,7 +1,10 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
@@ -13,9 +16,6 @@ import it.unibo.tuprolog.solve.testutils.SolutionUtils.anException
 import it.unibo.tuprolog.solve.testutils.SolutionUtils.queryArgList
 import it.unibo.tuprolog.solve.testutils.SolutionUtils.querySignature
 import it.unibo.tuprolog.solve.testutils.SolutionUtils.theQuerySolved
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
 
 /** One kind of solution, and the name [Solution.whenIs] must dispatch it to. */
 private class KindCase(
@@ -42,76 +42,76 @@ class SolutionSpec :
         test("yes-solution-contains-inserted-data") {
             val toBeTested = Solution.yes(aQuery, aSubstitution)
 
-            assertEquals(aQuery, toBeTested.query)
-            assertEquals(aSubstitution, toBeTested.substitution)
+            toBeTested.query shouldBe aQuery
+            toBeTested.substitution shouldBe aSubstitution
         }
 
         test("yes-solution-substitution-defaults-to-empty-if-not-specified") {
             val toBeTested = Solution.yes(aQuery)
 
-            assertEquals(Substitution.empty(), toBeTested.substitution)
+            toBeTested.substitution shouldBe Substitution.empty()
         }
 
         test("yes-solution-computes-solved-query-applying-substitution-to-query") {
             val toBeTested = Solution.yes(aQuery, aSubstitution)
 
-            assertEquals(theQuerySolved, toBeTested.solvedQuery)
+            toBeTested.solvedQuery shouldBe theQuerySolved
         }
 
         test("yes-solution-secondary-constructor-works-as-expected") {
             val toBeTested = Solution.yes(querySignature, queryArgList, aSubstitution)
 
-            assertEquals(aQuery, toBeTested.query)
-            assertEquals(aSubstitution, toBeTested.substitution)
-            assertEquals(theQuerySolved, toBeTested.solvedQuery)
+            toBeTested.query shouldBe aQuery
+            toBeTested.substitution shouldBe aSubstitution
+            toBeTested.solvedQuery shouldBe theQuerySolved
         }
 
         test("yes-solution-secondary-constructor-complains-if-arity-doesnt-match-arguments-count") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Solution.yes(
                     querySignature,
                     emptyList(),
                     Substitution.empty(),
                 )
             }
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Solution.yes(querySignature, listOf(Truth.TRUE, Truth.TRUE), Substitution.empty())
             }
         }
 
         test("yes-solution-secondary-constructor-complains-if-signature-vararg") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Solution.yes(querySignature.copy(vararg = true), queryArgList, Substitution.empty())
             }
         }
 
         test("no-solution-contains-inserted-data") {
-            assertEquals(aQuery, Solution.no(aQuery).query)
+            Solution.no(aQuery).query shouldBe aQuery
         }
 
         test("no-solution-solution-always-null") {
-            assertNull(Solution.no(aQuery).solvedQuery)
+            Solution.no(aQuery).solvedQuery.shouldBeNull()
         }
 
         test("no-solution-substitution-always-failed") {
-            assertEquals(Substitution.failed(), Solution.no(aQuery).substitution)
+            Solution.no(aQuery).substitution shouldBe Substitution.failed()
         }
 
         test("no-solution-secondary-constructor-works-as-expected") {
             val toBeTested = Solution.no(querySignature, queryArgList)
 
-            assertEquals(aQuery, toBeTested.query)
+            toBeTested.query shouldBe aQuery
         }
 
         test("no-solution-secondary-constructor-complains-if-arity-doesnt-match-arguments-count") {
-            assertFailsWith<IllegalArgumentException> { Solution.no(querySignature, emptyList()) }
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> { Solution.no(querySignature, emptyList()) }
+            shouldThrow<IllegalArgumentException> {
                 Solution.no(querySignature, listOf(Truth.TRUE, Truth.TRUE))
             }
         }
 
         test("no-solution-secondary-constructor-complains-if-signature-vararg") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Solution.no(querySignature.copy(vararg = true), queryArgList)
             }
         }
@@ -119,33 +119,33 @@ class SolutionSpec :
         test("halt-solution-contains-inserted-data") {
             val toBeTested = Solution.halt(aQuery, anException)
 
-            assertEquals(aQuery, toBeTested.query)
-            assertEquals(anException, toBeTested.exception)
+            toBeTested.query shouldBe aQuery
+            toBeTested.exception shouldBe anException
         }
 
         test("halt-solution-solution-always-null") {
-            assertNull(Solution.halt(aQuery, anException).solvedQuery)
+            Solution.halt(aQuery, anException).solvedQuery.shouldBeNull()
         }
 
         test("halt-solution-substitution-always-failed") {
-            assertEquals(Substitution.failed(), Solution.halt(aQuery, anException).substitution)
+            Solution.halt(aQuery, anException).substitution shouldBe Substitution.failed()
         }
 
         test("halt-solution-secondary-constructor-works-as-expected") {
             val toBeTested = Solution.halt(querySignature, queryArgList, anException)
 
-            assertEquals(aQuery, toBeTested.query)
+            toBeTested.query shouldBe aQuery
         }
 
         test("halt-solution-secondary-constructor-complains-if-arity-doesnt-match-arguments-count") {
-            assertFailsWith<IllegalArgumentException> { Solution.halt(querySignature, emptyList(), anException) }
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> { Solution.halt(querySignature, emptyList(), anException) }
+            shouldThrow<IllegalArgumentException> {
                 Solution.halt(querySignature, listOf(Truth.TRUE, Truth.TRUE), anException)
             }
         }
 
         test("halt-solution-secondary-constructor-complains-if-signature-vararg") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Solution.halt(querySignature.copy(vararg = true), queryArgList, anException)
             }
         }
@@ -159,8 +159,8 @@ class SolutionSpec :
                     Solution.yes(query, substitution)
                 }.cleanUp(hideWildcardVariables = false)
 
-            assertEquals(Atom.of("x"), solution.valueOf("X"))
-            assertEquals(Atom.of("p"), solution.valueOf("_P"))
+            solution.valueOf("X") shouldBe Atom.of("x")
+            solution.valueOf("_P") shouldBe Atom.of("p")
         }
 
         test("clean-up-hides-wildcard-variables-when-asked") {
@@ -172,35 +172,35 @@ class SolutionSpec :
                     Solution.yes(query, substitution)
                 }.cleanUp(hideWildcardVariables = true)
 
-            assertEquals(Atom.of("x"), solution.valueOf("X"))
-            assertNull(solution.valueOf("_P"))
+            solution.valueOf("X") shouldBe Atom.of("x")
+            solution.valueOf("_P").shouldBeNull()
         }
 
         test("clean-up-hiding-wildcard-variables-is-a-no-op-for-no-and-halt") {
             val no = Solution.no(aQuery).cleanUp(hideWildcardVariables = true)
             val halt = Solution.halt(aQuery, anException).cleanUp(hideWildcardVariables = true)
 
-            assertEquals(Solution.no(aQuery), no)
-            assertEquals(Solution.halt(aQuery, anException), halt)
+            no shouldBe Solution.no(aQuery)
+            halt shouldBe Solution.halt(aQuery, anException)
         }
 
         withTests(nameFn = { "kind/${it.id}/casts-only-to-itself" }, kinds) { case ->
             val solution = case.solution()
-            assertEquals(case.id == "yes", solution.asYes() != null)
-            assertEquals(case.id == "no", solution.asNo() != null)
-            assertEquals(case.id == "halt", solution.asHalt() != null)
-            if (case.id != "yes") assertFailsWith<ClassCastException> { solution.castToYes() }
-            if (case.id != "no") assertFailsWith<ClassCastException> { solution.castToNo() }
-            if (case.id != "halt") assertFailsWith<ClassCastException> { solution.castToHalt() }
+            (solution.asYes() != null) shouldBe (case.id == "yes")
+            (solution.asNo() != null) shouldBe (case.id == "no")
+            (solution.asHalt() != null) shouldBe (case.id == "halt")
+            if (case.id != "yes") shouldThrow<ClassCastException> { solution.castToYes() }
+            if (case.id != "no") shouldThrow<ClassCastException> { solution.castToNo() }
+            if (case.id != "halt") shouldThrow<ClassCastException> { solution.castToHalt() }
         }
 
         withTests(nameFn = { "kind/${it.id}/when-is-dispatches-to-its-branch" }, kinds) { case ->
-            assertEquals(case.id, case.solution().dispatched())
+            case.solution().dispatched() shouldBe case.id
         }
 
         withTests(nameFn = { "kind/${it.id}/when-is-falls-back-to-otherwise" }, kinds) { case ->
             val solution = case.solution()
-            assertEquals("otherwise", solution.whenIs<String>(otherwise = { "otherwise" }))
-            assertFailsWith<IllegalStateException> { solution.whenIs<String>() }
+            (solution.whenIs<String>(otherwise = { "otherwise" })) shouldBe "otherwise"
+            shouldThrow<IllegalStateException> { solution.whenIs<String>() }
         }
     })

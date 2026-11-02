@@ -1,9 +1,10 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.logicProgramming
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /** Conformance tests for how a [Solution]'s substitution presents variables that only occur nested inside another variable's binding (i.e. */
 fun solutionPresentationContract(
@@ -27,10 +28,10 @@ fun solutionPresentationContract(
             val solver = solverFactory.solverOf(staticKb = theory)
             val query = "append"(A, B)
             val sol = solver.solveOnce(query)
-            assertTrue { sol is Solution.Yes }
-            assertTrue { setOf(A, B).all { it in sol.substitution.keys } }
-            assertTrue { sol.substitution[A]!! matches "seq"(`_`) }
-            assertEquals("X", (sol.substitution[B] as? Var)?.name)
+            sol.shouldBeInstanceOf<Solution.Yes>()
+            (setOf(A, B).all { it in sol.substitution.keys }).shouldBeTrue()
+            (sol.substitution[A]!! matches "seq"(`_`)).shouldBeTrue()
+            (sol.substitution[B] as? Var)?.name shouldBe "X"
         }
     }
 }

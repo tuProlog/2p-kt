@@ -1,10 +1,11 @@
 package it.unibo.tuprolog.dsl
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Helpers for tests exercising a [Termificator] implementation, such as [Termificator.default] or
@@ -66,14 +67,14 @@ class TermificatorTester(
         input: T,
         expected: Scope.(T) -> Term,
         actual: Termificator.(T) -> Term = Termificator::termify,
-    ) = assertEquals(scope.expected(input), termificator.actual(input))
+    ) = termificator.actual(input) shouldBe scope.expected(input)
 
     /** Asserts that converting [input] via [actual] (defaulting to [Termificator.termify]) produces [expected]. */
     fun <T> assertTermificationWorks(
         input: T,
         expected: Term,
         actual: Termificator.(T) -> Term = Termificator::termify,
-    ) = assertEquals(expected, termificator.actual(input))
+    ) = termificator.actual(input) shouldBe expected
 
     /**
      * Asserts that converting [input] via [actual] (defaulting to [Termificator.termify]) throws
@@ -89,9 +90,8 @@ class TermificatorTester(
         val result = termificator.actual(input)
         fail("Termifying $input should fail, while it worked producing $result")
     } catch (e: IllegalArgumentException) {
-        assertTrue(
-            message = "Wrong message for expression: '${e.message}'",
-            actual = e.message?.startsWith("Cannot convert") ?: false,
-        )
+        withClue("Wrong message for expression: '${e.message}'") {
+            (e.message?.startsWith("Cannot convert") ?: false).shouldBeTrue()
+        }
     }
 }

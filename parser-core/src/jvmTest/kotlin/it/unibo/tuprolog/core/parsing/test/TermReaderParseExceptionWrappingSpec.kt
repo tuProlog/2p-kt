@@ -1,6 +1,10 @@
 package it.unibo.tuprolog.core.parsing.test
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -16,37 +20,33 @@ import it.unibo.tuprolog.parser.exceptions.UnexpectedTokenException
 import java.io.ByteArrayInputStream
 import java.io.Reader
 import java.io.StringReader
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
-import kotlin.test.assertSame
 
 class TermReaderParseExceptionWrappingSpec :
     FunSpec({
         test("lexical-errors-from-readers-and-streams-are-wrapped") {
             val readerError =
-                assertFailsWith<ParseException> {
+                shouldThrow<ParseException> {
                     TermReader.withDefaultOperators().readTerms(StringReader("ok.\n'\\q'.")).toList()
                 }
             assertWrapper<InvalidEscapeException>(readerError, line = 2, column = 2, offending = "\\q")
-            assertEquals("ok.\n'\\q'.", readerError.input)
+            readerError.input shouldBe "ok.\n'\\q'."
 
             val streamError =
-                assertFailsWith<ParseException> {
+                shouldThrow<ParseException> {
                     TermReader
                         .withDefaultOperators()
                         .readTerms(ByteArrayInputStream("f().".encodeToByteArray()))
                         .toList()
                 }
             assertWrapper<UnexpectedTokenException>(streamError, line = 1, column = 3, offending = ")")
-            assertEquals("f().", streamError.input)
+            streamError.input shouldBe "f()."
         }
 
         test("lazy-reader-parsing-wraps-only-when-the-invalid-term-is-requested") {
             val iterator = TermReader.withDefaultOperators().readTerms(StringReader("first. f().")).iterator()
 
-            assertEquals("first", assertIs<Struct>(iterator.next()).functor)
-            val wrapper = assertFailsWith<ParseException> { iterator.hasNext() }
+            (iterator.next().shouldBeInstanceOf<Struct>().functor) shouldBe "first"
+            val wrapper = shouldThrow<ParseException> { iterator.hasNext() }
             assertWrapper<UnexpectedTokenException>(wrapper, line = 1, column = 10, offending = ")")
         }
 
@@ -63,14 +63,14 @@ class TermReaderParseExceptionWrappingSpec :
                     override fun close() = Unit
                 }
 
-            val wrapper = assertFailsWith<ParseException> { TermReader.withNoOperator().readTerms(reader).toList() }
-            val sourceError = assertIs<SourceReadException>(wrapper.cause)
-            assertSame(failure, sourceError.cause)
-            assertEquals("", wrapper.input)
-            assertEquals(1, wrapper.line)
-            assertEquals(1, wrapper.column)
-            assertEquals(sourceError.offendingText, wrapper.offendingSymbol)
-            assertEquals(sourceError.message, wrapper.message)
+            val wrapper = shouldThrow<ParseException> { TermReader.withNoOperator().readTerms(reader).toList() }
+            val sourceError = wrapper.cause.shouldBeInstanceOf<SourceReadException>()
+            sourceError.cause shouldBeSameInstanceAs failure
+            wrapper.input shouldBe ""
+            wrapper.line shouldBe 1
+            wrapper.column shouldBe 1
+            wrapper.offendingSymbol shouldBe sourceError.offendingText
+            wrapper.message shouldBe sourceError.message
         }
 
         test("configured-token-buffer-failures-are-wrapped") {
@@ -84,7 +84,7 @@ class TermReaderParseExceptionWrappingSpec :
                     ),
                 )
 
-            val wrapper = assertFailsWith<ParseException> { reader.readTerms("f(a, b, c).").toList() }
+            val wrapper = shouldThrow<ParseException> { reader.readTerms("f(a, b, c).").toList() }
             assertWrapper<TokenBufferLimitExceededException>(wrapper, line = 1, column = 4, offending = null)
         }
     })
@@ -95,9 +95,9 @@ private inline fun <reified T : Throwable> assertWrapper(
     column: Int,
     offending: String?,
 ) {
-    val cause = assertIs<T>(wrapper.cause)
-    assertEquals(line, wrapper.line)
-    assertEquals(column, wrapper.column)
-    assertEquals(offending, wrapper.offendingSymbol)
-    assertEquals(cause.message, wrapper.message)
+    val cause = wrapper.cause.shouldBeInstanceOf<T>()
+    wrapper.line shouldBe line
+    wrapper.column shouldBe column
+    wrapper.offendingSymbol shouldBe offending
+    wrapper.message shouldBe cause.message
 }

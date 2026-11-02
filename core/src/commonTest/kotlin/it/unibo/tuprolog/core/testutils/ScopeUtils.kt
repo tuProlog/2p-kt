@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.core.testutils
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Var
-import kotlin.test.assertEquals
 
 /**
  * Utils singleton for testing [Scope]
@@ -40,7 +40,7 @@ internal object ScopeUtils {
         expected: Map<String, Var>,
         actual: Map<String, Var>,
     ) {
-        assertEquals(expected.keys, actual.keys)
+        actual.keys shouldBe expected.keys
         for (name in expected.keys) {
             VarUtils.assertDifferentVariableExceptForName(expected.getValue(name), actual.getValue(name))
         }

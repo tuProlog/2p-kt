@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.dsl
 
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Substitution
-import kotlin.test.assertFails
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 class LogicProgrammingScopeWithSubstitutionsSpec :
     FunSpec({
@@ -35,9 +35,9 @@ class LogicProgrammingScopeWithSubstitutionsSpec :
 
             test("get-wrong-value-in-substitution") {
                 logicProgramming {
-                    val error = assertFails { ("X" to "a")[1] }
-                    assertIs<IllegalArgumentException>(error)
-                    assertTrue(error.message?.startsWith("Cannot convert") ?: false)
+                    val error = shouldThrowAny { ("X" to "a")[1] }
+                    error.shouldBeInstanceOf<IllegalArgumentException>()
+                    (error.message?.startsWith("Cannot convert") ?: false).shouldBeTrue()
                 }
             }
 
@@ -51,9 +51,9 @@ class LogicProgrammingScopeWithSubstitutionsSpec :
 
             test("substitution-contains-fail") {
                 logicProgramming {
-                    val error = assertFails { 1 in ("X" to "a") }
-                    assertIs<IllegalArgumentException>(error)
-                    assertTrue(error.message?.startsWith("Cannot convert") ?: false)
+                    val error = shouldThrowAny { 1 in ("X" to "a") }
+                    error.shouldBeInstanceOf<IllegalArgumentException>()
+                    (error.message?.startsWith("Cannot convert") ?: false).shouldBeTrue()
                 }
             }
 

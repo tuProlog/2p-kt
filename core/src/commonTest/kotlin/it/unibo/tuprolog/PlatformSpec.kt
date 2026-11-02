@@ -1,13 +1,13 @@
 package it.unibo.tuprolog
 
 import io.kotest.core.spec.style.FunSpec
-import kotlin.test.assertEquals
+import io.kotest.matchers.shouldBe
 
 internal expect val expectedPlatform: Platform
 
 class PlatformSpec :
     FunSpec({
         test("current-platform") {
-            assertEquals(expectedPlatform, Info.PLATFORM)
+            Info.PLATFORM shouldBe expectedPlatform
         }
     })

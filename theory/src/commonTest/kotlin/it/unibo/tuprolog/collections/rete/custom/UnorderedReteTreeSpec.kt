@@ -2,6 +2,8 @@ package it.unibo.tuprolog.collections.rete.custom
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.allChunksOfSize
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmpty
 import it.unibo.tuprolog.collections.rete.custom.ReteTreeAssertionUtils.assertIsEmptyAndUnordered
@@ -19,8 +21,6 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class UnorderedReteTreeSpec :
     FunSpec({
@@ -34,14 +34,14 @@ class UnorderedReteTreeSpec :
             val tree = reteTreeOf(defaultClauses)
 
             assertIsNonEmpty(tree)
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
         }
 
         test("an-unordered-tree-does-not-necessarily-preserves-the-total-order-of-clauses1") {
             val tree = reteTreeOf(defaultClauses)
 
             assertIsNonEmpty(tree)
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
             assertItemMultisetsAreEqual(defaultClauses.asSequence(), tree.clauses)
         }
 
@@ -55,7 +55,7 @@ class UnorderedReteTreeSpec :
                 assertIsNonEmpty(tree)
             }
 
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
             assertItemMultisetsAreEqual(defaultClauses.asSequence(), tree.clauses)
         }
 
@@ -69,7 +69,7 @@ class UnorderedReteTreeSpec :
                 assertIsNonEmpty(tree)
             }
 
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
             assertItemMultisetsAreEqual(defaultClauses.asSequence(), tree.clauses)
         }
 
@@ -272,11 +272,11 @@ class UnorderedReteTreeSpec :
                 assertIsEmptyAndUnordered(tree)
 
                 tree.assertZ(aClause)
-                assertEquals(1, tree.size)
+                tree.size shouldBe 1
                 assertItemMultisetsAreEqual(sequenceOf(aClause), tree.get(aClause))
 
                 tree.assertZ(aClause)
-                assertEquals(2, tree.size)
+                tree.size shouldBe 2
                 assertItemMultisetsAreEqual(sequenceOf(aClause, aClause), tree.get(aClause))
             }
         }
@@ -288,11 +288,11 @@ class UnorderedReteTreeSpec :
                 assertIsEmptyAndUnordered(tree)
 
                 tree.assertZ(aClause)
-                assertEquals(1, tree.size)
+                tree.size shouldBe 1
                 assertItemMultisetsAreEqual(sequenceOf(aClause), tree.get(aClause))
 
                 tree.assertZ(aClause)
-                assertEquals(2, tree.size)
+                tree.size shouldBe 2
                 assertItemMultisetsAreEqual(sequenceOf(aClause, aClause), tree.get(aClause))
             }
         }
@@ -311,7 +311,7 @@ class UnorderedReteTreeSpec :
                 tree.assertZ(fact)
             }
 
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
 
             assertPartialOrderIsTheSame(family.asSequence(), tree.clauses)
             assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
@@ -330,7 +330,7 @@ class UnorderedReteTreeSpec :
                 tree.assertZ(clause)
             }
 
-            assertEquals(factsAndRules.size, tree.size)
+            tree.size shouldBe factsAndRules.size
 
             assertSubMultisetOf(family.asSequence(), tree.clauses)
             assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
@@ -347,7 +347,7 @@ class UnorderedReteTreeSpec :
             family.distinct().forEachIndexed { i, _ ->
                 val retracted = tree.retractFirst(template).toList()
                 assertSubMultisetOf(retracted, family)
-                assertEquals(family.size - 1 - i, tree.get(template).count())
+                tree.get(template).count() shouldBe (family.size - 1 - i)
             }
 
             // reset
@@ -359,11 +359,11 @@ class UnorderedReteTreeSpec :
 
             var retracted2 = tree.retractOnly(template, 2).toList()
             assertSubMultisetOf(retracted2, family)
-            assertEquals(family.size - 2, tree.get(template).count())
+            tree.get(template).count() shouldBe (family.size - 2)
 
             retracted2 = tree.retractOnly(template, 2).toList()
             assertSubMultisetOf(retracted2, family)
-            assertEquals(family.size - 4, tree.get(template).count())
+            tree.get(template).count() shouldBe (family.size - 4)
 
             // reset
 
@@ -379,7 +379,7 @@ class UnorderedReteTreeSpec :
             val tree = reteTreeOf(defaultClauses)
 
             assertIsNonEmpty(tree)
-            assertEquals(defaultClauses.size, tree.size)
+            tree.size shouldBe defaultClauses.size
             assertItemMultisetsAreEqual(defaultClauses.asSequence(), tree.clauses)
 
             for (clause in defaultClauses) {
@@ -394,7 +394,7 @@ class UnorderedReteTreeSpec :
             val tree = reteTreeOf(factsAndRules)
 
             assertIsNonEmpty(tree)
-            assertEquals(factsAndRules.size, tree.size)
+            tree.size shouldBe factsAndRules.size
 
             assertSubMultisetOf(family.asSequence(), tree.clauses)
             assertItemMultisetsAreEqual(family.asSequence(), tree.get(template))
@@ -409,7 +409,7 @@ class UnorderedReteTreeSpec :
             val numberOfClausesBeforeRetracting = tree.get(template).toList().count()
             val twoRetracted = tree.retractOnly(template, 2).toList()
             assertSubMultisetOf(twoRetracted, family)
-            assertTrue((numberOfClausesBeforeRetracting - tree.get(template).count()) in (0..2))
+            ((numberOfClausesBeforeRetracting - tree.get(template).count()) in (0..2)).shouldBeTrue()
 
             twoRetracted.forEach { tree.assertZ(it) }
             assertSubMultisetOf(twoRetracted.asSequence(), tree.get(template))
@@ -466,7 +466,7 @@ class UnorderedReteTreeSpec :
 
                     for (i in clauses.indices) {
                         tree.retractOnly(template, 1)
-                        assertEquals(clauses.size - i - 1, tree.size)
+                        tree.size shouldBe (clauses.size - i - 1)
                     }
 
                     assertIsEmpty(tree)
@@ -523,7 +523,7 @@ class UnorderedReteTreeSpec :
                         for (j in clauses.indices) {
                             assertSubMultisetOf(tree.retractFirst(query), clauses.asSequence())
 
-                            assertEquals(clauses.size - j - 1, tree.size)
+                            tree.size shouldBe (clauses.size - j - 1)
                         }
 
                         assertIsEmpty(tree)
@@ -544,7 +544,7 @@ class UnorderedReteTreeSpec :
                         for (j in clauses.indices) {
                             assertSubMultisetOf(tree.retractOnly(query, 1), clauses.asSequence())
 
-                            assertEquals(clauses.size - j - 1, tree.size)
+                            tree.size shouldBe (clauses.size - j - 1)
                         }
 
                         assertIsEmpty(tree)

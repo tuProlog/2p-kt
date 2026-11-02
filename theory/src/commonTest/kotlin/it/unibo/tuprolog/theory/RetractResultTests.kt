@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.theory
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.funSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 /**
  * Test class for [RetractResult] and subclasses
@@ -30,24 +30,24 @@ fun retractResultTests(
     val toTestFailure = RetractResult.Failure(theory)
 
     test("success-theory-correct") {
-        assertEquals(theory, toTestSuccess.theory)
+        toTestSuccess.theory shouldBe theory
     }
 
     test("success-clauses-list-correct") {
-        assertEquals(clauses, toTestSuccess.clauses)
+        toTestSuccess.clauses shouldBe clauses
     }
 
     test("success-first-clause-correct") {
-        assertEquals(clauses.first(), toTestSuccess.firstClause)
+        toTestSuccess.firstClause shouldBe clauses.first()
     }
 
     test("success-first-clause-with-empty-clause-list-throws-exception") {
-        assertFailsWith<NoSuchElementException> {
+        shouldThrow<NoSuchElementException> {
             RetractResult.Success(theory, emptyList()).firstClause
         }
     }
 
     test("fail-theory-correct") {
-        assertEquals(theory, toTestFailure.theory)
+        toTestFailure.theory shouldBe theory
     }
 }

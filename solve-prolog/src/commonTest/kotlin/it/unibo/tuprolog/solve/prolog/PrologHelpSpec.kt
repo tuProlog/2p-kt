@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.solve.prolog
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -22,9 +26,6 @@ import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.rule.RuleWrapper
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 class PrologHelpSpec :
     FunSpec({
@@ -33,20 +34,20 @@ class PrologHelpSpec :
         test("help/documents-builtins") {
             val help = Var.of("Help")
             val solution = solver().solveOnce(Struct.of("help", Signature("functor", 3).toIndicator(), help))
-            assertTrue(solution.isYes)
+            solution.isYes.shouldBeTrue()
         }
 
         test("help/documents-notable-flags") {
             val help = Var.of("Help")
             val solution = solver().solveOnce(Struct.of("help", Struct.of("flag", Atom.of("unknown")), help))
-            assertTrue(solution.isYes)
+            solution.isYes.shouldBeTrue()
         }
 
         test("help/enumerates-flags") {
             val name = Var.of("Name")
             val help = Var.of("Help")
             val solutions = solver().solve(Struct.of("help", Struct.of("flag", name), help))
-            assertTrue(solutions.any { it.isYes })
+            (solutions.any { it.isYes }).shouldBeTrue()
         }
 
         test("help/every-stdlib-component-has-semantic-help") {
@@ -57,7 +58,9 @@ class PrologHelpSpec :
                     .mapNotNull(NotableFlag::fromName)
                     .filter { it.help.isBlank() || "flag(${it.name})" !in it.help || !hasExample(it.help) }
                     .map { it.name }
-            assertTrue(undocumentedFlags.isEmpty(), "Missing flag help for: ${undocumentedFlags.joinToString()}")
+            withClue(
+                "Missing flag help for: ${undocumentedFlags.joinToString()}",
+            ) { undocumentedFlags.isEmpty().shouldBeTrue() }
         }
 
         test("help/documentation-examples-hold") {
@@ -75,20 +78,20 @@ class PrologHelpSpec :
 
         test("help/operator-help-combines-semantics-and-syntax") {
             val addition = helpFor(Signature("+", 2).toIndicator())
-            assertTrue("arithmetic sum" in addition)
-            assertTrue("Operator `+`" in addition)
-            assertTrue("`yfx`" in addition)
-            assertTrue("priority `500`" in addition)
+            ("arithmetic sum" in addition).shouldBeTrue()
+            ("Operator `+`" in addition).shouldBeTrue()
+            ("`yfx`" in addition).shouldBeTrue()
+            ("priority `500`" in addition).shouldBeTrue()
 
             val arithmeticEquality = helpFor(Signature("=:=", 2).toIndicator())
-            assertTrue("numerically equal" in arithmeticEquality)
-            assertTrue("`xfx`" in arithmeticEquality)
-            assertTrue("priority `700`" in arithmeticEquality)
+            ("numerically equal" in arithmeticEquality).shouldBeTrue()
+            ("`xfx`" in arithmeticEquality).shouldBeTrue()
+            ("priority `700`" in arithmeticEquality).shouldBeTrue()
 
             val disjunction = helpFor(Signature(";", 2).toIndicator())
-            assertTrue("disjunction" in disjunction)
-            assertTrue("`xfy`" in disjunction)
-            assertTrue("priority `1100`" in disjunction)
+            ("disjunction" in disjunction).shouldBeTrue()
+            ("`xfy`" in disjunction).shouldBeTrue()
+            ("priority `1100`" in disjunction).shouldBeTrue()
         }
 
         withTests(
@@ -100,21 +103,21 @@ class PrologHelpSpec :
             ),
         ) { case ->
             val help = helpFor(case.signature.toIndicator())
-            assertTrue("\n\nPrimitive." !in help)
-            assertTrue("\n\nFunction." !in help)
-            assertTrue("\n\nRule." !in help)
+            ("\n\nPrimitive." !in help).shouldBeTrue()
+            ("\n\nFunction." !in help).shouldBeTrue()
+            ("\n\nRule." !in help).shouldBeTrue()
         }
 
         test("help/internal-help-is-never-listed") {
             val subject = Var.of("Subject")
             val subjects = solver().solve(Struct.of("help", subject, Var.of("Help"))).filter { it.isYes }
             val internal = subjects.map { it.substitution[subject].toString() }.filter { "__help__" in it }.toList()
-            assertTrue(internal.isEmpty(), "Internal help leaked as: ${internal.joinToString()}")
+            withClue("Internal help leaked as: ${internal.joinToString()}") { internal.isEmpty().shouldBeTrue() }
         }
 
         test("help/qualified-signatures-and-libraries-are-documented") {
-            assertTrue("arity" in helpFor(Signature("prolog.lang.functor", 3).toIndicator()))
-            assertTrue("Standard Prolog" in helpFor(Struct.of("library", Atom.of("prolog.lang"))))
+            ("arity" in helpFor(Signature("prolog.lang.functor", 3).toIndicator())).shouldBeTrue()
+            ("Standard Prolog" in helpFor(Struct.of("library", Atom.of("prolog.lang")))).shouldBeTrue()
         }
 
         test("help/third-party-rule-help-survives-aliasing-and-aggregation") {
@@ -123,8 +126,8 @@ class PrologHelpSpec :
                     override val help: String = "Third-party rule semantics."
                 }
             val runtime = Runtime.of(libraryOf("third.party", rule))
-            assertEquals("Third-party rule semantics.", runtime.documentation[rule.signature])
-            assertTrue("Third-party rule semantics." in helpFor(rule.signature.toIndicator(), runtime))
+            runtime.documentation[rule.signature] shouldBe "Third-party rule semantics."
+            ("Third-party rule semantics." in helpFor(rule.signature.toIndicator(), runtime)).shouldBeTrue()
         }
 
         test("help/shadowed-primitives-do-not-contribute-documentation") {
@@ -140,8 +143,8 @@ class PrologHelpSpec :
                     Library.of("first", primitives = mapOf(signature to primitive("Shadowed."))),
                     Library.of("second", primitives = mapOf(signature to primitive("Effective."))),
                 )
-            assertEquals("Effective.", runtime.documentation[signature])
-            assertEquals("Shadowed.", runtime.documentation[signature.copy(name = "first.clash")])
+            runtime.documentation[signature] shouldBe "Effective."
+            runtime.documentation[signature.copy(name = "first.clash")] shouldBe "Shadowed."
         }
     })
 
@@ -151,8 +154,8 @@ private fun helpFor(
 ): String {
     val solver = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = otherLibraries)
     val help = Var.of("Help")
-    val solution = assertIs<Solution.Yes>(solver.solveOnce(Struct.of("help", subject, help)))
-    return assertIs<Atom>(solution.substitution[help]).value
+    val solution = solver.solveOnce(Struct.of("help", subject, help)).shouldBeInstanceOf<Solution.Yes>()
+    return solution.substitution[help].shouldBeInstanceOf<Atom>().value
 }
 
 private class HelpSubjectCase(

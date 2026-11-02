@@ -1,6 +1,11 @@
 package it.unibo.tuprolog.theory.parsing
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
@@ -13,11 +18,6 @@ import it.unibo.tuprolog.theory.Theory
 import java.io.ByteArrayInputStream
 import java.io.Reader
 import java.io.StringReader
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 class ClausesReaderContractSpec :
     FunSpec({
@@ -66,35 +66,35 @@ class ClausesReaderContractSpec :
             val custom = OperatorSet(customOperator)
             val reader = ClausesReader.withNoOperator()
 
-            assertEquals(OperatorSet.EMPTY, reader.defaultOperatorSet)
-            assertEquals(OperatorSet.STANDARD, ClausesReader.withStandardOperators().defaultOperatorSet)
-            assertEquals(OperatorSet.DEFAULT, ClausesReader.withDefaultOperators().defaultOperatorSet)
-            assertEquals(custom, ClausesReader.withOperators(custom).defaultOperatorSet)
-            assertEquals(custom, ClausesReader.withOperators(customOperator).defaultOperatorSet)
+            reader.defaultOperatorSet shouldBe OperatorSet.EMPTY
+            ClausesReader.withStandardOperators().defaultOperatorSet shouldBe OperatorSet.STANDARD
+            ClausesReader.withDefaultOperators().defaultOperatorSet shouldBe OperatorSet.DEFAULT
+            ClausesReader.withOperators(custom).defaultOperatorSet shouldBe custom
+            ClausesReader.withOperators(customOperator).defaultOperatorSet shouldBe custom
 
-            assertEquals("a", reader.readClauses(StringReader("a.")).singleHead().functor)
-            assertEquals("a", reader.readClauses(stream("a.")).singleHead().functor)
-            assertEquals("++", reader.readClauses(StringReader("a ++ b."), custom).singleHead().functor)
-            assertEquals("++", reader.readClauses(stream("a ++ b."), custom).singleHead().functor)
-            assertEquals("a", reader.readClausesLazily(StringReader("a.")).singleHead().functor)
-            assertEquals("a", reader.readClausesLazily(stream("a.")).singleHead().functor)
-            assertEquals("++", reader.readClausesLazily(StringReader("a ++ b."), custom).singleHead().functor)
-            assertEquals("++", reader.readClausesLazily(stream("a ++ b."), custom).singleHead().functor)
-            assertEquals(1L, reader.readTheory(StringReader("a.")).size)
-            assertEquals(1L, reader.readTheory(stream("a.")).size)
-            assertEquals("++", reader.readTheory(StringReader("a ++ b."), custom).singleHead().functor)
-            assertEquals("++", reader.readTheory(stream("a ++ b."), custom).singleHead().functor)
+            reader.readClauses(StringReader("a.")).singleHead().functor shouldBe "a"
+            reader.readClauses(stream("a.")).singleHead().functor shouldBe "a"
+            reader.readClauses(StringReader("a ++ b."), custom).singleHead().functor shouldBe "++"
+            reader.readClauses(stream("a ++ b."), custom).singleHead().functor shouldBe "++"
+            reader.readClausesLazily(StringReader("a.")).singleHead().functor shouldBe "a"
+            reader.readClausesLazily(stream("a.")).singleHead().functor shouldBe "a"
+            reader.readClausesLazily(StringReader("a ++ b."), custom).singleHead().functor shouldBe "++"
+            reader.readClausesLazily(stream("a ++ b."), custom).singleHead().functor shouldBe "++"
+            reader.readTheory(StringReader("a.")).size shouldBe 1L
+            reader.readTheory(stream("a.")).size shouldBe 1L
+            reader.readTheory(StringReader("a ++ b."), custom).singleHead().functor shouldBe "++"
+            reader.readTheory(stream("a ++ b."), custom).singleHead().functor shouldBe "++"
         }
 
         test("returned-sequence-does-not-read-until-it-is-consumed") {
             val source = GeneratedClauseReader(10)
             val clauses = ClausesReader.withNoOperator().readClausesLazily(source)
 
-            assertEquals(0, source.generatedClauses)
+            source.generatedClauses shouldBe 0
             val iterator = clauses.iterator()
-            assertEquals(0, source.generatedClauses)
-            assertEquals("c", (iterator.next() as Fact).head.functor)
-            assertTrue(source.generatedClauses in 1 until 10)
+            source.generatedClauses shouldBe 0
+            (iterator.next() as Fact).head.functor shouldBe "c"
+            (source.generatedClauses in 1 until 10).shouldBeTrue()
         }
 
         test("source-failures-are-translated-without-losing-their-cause") {
@@ -110,14 +110,14 @@ class ClausesReaderContractSpec :
                     override fun close() = Unit
                 }
 
-            val error = assertFailsWith<ParseException> { ClausesReader.withNoOperator().readClauses(reader) }
-            val sourceError = assertIs<SourceReadException>(error.cause)
-            assertSame(failure, sourceError.cause)
-            assertEquals(0, error.clauseIndex)
-            assertEquals(sourceError.span.start.line + 1, error.line)
-            assertEquals(sourceError.span.start.column + 1, error.column)
-            assertEquals(sourceError.offendingText, error.offendingSymbol)
-            assertEquals(sourceError.message, error.message)
+            val error = shouldThrow<ParseException> { ClausesReader.withNoOperator().readClauses(reader) }
+            val sourceError = error.cause.shouldBeInstanceOf<SourceReadException>()
+            sourceError.cause shouldBeSameInstanceAs failure
+            error.clauseIndex shouldBe 0
+            error.line shouldBe (sourceError.span.start.line + 1)
+            error.column shouldBe (sourceError.span.start.column + 1)
+            error.offendingSymbol shouldBe sourceError.offendingText
+            error.message shouldBe sourceError.message
         }
 
         test("parses-a-very-long-lazily-generated-input") {
@@ -128,12 +128,12 @@ class ClausesReaderContractSpec :
             var parsed = 0
             for (clause in clauses) {
                 val head = (clause as Fact).head
-                assertEquals("c", head.functor)
-                assertEquals(parsed.toLong(), head[0].castToInteger().value.toLong())
+                head.functor shouldBe "c"
+                head[0].castToInteger().value.toLong() shouldBe parsed.toLong()
                 parsed++
             }
 
-            assertEquals(clauseCount, parsed)
-            assertEquals(clauseCount, source.generatedClauses)
+            parsed shouldBe clauseCount
+            source.generatedClauses shouldBe clauseCount
         }
     })

@@ -13,7 +13,6 @@ kotlin {
                 api(project(":solve"))
                 api(project(":dsl-theory"))
                 api(project(":parser-core"))
-                api(kotlin("test-common"))
                 api(libs.kotest.framework.engine)
                 api(libs.kotest.assertions.core)
             }
@@ -21,13 +20,8 @@ kotlin {
 
         getByName("jvmMain") {
             dependencies {
+                // JUnit Jupiter, for the Java contract (JavaConstructionContract): Java tests can't be Kotest specs
                 implementation(kotlin("test-junit5"))
-            }
-        }
-
-        getByName("jsMain") {
-            dependencies {
-                implementation(kotlin("test-js"))
             }
         }
     }

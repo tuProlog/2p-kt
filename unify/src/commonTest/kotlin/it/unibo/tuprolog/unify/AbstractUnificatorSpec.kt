@@ -2,6 +2,9 @@ package it.unibo.tuprolog.unify
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -15,9 +18,6 @@ import it.unibo.tuprolog.unify.testutils.UnificatorUtils.assertUnifiedTermCorrec
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.memberClause
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.negativeMemberPatterns
 import it.unibo.tuprolog.unify.testutils.UnificatorUtils.positiveMemberPatterns
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import it.unibo.tuprolog.core.List.Companion as LogicList
 
 /**
@@ -41,7 +41,7 @@ class AbstractUnificatorSpec :
         test("context-property-works-as-expected") {
             val mySubstitution = Substitution.of("A", Atom.of("a"))
 
-            assertEquals(mySubstitution, myStrategyConstructor(mySubstitution).context)
+            myStrategyConstructor(mySubstitution).context shouldBe mySubstitution
         }
 
         val examples = UnificatorUtils.successfulUnifications + UnificatorUtils.failedUnifications
@@ -115,11 +115,11 @@ class AbstractUnificatorSpec :
         }
 
         withTests(nameFn = { "positive-corner-cases/${it.id}" }, positiveMemberPatterns) { case ->
-            assertTrue { myStrategyConstructor(Substitution.empty()).match(case.pattern, memberClause) }
+            myStrategyConstructor(Substitution.empty()).match(case.pattern, memberClause).shouldBeTrue()
         }
 
         withTests(nameFn = { "negative-corner-cases/${it.id}" }, negativeMemberPatterns) { case ->
-            assertFalse { myStrategyConstructor(Substitution.empty()).match(case.pattern, memberClause) }
+            myStrategyConstructor(Substitution.empty()).match(case.pattern, memberClause).shouldBeFalse()
         }
 
         test("unification-works-for-big-lists") {
@@ -130,16 +130,16 @@ class AbstractUnificatorSpec :
             val atomsAndVars = LogicList.of((0..n).map { if (it % 100 == 0) Var.anonymous() else Atom.of("a$it") })
 
             with(myStrategyConstructor(Substitution.empty())) {
-                assertFalse { match(ints, atoms, true) }
-                assertFalse { match(ints, atoms, false) }
-                assertTrue { match(ints, ints, true) }
-                assertTrue { match(ints, ints, false) }
-                assertTrue { match(atoms, atoms, true) }
-                assertTrue { match(atoms, atoms, false) }
-                assertTrue { match(ints, intsAndVars, true) }
-                assertTrue { match(ints, intsAndVars, false) }
-                assertTrue { match(atoms, atomsAndVars, true) }
-                assertTrue { match(atoms, atomsAndVars, false) }
+                match(ints, atoms, true).shouldBeFalse()
+                match(ints, atoms, false).shouldBeFalse()
+                match(ints, ints, true).shouldBeTrue()
+                match(ints, ints, false).shouldBeTrue()
+                match(atoms, atoms, true).shouldBeTrue()
+                match(atoms, atoms, false).shouldBeTrue()
+                match(ints, intsAndVars, true).shouldBeTrue()
+                match(ints, intsAndVars, false).shouldBeTrue()
+                match(atoms, atomsAndVars, true).shouldBeTrue()
+                match(atoms, atomsAndVars, false).shouldBeTrue()
             }
         }
     })

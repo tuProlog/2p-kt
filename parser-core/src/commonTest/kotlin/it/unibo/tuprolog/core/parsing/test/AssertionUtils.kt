@@ -1,11 +1,12 @@
 package it.unibo.tuprolog.core.parsing.test
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.parsing.TermParser
-import kotlin.test.assertEquals
 
 /** Asserts terms are equal taking into account differences in complete variables names */
 fun assertTermsAreEqual(
@@ -21,34 +22,29 @@ fun assertTermsAreEqual(
         | Problem: $mistake
         """.trimMargin()
 
-    assertEquals(expected.isGround, actual.isGround)
+    actual.isGround shouldBe expected.isGround
     if (expected.isGround) {
-        assertEquals(
-            expected,
-            actual,
-            message("one is ground the other is not"),
-        )
+        withClue(message("one is ground the other is not")) { actual shouldBe expected }
     } else {
         when {
             expected is Var && actual is Var -> {
-                assertEquals(expected.name, actual.name, message("different var name"))
+                withClue(message("different var name")) { actual.name shouldBe expected.name }
             }
             expected is Constant && actual is Constant -> {
-                assertEquals(expected, actual, message("different constant name"))
+                withClue(message("different constant name")) { actual shouldBe expected }
             }
             expected is Struct && actual is Struct -> {
-                assertEquals(expected.functor, actual.functor, message("different functor"))
-                assertEquals(expected.arity, actual.arity, message("different arity"))
+                withClue(message("different functor")) { actual.functor shouldBe expected.functor }
+                withClue(message("different arity")) { actual.arity shouldBe expected.arity }
                 for (i in 0 until expected.arity) {
                     assertTermsAreEqual(expected[i], actual[i])
                 }
             }
         }
-        assertEquals(
-            expected.variables.toSet().size,
-            actual.variables.toSet().size,
-            message("different amount of variables"),
-        )
+        withClue(message("different amount of variables")) {
+            actual.variables.toSet().size shouldBe
+                expected.variables.toSet().size
+        }
     }
 }
 

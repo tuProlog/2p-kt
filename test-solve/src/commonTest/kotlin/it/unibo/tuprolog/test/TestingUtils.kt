@@ -1,11 +1,12 @@
 package it.unibo.tuprolog.test
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import org.gciatto.kt.math.BigDecimal
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 private val DEFAULT_THRESHOLD = BigDecimal.of("1E-10")
 
@@ -16,12 +17,10 @@ fun assertAlmostEquals(
 ) {
     val diff = (expected - actual).absoluteValue
     val tolerance = threshold.absoluteValue
-    assertTrue(
-        diff <= tolerance,
-        message =
-            "expected:<$expected> but was:<$actual>, while " +
-                "the difference ($diff) is lower than the tolerance ($tolerance)",
-    )
+    withClue(
+        "expected:<$expected> but was:<$actual>, while " +
+            "the difference ($diff) is lower than the tolerance ($tolerance)",
+    ) { (diff <= tolerance).shouldBeTrue() }
 }
 
 fun assertAlmostEquals(
@@ -41,4 +40,4 @@ fun assertAlmostEquals(
     expected: Integer,
     actual: Integer,
     threshold: BigDecimal = DEFAULT_THRESHOLD,
-) = assertEquals(expected, actual)
+) = actual shouldBe expected

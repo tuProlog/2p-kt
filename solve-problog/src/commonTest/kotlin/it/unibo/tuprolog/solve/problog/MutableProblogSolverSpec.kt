@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.problog
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -17,8 +19,6 @@ import it.unibo.tuprolog.solve.probability
 import it.unibo.tuprolog.solve.setProbabilistic
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 private val operators = ProblogSolverFactory.defaultBuiltins.operators
 
@@ -44,28 +44,28 @@ class MutableProblogSolverSpec :
             val solver = solver()
             solver.assertZ(p(1))
             solver.assertZ(p(2))
-            assertEquals(listOf(Integer.of(1), Integer.of(2)), solver.ps())
+            solver.ps() shouldBe listOf(Integer.of(1), Integer.of(2))
         }
 
         test("assert-a/prepends-facts") {
             val solver = solver()
             solver.assertA(p(1))
             solver.assertA(p(2))
-            assertEquals(listOf(Integer.of(2), Integer.of(1)), solver.ps())
+            solver.ps() shouldBe listOf(Integer.of(2), Integer.of(1))
         }
 
         test("assert-z/keeps-every-head-of-an-annotated-disjunction") {
             val solver = solver()
             solver.assertZ(theory("0.5::a ; 0.5::b.").first())
-            assertEquals(0.5, solver.probabilityOf("a"))
-            assertEquals(0.5, solver.probabilityOf("b"))
+            solver.probabilityOf("a") shouldBe 0.5
+            solver.probabilityOf("b") shouldBe 0.5
         }
 
         test("assert-a/keeps-every-head-of-an-annotated-disjunction") {
             val solver = solver()
             solver.assertA(theory("0.3::a ; 0.7::b.").first())
-            assertEquals(0.3, solver.probabilityOf("a"))
-            assertEquals(0.7, solver.probabilityOf("b"))
+            solver.probabilityOf("a") shouldBe 0.3
+            solver.probabilityOf("b") shouldBe 0.7
         }
 
         test("retract/removes-a-fact") {
@@ -73,7 +73,7 @@ class MutableProblogSolverSpec :
             solver.assertZ(p(1))
             solver.assertZ(p(2))
             solver.retract(p(1))
-            assertEquals(listOf(Integer.of(2)), solver.ps())
+            solver.ps() shouldBe listOf(Integer.of(2))
         }
 
         test("retract-all/removes-every-matching-fact") {
@@ -81,7 +81,7 @@ class MutableProblogSolverSpec :
             solver.assertZ(p(1))
             solver.assertZ(p(2))
             solver.retractAll(Struct.of("p", Var.anonymous()))
-            assertEquals(emptyList(), solver.ps())
+            solver.ps() shouldBe emptyList()
         }
 
         test("knowledge-bases/are-mapped-when-loaded-or-appended") {
@@ -90,38 +90,38 @@ class MutableProblogSolverSpec :
             solver.appendStaticKb(theory("0.4::b."))
             solver.loadDynamicKb(theory("0.2::c."))
             solver.appendDynamicKb(theory("0.8::d."))
-            assertEquals(listOf(0.6, 0.4, 0.2, 0.8), listOf("a", "b", "c", "d").map { solver.probabilityOf(it) })
+            (listOf("a", "b", "c", "d").map { solver.probabilityOf(it) }) shouldBe listOf(0.6, 0.4, 0.2, 0.8)
             solver.resetStaticKb()
             solver.resetDynamicKb()
-            assertTrue(solver.staticKb.isEmpty && solver.dynamicKb.isEmpty)
+            (solver.staticKb.isEmpty && solver.dynamicKb.isEmpty).shouldBeTrue()
         }
 
         test("copy/maps-the-theories-it-is-given") {
-            assertEquals(0.6, solver().copy(staticKb = theory("0.6::h.")).probabilityOf("h"))
-            assertEquals(0.6, solver().copy(dynamicKb = theory("0.6::h.")).probabilityOf("h"))
+            solver().copy(staticKb = theory("0.6::h.")).probabilityOf("h") shouldBe 0.6
+            solver().copy(dynamicKb = theory("0.6::h.")).probabilityOf("h") shouldBe 0.6
         }
 
         test("clone/keeps-the-knowledge-base") {
             val solver = solver()
             solver.loadStaticKb(theory("0.6::h."))
-            assertEquals(0.6, solver.clone().probabilityOf("h"))
+            solver.clone().probabilityOf("h") shouldBe 0.6
         }
 
         test("settings/reach-the-underlying-solver") {
             val solver = solver()
             val custom = Library.of("custom")
             solver.loadLibrary(custom)
-            assertTrue("custom" in solver.libraries)
+            ("custom" in solver.libraries).shouldBeTrue()
             solver.unloadLibrary(custom)
-            assertTrue("custom" !in solver.libraries)
+            ("custom" !in solver.libraries).shouldBeTrue()
             solver.setRuntime(solver.libraries + custom)
-            assertTrue("custom" in solver.libraries)
+            ("custom" in solver.libraries).shouldBeTrue()
             solver.setRuntime(Runtime.empty())
             solver.setFlag(Unknown.name, Unknown.FAIL)
-            assertEquals(Unknown.FAIL, solver.flags[Unknown])
+            solver.flags[Unknown] shouldBe Unknown.FAIL
             solver.setFlag(Unknown.name to Unknown.WARNING)
-            assertEquals(Unknown.WARNING, solver.flags[Unknown])
+            solver.flags[Unknown] shouldBe Unknown.WARNING
             solver.setFlag(Unknown)
-            assertEquals(Unknown.defaultValue, solver.flags[Unknown])
+            solver.flags[Unknown] shouldBe Unknown.defaultValue
         }
     })

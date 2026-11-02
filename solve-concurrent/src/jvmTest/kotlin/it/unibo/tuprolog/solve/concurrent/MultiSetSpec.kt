@@ -3,6 +3,7 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldNotBe
 import it.unibo.tuprolog.dsl.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
@@ -11,7 +12,6 @@ import it.unibo.tuprolog.solve.halt
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.test.assertNotEquals
 
 class MultiSetSpec :
     FunSpec({
@@ -69,9 +69,9 @@ class MultiSetSpec :
                     val multiSet1 = MultiSet(solutions)
                     val multiSet2 = MultiSet(solutions2)
                     val multiSet3 = MultiSet(solutions3)
-                    assertNotEquals(multiSet1, multiSet2)
-                    assertNotEquals(multiSet1, multiSet3)
-                    assertNotEquals(multiSet2, multiSet3)
+                    multiSet2 shouldNotBe multiSet1
+                    multiSet3 shouldNotBe multiSet1
+                    multiSet3 shouldNotBe multiSet2
                 }
             }
         }

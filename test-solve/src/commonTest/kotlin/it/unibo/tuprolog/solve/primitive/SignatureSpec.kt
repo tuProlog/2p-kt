@@ -1,7 +1,13 @@
 package it.unibo.tuprolog.solve.primitive
 
+import io.kotest.assertions.fail
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
@@ -12,12 +18,6 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.extractSignature
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 /**
  * Test class for [Signature]
@@ -51,20 +51,20 @@ class SignatureSpec :
             )
 
         withTests(nameFn = { "name-correct/${it.id}" }, cases) { case ->
-            assertEquals(signatureName, case.signature.name)
+            case.signature.name shouldBe signatureName
         }
 
         withTests(nameFn = { "arity-correct/${it.id}" }, cases) { case ->
-            assertEquals(signatureArity, case.signature.arity)
+            case.signature.arity shouldBe signatureArity
         }
 
         test("vararg-correct") {
-            assertFalse { normalSignature.vararg }
-            assertTrue { varargSignature.vararg }
+            normalSignature.vararg.shouldBeFalse()
+            varargSignature.vararg.shouldBeTrue()
         }
 
         test("signature-with-negative-arity-is-prohibited") {
-            assertFailsWith<IllegalArgumentException> {
+            shouldThrow<IllegalArgumentException> {
                 Signature(
                     signatureName,
                     -1,
@@ -73,26 +73,26 @@ class SignatureSpec :
         }
 
         withTests(nameFn = { "to-term/${it.id}" }, cases) { case ->
-            assertEquals(case.term, case.signature.toTerm())
+            case.signature.toTerm() shouldBe case.term
         }
 
         test("with-args-works-on-non-vararg-signatures") {
-            assertEquals(normalSignature.withArgs(argList), Struct.of(signatureName, argList))
+            Struct.of(signatureName, argList) shouldBe normalSignature.withArgs(argList)
         }
 
         test("with-args-works-even-on-vararg-signatures") {
-            assertEquals(varargSignature.withArgs(argList), Struct.of(signatureName, argList))
+            Struct.of(signatureName, argList) shouldBe varargSignature.withArgs(argList)
         }
 
         test("with-args-complains-if-not-correct-number-of-arguments-provided") {
-            assertFailsWith<IllegalArgumentException> { normalSignature.withArgs(emptyList()) }
-            assertFailsWith<IllegalArgumentException> { normalSignature.withArgs(argList + aAtom) }
+            shouldThrow<IllegalArgumentException> { normalSignature.withArgs(emptyList()) }
+            shouldThrow<IllegalArgumentException> { normalSignature.withArgs(argList + aAtom) }
         }
 
         test("with-args-complains-if-not-enough-arguments-for-vararg-signature-provided") {
-            assertFailsWith<IllegalArgumentException> { varargSignature.withArgs(emptyList()) }
+            shouldThrow<IllegalArgumentException> { varargSignature.withArgs(emptyList()) }
 
-            assertEquals(varargSignature.withArgs(argList + aAtom), Struct.of(signatureName, argList + aAtom))
+            Struct.of(signatureName, argList + aAtom) shouldBe varargSignature.withArgs(argList + aAtom)
         }
 
         withTests(nameFn = { "from-term-with-struct/${it.id}" }, cases) { case ->
@@ -100,88 +100,86 @@ class SignatureSpec :
             val reconstructed =
                 Signature.fromSignatureTerm(signature.toTerm())
                     ?: fail("Cannot reconstruct signature $signature from toTerm(): ${signature.toTerm()}")
-            assertEquals(signature, reconstructed)
-            assertEquals(signature, Signature.fromSignatureTerm(case.term) ?: fail())
+            reconstructed shouldBe signature
+            (Signature.fromSignatureTerm(case.term) ?: fail("not a signature term")) shouldBe signature
         }
 
         test("from-term-with-struct-returns-null-if-something-not-matching-correct-pattern") {
-            assertNull(Signature.fromSignatureTerm(Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity))))
-            assertNull(
-                Signature.fromSignatureTerm(
+            Signature
+                .fromSignatureTerm(
+                    Struct.of("\\", Atom.of(signatureName), Integer.of(signatureArity)),
+                ).shouldBeNull()
+            Signature
+                .fromSignatureTerm(
                     Struct.of("/", Atom.of(signatureName), Integer.of(signatureArity), Truth.TRUE),
-                ),
-            )
-            assertNull(Signature.fromSignatureTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))))
-            assertNull(Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Var.anonymous())))
-            assertNull(
-                Signature.fromSignatureTerm(
+                ).shouldBeNull()
+            Signature.fromSignatureTerm(Struct.of("/", Var.anonymous(), Integer.of(signatureArity))).shouldBeNull()
+            Signature.fromSignatureTerm(Struct.of("/", Atom.of(signatureName), Var.anonymous())).shouldBeNull()
+            Signature
+                .fromSignatureTerm(
                     Struct.of(
                         "/",
                         Atom.of(signatureName),
                         Struct.of("a", Integer.of(signatureArity), Atom.of("vararg")),
                     ),
-                ),
-            )
-            assertNull(
-                Signature.fromSignatureTerm(
+                ).shouldBeNull()
+            Signature
+                .fromSignatureTerm(
                     Struct.of(
                         "/",
                         Atom.of(signatureName),
                         Struct.of("+", Integer.of(signatureArity), Atom.of("vararg"), Truth.TRUE),
                     ),
-                ),
-            )
-            assertNull(
-                Signature.fromSignatureTerm(
+                ).shouldBeNull()
+            Signature
+                .fromSignatureTerm(
                     Struct.of("/", Atom.of(signatureName), Struct.of("+", Var.anonymous(), Atom.of("vararg"))),
-                ),
-            )
-            assertNull(
-                Signature.fromSignatureTerm(
+                ).shouldBeNull()
+            Signature
+                .fromSignatureTerm(
                     Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(signatureArity), Var.anonymous())),
-                ),
-            )
-            assertNull(
-                Signature.fromSignatureTerm(
+                ).shouldBeNull()
+            Signature
+                .fromSignatureTerm(
                     Struct.of("/", Atom.of(signatureName), Struct.of("+", Integer.of(-1), Atom.of("vararg"))),
-                ),
-            )
+                ).shouldBeNull()
         }
 
         withTests(nameFn = { "from-term-with-term/${it.id}" }, cases) { case ->
-            assertEquals(case.signature, Signature.fromSignatureTerm(case.signature.toTerm() as Term) ?: fail())
-            assertEquals(case.signature, Signature.fromSignatureTerm(case.term as Term) ?: fail())
+            (Signature.fromSignatureTerm(case.signature.toTerm() as Term) ?: fail("not a signature term")) shouldBe
+                case.signature
+            (Signature.fromSignatureTerm(case.term as Term) ?: fail("not a signature term")) shouldBe case.signature
         }
 
         test("from-term-with-term-returns-null-if-not-a-struct") {
-            assertNull(Signature.fromSignatureTerm(Var.anonymous()))
-            assertNull(Signature.fromSignatureTerm(Numeric.of(2)))
+            Signature.fromSignatureTerm(Var.anonymous()).shouldBeNull()
+            Signature.fromSignatureTerm(Numeric.of(2)).shouldBeNull()
         }
 
         test("from-indicator-returns-correct-instance") {
             val toBeTested = Signature.fromIndicator(Indicator.of(signatureName, signatureArity))
 
-            assertEquals(normalSignature, toBeTested)
+            toBeTested shouldBe normalSignature
         }
 
         test("from-indicator-returns-null-if-not-well-formed") {
-            assertNull(Signature.fromIndicator(Indicator.of(Var.anonymous(), Var.anonymous())))
+            Signature.fromIndicator(Indicator.of(Var.anonymous(), Var.anonymous())).shouldBeNull()
         }
 
         test("to-indicator-works-on-non-vararg-signatures") {
-            assertEquals(Indicator.of(signatureName, signatureArity), normalSignature.toIndicator())
+            normalSignature.toIndicator() shouldBe Indicator.of(signatureName, signatureArity)
         }
 
         test("to-indicator-complains-on-vararg-signatures") {
-            assertFailsWith<NotImplementedError> { varargSignature.toIndicator() }
+            shouldThrow<NotImplementedError> { varargSignature.toIndicator() }
         }
 
         test("extract-signature/atom") {
-            assertEquals(Signature(aAtom.value, aAtom.arity), aAtom.extractSignature())
+            aAtom.extractSignature() shouldBe Signature(aAtom.value, aAtom.arity)
         }
 
         withTests(nameFn = { "extract-signature/${it.id}" }, cases) { case ->
-            assertEquals(Signature(case.term.functor, case.term.arity), case.term.extractSignature())
+            case.term.extractSignature() shouldBe Signature(case.term.functor, case.term.arity)
         }
     })
 

@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.impl.TupleImpl
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 import it.unibo.tuprolog.core.testutils.TupleUtils
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
 
 /**
  * Test class for [Tuple] companion object
@@ -18,12 +18,12 @@ import kotlin.test.assertSame
 class TupleSpec :
     FunSpec({
         test("wrap-if-needed-with-no-args") {
-            assertSame(Truth.TRUE, Tuple.wrapIfNeeded())
+            Tuple.wrapIfNeeded() shouldBeSameInstanceAs Truth.TRUE
         }
 
         test("wrap-if-needed-with-one-argument") {
             val something = Atom.of("hey")
-            assertSame(something, Tuple.wrapIfNeeded(something))
+            Tuple.wrapIfNeeded(something) shouldBeSameInstanceAs something
         }
 
         test("wrap-if-needed-with-two-or-more-arguments-returns-tuple-instance") {
@@ -33,13 +33,13 @@ class TupleSpec :
             val toBeTested = Tuple.wrapIfNeeded(something1, something2)
 
             TermTypeAssertionUtils.assertIsTuple(toBeTested)
-            assertEquals("(hello, world)", toBeTested.toString())
+            toBeTested.toString() shouldBe "(hello, world)"
         }
 
         test("wrap-if-needed-returns-default-if-no-arguments-provided") {
             val myDefault = Atom.of("myDefault")
 
-            assertSame(myDefault, Tuple.wrapIfNeeded { myDefault })
+            (Tuple.wrapIfNeeded { myDefault }) shouldBeSameInstanceAs myDefault
         }
 
         withTests(nameFn = { "of-left-right/${it.id}" }, TupleUtils.tupleCases) { case ->
@@ -64,8 +64,8 @@ class TupleSpec :
         }
 
         test("tuple-of-list-should-complain-with-lower-than-two-elements") {
-            assertFailsWith<IllegalArgumentException> { Tuple.of(listOf()) }
-            assertFailsWith<IllegalArgumentException> { Tuple.of(listOf(Atom.of("a"))) }
+            shouldThrow<IllegalArgumentException> { Tuple.of(listOf()) }
+            shouldThrow<IllegalArgumentException> { Tuple.of(listOf(Atom.of("a"))) }
         }
 
         withTests(nameFn = { "of-iterable/${it.id}" }, TupleUtils.tupleCases) { case ->
@@ -76,24 +76,24 @@ class TupleSpec :
             val nums = (0..100_000).toList()
             val tuple = Tuple.of(nums.map { Integer.of(it) })
 
-            assertEquals(nums.joinToString(", ", "(", ")"), tuple.toString())
+            tuple.toString() shouldBe nums.joinToString(", ", "(", ")")
 
             val otherTuple = tuple.freshCopy()
 
-            assertEquals(tuple.hashCode(), otherTuple.hashCode())
-            assertEquals(tuple, otherTuple)
+            otherTuple.hashCode() shouldBe tuple.hashCode()
+            otherTuple shouldBe tuple
         }
 
         test("wrap-sequence-if-needed/several-terms-are-a-tuple") {
             val (a, b) = listOf(Atom.of("a"), Atom.of("b"))
-            assertEquals(Tuple.of(a, b), Tuple.wrapIfNeeded(sequenceOf(a, b)))
+            Tuple.wrapIfNeeded(sequenceOf(a, b)) shouldBe Tuple.of(a, b)
         }
 
         test("wrap-sequence-if-needed/one-term-stays-as-is") {
-            assertEquals(Atom.of("a"), Tuple.wrapIfNeeded(sequenceOf(Atom.of("a"))))
+            Tuple.wrapIfNeeded(sequenceOf(Atom.of("a"))) shouldBe Atom.of("a")
         }
 
         test("wrap-sequence-if-needed/no-terms-is-true") {
-            assertEquals(Truth.TRUE, Tuple.wrapIfNeeded(emptySequence()))
+            Tuple.wrapIfNeeded(emptySequence()) shouldBe Truth.TRUE
         }
     })

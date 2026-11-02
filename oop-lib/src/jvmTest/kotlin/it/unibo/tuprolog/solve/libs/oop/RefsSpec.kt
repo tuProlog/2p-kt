@@ -2,6 +2,10 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -10,9 +14,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopRuntimeException
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class RefsSpec :
     FunSpec({
@@ -28,24 +29,24 @@ class RefsSpec :
             for (case in cases) {
                 try {
                     val result = ref.invoke("call", case2Term(case))
-                    assertFalse { case.isFailed }
-                    assertTrue { result is Result.Value }
-                    assertEquals(case.string, result.asObjectRef()?.`object`)
-                    assertEquals(Atom.of(case.string), result.toTerm())
+                    case.isFailed.shouldBeFalse()
+                    result.shouldBeInstanceOf<Result.Value>()
+                    result.asObjectRef().`object` shouldBe case.string
+                    result.toTerm() shouldBe Atom.of(case.string)
                 } catch (e: OopRuntimeException) {
-                    assertTrue { case.term.let { it is Var || it is NullRef } }
+                    (case.term.let { it is Var || it is NullRef }).shouldBeTrue()
                 } catch (e: OopException) {
-                    assertTrue { case.isFailed }
-                    assertEquals(case.exception!!::class, e::class)
+                    case.isFailed.shouldBeTrue()
+                    e::class shouldBe case.exception!!::class
                 }
             }
             var result = ref.invoke("size")
             val expectedSize = cases.size - cases.count { it.isFailed }
-            assertEquals(Integer.of(expectedSize), result.toTerm())
+            result.toTerm() shouldBe Integer.of(expectedSize)
             result = ref.invoke("toList")
             val list = result.asObjectRef()?.`object` as List<*>
-            assertEquals(cases.filterNot { it.isFailed }.map { it.converted!! }, list)
-            assertEquals(cases.filterNot { it.isFailed }.map { it.converted!! to it.type }, obj.recordings)
+            list shouldBe (cases.filterNot { it.isFailed }.map { it.converted!! })
+            obj.recordings shouldBe (cases.filterNot { it.isFailed }.map { it.converted!! to it.type })
         }
 
         @Suppress("SwallowedException")
@@ -56,16 +57,16 @@ class RefsSpec :
             val ref = TypeRef.of(ConstructorOverloadDetector::class)
             try {
                 val result = ref.create(case2Term(case))
-                assertFalse { case.isFailed }
-                assertTrue { result is Result.Value }
-                assertTrue { result.asObjectRef()?.`object` is ConstructorOverloadDetector }
-                val constructorOverloadDetector = result.asObjectRef()?.`object` as ConstructorOverloadDetector
-                assertEquals(case.converted to case.type, constructorOverloadDetector.args)
+                case.isFailed.shouldBeFalse()
+                result.shouldBeInstanceOf<Result.Value>()
+                result.asObjectRef().`object`.shouldBeInstanceOf<ConstructorOverloadDetector>()
+                val constructorOverloadDetector = result.asObjectRef().`object` as ConstructorOverloadDetector
+                constructorOverloadDetector.args shouldBe (case.converted to case.type)
             } catch (e: OopRuntimeException) {
-                assertTrue { case.term.let { it is Var || it is NullRef } }
+                (case.term.let { it is Var || it is NullRef }).shouldBeTrue()
             } catch (e: OopException) {
-                assertTrue { case.isFailed }
-                assertEquals(case.exception!!::class, e::class)
+                case.isFailed.shouldBeTrue()
+                e::class shouldBe case.exception!!::class
             }
         }
 

@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.solve.function.testutils
 
+import io.kotest.assertions.withClue
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.Term
@@ -10,8 +13,6 @@ import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.function.Compute
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Utils singleton to help testing [Compute]
@@ -39,16 +40,20 @@ internal object ComputeUtils {
         expectedMaxDuration: TimeDuration,
     ) {
         val toleranceInMillis = 10L // 10 ms
-        assertEquals(expectedSignature, signature)
-        assertEquals(expectedArguments, arguments)
-        assertEquals(expectedContext, context)
-        assertTrue(
+        signature shouldBe expectedSignature
+        arguments shouldBe expectedArguments
+        context shouldBe expectedContext
+        withClue(
             "Actual issuing instant `$requestIssuingInstant` diverges more than `$toleranceInMillis` from " +
                 "expected one `$expectedRequestIssuingInstant`",
         ) {
-            requestIssuingInstant - expectedRequestIssuingInstant < toleranceInMillis
+            (
+                requestIssuingInstant -
+                    expectedRequestIssuingInstant <
+                    toleranceInMillis
+            ).shouldBeTrue()
         }
-        assertEquals(expectedMaxDuration, executionMaxDuration)
+        executionMaxDuration shouldBe expectedMaxDuration
     }
 
     // Response parameters

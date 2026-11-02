@@ -2,11 +2,11 @@ package it.unibo.tuprolog.solve.channel
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.solve.channel.OutputStore.Companion.STDERR
 import it.unibo.tuprolog.solve.channel.OutputStore.Companion.STDOUT
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 private class Fixture {
     val out = OutputChannel.of<String> {}
@@ -49,33 +49,33 @@ class ChannelStoreSpec :
     FunSpec({
         test("current/defaults-to-stdout") {
             with(Fixture()) {
-                assertSame(out, store.current)
-                assertEquals(listOf(STDOUT), store.currentAliases.toList())
+                store.current shouldBeSameInstanceAs out
+                store.currentAliases.toList() shouldBe listOf(STDOUT)
             }
         }
 
         test("current/can-be-set-by-alias-or-channel") {
             with(Fixture()) {
-                assertSame(err, store.setCurrent(STDERR).current)
-                assertSame(err, store.setCurrent(err).current)
-                assertSame(out, store.setCurrent("no-such-alias").current)
+                store.setCurrent(STDERR).current shouldBeSameInstanceAs err
+                store.setCurrent(err).current shouldBeSameInstanceAs err
+                store.setCurrent("no-such-alias").current shouldBeSameInstanceAs out
             }
         }
 
         withTests(nameFn = { "plus/${it.id}" }, plusCases) { case ->
             with(Fixture()) {
                 val extended = case.plus(this)
-                assertSame(log, extended["log"])
-                assertSame(trace, extended["trace"])
-                assertSame(out, extended.stdOut)
-                assertEquals(listOf("log"), extended.aliasesOf(log).toList())
+                extended["log"] shouldBeSameInstanceAs log
+                extended["trace"] shouldBeSameInstanceAs trace
+                extended.stdOut shouldBeSameInstanceAs out
+                extended.aliasesOf(log).toList() shouldBe listOf("log")
             }
         }
 
         withTests(nameFn = { "minus/${it.id}" }, minusCases) { case ->
             with(Fixture()) {
                 val extended = store.plus("log" to log, "trace" to trace)
-                assertEquals(store, case.minus(extended))
+                case.minus(extended) shouldBe store
             }
         }
 
@@ -83,15 +83,15 @@ class ChannelStoreSpec :
             with(Fixture()) {
                 val extended = store.plus("log" to log, "log2" to log)
                 val closed = extended.close(log)
-                assertTrue(log.isClosed)
-                assertTrue("log" !in closed && "log2" !in closed)
-                assertSame(out, closed.stdOut)
+                log.isClosed.shouldBeTrue()
+                ("log" !in closed && "log2" !in closed).shouldBeTrue()
+                closed.stdOut shouldBeSameInstanceAs out
             }
         }
 
         test("find-by-term/finds-the-channel-by-its-stream-term") {
             with(Fixture()) {
-                assertEquals(listOf(err), store.findByTerm(err.streamTerm).toList())
+                store.findByTerm(err.streamTerm).toList() shouldBe listOf(err)
             }
         }
     })

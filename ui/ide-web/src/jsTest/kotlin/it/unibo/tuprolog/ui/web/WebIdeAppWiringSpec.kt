@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.ui.web
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.parsing.parseAsTerm
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
-import kotlin.test.assertIs
-import kotlin.test.assertSame
 
 /**
  * Exercises the exact solver [main] wires up, in a real browser via jsBrowserTest.
@@ -35,7 +35,7 @@ class WebIdeAppWiringSpec :
             namespace.PrologSolverFactory = PrologSolverFactory
             globalThis()["2p-solve-prolog"] = module
 
-            assertSame(PrologSolverFactory, Solver.prolog)
+            Solver.prolog shouldBeSameInstanceAs PrologSolverFactory
         }
 
         test("PrologSolverFactory builds a working solver once bundled by webpack") {
@@ -45,6 +45,6 @@ class WebIdeAppWiringSpec :
                     .staticKb("p(1).\np(2).".parseAsTheory())
                     .buildMutable()
             val solution = solver.solveOnce("p(X).".parseAsTerm() as Struct)
-            assertIs<Solution.Yes>(solution)
+            solution.shouldBeInstanceOf<Solution.Yes>()
         }
     })

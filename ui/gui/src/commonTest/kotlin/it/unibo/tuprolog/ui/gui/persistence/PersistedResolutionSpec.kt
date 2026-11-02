@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.ui.gui.persistence
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
-import kotlin.test.assertEquals
 
 class PersistedResolutionSpec :
     FunSpec({
@@ -25,12 +25,12 @@ class PersistedResolutionSpec :
                     terminalStatus = ResolutionStatus.COMPLETED,
                 )
 
-            assertEquals(original, original.toPersisted().toResolutionHistoryEntry())
+            original.toPersisted().toResolutionHistoryEntry() shouldBe original
         }
 
         test("No and Halt resolutions round-trip too") {
             val no = ResolutionHistoryEntry("q.", listOf(SolutionPresentation.No("q.")), ResolutionStatus.COMPLETED)
-            assertEquals(no, no.toPersisted().toResolutionHistoryEntry())
+            no.toPersisted().toResolutionHistoryEntry() shouldBe no
 
             val halt =
                 ResolutionHistoryEntry(
@@ -47,13 +47,13 @@ class PersistedResolutionSpec :
                     terminalStatus = ResolutionStatus.FAILED,
                     error = "boom",
                 )
-            assertEquals(halt, halt.toPersisted().toResolutionHistoryEntry())
+            halt.toPersisted().toResolutionHistoryEntry() shouldBe halt
         }
 
         test("an unrecognized persisted status falls back to COMPLETED instead of crashing") {
             val persisted = ResolutionHistoryEntry("q.", emptyList(), ResolutionStatus.COMPLETED).toPersisted()
             val corrupted = persisted.copy(terminalStatus = "NOT_A_REAL_STATUS")
 
-            assertEquals(ResolutionStatus.COMPLETED, corrupted.toResolutionHistoryEntry().terminalStatus)
+            corrupted.toResolutionHistoryEntry().terminalStatus shouldBe ResolutionStatus.COMPLETED
         }
     })

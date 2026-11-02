@@ -1,7 +1,11 @@
 package it.unibo.tuprolog.theory
 
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
@@ -12,9 +16,6 @@ import it.unibo.tuprolog.theory.impl.MutableIndexedTheory
 import it.unibo.tuprolog.theory.impl.MutableListedTheory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.reflect.KClass
-import kotlin.test.assertEquals
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 private val clauses: List<Clause> = listOf(1, 2, 3).map { Fact.of(Struct.of("f", Integer.of(it))) }
 
@@ -87,16 +88,16 @@ class TheoryFactorySpec :
         withTests(nameFn = { "${it.kind.id}/${it.call.id}" }, cases) { case ->
             val theory = case.kind.factory.(case.call.build)()
             val expectedClass = if (case.call.mutable) case.kind.mutable else case.kind.immutable
-            assertTrue(expectedClass.isInstance(theory), "${theory::class} is not a $expectedClass")
-            assertEquals(case.call.mutable, theory.isMutable)
-            assertEquals(if (case.call.empty) emptyList() else clauses, theory.clauses.toList())
+            withClue("${theory::class} is not a $expectedClass") { expectedClass.isInstance(theory).shouldBeTrue() }
+            theory.isMutable shouldBe case.call.mutable
+            theory.clauses.toList() shouldBe (if (case.call.empty) emptyList() else clauses)
             val expectedUnificator = if (case.call.withUnificator) otherUnificator else case.kind.factory.unificator
-            assertSame(expectedUnificator, theory.unificator)
+            theory.unificator shouldBeSameInstanceAs expectedUnificator
         }
 
         withTests(nameFn = { "${it.id}/copy-changes-only-the-unificator" }, kinds) { kind ->
             val copy = kind.factory.copy(otherUnificator)
-            assertSame(otherUnificator, copy.unificator)
-            assertTrue(kind.immutable.isInstance(copy.theoryOf(clauses)))
+            copy.unificator shouldBeSameInstanceAs otherUnificator
+            kind.immutable.isInstance(copy.theoryOf(clauses)).shouldBeTrue()
         }
     })
