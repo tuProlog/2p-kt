@@ -43,7 +43,7 @@ object SetTheory : UnaryPredicate.NonBacktrackable<ExecutionContext>("set_theory
         throws error(type_error(atom, 42), _).
 
         ?- set_theory('foo(.').
-        throws error(syntax_error, _).
+        throws error(syntax_error(_), _).
         ```
         """.trimIndent()
 
