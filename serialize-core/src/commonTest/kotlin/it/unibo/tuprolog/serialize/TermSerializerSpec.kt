@@ -12,6 +12,11 @@ import it.unibo.tuprolog.core.Truth
 /** A [Truth] other than the three predefined ones, which no serializer knows. */
 private class UnknownTruth : Truth by Truth.TRUE {
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTruth(this)
+
+    // Term declares equals and hashCode, so delegation would make this equal to Truth.TRUE
+    override fun equals(other: Any?): Boolean = this === other
+
+    override fun hashCode(): Int = 0
 }
 
 /** A term of no known kind, which no serializer knows. */
