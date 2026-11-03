@@ -3,6 +3,7 @@ package it.unibo.tuprolog.unify
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.impl.Bindings
+import it.unibo.tuprolog.unify.impl.SubstitutionMaterializer
 import it.unibo.tuprolog.unify.impl.UnificationHooks
 import it.unibo.tuprolog.unify.impl.UnificationRun
 import it.unibo.tuprolog.unify.impl.hasCycles
@@ -60,6 +61,17 @@ abstract class AbstractWorklistUnificator(
 
     private val contextHasCycles: Boolean by lazy { context.hasCycles() }
 
+    /** The [context], made idempotent once and for all, as the bindings every run starts from must be. */
+    private val baseContext: Substitution by lazy {
+        if (context.isFailed || context.size < 2) {
+            context
+        } else {
+            val bindings = Bindings(Substitution.empty())
+            for ((variable, term) in context) bindings[variable] = term
+            SubstitutionMaterializer(bindings).materialize()
+        }
+    }
+
     /**
      * Decides whether [first] and [second] are equal, when both are constants or both are (distinct instances of)
      * variables. Compound terms are never passed: they are compared argument by argument. Defaults to [Term.equals].
@@ -91,7 +103,7 @@ abstract class AbstractWorklistUnificator(
     ): UnificationRun? {
         val occursCheck = request.occurCheckEnabled
         if (base.isFailed || occursCheck && (if (base === context) contextHasCycles else base.hasCycles())) return null
-        return UnificationRun(hooks, Bindings(base), occursCheck, request)
+        return UnificationRun(hooks, Bindings(if (base === context) baseContext else base), occursCheck, request)
     }
 
     override fun mgu(
@@ -108,7 +120,8 @@ abstract class AbstractWorklistUnificator(
     /**
      * Unifies the bindings of [substitution2] with the ones of [context] and [substitution1]: a variable bound by both
      * gets its two values unified, rather than one overriding the other. Only those pairs of values are passed to
-     * [handleComparison]. The result is idempotent.
+     * [handleComparison]. The result is idempotent, provided that [substitution1] is, as any substitution returned by
+     * a [Unificator]: its own bindings are not resolved against each other (e.g. `{X -> f(Y), Y -> a}` is kept as is).
      */
     override fun merge(
         substitution1: Substitution,
@@ -119,7 +132,7 @@ abstract class AbstractWorklistUnificator(
         val run =
             when {
                 substitution1.isFailed || substitution2.isFailed || context.isFailed -> null
-                // substitution1 is a consistent set of bindings: with nothing to reconcile it with, use it as is
+                // with nothing to reconcile it with, substitution1 (assumed idempotent) is the base of the run
                 context.isEmpty() -> newRun(substitution1, request)
                 else -> newRun(context, request)?.takeIf { it.merge(substitution1) }
             }?.takeIf { it.merge(substitution2) } ?: return handleResult(request, Substitution.failed())

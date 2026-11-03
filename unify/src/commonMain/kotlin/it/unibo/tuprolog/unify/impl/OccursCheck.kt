@@ -3,6 +3,7 @@
 package it.unibo.tuprolog.unify.impl
 
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import kotlin.jvm.JvmName
@@ -41,8 +42,8 @@ internal fun Bindings.occurs(
     return false
 }
 
-/** Tells whether any variable of these bindings occurs in what it is bound to. */
-internal fun Map<Var, Term>.hasCycles(): Boolean {
+/** Tells whether any variable of this substitution occurs in what it is bound to. */
+internal fun Substitution.hasCycles(): Boolean {
     val bindings = Bindings(this)
     return entries.any { (variable, term) -> bindings.occurs(variable, term) }
 }

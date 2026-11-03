@@ -107,8 +107,10 @@ class SubstitutionMergeSpec :
             Scope.empty {
                 val first = substitutionOf("X" to structOf("f", varOf("Y")))
                 val second = substitutionOf("Y" to structOf("g", varOf("X")))
+                // Y = g(X) = g(f(Y)), and X = f(Y) = f(g(f(Y))): a rational solution, whose cycles stop at Y
+                val y = structOf("g", structOf("f", varOf("Y")))
                 WorklistUnificators.strict().merge(first, second, false) shouldBe
-                    substitutionOf("X" to structOf("f", structOf("g", varOf("X"))), "Y" to structOf("g", varOf("X")))
+                    substitutionOf("X" to structOf("f", y), "Y" to y)
             }
         }
     })

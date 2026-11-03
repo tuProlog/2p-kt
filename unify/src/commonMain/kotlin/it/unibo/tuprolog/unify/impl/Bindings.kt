@@ -1,15 +1,16 @@
 package it.unibo.tuprolog.unify.impl
 
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
 /**
  * The variable bindings of one unification run: the bindings established during the run, layered over [base] ones
  * (the context, or the first operand of a merge) which are never copied. Bindings are *triangular*: a bound term may
- * contain bound variables, which are only resolved when needed.
+ * contain bound variables, which are only resolved when needed. The [base] is assumed to be idempotent.
  */
 internal class Bindings(
-    private val base: Map<Var, Term>,
+    val base: Substitution,
 ) {
     private var local: MutableMap<Var, Term>? = null
 
@@ -23,10 +24,9 @@ internal class Bindings(
         map[variable] = term
     }
 
-    /** The bound variables: [base]'s first, then the ones bound during the run, each once. */
-    fun forEachVariable(action: (Var) -> Unit) {
-        base.keys.forEach(action)
-        local?.keys?.forEach { if (it !in base) action(it) }
+    /** The bindings established during the run, of variables not bound by [base], in order. */
+    fun forEachNew(action: (Var, Term) -> Unit) {
+        local?.forEach { (variable, term) -> if (variable !in base) action(variable, term) }
     }
 
     /**
