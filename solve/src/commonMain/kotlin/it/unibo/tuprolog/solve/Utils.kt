@@ -34,15 +34,14 @@ inline fun <T> Iterable<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = 
 /** Performs the given [action] on each element, giving a lookahead hint (i.e. if there's another element to process after). */
 inline fun <T> Sequence<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = iterator().forEachWithLookahead(action)
 
-/** Extracts every `op/3` directive out of this collection of [Clause]s, converting each to an [Operator]. */
+/** Extracts every `op/3` directive out of this collection of [Clause]s, converting each to its [Operator]s. */
 fun Iterable<Clause>.getAllOperators(): Sequence<Operator> =
     asSequence()
         .filterIsInstance<Directive>()
         .map { it.body }
         .filterIsInstance<Struct>()
         .filter { it.arity == 3 && it.functor == "op" }
-        .map { Operator.fromTerm(it) }
-        .filterNotNull()
+        .flatMap { Operator.manyFromTerm(it) }
 
 /** Shorthand for this [Library]'s declared [Library.operators], as a [Sequence]. */
 fun Library.getAllOperators(): Sequence<Operator> = operators.asSequence()

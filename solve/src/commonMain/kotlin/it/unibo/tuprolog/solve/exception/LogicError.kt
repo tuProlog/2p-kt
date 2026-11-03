@@ -144,8 +144,8 @@ abstract class LogicError(
                             InstantiationError(actualMessage, cause, contexts, Var.anonymous(), extraData)
                         functor == SystemError.typeFunctor ->
                             SystemError(actualMessage, cause, contexts, extraData)
-                        functor == SyntaxError.typeFunctor ->
-                            SyntaxError(actualMessage, cause, contexts, extraData)
+                        functor == SyntaxError.typeFunctor && arity <= 1 ->
+                            SyntaxError(actualMessage, cause, contexts, extraData, args.singleOrNull())
                         functor == MessageError.typeFunctor ->
                             MessageError(actualMessage, cause, contexts, extraData)
                         functor == RepresentationError.typeFunctor && arity == 1 ->

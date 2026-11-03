@@ -52,6 +52,18 @@ private val solveCases =
             stdout = listOf("halt: ", "is unexpectedly not instantiated"),
         ),
         RunCase("parse-error-goes-to-stderr", listOf("solve", "foo(."), stderr = listOf("# ")),
+        RunCase(
+            "empty-query-is-a-usage-error",
+            listOf("solve", ""),
+            stderr = listOf("query must not be empty"),
+            status = 1,
+        ),
+        RunCase(
+            "blank-query-is-a-usage-error",
+            listOf("solve", "  "),
+            stderr = listOf("query must not be empty"),
+            status = 1,
+        ),
         RunCase("halt-exits-with-zero", listOf("solve", "halt."), stdout = listOf("# goodbye.")),
         RunCase("halt-with-status", listOf("solve", "halt(3)."), stdout = listOf("# goodbye."), status = 3),
         RunCase(

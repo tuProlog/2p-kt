@@ -8,7 +8,7 @@ package it.unibo.tuprolog.solve.libs.oop.primitives
  * Example: `array_items(A, [1, 2, 3])` binds `A` to an [it.unibo.tuprolog.solve.libs.oop.ObjectRef]
  * wrapping `new Object[]{1, 2, 3}`.
  */
-object ArrayItems : AbstractIterableItems<Array<*>>("array", Array::class) {
+object ArrayItems : AbstractIterableItems<Array<*>>("array") {
     override val help: String =
         """
         `array_items(?ArrayRef, ?Items)`

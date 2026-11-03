@@ -34,12 +34,15 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
         """
         `cast(+Term, ?Type, ?ObjectRef)`
         
-        Converts `Term` into an instance of `Type` and unifies `ObjectRef` with a reference to the resulting object. `Type` must be a type reference or a `${'$'}Alias` reference to a type (e.g. `${'$'}long`); any other bound value raises a type error, and an unregistered alias raises an existence error. Fails if `Term` cannot be converted into `Type`. If `Type` is unbound, it enumerates on backtracking every type `Term` can be converted into (and all their supertypes), binding `Type` to a type reference each time. Use it to force a specific representation, e.g. `cast(1, ${'$'}long, L)` yields a reference to a `Long` rather than an `Int`; inside method or constructor arguments, the `X as Type` notation (`as/2`) forces a conversion inline.
+        Converts `Term` into an instance of `Type` and unifies `ObjectRef` with a reference to the resulting object. `Type` must be a type reference, an atom holding a fully qualified type name (e.g. `'java.lang.Long'`), or a `${'$'}Alias` reference to a type (e.g. `${'$'}long`); any other bound value raises a type error, and an unregistered alias raises an existence error. Fails if the type name names no type, or if `Term` cannot be converted into `Type`. If `Type` is unbound, it enumerates on backtracking every type `Term` can be converted into (and all their supertypes), binding `Type` to a type reference each time. Use it to force a specific representation, e.g. `cast(1, ${'$'}long, L)` yields a reference to a `Long` rather than an `Int`; inside method or constructor arguments, the `X as Type` notation (`as/2`) forces a conversion inline.
 
         **Examples**
 
         ```prolog
         ?- cast(1, ${'$'}long, R), object_ref(R).
+        yes.
+
+        ?- cast(1, 'java.lang.Long', R), object_ref(R).
         yes.
 
         ?- cast(abc, ${'$'}int, R).
@@ -55,7 +58,6 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
         catchingOopExceptions {
             when (second) {
                 is Struct -> {
-                    ensuringArgumentIsTypeRef(1)
                     val type = getArgumentAsTypeRef(1)
                     try {
                         sequenceOf(replyWith(cast(first, type?.type, third)))

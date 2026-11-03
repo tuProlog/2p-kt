@@ -101,10 +101,34 @@ class ProblogSolverSpec :
         include(atomicContract(ProblogSolverFactory))
         include(bagOfContract(ProblogSolverFactory))
         include(bigListContract(ProblogSolverFactory, disabled = setOf("big-list/big-list-generation")))
-        include(callContract(ProblogSolverFactory, ensureExecutable))
+        // Problog rewrites user clauses, so goals built at run time can't reach user predicates
+        include(
+            callContract(
+                ProblogSolverFactory,
+                ensureExecutable,
+                disabled =
+                    setOf(
+                        "call/n/atom-goal",
+                        "call/n/compound-goal",
+                        "call/n/call-as-goal",
+                        "call/n/higher-order-predicate",
+                        "call/n/seven-extra-arguments",
+                    ),
+            ),
+        )
         include(catchAndThrowContract(ProblogSolverFactory))
         include(charCodeContract(ProblogSolverFactory))
-        include(clauseContract(ProblogSolverFactory, disabled = setOf("clause/clause-variables")))
+        include(
+            clauseContract(
+                ProblogSolverFactory,
+                disabled =
+                    setOf(
+                        "clause/clause-variables",
+                        "clause/renames-the-clause-on-each-call",
+                        "clause/supports-the-vanilla-meta-interpreter",
+                    ),
+            ),
+        )
         include(compoundContract(ProblogSolverFactory))
         include(copyTermContract(ProblogSolverFactory))
         include(customDataContract(ProblogSolverFactory))

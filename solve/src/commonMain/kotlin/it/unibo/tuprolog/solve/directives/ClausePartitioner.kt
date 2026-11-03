@@ -20,6 +20,7 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.dequeOf
+import it.unibo.tuprolog.core.List as LogicList
 
 /**
  * The concrete [ClausePartition]/[DirectiveSelector] implementation, lazily partitioning [source]'s clauses on
@@ -113,8 +114,10 @@ class ClausePartitioner(
         if (priority is Integer) {
             try {
                 val spec = Specifier.fromTerm(specifier)
-                if (name is Atom) {
-                    _operators += Operator(name.value, spec, priority.value.toInt())
+                // ISO allows a list of names, each becoming an operator
+                val names = if (name is LogicList) name.toList() else listOf(name)
+                names.filterIsInstance<Atom>().forEach {
+                    _operators += Operator(it.value, spec, priority.value.toInt())
                 }
             } catch (_: IllegalArgumentException) {
                 // do nothing

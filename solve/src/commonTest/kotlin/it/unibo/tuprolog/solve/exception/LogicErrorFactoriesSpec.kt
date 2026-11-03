@@ -6,7 +6,9 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeBlank
+import io.kotest.matchers.string.shouldNotContain
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Indicator
@@ -44,6 +46,9 @@ private val dispatchCases =
         DispatchCase("instantiation-error", InstantiationError::class) { atomOf("instantiation_error") },
         DispatchCase("system-error", SystemError::class) { atomOf("system_error") },
         DispatchCase("syntax-error", SyntaxError::class) { atomOf("syntax_error") },
+        DispatchCase("syntax-error-with-description", SyntaxError::class) {
+            structOf("syntax_error", atomOf("oops"))
+        },
         DispatchCase("message-error", MessageError::class) { atomOf("") },
         DispatchCase("representation-error", RepresentationError::class) {
             structOf("representation_error", atomOf("max_arity"))
@@ -153,15 +158,15 @@ private val factoryCases =
         FactoryCase("type/of", { TypeError.of(context, TypeError.Expected.ATOM, Integer.of(1), "not an atom") }) {
             structOf("type_error", atomOf("atom"), intOf(1))
         },
-        FactoryCase("syntax/of", { SyntaxError.of(context, "oops") }) { atomOf("syntax_error") },
+        FactoryCase("syntax/of", { SyntaxError.of(context, "oops") }) { structOf("syntax_error", atomOf("oops")) },
         FactoryCase("syntax/while-parsing-term", { SyntaxError.whileParsingTerm(context, "f(", 1, 3, "oops") }) {
-            atomOf("syntax_error")
+            structOf("syntax_error", atomOf("oops"))
         },
         FactoryCase(
             "syntax/while-parsing-clauses",
             { SyntaxError.whileParsingClauses(context, "a.\nb c.", 1, 2, 3, "oops") },
         ) {
-            atomOf("syntax_error")
+            structOf("syntax_error", atomOf("oops"))
         },
     )
 
@@ -259,5 +264,22 @@ class LogicErrorFactoriesSpec :
             val message = SyntaxError.whileParsingClauses(context, "a.\nb c.", 1, 2, 3, "oops").message!!
             withClue(message) { message.startsWith("Syntax error at 2:3 while parsing clause 1: oops").shouldBeTrue() }
             withClue(message) { ("b c." in message).shouldBeTrue() }
+        }
+
+        test("message/representation-error-without-a-cause-has-no-null") {
+            RepresentationError
+                .of(
+                    context,
+                    foo2,
+                    RepresentationError.Limit.MAX_ARITY,
+                ).message
+                .shouldNotBeNull() shouldNotContain
+                "null"
+        }
+
+        test("message/evaluation-error-names-its-type") {
+            EvaluationError(context = context, errorType = EvaluationError.Type.ZERO_DIVISOR)
+                .message
+                .shouldNotBeNull() shouldContain "zero_divisor"
         }
     })

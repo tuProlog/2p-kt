@@ -8,7 +8,7 @@ package it.unibo.tuprolog.solve.libs.oop.primitives
  * Example: `set_items(S, [1, 2, 2])` binds `S` to an [it.unibo.tuprolog.solve.libs.oop.ObjectRef]
  * wrapping `setOf(1, 2)`.
  */
-object SetItems : AbstractIterableItems<Set<*>>("set", Set::class) {
+object SetItems : AbstractIterableItems<Set<*>>("set") {
     override val help: String =
         """
         `set_items(?SetRef, ?Items)`

@@ -5,14 +5,17 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.assertSolutionEquals
+import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.error.DomainError
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
 import it.unibo.tuprolog.solve.halt
+import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.solve.yes
@@ -218,5 +221,16 @@ class StreamControlSpec :
                     solutions,
                 )
             }
+        }
+
+        test("user-error-is-the-standard-error-stream") {
+            val errors = StringBuilder()
+            PrologSolverFactory
+                .solverWithDefaultBuiltins(
+                    otherLibraries = Runtime.of(IOLib),
+                    stdErr = OutputChannel.of { errors.append(it) },
+                ).solveOnce("write(user_error, x)".parseAsStruct())
+                .shouldBeInstanceOf<Solution.Yes>()
+            errors.toString() shouldBe "x"
         }
     })

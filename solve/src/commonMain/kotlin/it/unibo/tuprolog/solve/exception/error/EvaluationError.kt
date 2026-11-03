@@ -12,7 +12,7 @@ import kotlin.jvm.JvmStatic
 /**
  * The evaluation error occurs when some problem occurs in evaluating an arithmetic expression
  *
- * @param message the detail message string.
+ * @param message the detail message string; one naming [errorType] if `null`.
  * @param cause the cause of this exception.
  * @param contexts a stack of contexts localising the exception
  * @param errorType The error type
@@ -26,7 +26,13 @@ class EvaluationError(
     contexts: Array<ExecutionContext>,
     @JsName("errorType") val errorType: Type,
     extraData: Term? = null,
-) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+) : LogicError(
+        message ?: "Arithmetic evaluation error: ${errorType.toTerm()}",
+        cause,
+        contexts,
+        Atom.of(typeFunctor),
+        extraData,
+    ) {
     constructor(
         message: String? = null,
         cause: Throwable? = null,

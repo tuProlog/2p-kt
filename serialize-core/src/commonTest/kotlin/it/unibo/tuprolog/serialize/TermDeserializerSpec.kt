@@ -1,7 +1,31 @@
 package it.unibo.tuprolog.serialize
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
+import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Term
+
+/** A term, and its JSON representation. */
+private class Representation(
+    val id: String,
+    val json: String,
+    val term: Scope.() -> Term,
+)
+
+private val representations =
+    listOf(
+        Representation("directive", "{\"body\": {\"fun\": \"initialization\", \"args\": [\"main\"]}}") {
+            directiveOf(structOf("initialization", atomOf("main")))
+        },
+        Representation("indicator", "{\"name\": \"counter\", \"arity\": 1}") { indicatorOf("counter", 1) },
+        Representation(
+            "directive-on-an-indicator",
+            "{\"body\": {\"fun\": \"dynamic\", \"args\": [{\"name\": \"counter\", \"arity\": 1}]}}",
+        ) {
+            directiveOf(structOf("dynamic", indicatorOf("counter", 1)))
+        },
+    )
 
 class TermDeserializerSpec :
     FunSpec({
@@ -223,5 +247,13 @@ class TermDeserializerSpec :
             deserializer.assertTermDeserializationWorks("false") {
                 truthOf(false)
             }
+        }
+
+        withTests(nameFn = { "deserialize/${it.id}" }, representations) { case ->
+            TermDeserializer.of(MimeType.Json).assertTermDeserializationWorks(case.json, case.term)
+        }
+
+        withTests(nameFn = { "serialize/${it.id}" }, representations) { case ->
+            TermSerializer.of(MimeType.Json).assertTermSerializationWorks(case.json, case.term)
         }
     })

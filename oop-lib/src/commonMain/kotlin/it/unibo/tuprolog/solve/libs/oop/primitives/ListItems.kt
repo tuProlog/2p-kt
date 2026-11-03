@@ -8,7 +8,7 @@ package it.unibo.tuprolog.solve.libs.oop.primitives
  * Example: `list_items(L, [1, 2, 3])` binds `L` to an [it.unibo.tuprolog.solve.libs.oop.ObjectRef]
  * wrapping `listOf(1, 2, 3)`.
  */
-object ListItems : AbstractIterableItems<List<*>>("list", List::class) {
+object ListItems : AbstractIterableItems<List<*>>("list") {
     override val help: String =
         """
         `list_items(?ListRef, ?Items)`

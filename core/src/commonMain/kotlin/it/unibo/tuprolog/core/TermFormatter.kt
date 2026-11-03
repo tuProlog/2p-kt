@@ -14,6 +14,7 @@ import it.unibo.tuprolog.core.impl.TermFormatterWithPrettyExpressions
 import it.unibo.tuprolog.core.impl.TermFormatterWithPrettyVariables
 import it.unibo.tuprolog.core.operators.OperatorSet
 import kotlin.js.JsName
+import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
 /**
@@ -97,6 +98,7 @@ interface TermFormatter :
          * [readable], [prettyVariables], [prettyExpressions]) are shorthands for common combinations.
          */
         @JvmStatic
+        @JvmOverloads
         @JsName("of")
         fun of(
             varFormat: VarFormat,
@@ -133,6 +135,7 @@ interface TermFormatter :
          * rather than by [Var.completeName], never quotes functors, and shows term tags.
          */
         @JvmStatic
+        @JvmOverloads
         @JsName("default")
         fun default(
             operators: OperatorSet = OperatorSet.DEFAULT,
@@ -152,6 +155,7 @@ interface TermFormatter :
          * a pretty way (see [VarFormat.PRETTY]).
          */
         @JvmStatic
+        @JvmOverloads
         @JsName("readable")
         fun readable(
             operators: OperatorSet = OperatorSet.DEFAULT,
@@ -167,6 +171,7 @@ interface TermFormatter :
          * So for instance, the term `A_3 + A_4` is represented as `'+'(A1, A2)`.
          */
         @JvmStatic
+        @JvmOverloads
         @JsName("prettyVariables")
         fun prettyVariables(tagsOptions: TagsFormattingOptions = TagsFormattingOptions()): TermFormatter =
             of(PRETTY, COLLECTIONS, tagsOptions = tagsOptions)
@@ -180,6 +185,7 @@ interface TermFormatter :
          * would be represented as `A + B`, if [prettyVariables] is `true`, or `A_1 + B_2` otherwise.
          */
         @JvmStatic
+        @JvmOverloads
         @JsName("prettyExpressions")
         fun prettyExpressions(
             prettyVariables: Boolean,
@@ -202,6 +208,7 @@ interface TermFormatter :
          * would be represented as `A + B`.
          */
         @JvmStatic
+        @JvmOverloads
         @JsName("prettyExpressionsPrettyVariables")
         fun prettyExpressions(
             operatorSet: OperatorSet,
@@ -217,6 +224,7 @@ interface TermFormatter :
          * or `A_1 + B_2` otherwise.
          */
         @JvmStatic
+        @JvmOverloads
         @JsName("prettyExpressionsDefaultOperators")
         fun prettyExpressions(
             prettyVariables: Boolean,
@@ -231,6 +239,7 @@ interface TermFormatter :
          * So for instance the term `A_1 + B_2` is represented as `A + B`.
          */
         @JvmStatic
+        @JvmOverloads
         @JsName("prettyExpressionsPrettyVariablesDefaultOperators")
         fun prettyExpressions(tagsOptions: TagsFormattingOptions = TagsFormattingOptions()): TermFormatter =
             prettyExpressions(true, OperatorSet.DEFAULT, tagsOptions)

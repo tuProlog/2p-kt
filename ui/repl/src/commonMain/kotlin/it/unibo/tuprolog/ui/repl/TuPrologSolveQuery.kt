@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.ui.repl
 
 import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.arguments.check
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
@@ -28,7 +29,7 @@ class TuPrologSolveQuery :
         help = "Compute a particular query and then terminate",
         name = "solve",
     ) {
-    private val query: String by argument()
+    private val query: String by argument().check("query must not be empty") { it.isNotBlank() }
     private val maxSolutions: Int by option("-n", "--numberOfSolutions", help = "Number of solution to calculate")
         .int()
         .default(0)
@@ -46,22 +47,18 @@ class TuPrologSolveQuery :
     }
 
     private fun evalAndPrint(solver: Solver) {
-        if (query.isNotEmpty()) {
-            try {
-                val duration: TimeDuration = parentCommand.getTimeout()
-                val solutions = solver.solve(Struct.parse(query), duration).iterator()
-                val groundQueriesHaveBooleanSolution =
-                    solver.flags[GroundQueriesHaveBooleanSolution] == GroundQueriesHaveBooleanSolution.ON
-                if (maxSolutions == 0) {
-                    printSolutions(solutions, solver.operators, groundQueriesHaveBooleanSolution)
-                } else {
-                    printNumSolutions(solutions, maxSolutions, solver.operators, groundQueriesHaveBooleanSolution)
-                }
-            } catch (e: ParseException) {
-                printParseException(e)
+        try {
+            val duration: TimeDuration = parentCommand.getTimeout()
+            val solutions = solver.solve(Struct.parse(query), duration).iterator()
+            val groundQueriesHaveBooleanSolution =
+                solver.flags[GroundQueriesHaveBooleanSolution] == GroundQueriesHaveBooleanSolution.ON
+            if (maxSolutions == 0) {
+                printSolutions(solutions, solver.operators, groundQueriesHaveBooleanSolution)
+            } else {
+                printNumSolutions(solutions, maxSolutions, solver.operators, groundQueriesHaveBooleanSolution)
             }
-        } else {
-            TODO("throw adequate exception")
+        } catch (e: ParseException) {
+            printParseException(e)
         }
     }
 }

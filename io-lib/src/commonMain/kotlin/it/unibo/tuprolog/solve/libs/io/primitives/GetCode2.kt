@@ -23,7 +23,7 @@ object GetCode2 : BinaryRelation.NonBacktrackable<ExecutionContext>("get_code") 
         """
         `get_code(+Stream, ?Code)`
         
-        Reads and consumes the next character from the input stream `Stream` and unifies its code with `Code`, which becomes `-1` at the end of the stream. `Stream` must be an alias (e.g. `user_input`) or a `${'$'}stream(in, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an output stream a domain error (`stream_type`), where ISO prescribes a permission error. `Code` must be unbound or an integer (type error otherwise) within the character-code range or `-1` (representation error otherwise). It fails, instead of raising an error, if the underlying channel has been closed.
+        Reads and consumes the next character from the input stream `Stream` and unifies its code with `Code`, which becomes `-1` at the end of the stream. `Stream` must be an alias (e.g. `user_input`) or a `${'$'}stream(in, Id)` term denoting an open stream: an unbound `Stream` raises an instantiation error, an unknown one an existence error, and an output stream a domain error (`stream_type`), where ISO prescribes a permission error. `Code` must be unbound or an integer (type error otherwise) within the character-code range or `-1` (representation error otherwise); so is a character beyond the Basic Multilingual Plane in the stream, which has no single UTF-16 code (`representation_error(character_code)`). It fails, instead of raising an error, if the underlying channel has been closed.
 
         **Examples**
 

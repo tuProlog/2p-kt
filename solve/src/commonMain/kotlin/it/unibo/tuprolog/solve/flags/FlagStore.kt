@@ -94,7 +94,7 @@ data class FlagStore(
         /**
          * The default [FlagStore] every new [it.unibo.tuprolog.solve.Solver] starts with (see
          * [it.unibo.tuprolog.solve.SolverFactory.defaultFlags]), with every [NotableFlag] set to its
-         * [NotableFlag.defaultValue]: [Unknown], [MaxArity], [DoubleQuotes], [LastCallOptimization],
+         * [NotableFlag.defaultValue]: [Unknown], [Bounded], [MaxArity], [DoubleQuotes], [LastCallOptimization],
          * [TrackVariables], [ShowWildCardVariablesInSolutions], [UniqueSolutions],
          * [GroundQueriesHaveBooleanSolution].
          */
@@ -102,6 +102,7 @@ data class FlagStore(
         val DEFAULT =
             FlagStore.of(
                 Unknown,
+                Bounded,
                 MaxArity,
                 DoubleQuotes,
                 LastCallOptimization,

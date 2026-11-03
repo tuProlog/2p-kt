@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
+
 /** Conformance tests for the ISO `setof/3` built-in. */
 fun setOfContract(
     solverFactory: SolverFactory,
@@ -19,7 +21,7 @@ fun setOfContract(
 
     case("set-of/set-of-sorted") {
         setof("X", ("X" eq 2) or ("X" eq 1), "X") yields {
-            listOf(it.yes("X" to logicListOf(2, 1)))
+            listOf(it.yes("X" to logicListOf(1, 2)))
         }
     }
 
@@ -35,5 +37,15 @@ fun setOfContract(
         setof("X", "Y" sup ((("X" eq 1) or ("Y" eq 1)) or (("X" eq 2) or ("Y" eq 2))), "S") yields {
             listOf(it.yes("S" to logicListOf(1, 2)))
         }
+    }
+
+    // ISO's standard order: variables, then floats, then integers, then atoms, then compound terms
+    scenario("set-of/sorts-by-the-standard-order-of-terms") {
+        solverFactory.answers("setof(X, member(X, [c, f(a), 2.0, a, 1, b, a]), S)") shouldBe
+            listOf("yes: S = [2.0, 1, a, b, c, f(a)]")
+    }
+
+    scenario("set-of/nested-existential-variables") {
+        solverFactory.answers("setof(X, Y^Z^member(X-Y-Z, [2-a-b, 1-c-d]), L)") shouldBe listOf("yes: L = [1, 2]")
     }
 }

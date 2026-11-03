@@ -20,7 +20,7 @@ object WriteEq1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("writeq") {
         """
         `writeq(@Term)`
         
-        Writes `Term` to the current output stream (standard output, unless changed via `set_output/1`) so that it can be read back: atoms and functors are quoted where needed, operators are written in operator notation, and `'${'$'}VAR'(N)` terms are written as variable letters. It succeeds deterministically. The current implementation formats operators according to the default operator table rather than the current one. It fails, instead of raising an error, if the underlying channel has been closed.
+        Writes `Term` to the current output stream (standard output, unless changed via `set_output/1`) so that it can be read back: atoms and functors are quoted where needed, operators (including those defined at runtime) are written in operator notation, and `'${'$'}VAR'(N)` terms are written as variable letters. It succeeds deterministically. It fails, instead of raising an error, if the underlying channel has been closed.
 
         **Examples**
 
@@ -32,5 +32,5 @@ object WriteEq1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("writeq") {
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response =
-        writeTermAndReply(currentOutputChannel, first, TermFormatter.readable())
+        writeTermAndReply(currentOutputChannel, first, TermFormatter.readable(context.operators))
 }

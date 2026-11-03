@@ -40,6 +40,7 @@ class ConcurrentSolverConformanceSpec :
         include(concurrentNumberCodesContract())
         include(concurrentOrContract())
         include(concurrentRepeatContract())
+        include(concurrentRetractContract())
         include(concurrentSetOfContract())
         include(concurrentSolutionPresentationContract())
         include(concurrentSolverContract())

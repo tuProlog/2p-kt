@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
@@ -63,5 +64,9 @@ fun bagOfContract(
                 ),
             )
         }
+    }
+
+    scenario("bag-of/nested-existential-variables") {
+        solverFactory.answers("bagof(X, Y^Z^member(X-Y-Z, [2-a-b, 1-c-d]), L)") shouldBe listOf("yes: L = [2, 1]")
     }
 }

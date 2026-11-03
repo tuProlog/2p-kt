@@ -22,7 +22,7 @@ class SolutionFormatterSpec :
             val formatter = SolutionFormatter.of()
             val solution = Solution.yes(groundQuery)
 
-            formatter.format(solution) shouldBe "yes: 2 is 1 + 1\n    "
+            formatter.format(solution) shouldBe "yes: 2 is 1 + 1"
         }
 
         test("groundQueriesHaveBooleanSolution renders a ground query's yes solution as just yes") {

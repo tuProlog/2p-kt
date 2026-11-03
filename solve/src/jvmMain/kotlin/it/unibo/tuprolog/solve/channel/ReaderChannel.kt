@@ -15,12 +15,14 @@ class ReaderChannel(
 ) : AbstractInputChannel<String>() {
     constructor(inputStream: InputStream) : this(InputStreamReader(inputStream))
 
-    override fun readActually(): String? =
-        reader
-            .read()
-            .takeIf { it >= 0 }
-            ?.toChar()
-            ?.toString()
+    // a character beyond the Basic Multilingual Plane is two UTF-16 chars, read together
+    override fun readActually(): String? {
+        val first = readChar()
+        val second = if (first?.isHighSurrogate() == true) readChar() else null
+        return first?.let { if (second == null) "$it" else "$it$second" }
+    }
+
+    private fun readChar(): Char? = reader.read().takeIf { it >= 0 }?.toChar()
 
     override val available: Boolean
         @Synchronized

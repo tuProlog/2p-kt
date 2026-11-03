@@ -1,7 +1,31 @@
 package it.unibo.tuprolog.serialize
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.TermVisitor
+import it.unibo.tuprolog.core.Truth
+
+/** A [Truth] other than the three predefined ones, which no serializer knows. */
+private class UnknownTruth : Truth by Truth.TRUE {
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTruth(this)
+
+    // Term declares equals and hashCode, so delegation would make this equal to Truth.TRUE
+    override fun equals(other: Any?): Boolean = this === other
+
+    override fun hashCode(): Int = 0
+}
+
+/** A term of no known kind, which no serializer knows. */
+private class UnknownTerm : Term by Atom.of("unknown") {
+    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTerm(this)
+}
+
+private val unrepresentable: List<Pair<String, () -> Term>> =
+    listOf("unknown-truth" to ::UnknownTruth, "unknown-term" to ::UnknownTerm)
 
 class TermSerializerSpec :
     FunSpec({
@@ -241,5 +265,12 @@ class TermSerializerSpec :
             serializer.assertTermSerializationWorks(expected) {
                 varOf("Y")
             }
+        }
+
+        withTests(
+            nameFn = { (id, mimeType) -> "unrepresentable-term/$id/${mimeType.subType}" },
+            unrepresentable.flatMap { (id, term) -> listOf(MimeType.Json, MimeType.Yaml).map { Triple(id, it, term) } },
+        ) { (_, mimeType, term) ->
+            shouldThrow<SerializationException> { TermSerializer.of(mimeType).serialize(term()) }
         }
     })

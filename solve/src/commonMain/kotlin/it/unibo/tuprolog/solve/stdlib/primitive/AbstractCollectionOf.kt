@@ -3,21 +3,17 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.Solve
-import kotlin.collections.Set
 import it.unibo.tuprolog.core.List as LogicList
 
 @Suppress("PrivatePropertyName", "ktlint:standard:property-naming")
 abstract class AbstractCollectionOf(
     val name: String,
 ) : AbstractCollectingPrimitive(name) {
-    private val VARS = Var.of("VARS")
-    private val GOAL = Var.of("GOAL")
-    private val APEX_TEMPLATE = Struct.of("^", VARS, GOAL)
-
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
         first: Term,
         second: Term,
@@ -25,19 +21,20 @@ abstract class AbstractCollectionOf(
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
-        val mgu = mgu(APEX_TEMPLATE, second)
-        val uninteresting: Set<Var> =
-            when (mgu) {
-                is Substitution.Unifier ->
-                    when (val vars = mgu[VARS]) {
-                        is Tuple -> vars.toSequence().filterIsInstance<Var>().toSet()
-                        is Var -> setOf(vars)
-                        else -> emptySet()
-                    }
-                else -> emptySet()
+        // the iterated goal of V1^V2^...^G is G, with the variables of every Vi existentially quantified
+        val uninteresting = mutableSetOf<Var>()
+        var goal = second
+        while (goal is Struct && goal.functor == "^" && goal.arity == 2) {
+            uninteresting += goal[0].variables
+            goal = goal[1]
+        }
+        val iterated =
+            when (goal) {
+                is Struct -> goal
+                is Var -> throw InstantiationError.forArgument(context, signature, goal, 1)
+                else -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, goal, 1)
             }
-        val goal = if (mgu is Substitution.Unifier) mgu[GOAL]!! else second
-        val solutions = computeIntermediateSolutions(goal.castToStruct())
+        val solutions = computeIntermediateSolutions(iterated)
         val free = goal.variables.toSet() - first.variables.toSet()
         val interesting = free - uninteresting
         val groups = solutions.groupBy { it.substitution.filter(interesting) }
