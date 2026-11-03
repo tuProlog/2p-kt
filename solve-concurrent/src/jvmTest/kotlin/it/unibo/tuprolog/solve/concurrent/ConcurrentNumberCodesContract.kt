@@ -47,7 +47,7 @@ fun concurrentNumberCodesContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = number_codes("a", "L")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

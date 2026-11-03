@@ -29,7 +29,6 @@ import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.theory.Theory
 import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
-import kotlin.time.Duration
 
 private inline val loggingOn get() = false
 
@@ -181,13 +180,6 @@ inline fun assertSolutionEquals(
 }
 
 /** Utility method to solve goals in [goalToSolutions] with [solver] and check if solutions are as expected by means of [assertSolutionEquals] */
-fun assertSolverSolutionsCorrect(
-    solver: Solver,
-    goalToSolutions: List<Pair<Struct, List<Solution>>>,
-    maxDuration: Duration,
-) = assertSolverSolutionsCorrect(solver, goalToSolutions, SolveOptions.allLazilyWithTimeout(maxDuration))
-
-/** Same as the other [assertSolverSolutionsCorrect], but solving with the given [options] (e.g. simulated time). */
 fun assertSolverSolutionsCorrect(
     solver: Solver,
     goalToSolutions: List<Pair<Struct, List<Solution>>>,

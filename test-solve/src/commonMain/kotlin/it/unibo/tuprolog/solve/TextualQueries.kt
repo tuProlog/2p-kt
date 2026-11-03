@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.parsing.parseAsClause
 import it.unibo.tuprolog.core.parsing.parseAsStruct
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.theory.Theory
-import kotlin.time.Duration
 
 /**
  * The answers to the Prolog [query], on a fresh solver of this factory with default built-ins whose static knowledge
@@ -19,11 +18,11 @@ import kotlin.time.Duration
 fun SolverFactory.answers(
     query: String,
     vararg clauses: String,
-    timeout: Duration = durations.mediumDuration,
+    budget: SolveOptions = durations.mediumBudget,
 ): List<String> {
     val solver = solverWithDefaultBuiltins(staticKb = Theory.of(clauses.map { it.parseAsClause() }))
     val formatter = TermFormatter.readable(solver.operators)
-    return solver.solve(query.parseAsStruct(solver.operators), timeout).map { it.render(formatter) }.toList()
+    return solver.solve(query.parseAsStruct(solver.operators), budget).map { it.render(formatter) }.toList()
 }
 
 private val durations = object : SolverTest {}

@@ -41,17 +41,17 @@ fun concurrentCustomDataContract() =
                 val getQuery = GetEphemeral.functor("key", X)
                 val query = setQuery and (getQuery or getQuery)
 
-                var solutions = fromSequence(solver.solve(setQuery, shortDuration))
+                var solutions = fromSequence(solver.solve(setQuery, shortBudget))
                 var expected = fromSequence(setQuery.yes())
 
                 expected.assertingEquals(solutions)
 
-                solutions = fromSequence(solver.solve(getQuery, shortDuration))
+                solutions = fromSequence(solver.solve(getQuery, shortBudget))
                 expected = fromSequence(getQuery.no())
 
                 expected.assertingEquals(solutions)
 
-                solutions = fromSequence(solver.solve(query, shortDuration))
+                solutions = fromSequence(solver.solve(query, shortBudget))
                 expected = fromSequence(sequenceOf(query.yes(X to 1), query.no()))
 
                 expected.assertingEquals(solutions)
@@ -66,17 +66,17 @@ fun concurrentCustomDataContract() =
                 val getQuery = GetDurable.functor("key", X)
                 val query = setQuery and (getQuery or getQuery)
 
-                var solutions = fromSequence(solver.solve(setQuery, shortDuration))
+                var solutions = fromSequence(solver.solve(setQuery, shortBudget))
                 var expected = fromSequence(setQuery.yes())
 
                 expected.assertingEquals(solutions)
 
-                solutions = fromSequence(solver.solve(getQuery, shortDuration))
+                solutions = fromSequence(solver.solve(getQuery, shortBudget))
                 expected = fromSequence(getQuery.no())
 
                 expected.assertingEquals(solutions)
 
-                solutions = fromSequence(solver.solve(query, shortDuration))
+                solutions = fromSequence(solver.solve(query, shortBudget))
                 expected = fromSequence(sequenceOf(query.yes(X to 1), query.yes(X to 1)))
 
                 expected.assertingEquals(solutions)
@@ -91,17 +91,17 @@ fun concurrentCustomDataContract() =
                 val getQuery = GetPersistent.functor("key", X)
                 val query = setQuery and (getQuery or getQuery)
 
-                var solutions = fromSequence(solver.solve(setQuery, shortDuration))
+                var solutions = fromSequence(solver.solve(setQuery, shortBudget))
                 var expected = fromSequence(setQuery.yes())
 
                 expected.assertingEquals(solutions)
 
-                solutions = fromSequence(solver.solve(getQuery, shortDuration))
+                solutions = fromSequence(solver.solve(getQuery, shortBudget))
                 expected = fromSequence(getQuery.yes(X to 1))
 
                 expected.assertingEquals(solutions)
 
-                solutions = fromSequence(solver.solve(query, shortDuration))
+                solutions = fromSequence(solver.solve(query, shortBudget))
                 expected = fromSequence(sequenceOf(query.yes(X to 1), query.yes(X to 1)))
 
                 expected.assertingEquals(solutions)

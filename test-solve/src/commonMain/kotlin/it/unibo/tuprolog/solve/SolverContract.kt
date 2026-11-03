@@ -147,6 +147,7 @@ import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
 import it.unibo.tuprolog.utils.time.ChronometerFactory
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 import kotlin.collections.plus as append
 
@@ -412,7 +413,7 @@ fun solverContract(
 
             val query = tupleOf(terms.map { write(it) }.append(nl))
 
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.yes()),
@@ -435,7 +436,7 @@ fun solverContract(
 
             val query = write("b") and write("c") and write("d") and nl
 
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.yes()),
@@ -461,7 +462,7 @@ fun solverContract(
                 )
 
             var query = findall(N, "a"(N), L)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            var solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.yes(L to logicListOf(1, 2, 3))),
@@ -469,7 +470,7 @@ fun solverContract(
             )
 
             query = findall(`_`, false, L)
-            solutions = solver.solve(query, mediumDuration).toList()
+            solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.yes(L to emptyLogicList)),
@@ -477,7 +478,7 @@ fun solverContract(
             )
 
             query = findall(`_`, G, `_`)
-            solutions = solver.solve(query, mediumDuration).toList()
+            solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -521,7 +522,7 @@ fun solverContract(
                 )
 
             val query = "ftog"(X, Y)
-            val solutions = solver.solve(query, longDuration).toList()
+            val solutions = solver.solve(query, longBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -591,7 +592,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
             goalToSolutions = ifThen1ToSolution,
-            maxDuration = mediumDuration,
+            options = mediumBudget,
         )
     }
 
@@ -600,7 +601,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory1),
             goalToSolutions = ifThenElse1ToSolution,
-            maxDuration = mediumDuration,
+            options = mediumBudget,
         )
     }
 
@@ -609,7 +610,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
             goalToSolutions = ifThenElse2ToSolution,
-            maxDuration = mediumDuration,
+            options = mediumBudget,
         )
     }
 
@@ -618,7 +619,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solver = solverFactory.solverWithDefaultBuiltins(staticKb = ifThenTheory2),
             goalToSolutions = ifThen2ToSolution,
-            maxDuration = mediumDuration,
+            options = mediumBudget,
         )
     }
 
@@ -627,7 +628,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleFactTheory),
             simpleFactTheoryNotableGoalToSolutions,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -636,7 +637,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutTheory),
             simpleCutTheoryNotableGoalToSolutions,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -645,7 +646,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = simpleCutAndConjunctionTheory),
             simpleCutAndConjunctionTheoryNotableGoalToSolutions,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -654,7 +655,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = cutConjunctionAndBacktrackingTheory),
             cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -664,7 +665,7 @@ fun solverContract(
             solverFactory.solverWithDefaultBuiltins(staticKb = infiniteComputationTheory),
             infiniteComputationTheoryNotableGoalToSolution,
             SolveOptions
-                .allLazilyWithTimeout(shortDuration)
+                .allLazilyWithTimeout(1.seconds)
                 .setChronometerFactory(ChronometerFactory.simulated(durationPerLeap = 1.milliseconds)),
         )
     }
@@ -674,7 +675,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = prologStandardExampleTheory),
             prologStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -685,7 +686,7 @@ fun solverContract(
                 staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory,
             ),
             prologStandardExampleWithCutTheoryNotableGoalToSolution,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -694,7 +695,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = customReverseListTheory),
             customReverseListTheoryNotableGoalToSolution,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -703,7 +704,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = conjunctionStandardExampleTheory),
             conjunctionStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -738,7 +739,7 @@ fun solverContract(
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    mediumDuration,
+                    mediumBudget,
                 )
             }
         }
@@ -750,13 +751,13 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = callStandardExampleTheory),
             callStandardExampleTheoryGoalsToSolution(callErrorSignature),
-            mediumDuration,
+            mediumBudget,
         )
 
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             callTestingGoalsToSolutions(callErrorSignature),
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -776,7 +777,7 @@ fun solverContract(
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    mediumDuration,
+                    mediumBudget,
                 )
             }
         }
@@ -788,13 +789,13 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = catchAndThrowTheoryExample),
             catchAndThrowTheoryExampleNotableGoalToSolution,
-            mediumDuration,
+            mediumBudget,
         )
 
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             catchTestingGoalsToSolutions,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -834,7 +835,7 @@ fun solverContract(
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    mediumDuration,
+                    mediumBudget,
                 )
             }
         }
@@ -846,7 +847,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             haltTestingGoalsToSolutions,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -856,7 +857,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = notStandardExampleTheory),
             notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature, notErrorSignature),
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -905,7 +906,7 @@ fun solverContract(
                 assertSolverSolutionsCorrect(
                     solverFactory.solverWithDefaultBuiltins(staticKb = database),
                     goalToSolutions,
-                    mediumDuration,
+                    mediumBudget,
                 )
             }
         }
@@ -917,7 +918,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = ifThenStandardExampleTheory),
             ifThenStandardExampleTheoryNotableGoalToSolution,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -927,7 +928,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             ifThenElseStandardExampleNotableGoalToSolution,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -936,7 +937,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = customRangeListGeneratorTheory),
             customRangeListGeneratorTheoryNotableGoalToSolution,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -945,7 +946,7 @@ fun solverContract(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = atomOf("a")
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -971,7 +972,7 @@ fun solverContract(
                         ),
                 )
             val query = "a"(N)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -996,7 +997,7 @@ fun solverContract(
                         ),
                 )
             val query = "a"(N)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 with(query) { listOf(yes(N to 3), yes(N to 2)) },
@@ -1019,7 +1020,7 @@ fun solverContract(
                         ),
                 )
             val query = "a"(N)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -1044,7 +1045,7 @@ fun solverContract(
                         ),
                 )
             val query = "a"(N)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -1067,7 +1068,7 @@ fun solverContract(
                         ),
                 )
             val query = atomOf("a")
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -1092,7 +1093,7 @@ fun solverContract(
                         ),
                 )
             val query = atomOf("a")
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -1115,7 +1116,7 @@ fun solverContract(
                         ),
                 )
             val query = "a"(N)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -1138,7 +1139,7 @@ fun solverContract(
                         ),
                 )
             val query = atomOf("a")
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 with(query) { listOf(yes(), yes()) },
@@ -1159,7 +1160,7 @@ fun solverContract(
                         ),
                 )
             val query = "a"(N)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 with(query) { listOf(yes(N to 1), yes(N to 2)) },
@@ -1174,7 +1175,7 @@ fun solverContract(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            assertSolverSolutionsCorrect(solver, memberGoalToSolution, mediumDuration)
+            assertSolverSolutionsCorrect(solver, memberGoalToSolution, mediumBudget)
         }
     }
 
@@ -1184,7 +1185,7 @@ fun solverContract(
 
             val query = assertz("f"(2) impliedBy false) and asserta("f"(1) impliedBy true)
 
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.yes()),
@@ -1212,7 +1213,7 @@ fun solverContract(
 
             val query = retract("f"(X)) // retract(f(X))
 
-            val solutions = solver.solve(query, longDuration).toList()
+            val solutions = solver.solve(query, longBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -1235,7 +1236,7 @@ fun solverContract(
 
             val n = 100
 
-            val solutions = solver.solve(query, mediumDuration).take(n).toList()
+            val solutions = solver.solve(query, mediumBudget).take(n).toList()
 
             assertSolutionEquals(
                 (0 until n).map { query.yes(X to it) },
@@ -1365,7 +1366,7 @@ fun solverContract(
 
             var query = retractall("f"(X))
 
-            var solutions = solver.solve(query, longDuration).toList()
+            var solutions = solver.solve(query, longBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -1378,7 +1379,7 @@ fun solverContract(
             solver.dynamicKb.size shouldBe 0L
 
             query = retractall("f"(X))
-            solutions = solver.solve(query, mediumDuration).toList()
+            solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -1393,7 +1394,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             greaterThanTesting,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -1401,7 +1402,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             greaterThanOrEqualTesting,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -1409,7 +1410,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             equalTesting,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -1417,7 +1418,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             notEqualTesting,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -1425,7 +1426,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanTesting,
-            mediumDuration,
+            mediumBudget,
         )
     }
 
@@ -1433,7 +1434,7 @@ fun solverContract(
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(),
             lowerThanOrEqualTesting,
-            mediumDuration,
+            mediumBudget,
         )
     }
 }
@@ -1452,7 +1453,7 @@ private fun ContractScope.testAssert(
                 assertX("f"(3)) and
                 "f"(X)
 
-        val solutions = solver.solve(query, mediumDuration).toList()
+        val solutions = solver.solve(query, mediumBudget).toList()
         val ints = if (inverse) (3 downTo 1) else (1..3)
 
         assertSolutionEquals(

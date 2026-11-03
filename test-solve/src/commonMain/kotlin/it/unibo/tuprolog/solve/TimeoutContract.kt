@@ -17,6 +17,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
+import kotlin.time.Duration.Companion.seconds
 
 /** The time budget of the simulated-time scenarios. */
 private val BUDGET = 20.milliseconds
@@ -67,13 +68,13 @@ fun timeoutContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),
 ) = contract(solverFactory, disabled) {
-    // ?- sleep(MediumDuration). with a ShortDuration budget, in real time: a smoke test of the default chronometer
+    // ?- sleep(2000). with a 1 s budget, in real time: a smoke test of the default chronometer
     scenario("timeout/sleep-real-time") {
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
             solver.assertHasPredicateInAPI(Sleep)
-            val query = "sleep"(mediumDuration.inWholeMilliseconds)
-            assertSolutionEquals(listOf(query.halt(timeOut(shortDuration))), solver.solveList(query, shortDuration))
+            val query = "sleep"(2.seconds.inWholeMilliseconds)
+            assertSolutionEquals(listOf(query.halt(timeOut(1.seconds))), solver.solveList(query, 1.seconds))
         }
     }
 

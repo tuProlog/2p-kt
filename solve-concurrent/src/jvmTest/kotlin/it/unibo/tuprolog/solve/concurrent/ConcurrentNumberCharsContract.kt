@@ -47,7 +47,7 @@ fun concurrentNumberCharsContract() =
                 val solver = solverWithDefaultBuiltins()
                 // val query = number_chars("X", listOf("3", ".", "3", "E", "+", "0"))
                 val query = number_chars(X, logicListOf("3", ".", "9"))
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes("X" to 3.9))
 
                 expected.assertingEquals(solutions)
@@ -59,7 +59,7 @@ fun concurrentNumberCharsContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = number_chars("X", "L")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

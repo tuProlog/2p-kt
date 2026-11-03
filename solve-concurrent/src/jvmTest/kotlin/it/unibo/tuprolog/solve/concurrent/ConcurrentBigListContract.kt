@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
-import kotlin.time.Duration.Companion.seconds
 
 fun concurrentBigListContract() =
     concurrentContract {
@@ -25,7 +24,7 @@ fun concurrentBigListContract() =
                 val solver = solverWithDefaultBuiltins(staticKb = theory)
 
                 val query = "biglist"(BigListOptions.SIZE, L)
-                val solutions = fromSequence(solver.solve(query, BIG_LIST_TIMEOUT))
+                val solutions = fromSequence(solver.solve(query, BIG_LIST_BUDGET))
                 val expected =
                     fromSequence(
                         sequenceOf(
@@ -42,4 +41,7 @@ fun concurrentBigListContract() =
     }
 
 // the long duration the concurrent suite used for big lists (4 * 2 * 6 s)
-private val BIG_LIST_TIMEOUT = 48.seconds
+// generating the big list takes < 131072 resolution steps
+private val BIG_LIST_BUDGET =
+    it.unibo.tuprolog.solve.SolverTest
+        .stepBudget(1_000_000)

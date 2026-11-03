@@ -43,7 +43,7 @@ fun concurrentFlagsContract() =
                 LastCallOptimization.defaultValue shouldBe LastCallOptimization.ON
 
                 val query = current_flag(LastCallOptimization.name, LastCallOptimization.ON)
-                val solutions = fromSequence(solver.solve(query, shortDuration))
+                val solutions = fromSequence(solver.solve(query, shortBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -57,7 +57,7 @@ fun concurrentFlagsContract() =
                 Unknown.defaultValue shouldBe Unknown.WARNING
 
                 val query = current_flag(Unknown.name, Unknown.WARNING)
-                val solutions = fromSequence(solver.solve(query, shortDuration))
+                val solutions = fromSequence(solver.solve(query, shortBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -70,7 +70,7 @@ fun concurrentFlagsContract() =
 
                 for (value in Unknown.admissibleValues) {
                     val query = set_flag(Unknown.name, value) and current_flag(Unknown.name, V)
-                    val solutions = fromSequence(solver.solve(query, shortDuration))
+                    val solutions = fromSequence(solver.solve(query, shortBudget))
                     val expected = fromSequence(query.yes(V to value))
 
                     expected.assertingEquals(solutions)
@@ -82,7 +82,7 @@ fun concurrentFlagsContract() =
             logicProgramming {
                 val solver = solverWithDefaultBuiltins()
 
-                val solutions = solver.solve(current_flag(F, `_`), shortDuration).toList()
+                val solutions = solver.solve(current_flag(F, `_`), shortBudget).toList()
 
                 solutions.isNotEmpty().shouldBeTrue()
 
@@ -92,7 +92,7 @@ fun concurrentFlagsContract() =
 
                 for (term in listOf(5, "f"("x"), 2.3).map { it.toTerm() }) {
                     var query = current_flag(term, `_`)
-                    var solutions2 = fromSequence(solver.solveOnce(query, shortDuration))
+                    var solutions2 = fromSequence(solver.solveOnce(query, shortBudget))
                     var expected =
                         fromSequence(
                             query.halt(
@@ -109,7 +109,7 @@ fun concurrentFlagsContract() =
                     expected.assertingEquals(solutions2)
 
                     query = set_flag(term, "value")
-                    solutions2 = fromSequence(solver.solveOnce(query, shortDuration))
+                    solutions2 = fromSequence(solver.solveOnce(query, shortBudget))
                     expected =
                         fromSequence(
                             query.halt(
@@ -136,7 +136,7 @@ fun concurrentFlagsContract() =
                     solver.flags.containsKey(flag).shouldBeFalse()
 
                     val query = current_flag(flag, V)
-                    val solutions = fromSequence(solver.solveOnce(query, shortDuration))
+                    val solutions = fromSequence(solver.solveOnce(query, shortBudget))
                     val expected = fromSequence(query.no())
 
                     expected.assertingEquals(solutions)
@@ -153,7 +153,7 @@ fun concurrentFlagsContract() =
                     solver.flags.containsKey(flag).shouldBeFalse()
 
                     val query = set_flag(flag, value) and current_flag(flag, X)
-                    val solutions = fromSequence(solver.solveOnce(query, shortDuration))
+                    val solutions = fromSequence(solver.solveOnce(query, shortBudget))
                     val expected = fromSequence(query.yes(X to value))
 
                     expected.assertingEquals(solutions)
@@ -174,7 +174,7 @@ fun concurrentFlagsContract() =
 
                 val selectedFlags =
                     solver
-                        .solve(query, shortDuration)
+                        .solve(query, shortBudget)
                         .filterIsInstance<Solution.Yes>()
                         .map { it.substitution[F]!! to it.substitution[X]!! }
                         .toMap()
@@ -188,7 +188,7 @@ fun concurrentFlagsContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = set_flag(F, "value")
-                val solutions = fromSequence(solver.solveList(query, shortDuration))
+                val solutions = fromSequence(solver.solveList(query, shortBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -213,7 +213,7 @@ fun concurrentFlagsContract() =
 
                 LastCallOptimization.admissibleValues.contains(truthOf(true)).shouldBeFalse()
 
-                val solutions = fromSequence(solver.solveList(query, shortDuration))
+                val solutions = fromSequence(solver.solveList(query, shortBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -236,7 +236,7 @@ fun concurrentFlagsContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = set_flag(MaxArity.name, 10)
-                val solutions = fromSequence(solver.solveList(query, shortDuration))
+                val solutions = fromSequence(solver.solveList(query, shortBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -261,7 +261,7 @@ fun concurrentFlagsContract() =
                 ShowWildCardVariablesInSolutions.defaultValue shouldBe ShowWildCardVariablesInSolutions.ON
 
                 val query = current_flag(ShowWildCardVariablesInSolutions.name, ShowWildCardVariablesInSolutions.ON)
-                val solutions = fromSequence(solver.solve(query, shortDuration))
+                val solutions = fromSequence(solver.solve(query, shortBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -275,7 +275,7 @@ fun concurrentFlagsContract() =
                 UniqueSolutions.defaultValue shouldBe UniqueSolutions.OFF
 
                 val query = current_flag(UniqueSolutions.name, UniqueSolutions.OFF)
-                val solutions = fromSequence(solver.solve(query, shortDuration))
+                val solutions = fromSequence(solver.solve(query, shortBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -289,7 +289,7 @@ fun concurrentFlagsContract() =
                 GroundQueriesHaveBooleanSolution.defaultValue shouldBe GroundQueriesHaveBooleanSolution.OFF
 
                 val query = current_flag(GroundQueriesHaveBooleanSolution.name, GroundQueriesHaveBooleanSolution.OFF)
-                val solutions = fromSequence(solver.solve(query, shortDuration))
+                val solutions = fromSequence(solver.solve(query, shortBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -302,7 +302,7 @@ fun concurrentFlagsContract() =
                 val wildcard = varOf("_P")
                 val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
 
-                val solution = solver.solveOnce(query, shortDuration)
+                val solution = solver.solveOnce(query, shortBudget)
 
                 solution.isYes.shouldBeTrue()
                 solution.valueOf("X") shouldBe Atom.of("lino")
@@ -323,7 +323,7 @@ fun concurrentFlagsContract() =
                 val wildcard = varOf("_P")
                 val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
 
-                val solution = solver.solveOnce(query, shortDuration)
+                val solution = solver.solveOnce(query, shortBudget)
 
                 solution.isYes.shouldBeTrue()
                 solution.valueOf("X") shouldBe Atom.of("lino")
@@ -336,7 +336,7 @@ fun concurrentFlagsContract() =
                 val solver = solverWithDefaultBuiltins()
                 val query = member(X, logicListOf(1, 1, 1))
 
-                (solver.solveList(query, shortDuration).count { it.isYes }) shouldBe 3
+                (solver.solveList(query, shortBudget).count { it.isYes }) shouldBe 3
             }
         }
 
@@ -347,7 +347,7 @@ fun concurrentFlagsContract() =
                         flags = FlagStore.DEFAULT.set(UniqueSolutions, UniqueSolutions.ON),
                     )
                 val query = member(X, logicListOf(1, 1, 1))
-                val solutions = fromSequence(solver.solve(query, shortDuration))
+                val solutions = fromSequence(solver.solve(query, shortBudget))
                 val expected = fromSequence(query.yes(X to 1))
 
                 expected.assertingEquals(solutions)

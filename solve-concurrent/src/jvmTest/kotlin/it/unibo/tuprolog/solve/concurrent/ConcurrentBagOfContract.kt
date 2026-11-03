@@ -45,7 +45,7 @@ fun concurrentBagOfContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = bagof("X", "G", "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -67,7 +67,7 @@ fun concurrentBagOfContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = bagof("X", 1, "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
