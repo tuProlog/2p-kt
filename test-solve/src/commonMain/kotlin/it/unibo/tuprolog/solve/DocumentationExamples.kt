@@ -9,10 +9,12 @@ import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.unify.Unificator
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 private val EXAMPLE_BLOCK = Regex("```prolog\\n([\\s\\S]*?)```")
 
-private const val EXAMPLE_TIMEOUT: TimeDuration = 10_000
+private val EXAMPLE_TIMEOUT: Duration = 10.seconds
 
 /** Whether [markdown] contains a ```` ```prolog ```` example block. */
 fun hasExample(markdown: String): Boolean = EXAMPLE_BLOCK.containsMatchIn(markdown)

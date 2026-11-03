@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
+import kotlin.time.Duration
 
 /** Extracts this [Struct] indicator and converts it to [Signature] */
 @JsName("extractSignature")
@@ -13,11 +14,11 @@ fun Struct.extractSignature(): Signature = Signature.fromIndicator(indicator)!!
 
 /**
  * Solves the goal built by [scopedContext] within a fresh, empty [Scope] (useful to build the goal [Struct] using
- * scoped variables inline), capping resolution to [maxDuration].
+ * scoped variables inline), capping resolution to [maxDuration] ([Duration.INFINITE], i.e. no limit, by default).
  */
 @JsName("solve")
 fun Solver.solve(
-    maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
+    maxDuration: Duration = Duration.INFINITE,
     scopedContext: Scope.() -> Struct,
 ): Sequence<Solution> = solve(scopedContext(Scope.empty()), maxDuration)
 

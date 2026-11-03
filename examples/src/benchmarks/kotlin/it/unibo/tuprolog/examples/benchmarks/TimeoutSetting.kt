@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.examples.benchmarks
 
 import it.unibo.tuprolog.solve.SolveOptions
+import kotlin.time.Duration.Companion.hours
 
 /** The timeout configurations the benchmarks compare, by JMH `timeout` parameter value. */
 enum class TimeoutSetting(
@@ -11,7 +12,7 @@ enum class TimeoutSetting(
     NONE("none", SolveOptions.allLazily()),
 
     /** A timeout far beyond the workload's duration: checking it costs, but it never fires. */
-    LARGE("large", SolveOptions.allLazilyWithTimeout(LARGE_TIMEOUT_MILLIS)),
+    LARGE("large", SolveOptions.allLazilyWithTimeout(1.hours)),
     ;
 
     companion object {
@@ -19,5 +20,3 @@ enum class TimeoutSetting(
         fun byId(id: String): TimeoutSetting = entries.first { it.id == id }
     }
 }
-
-private const val LARGE_TIMEOUT_MILLIS: Long = 60L * 60L * 1000L

@@ -15,6 +15,10 @@ import it.unibo.tuprolog.utils.Cursor
 data class StatePrimitiveExecution(
     override val context: PrologExecutionContext,
 ) : AbstractState(context) {
+    /** A mandatory refresh point: the primitive may have run for arbitrarily long (e.g. blocking, or sub-solving). */
+    override val isTimeout: Boolean
+        get() = context.chronometer.checkNow()
+
     private fun PrologExecutionContext.copyFromCurrentPrimitive(
         goals: Cursor<out Term>? = null,
         procedureFromAncestor: Int = 0,

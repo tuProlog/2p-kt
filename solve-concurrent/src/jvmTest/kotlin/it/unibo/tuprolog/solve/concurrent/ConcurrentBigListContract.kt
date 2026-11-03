@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.no
 import it.unibo.tuprolog.solve.yes
+import kotlin.time.Duration.Companion.seconds
 
 fun concurrentBigListContract() =
     concurrentContract {
@@ -41,4 +42,4 @@ fun concurrentBigListContract() =
     }
 
 // the long duration the concurrent suite used for big lists (4 * 2 * 6 s)
-private const val BIG_LIST_TIMEOUT = 48_000L
+private val BIG_LIST_TIMEOUT = 48.seconds

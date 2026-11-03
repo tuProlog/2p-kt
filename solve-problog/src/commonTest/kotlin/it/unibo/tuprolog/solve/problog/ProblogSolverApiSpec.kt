@@ -27,14 +27,14 @@ class ProblogSolverApiSpec :
         test("solve-list/collects-every-solution") {
             val solver = solver("0.6::h.")
             (solver.solveList(h).map { it.query }) shouldBe listOf(h)
-            (solver.solveList(h, 1.seconds.inWholeMilliseconds).map { it.query }) shouldBe listOf(h)
+            (solver.solveList(h, 1.seconds).map { it.query }) shouldBe listOf(h)
             (solver.solveList(h, probabilistic).map { it.probability }) shouldBe listOf(0.6)
         }
 
         test("solve-once/stops-at-the-first-solution") {
             val solver = solver("0.6::h.")
             solver.solveOnce(h).shouldBeInstanceOf<Solution.Yes>()
-            solver.solveOnce(h, 1.seconds.inWholeMilliseconds).shouldBeInstanceOf<Solution.Yes>()
+            solver.solveOnce(h, 1.seconds).shouldBeInstanceOf<Solution.Yes>()
             solver.solveOnce(h, probabilistic).probability shouldBe 0.6
         }
 

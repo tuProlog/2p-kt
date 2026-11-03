@@ -13,9 +13,10 @@ import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.theory.Theory
+import kotlin.time.Duration.Companion.seconds
 import it.unibo.tuprolog.core.List as LogicList
 
-private const val TIMEOUT = 10_000L
+private val TIMEOUT = 10.seconds
 
 /** `member(X, [1, 2, 3])`, whose solutions are the reference every convenience call must reproduce. */
 private val goal = Struct.of("member", Var.of("X"), LogicList.of(Integer.of(1), Integer.of(2), Integer.of(3)))

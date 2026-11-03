@@ -53,9 +53,9 @@ import it.unibo.tuprolog.solve.TestingTermOperators.lowerThanOrEqualTesting
 import it.unibo.tuprolog.solve.TestingTermOperators.lowerThanTesting
 import it.unibo.tuprolog.solve.TestingTermOperators.notEqualTesting
 import it.unibo.tuprolog.solve.TimeRelatedTheories.allSolutionsInTimeGoalToSolution
-import it.unibo.tuprolog.solve.TimeRelatedTheories.maxDurationFor
 import it.unibo.tuprolog.solve.TimeRelatedTheories.noSolutionInTimeGoalToSolution
 import it.unibo.tuprolog.solve.TimeRelatedTheories.oneSolutionInTimeGoalToSolution
+import it.unibo.tuprolog.solve.TimeRelatedTheories.simulatedTimeOptions
 import it.unibo.tuprolog.solve.TimeRelatedTheories.timeRelatedTheory
 import it.unibo.tuprolog.solve.TimeRelatedTheories.twoSolutionsInTimeGoalToSolution
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -145,6 +145,8 @@ import it.unibo.tuprolog.solve.stdlib.rule.Not
 import it.unibo.tuprolog.solve.stdlib.rule.Once
 import it.unibo.tuprolog.solve.stdlib.rule.Semicolon
 import it.unibo.tuprolog.solve.stdlib.rule.SetPrologFlag
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration.Companion.milliseconds
 import it.unibo.tuprolog.solve.stdlib.primitive.Float as FloatPrimitive
 import kotlin.collections.plus as append
 
@@ -544,7 +546,7 @@ fun solverContract(
                     staticKb = timeRelatedTheory,
                 ),
             goalToSolutions = noSolutionInTimeGoalToSolution,
-            maxDuration = maxDurationFor(0),
+            options = simulatedTimeOptions(0),
         )
     }
 
@@ -556,7 +558,7 @@ fun solverContract(
                     staticKb = timeRelatedTheory,
                 ),
             goalToSolutions = oneSolutionInTimeGoalToSolution,
-            maxDuration = maxDurationFor(1),
+            options = simulatedTimeOptions(1),
         )
     }
 
@@ -568,7 +570,7 @@ fun solverContract(
                     staticKb = timeRelatedTheory,
                 ),
             goalToSolutions = twoSolutionsInTimeGoalToSolution,
-            maxDuration = maxDurationFor(2),
+            options = simulatedTimeOptions(2),
         )
     }
 
@@ -580,7 +582,7 @@ fun solverContract(
                     staticKb = timeRelatedTheory,
                 ),
             goalToSolutions = allSolutionsInTimeGoalToSolution,
-            maxDuration = maxDurationFor(3),
+            options = simulatedTimeOptions(3),
         )
     }
 
@@ -656,12 +658,14 @@ fun solverContract(
         )
     }
 
-    // Test with [infiniteComputationTheoryNotableGoalToSolution]
+    // Test with [infiniteComputationTheoryNotableGoalToSolution], on leap-driven simulated time
     scenario("solver/max-duration-parameter-and-time-out-exception") {
         assertSolverSolutionsCorrect(
             solverFactory.solverWithDefaultBuiltins(staticKb = infiniteComputationTheory),
             infiniteComputationTheoryNotableGoalToSolution,
-            shortDuration,
+            SolveOptions
+                .allLazilyWithTimeout(shortDuration)
+                .setChronometerFactory(ChronometerFactory.simulated(durationPerLeap = 1.milliseconds)),
         )
     }
 

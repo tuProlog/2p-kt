@@ -14,6 +14,7 @@ import kotlinx.benchmark.Param
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Time `:solve-prolog` takes to give up on a never-ending query (`loop`) under a [timeoutMillis] budget (#1012):
@@ -26,13 +27,19 @@ class TimeoutOvershootBenchmark {
     @Param("10", "100")
     var timeoutMillis: Long = 10
 
+    @Param("direct", "adaptive")
+    var chronometer: String = "direct"
+
     private lateinit var solver: Solver
     private lateinit var options: SolveOptions
 
     @Setup
     fun setUp() {
         solver = PrologSolverFactory.solverWithDefaultBuiltins(staticKb = BenchmarkTheory.theory)
-        options = SolveOptions.allLazilyWithTimeout(timeoutMillis)
+        options =
+            SolveOptions
+                .allLazilyWithTimeout(timeoutMillis.milliseconds)
+                .setChronometerFactory(ChronometerSetting.byId(chronometer).factory)
     }
 
     @Benchmark

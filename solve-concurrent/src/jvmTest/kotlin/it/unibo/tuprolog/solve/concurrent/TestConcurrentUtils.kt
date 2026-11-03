@@ -15,7 +15,6 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.SolverTest
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.concurrent.ConcurrentFromSequence.fromSequence
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
@@ -25,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.jvm.JvmName
+import kotlin.time.Duration
 
 private inline val loggingOn get() = false
 
@@ -254,7 +254,7 @@ class MultiSet(
 fun assertConcurrentSolverSolutionsCorrect(
     solver: Solver,
     goalToSolutions: List<Pair<Struct, List<Solution>>>,
-    maxDuration: TimeDuration,
+    maxDuration: Duration,
 ) {
     goalToSolutions.forEach { (goal, solutionList) ->
         if (loggingOn) solver.logKBs()

@@ -11,6 +11,9 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.utils.time.Chronometer
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration
 
 /**
  * Utils singleton that contains dummy instances, to be used when in a test something is not important
@@ -30,8 +33,11 @@ object DummyInstances {
      * be handed to a real solver or resolution step — only ever constructed and passed where an exception is built,
      * not resolved.
      */
+    val executionContext: ExecutionContext = executionContext(ChronometerFactory.default.create(Duration.INFINITE))
+
+    /** Same as [executionContext], but timed by [chronometer]: e.g. to check how timing flows into requests. */
     @Suppress("IMPLICIT_NOTHING_AS_TYPE_PARAMETER", "IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION")
-    val executionContext =
+    fun executionContext(chronometer: Chronometer): ExecutionContext =
         object : ExecutionContext {
             override val unificator: Unificator get() = Unificator.default
             override val procedure: Struct by lazy { Atom.of("dummyProcedure") }
@@ -45,8 +51,7 @@ object DummyInstances {
             override val substitution: Substitution.Unifier = Substitution.empty()
             override val logicStackTrace: Nothing by lazy { throw NotImplementedError() }
             override val customData: Nothing by lazy { throw NotImplementedError() }
-            override val startTime: TimeInstant = 0L
-            override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE
+            override val chronometer: Chronometer = chronometer
 
             override fun createSolver(
                 unificator: Unificator,

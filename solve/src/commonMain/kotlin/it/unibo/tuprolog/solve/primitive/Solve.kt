@@ -7,17 +7,17 @@ import it.unibo.tuprolog.solve.Durable
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.TimeInstant
-import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.ResolutionException
-import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.sideffects.SideEffectManager
 import it.unibo.tuprolog.solve.sideffects.SideEffectsBuilder
 import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.utils.time.Chronometer
+import it.unibo.tuprolog.utils.time.ChronometerFactory
 import kotlin.js.JsName
+import kotlin.time.Duration
 
 /** A base class for Solve requests and responses */
 sealed class Solve {
@@ -32,10 +32,6 @@ sealed class Solve {
         /** The context that's current at Request making */
         @JsName("context")
         val context: C,
-        /** The time instant when the request was submitted for resolution */
-        override val startTime: TimeInstant = currentTimeInstant(),
-        /** The execution max duration after which the computation should end, because no more useful */
-        override val maxDuration: TimeDuration = context.endTime - startTime,
     ) : Solve(),
         Durable {
         init {
@@ -51,15 +47,11 @@ sealed class Solve {
                             "with wrong number of arguments ${arguments.toList()}"
                     }
             }
-            require(startTime >= 0) { "The request issuing instant can't be negative: $startTime" }
-            if (maxDuration < 0) {
-                throw TimeOutException(
-                    message = "Request's max duration can't be negative: $maxDuration",
-                    context = context,
-                    exceededDuration = context.maxDuration,
-                )
-            }
         }
+
+        /** The chronometer of the resolution this request belongs to, i.e. its [context]'s. */
+        override val chronometer: Chronometer
+            get() = context.chronometer
 
         /** The current query [Struct] of this request */
         @JsName("query")
@@ -209,14 +201,28 @@ sealed class Solve {
             SideEffectsBuilder.empty().also { it.buildSideEffects() }.build(),
         )
 
+        /** Creates a new, independent [Solver] sharing this request's [context] state, for nested resolutions. */
         @JsName("subSolver")
         fun subSolver(): Solver = context.createSolver()
 
+        /**
+         * Solves [goal] in a nested resolution (via [subSolver]), timed by a child scope of this request's
+         * [chronometer] (see [Chronometer.childScope]): on the same timeline, and never outliving this resolution's
+         * deadline, nor `now + limit`.
+         */
         @JsName("solve")
         fun solve(
             goal: Struct,
-            maxDuration: TimeDuration = this.maxDuration,
-        ): Sequence<Solution> = subSolver().solve(goal, maxDuration)
+            limit: Duration = Duration.INFINITE,
+        ): Sequence<Solution> =
+            subSolver().solve(
+                goal,
+                SolveOptions
+                    .allLazily()
+                    .setTimeout(
+                        limit,
+                    ).setChronometerFactory(ChronometerFactory.childrenOf(chronometer)),
+            )
     }
 
     /** Class representing a Response, from the Solver, to a [Solve.Request] */

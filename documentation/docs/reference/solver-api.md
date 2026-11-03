@@ -8,7 +8,7 @@ implementation modules `:solve-prolog`, `:solve-concurrent`, and `:solve-problog
 ## `Solver`
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solver.kt:21:65"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solver.kt:22:66"
 ```
 
 Three families of methods trigger resolution of a `Struct` goal, differing in how solutions are collected:
@@ -17,7 +17,7 @@ Three families of methods trigger resolution of a `Struct` goal, differing in ho
 - `solveList(goal, options): List<Solution>` — always eager (careful with infinite solution sets);
 - `solveOnce(goal, options): Solution` — eagerly returns the first solution only (`options.setLimit(1)`).
 
-Overloads accepting a `timeout: TimeDuration` instead of `options` are shorthands built on `SolveOptions.of(...)`.
+Overloads accepting a `timeout: kotlin.time.Duration` instead of `options` are shorthands built on `SolveOptions.of(...)`.
 
 `Solver` also extends `ExecutionContextAware` (see below) and exposes `copy(...)` / `clone()` to derive a new solver
 sharing/overriding specific pieces of state.
@@ -47,17 +47,52 @@ val solutions = solver.solve(Struct.of("append", listA, listB, result))
 ## `SolveOptions`
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/SolveOptions.kt:7:26"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/SolveOptions.kt:10:33"
 ```
 
 - `isLazy` / `isEager` — controls whether `solve()` streams solutions on demand or computes eagerly;
-- `timeout: TimeDuration` — max execution duration (`SolveOptions.MAX_TIMEOUT` by default);
+- `timeout: Duration` — max execution duration (`SolveOptions.MAX_TIMEOUT`, i.e. `Duration.INFINITE`, by default);
+- `chronometerFactory: ChronometerFactory?` — how resolution time is measured (see [Resolution time](#resolution-time));
+  `null`, the default, means `ChronometerFactory.default`;
 - `limit: Int` — caps the number of returned solutions (`SolveOptions.ALL_SOLUTIONS`, i.e. `-1`, by default);
 - `customOptions: Map<String, Any>` — implementation-specific extra knobs.
 
 Instances are built via the companion's factories: `allLazily()`, `someLazily(limit)`, `allEagerly()`,
-`someEagerly(limit)`, their `...WithTimeout(...)` variants, or the general `of(lazy, timeout, limit, customOptions)`.
-`SolveOptions.DEFAULT` is `allLazily()`.
+`someEagerly(limit)`, their `...WithTimeout(...)` variants, or the general
+`of(lazy, timeout, limit, chronometerFactory, customOptions)`. `SolveOptions.DEFAULT` is `allLazily()`.
+
+### Resolution time
+
+Each resolution is timed by its own `Chronometer` (`it.unibo.tuprolog.utils.time`, in `:utils`), created when it
+starts by `SolveOptions.createChronometer()`, i.e. by `chronometerFactory` (or `ChronometerFactory.default`) with
+`timeout`. Options hold no timing state, so the same `SolveOptions` can be shared by any number of resolutions.
+
+- **Semantics.** Expiration is strict: resolution is aborted once the elapsed time is *greater than* `timeout`, so a
+  zero timeout only expires once some time elapses, and `Duration.INFINITE` never does. A timeout halts resolution
+  with a `Solution.Halt` carrying a `TimeOutException`, wherever it is detected (a resolution step, `sleep/1`, a
+  nested resolution such as `findall/3`'s), and `catch/3` can't intercept it.
+- **Propagation.** The chronometer is resolution-level state shared by every `ExecutionContext` of the resolution
+  (`Durable.chronometer`, hence `Solve.Request.chronometer`): backtracking neither restores elapsed time nor
+  replenishes the budget. Nested resolutions (`Solve.Request.solve(goal, limit)`) are timed by a *child scope*, on the
+  same timeline, whose deadline never exceeds the parent's.
+- **Lazy solutions.** In `:solve-prolog`, each solution gets the full budget: asking for the next one restarts the
+  chronometer, so time the caller spends between solutions is not counted. In `:solve-concurrent`, which computes
+  solutions eagerly in the background, one budget covers the whole resolution.
+- **Implementations** (`ChronometerFactory`'s companion):
+  - `direct(timeline)` reads the clock at every resolution step: the reference implementation;
+  - `adaptive(policy, timeline)` reads it only every so many steps, planned from the estimated duration of a step
+    (`AdaptiveSamplingPolicy`), and never without a timeout. Expiration may be detected slightly late, never early;
+    mandatory readings happen after each primitive call and before publishing a solution;
+  - `simulated(timeline, durationPerLeap)` runs on virtual time (`Timeline.manual()`): each resolution step advances
+    it by `durationPerLeap`, and `sleep/1` advances it without waiting. Timeout behaviour becomes deterministic and
+    independent of the host machine, e.g. for tests:
+
+```kotlin
+val timeline = Timeline.manual()
+val options = SolveOptions.allLazilyWithTimeout(20.milliseconds)
+    .setChronometerFactory(ChronometerFactory.simulated(timeline, durationPerLeap = 1.milliseconds))
+solver.solve(Struct.parse("sleep(1000)"), options) // halts with a TimeOutException, without waiting 1 s
+```
 
 ## `Solution`
 

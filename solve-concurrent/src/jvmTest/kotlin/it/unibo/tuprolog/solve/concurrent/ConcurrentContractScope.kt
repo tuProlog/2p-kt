@@ -6,7 +6,7 @@ import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.Expectation
 import it.unibo.tuprolog.solve.SolverFactory
-import it.unibo.tuprolog.solve.TimeDuration
+import kotlin.time.Duration
 
 /**
  * Registers [ConcurrentSolverFactory] cases. Solutions are compared as multisets ([MultiSet]), since a concurrent
@@ -23,7 +23,7 @@ class ConcurrentContractScope internal constructor(
     /** A query on a fresh solver with default built-ins, which must yield exactly the expected solutions. */
     fun case(
         id: String,
-        timeout: TimeDuration = mediumDuration,
+        timeout: Duration = mediumDuration,
         expectation: LogicProgrammingScope.() -> Expectation,
     ) = scenario(id) {
         logicProgramming {
