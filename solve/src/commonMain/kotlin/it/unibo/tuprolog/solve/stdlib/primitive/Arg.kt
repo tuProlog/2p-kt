@@ -51,7 +51,7 @@ object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
                             }.filter { (_, sub) ->
                                 sub is Substitution.Unifier
                             }.map { (i, sub) ->
-                                sub + Substitution.of(first to Integer.of(i))
+                                merge(sub, Substitution.of(first to Integer.of(i)))
                             }
                     }
                     is Integer -> {
