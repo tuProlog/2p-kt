@@ -107,7 +107,8 @@ abstract class AbstractWorklistUnificator(
 
     /**
      * Unifies the bindings of [substitution2] with the ones of [context] and [substitution1]: a variable bound by both
-     * gets its two values unified, rather than one overriding the other. The result is idempotent.
+     * gets its two values unified, rather than one overriding the other. Only those pairs of values are passed to
+     * [handleComparison]. The result is idempotent.
      */
     override fun merge(
         substitution1: Substitution,
@@ -120,9 +121,8 @@ abstract class AbstractWorklistUnificator(
                 substitution1.isFailed || substitution2.isFailed || context.isFailed -> null
                 // substitution1 is a consistent set of bindings: with nothing to reconcile it with, use it as is
                 context.isEmpty() -> newRun(substitution1, request)
-                else -> newRun(context, request)?.also { it.pushAll(substitution1) }
-            } ?: return handleResult(request, Substitution.failed())
-        run.pushAll(substitution2)
+                else -> newRun(context, request)?.takeIf { it.merge(substitution1) }
+            }?.takeIf { it.merge(substitution2) } ?: return handleResult(request, Substitution.failed())
         return handleResult(request, run.solve())
     }
 }

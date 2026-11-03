@@ -7,8 +7,10 @@ import kotlin.js.JsName
  * A pair of [Term]s that an [AbstractWorklistUnificator] is about to compare, handed to
  * [AbstractWorklistUnificator.handleComparison] so that subclasses can observe it or alter its outcome.
  *
- * Orientation is preserved: [lhs] always stems from the left operand of the [request] (the first term of an
- * [MguRequest], or the first substitution of a [MergeRequest]), and [rhs] from the right one. Both are *dereferenced*:
+ * Orientation is preserved: [lhs] always stems from the left operand of the [request], and [rhs] from the right one.
+ * For an [MguRequest], they are subterms of its first and second term respectively. For a [MergeRequest], only the
+ * variables bound by both substitutions lead to comparisons: [lhs] is what the variable is bound to by the first
+ * substitution (or the context), and [rhs] what it is bound to by the second one. Both are *dereferenced*:
  * a bound variable is replaced by the term it is currently bound to, so a term may show up on the side of the variable
  * it was bound to (e.g. after `f(X, X) = f(a, b)` binds `X` to `a`, the second pair is reported as `a = b`).
  *

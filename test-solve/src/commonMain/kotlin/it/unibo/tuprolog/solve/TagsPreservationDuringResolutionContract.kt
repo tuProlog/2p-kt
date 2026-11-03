@@ -5,10 +5,10 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.theory.logicProgramming
-import it.unibo.tuprolog.unify.AbstractUnificator
-import it.unibo.tuprolog.unify.Equation
+import it.unibo.tuprolog.solve.tags.TagComparisonVerse
+import it.unibo.tuprolog.solve.tags.TagFlow
+import it.unibo.tuprolog.solve.tags.TagsUnificationEngine
 import it.unibo.tuprolog.utils.setTags
 
 /** Verifies that term tags (see `it.unibo.tuprolog.utils.Taggable`) attached to a theory's clauses, or to a query, survive resolution and are visible to a custom `it.unibo.tuprolog.unify.Unificator`. */
@@ -16,20 +16,24 @@ fun tagsPreservationDuringResolutionContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),
 ) = contract(solverFactory, disabled) {
+    // Every scenario runs against both unification engines (see TagsUnificationEngine), which differ in which tags
+    // are observable: the worklist engine compares compound terms before decomposing them, so tags at depths `F`
+    // and `G` are visible, whereas the equation-based one decomposes matching compound terms straight into equations
+    // of their arguments, so only tags at depth `X` are. Tags at depth `CLAUSE` are never visible, as the clause
+    // itself is not unified, only its head.
+
     // Case 1: the theory clause is tagged (at each of the four depths), and the query is *not*.
     //
     // Under `IGNORE`, resolution always succeeds (tags play no role). Under `EQUALS`, it only fails when the tag
-    // is actually observable, i.e. at depth `X`, since an empty query-side tag map differs from the clause's;
-    // at `CLAUSE`/`F`/`G` the tag is unreachable during unification, so resolution succeeds regardless.
+    // is actually observable, since an empty query-side tag map differs from the clause's.
     scenario("tags-preservation-during-resolution/untagged-query-against-tagged-theory") {
-        for (depth in Depth.entries) {
-            for (verse in verses) {
-                val solutions = countSolutions(solverFor(depth, verse), untaggedQuery())
-                // Equation.allOf never emits an equation for a *matching* struct-vs-struct pair, it always
-                // decomposes straight into per-argument equations; so tags on an intermediate struct (CLAUSE, F, G)
-                // are invisible to any Unificator, only a leaf's (X) tags are ever visible
-                val expected = if (verse == TagComparisonVerse.IGNORE || depth != Depth.X) 1 else 0
-                withClue("depth=$depth verse=$verse") { solutions shouldBe expected }
+        for (engine in TagsUnificationEngine.entries) {
+            for (depth in Depth.entries) {
+                for (verse in verses) {
+                    val solutions = countSolutions(solverFor(engine, depth, verse), untaggedQuery())
+                    val expected = if (verse == TagComparisonVerse.IGNORE || !engine.sees(depth)) 1 else 0
+                    withClue("engine=$engine depth=$depth verse=$verse") { solutions shouldBe expected }
+                }
             }
         }
     }
@@ -39,10 +43,12 @@ fun tagsPreservationDuringResolutionContract(
     //
     // Resolution always succeeds, with exactly one solution, under both `EQUALS` and `IGNORE`.
     scenario("tags-preservation-during-resolution/query-tagged-like-theory") {
-        for (depth in listOf(Depth.F, Depth.G, Depth.X)) {
-            for (verse in verses) {
-                val solutions = countSolutions(solverFor(depth, verse), taggedQuery(depth, tagA))
-                withClue("depth=$depth verse=$verse") { solutions shouldBe 1 }
+        for (engine in TagsUnificationEngine.entries) {
+            for (depth in listOf(Depth.F, Depth.G, Depth.X)) {
+                for (verse in verses) {
+                    val solutions = countSolutions(solverFor(engine, depth, verse), taggedQuery(depth, tagA))
+                    withClue("engine=$engine depth=$depth verse=$verse") { solutions shouldBe 1 }
+                }
             }
         }
     }
@@ -51,16 +57,19 @@ fun tagsPreservationDuringResolutionContract(
     // with a different tag value for the same key, once with a different key altogether.
     //
     // Under `IGNORE`, resolution still succeeds. Under `EQUALS`, it only fails where the mismatch is actually
-    // observable, i.e. at depth `X`; at `F`/`G` the tag is unreachable, so resolution succeeds regardless, exactly
-    // as it would with a fully untagged query (see [testUntaggedQueryAgainstTaggedTheory]).
+    // observable; elsewhere, resolution succeeds regardless, exactly as it would with a fully untagged query.
     scenario("tags-preservation-during-resolution/query-tagged-differently-from-theory") {
-        for (depth in listOf(Depth.F, Depth.G, Depth.X)) {
-            for (differentTag in listOf(tagDifferentValue, tagDifferentKey)) {
-                for (verse in verses) {
-                    val solutions = countSolutions(solverFor(depth, verse), taggedQuery(depth, differentTag))
-                    // see testUntaggedQueryAgainstTaggedTheory: only leaf-level (X) tags are ever visible
-                    val expected = if (verse == TagComparisonVerse.IGNORE || depth != Depth.X) 1 else 0
-                    withClue("depth=$depth tag=$differentTag verse=$verse") { solutions shouldBe expected }
+        for (engine in TagsUnificationEngine.entries) {
+            for (depth in listOf(Depth.F, Depth.G, Depth.X)) {
+                for (differentTag in listOf(tagDifferentValue, tagDifferentKey)) {
+                    for (verse in verses) {
+                        val solver = solverFor(engine, depth, verse)
+                        val solutions = countSolutions(solver, taggedQuery(depth, differentTag))
+                        val expected = if (verse == TagComparisonVerse.IGNORE || !engine.sees(depth)) 1 else 0
+                        withClue("engine=$engine depth=$depth tag=$differentTag verse=$verse") {
+                            solutions shouldBe expected
+                        }
+                    }
                 }
             }
         }
@@ -72,18 +81,17 @@ fun tagsPreservationDuringResolutionContract(
     // through multiple unification steps.
     //
     // Every atom contributed by the query (`a`, `b`, `c`) is tagged as goal-originated; every atom contributed by
-    // the theory (`zero`, and each `succ` wrapper) is tagged as theory-originated. A custom
-    // `it.unibo.tuprolog.unify.Unificator.handleEquation` inspects every equation handled during resolution and
-    // fails the test if a goal-originated tag is ever found on the right-hand side of an equation, or a
-    // theory-originated tag is ever found on its left-hand side — since resolution always unifies the current goal
+    // the theory (`zero`, and each `succ` wrapper) is tagged as theory-originated. A custom unificator inspects every
+    // comparison (or equation) handled during resolution and fails the test if a goal-originated tag is ever found on
+    // its right-hand side, or a theory-originated tag is ever found on its left-hand side — since resolution always unifies the current goal
     // (lhs) against a clause head (rhs), a correct implementation should never mix the two. It also fails if
     // neither kind of tag was ever observed at all, which would indicate tags silently disappeared during
     // resolution rather than legitimately never crossing sides.
     //
     // This test is meant to help a developer pinpoint *where*, during resolution, a tag gets lost or misplaced.
     scenario("tags-preservation-during-resolution/tag-origin-during-computation") {
-        val goalTag = mapOf("origin" to "goal")
-        val theoryTag = mapOf("origin" to "theory")
+        val goalTag = mapOf(TagFlow.ORIGIN to TagFlow.GOAL)
+        val theoryTag = mapOf(TagFlow.ORIGIN to TagFlow.THEORY)
 
         val theory =
             logicProgramming {
@@ -94,8 +102,6 @@ fun tagsPreservationDuringResolutionContract(
                     },
                 )
             }
-        val unificator = TagFlowUnificator()
-        val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = unificator)
         val goal =
             logicProgramming {
                 "count"(
@@ -107,15 +113,21 @@ fun tagsPreservationDuringResolutionContract(
                 )
             }
 
-        val solutions = solver.solveList(goal).filter { it.isYes }
+        for (engine in TagsUnificationEngine.entries) {
+            val flow = TagFlow()
+            val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = engine.tagFlow(flow))
+            val solutions = solver.solveList(goal).filter { it.isYes }
 
-        solutions.size shouldBe 1
-        withClue("tags crossed sides: ${unificator.violations}") { unificator.violations.isEmpty().shouldBeTrue() }
-        withClue("goal-originated tags were never observed: they may have been lost") {
-            unificator.sawGoalOriginatedTag.shouldBeTrue()
-        }
-        withClue("theory-originated tags were never observed: they may have been lost") {
-            unificator.sawTheoryOriginatedTag.shouldBeTrue()
+            withClue("engine=$engine") {
+                solutions.size shouldBe 1
+                withClue("tags crossed sides: ${flow.violations}") { flow.violations.isEmpty().shouldBeTrue() }
+                withClue("goal-originated tags were never observed: they may have been lost") {
+                    flow.sawGoalOriginatedTag.shouldBeTrue()
+                }
+                withClue("theory-originated tags were never observed: they may have been lost") {
+                    flow.sawTheoryOriginatedTag.shouldBeTrue()
+                }
+            }
         }
     }
 }
@@ -159,75 +171,24 @@ private fun taggedQuery(
 
 private fun untaggedQuery(): Struct = logicProgramming { "f"("g"("x")) }
 
+/** Whether this engine lets custom unificators see tags attached at [depth]. */
+private fun TagsUnificationEngine.sees(depth: Depth): Boolean =
+    when (depth) {
+        Depth.CLAUSE -> false
+        Depth.F, Depth.G -> compoundTagsVisible
+        Depth.X -> true
+    }
+
 private fun ContractScope.solverFor(
+    engine: TagsUnificationEngine,
     depth: Depth,
     verse: TagComparisonVerse,
 ): Solver {
     val theory = logicProgramming { theoryOf(taggedClause(depth, tagA)) }
-    return solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = TagAwareUnificator(verse))
+    return solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = engine.tagAware(verse))
 }
 
 private fun countSolutions(
     solver: Solver,
     goal: Struct,
 ): Int = solver.solveList(goal).count { it.isYes }
-
-private enum class TagComparisonVerse {
-    EQUALS,
-    IGNORE,
-}
-
-private class TagAwareUnificator(
-    val verse: TagComparisonVerse,
-) : AbstractUnificator() {
-    override fun checkTermsEquality(
-        first: Term,
-        second: Term,
-    ): Boolean = first == second
-
-    override fun handleEquation(
-        request: Request,
-        equation: Equation,
-    ): Equation =
-        with(equation) {
-            when {
-                isContradiction -> this
-                else -> if (checkTagVerse(verse)) this else toContradiction()
-            }
-        }
-
-    private fun Equation.checkTagVerse(verse: TagComparisonVerse): Boolean =
-        when (verse) {
-            TagComparisonVerse.EQUALS -> rhs.tags == lhs.tags
-            TagComparisonVerse.IGNORE -> true
-        }
-}
-
-/**
- * A [Unificator][it.unibo.tuprolog.unify.Unificator] that lets a developer debug where tags come from,
- * during resolution: it records every observed cross-contamination between the tags originated on the goal
- * side and the ones originated on the theory side, of any [Equation] handled while solving.
- */
-private class TagFlowUnificator : AbstractUnificator() {
-    val violations = mutableListOf<String>()
-    var sawGoalOriginatedTag = false
-    var sawTheoryOriginatedTag = false
-
-    override fun checkTermsEquality(
-        first: Term,
-        second: Term,
-    ): Boolean = first == second
-
-    override fun handleEquation(
-        request: Request,
-        equation: Equation,
-    ): Equation {
-        val lhsOrigin = equation.lhs.tags["origin"]
-        val rhsOrigin = equation.rhs.tags["origin"]
-        if (lhsOrigin == "theory") violations += "theory-originated tag found in lhs: ${equation.lhs}"
-        if (rhsOrigin == "goal") violations += "goal-originated tag found in rhs: ${equation.rhs}"
-        if (lhsOrigin == "goal") sawGoalOriginatedTag = true
-        if (rhsOrigin == "theory") sawTheoryOriginatedTag = true
-        return equation
-    }
-}

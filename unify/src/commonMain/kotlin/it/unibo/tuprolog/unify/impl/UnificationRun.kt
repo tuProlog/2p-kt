@@ -37,9 +37,21 @@ internal class UnificationRun(
         pending.add(rhs)
     }
 
-    /** Pushes the bindings of [substitution] as pairs, variables on the left. */
-    fun pushAll(substitution: Substitution) {
-        for ((variable, term) in substitution) push(variable, term)
+    /**
+     * Adds the bindings of [substitution]: a variable not bound yet gets bound right away, whereas a variable already
+     * bound gets its two values pushed as a pair to unify. Returns `false` if occurs-check rejects a binding.
+     */
+    fun merge(substitution: Substitution): Boolean {
+        for ((variable, term) in substitution) {
+            val representative = bindings.representative(variable)
+            if (representative is Var && bindings[representative] == null) {
+                val value = bindings.dereference(term)
+                if (value != representative && !bind(representative, value)) return false
+            } else {
+                push(variable, term)
+            }
+        }
+        return true
     }
 
     /** Unifies all pending pairs, then builds the resulting [Substitution]. */
