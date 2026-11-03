@@ -80,7 +80,7 @@ starts by `SolveOptions.createChronometer()`, i.e. by `chronometerFactory` (or `
   solutions eagerly in the background, one budget covers the whole resolution.
 - **Implementations** (`ChronometerFactory`'s companion):
   - `direct(timeline)` reads the clock at every resolution step: the reference implementation;
-  - `adaptive(policy, timeline)` reads it only every so many steps, planned from the estimated duration of a step
+  - `adaptive(policy, timeline)` (the default, `ChronometerFactory.default`) reads it only every so many steps, planned from the estimated duration of a step
     (`AdaptiveSamplingPolicy`), and never without a timeout. Expiration may be detected slightly late, never early;
     mandatory readings happen after each primitive call and before publishing a solution;
   - `simulated(timeline, durationPerLeap)` runs on virtual time (`Timeline.manual()`): each resolution step advances

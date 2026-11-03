@@ -49,9 +49,9 @@ fun interface ChronometerFactory {
         @JvmStatic
         fun childrenOf(parent: Chronometer): ChronometerFactory = ChronometerFactory { parent.childScope(it) }
 
-        /** The factory used when none is configured. */
+        /** The factory used when none is configured: [adaptive], with the default policy, on the system clock. */
         @JvmStatic
         val default: ChronometerFactory
-            get() = direct()
+            get() = adaptive()
     }
 }
