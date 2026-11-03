@@ -66,6 +66,7 @@ import it.unibo.tuprolog.solve.numberCharsContract
 import it.unibo.tuprolog.solve.numberCodesContract
 import it.unibo.tuprolog.solve.numberContract
 import it.unibo.tuprolog.solve.onceContract
+import it.unibo.tuprolog.solve.opContract
 import it.unibo.tuprolog.solve.orContract
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
@@ -83,9 +84,11 @@ import it.unibo.tuprolog.solve.subAtomContract
 import it.unibo.tuprolog.solve.substitutionsContract
 import it.unibo.tuprolog.solve.tagsPreservationDuringResolutionContract
 import it.unibo.tuprolog.solve.termContract
+import it.unibo.tuprolog.solve.termSameContract
 import it.unibo.tuprolog.solve.timeoutContract
 import it.unibo.tuprolog.solve.trueContract
 import it.unibo.tuprolog.solve.unifyContract
+import it.unibo.tuprolog.solve.univContract
 import it.unibo.tuprolog.solve.yes
 
 /** The shared solver contracts of `:test-solve`, run against [PrologSolverFactory]. */
@@ -147,6 +150,9 @@ class PrologSolverSpec :
         include(termContract(PrologSolverFactory))
         include(timeoutContract(PrologSolverFactory))
         include(trueContract(PrologSolverFactory))
+        include(univContract(PrologSolverFactory))
+        include(opContract(PrologSolverFactory))
+        include(termSameContract(PrologSolverFactory))
         include(staticFactoryContract(SolvePrologExpectations.expectations))
 
         withTests(

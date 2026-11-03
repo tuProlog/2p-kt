@@ -13,6 +13,8 @@ import it.unibo.tuprolog.solve.library.impl.ExtensionLibrary
 import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
+import it.unibo.tuprolog.solve.stdlib.primitive.Abolish
+import it.unibo.tuprolog.solve.stdlib.primitive.AddArguments
 import it.unibo.tuprolog.solve.stdlib.primitive.Arg
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticEqual
 import it.unibo.tuprolog.solve.stdlib.primitive.ArithmeticGreaterThan
@@ -59,6 +61,8 @@ import it.unibo.tuprolog.solve.stdlib.primitive.NumberChars
 import it.unibo.tuprolog.solve.stdlib.primitive.NumberCodes
 import it.unibo.tuprolog.solve.stdlib.primitive.Op
 import it.unibo.tuprolog.solve.stdlib.primitive.Repeat
+import it.unibo.tuprolog.solve.stdlib.primitive.Retract
+import it.unibo.tuprolog.solve.stdlib.primitive.RetractAll
 import it.unibo.tuprolog.solve.stdlib.primitive.Reverse
 import it.unibo.tuprolog.solve.stdlib.primitive.SetDurable
 import it.unibo.tuprolog.solve.stdlib.primitive.SetEphemeral
@@ -109,7 +113,8 @@ object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
     override val primitives: Map<Signature, Primitive>
         get() =
             listOf(
-                // Abolish,
+                Abolish,
+                AddArguments,
                 Arg,
                 ArithmeticEqual,
                 ArithmeticGreaterThan,
@@ -158,8 +163,8 @@ object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
                 Op,
                 Or, // TODO removes rule for -> and ; from default builtins
                 Repeat,
-                // Retract,
-                // RetractAll,
+                Retract,
+                RetractAll,
                 Reverse,
                 SetDurable,
                 SetEphemeral,

@@ -18,12 +18,6 @@ kotlin {
             }
         }
 
-        commonTest {
-            dependencies {
-                api(project(":solve"))
-            }
-        }
-
         getByName("jvmMain") {
             dependencies {
                 implementation(libs.jackson.core)

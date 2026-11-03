@@ -20,6 +20,13 @@ internal class EmptyBlockImpl(
 
     override val variables: Sequence<Var> = emptySequence()
 
+    // explicit, as on Kotlin/JS the inherited toList() called itself until the stack overflowed
+    override fun toList(): List<Term> = emptyList()
+
+    override fun toArray(): Array<Term> = emptyArray()
+
+    override fun toSequence(): Sequence<Term> = emptySequence()
+
     override fun copyWithTags(tags: Map<String, Any>): EmptyBlock = EmptyBlockImpl(tags)
 
     override fun freshCopy(): EmptyBlock = this

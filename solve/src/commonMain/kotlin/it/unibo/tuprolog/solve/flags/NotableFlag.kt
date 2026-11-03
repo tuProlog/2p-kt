@@ -8,7 +8,7 @@ import kotlin.jvm.JvmStatic
 /**
  * A typed, well-known Prolog flag, i.e. a named switch whose legal values and default are known ahead of time --
  * as opposed to the arbitrary `String → `[Term]` entries a plain [FlagStore] can also hold. Implemented as `object`s
- * for both ISO-standard flags ([Unknown], [DoubleQuotes], [MaxArity]) and implementation-specific ones
+ * for both ISO-standard flags ([Unknown], [Bounded], [DoubleQuotes], [MaxArity]) and implementation-specific ones
  * ([LastCallOptimization], [TrackVariables]).
  *
  * @see FlagStore
@@ -73,13 +73,14 @@ interface NotableFlag : Helpable {
             }
 
     companion object {
-        /** Looks up the built-in [NotableFlag] ([DoubleQuotes], [LastCallOptimization], [MaxArity], [TrackVariables],
-         * [Unknown], [ShowWildCardVariablesInSolutions], [UniqueSolutions], [GroundQueriesHaveBooleanSolution])
-         * named [name], or `null` if none matches. */
+        /** Looks up the built-in [NotableFlag] ([Bounded], [DoubleQuotes], [LastCallOptimization], [MaxArity],
+         * [TrackVariables], [Unknown], [ShowWildCardVariablesInSolutions], [UniqueSolutions],
+         * [GroundQueriesHaveBooleanSolution]) named [name], or `null` if none matches. */
         @JsName("fromName")
         @JvmStatic
         fun fromName(name: String): NotableFlag? =
             sequenceOf(
+                Bounded,
                 DoubleQuotes,
                 LastCallOptimization,
                 MaxArity,

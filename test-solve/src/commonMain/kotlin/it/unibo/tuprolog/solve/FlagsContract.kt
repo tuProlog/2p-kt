@@ -415,4 +415,13 @@ fun flagsContract(
             (solver.solveList(query, shortDuration).count { it.isYes }) shouldBe 1
         }
     }
+
+    scenario("flags/integers-are-unbounded") {
+        solverFactory.answers("current_flag(bounded, X)") shouldBe listOf("yes: X = false")
+    }
+
+    scenario("flags/bounded-is-read-only") {
+        solverFactory.answers("set_flag(bounded, true)") shouldBe
+            listOf("halt: permission_error(modify, flag, bounded)")
+    }
 }

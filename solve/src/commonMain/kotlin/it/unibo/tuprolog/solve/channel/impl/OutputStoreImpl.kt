@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.channel.OutputStore.Companion.STDERR
 import it.unibo.tuprolog.solve.channel.OutputStore.Companion.STDOUT
 import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.ensureAliasRefersToChannel
+import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.rebindingStandardAliases
 import it.unibo.tuprolog.solve.channel.impl.ChannelStoreUtils.setCurrent
 import it.unibo.tuprolog.solve.exception.Warning
 
@@ -17,22 +18,20 @@ internal class OutputStoreImpl(
 ) : AbstractChannelStore<String, OutputChannel<String>, OutputStore>(checkChannels(stdOut, stdErr, outputChannels)),
     OutputStore {
     override fun setStdOut(channel: OutputChannel<String>): OutputStore =
-        (channels - STDOUT).let {
-            if (current == stdOut) {
-                OutputStoreImpl(channel, stdErr, warnings, it + (CURRENT to channel))
-            } else {
-                OutputStoreImpl(channel, stdErr, warnings, it)
-            }
-        }
+        OutputStoreImpl(
+            channel,
+            stdErr,
+            warnings,
+            (channels - STDOUT).rebindingStandardAliases("user_output", stdOut, channel),
+        )
 
     override fun setStdErr(channel: OutputChannel<String>): OutputStore =
-        (channels - STDERR).let {
-            if (current == stdErr) {
-                OutputStoreImpl(stdOut, channel, warnings, it + (CURRENT to channel))
-            } else {
-                OutputStoreImpl(stdOut, channel, warnings, it)
-            }
-        }
+        OutputStoreImpl(
+            stdOut,
+            channel,
+            warnings,
+            (channels - STDERR).rebindingStandardAliases("user_error", stdErr, channel),
+        )
 
     override fun setWarnings(channel: OutputChannel<Warning>): OutputStore =
         OutputStoreImpl(

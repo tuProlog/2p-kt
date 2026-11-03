@@ -121,7 +121,7 @@ fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): Ty
             findRefFromAlias(arg.castToStruct()) as? TypeRef
         }
         else -> {
-            ensuringArgumentIsTypeRef(1)
+            ensuringArgumentIsTypeRef(index)
             null
         }
     }

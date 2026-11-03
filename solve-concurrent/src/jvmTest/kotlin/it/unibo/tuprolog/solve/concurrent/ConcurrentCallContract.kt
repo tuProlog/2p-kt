@@ -2,9 +2,13 @@
 
 package it.unibo.tuprolog.solve.concurrent
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.dsl.theory.logicProgramming
+import it.unibo.tuprolog.solve.CALL_N_THEORY
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.answers
+import it.unibo.tuprolog.solve.callNCases
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.halt
@@ -172,6 +176,11 @@ fun concurrentCallContract() =
 
                 expected.assertingEquals(solutions)
             }
+        }
+
+        callNCases.forEach { (id, case) ->
+            val (query, answer) = case
+            scenario("call/n/$id") { answers(query, *CALL_N_THEORY) shouldBe listOf(answer) }
         }
     }
 

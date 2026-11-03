@@ -20,9 +20,7 @@ import it.unibo.tuprolog.core.Var
 
 @Suppress("TooManyFunctions")
 internal class JvmTermObjectifier : TermObjectifier {
-    override fun defaultValue(term: Term): Any {
-        error("Cannot objectify term: $term")
-    }
+    override fun defaultValue(term: Term): Any = throw SerializationException(term)
 
     override fun objectifyMany(values: Iterable<Term>): Any = values.map { objectify(it) }
 
@@ -36,7 +34,7 @@ internal class JvmTermObjectifier : TermObjectifier {
             Truth.TRUE -> true
             Truth.FALSE -> false
             Truth.FAIL -> "fail"
-            else -> NotImplementedError("Serialization of Truth value: $term")
+            else -> throw SerializationException(term)
         }
 
     override fun visitStruct(term: Struct): Map<String, Any> =

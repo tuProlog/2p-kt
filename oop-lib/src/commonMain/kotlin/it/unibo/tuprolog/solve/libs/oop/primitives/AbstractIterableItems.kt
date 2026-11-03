@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectToTermConverter
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import kotlin.reflect.KClass
 
 /**
  * The shared implementation of `${iterable}_items/2`, converting between a Prolog [List] of items
@@ -29,7 +28,6 @@ import kotlin.reflect.KClass
  */
 abstract class AbstractIterableItems<T : Any>(
     iterable: String,
-    private val target: KClass<T>,
 ) : BinaryRelation.Functional<ExecutionContext>("${iterable}_items") {
     /** Builds a `T` out of this sequence of already-converted items. */
     protected abstract fun Sequence<Any?>.toIterable(): T

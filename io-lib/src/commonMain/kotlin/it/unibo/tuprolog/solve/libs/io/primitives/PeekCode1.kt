@@ -14,7 +14,8 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  *
  * @throws it.unibo.tuprolog.solve.exception.error.TypeError if the argument is bound but not an integer.
  * @throws it.unibo.tuprolog.solve.exception.error.RepresentationError (`character_code`) if it is an integer outside
- * the representable character-code range.
+ * the representable character-code range, or if the next character in the stream is beyond the Basic Multilingual
+ * Plane.
  *
  * Fails, rather than erroring, if the channel is closed.
  */
@@ -23,7 +24,7 @@ object PeekCode1 : UnaryPredicate.NonBacktrackable<ExecutionContext>("peek_code"
         """
         `peek_code(?Code)`
         
-        Unifies `Code` with the code of the next character of the current input stream (standard input, unless changed via `set_input/1`) without consuming it, or with `-1` at the end of the stream. It is deterministic. `Code` must be unbound or an integer (type error otherwise) within the character-code range or `-1` (representation error otherwise). It fails, instead of raising an error, if the underlying channel has been closed.
+        Unifies `Code` with the code of the next character of the current input stream (standard input, unless changed via `set_input/1`) without consuming it, or with `-1` at the end of the stream. It is deterministic. `Code` must be unbound or an integer (type error otherwise) within the character-code range or `-1` (representation error otherwise); so is a character beyond the Basic Multilingual Plane in the stream, which has no single UTF-16 code (`representation_error(character_code)`). It fails, instead of raising an error, if the underlying channel has been closed.
 
         **Examples**
 

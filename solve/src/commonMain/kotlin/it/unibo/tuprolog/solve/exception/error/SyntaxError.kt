@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.exception.error
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.LogicError
@@ -15,24 +16,34 @@ import kotlin.jvm.JvmStatic
  * @param cause the cause of this exception.
  * @param contexts a stack of contexts localising the exception
  * @param extraData The possible extra data to be carried with the error
+ * @param description what went wrong, making the error type `syntax_error(Description)` as ISO prescribes; the
+ * error type is the bare atom `syntax_error` if it is `null`
  */
 class SyntaxError constructor(
     message: String? = null,
     cause: Throwable? = null,
     contexts: Array<ExecutionContext>,
     extraData: Term? = null,
-) : LogicError(message, cause, contexts, Atom.of(typeFunctor), extraData) {
+    @JsName("description") val description: Term? = null,
+) : LogicError(
+        message,
+        cause,
+        contexts,
+        description?.let { Struct.of(typeFunctor, it) } ?: Atom.of(typeFunctor),
+        extraData,
+    ) {
     constructor(
         message: String? = null,
         cause: Throwable? = null,
         context: ExecutionContext,
         extraData: Term? = null,
-    ) : this(message, cause, arrayOf(context), extraData)
+        description: Term? = null,
+    ) : this(message, cause, arrayOf(context), extraData, description)
 
     override fun updateContext(
         newContext: ExecutionContext,
         index: Int,
-    ): SyntaxError = SyntaxError(message, cause, contexts.setItem(index, newContext), extraData)
+    ): SyntaxError = SyntaxError(message, cause, contexts.setItem(index, newContext), extraData, description)
 
     override fun updateLastContext(newContext: ExecutionContext): SyntaxError =
         updateContext(
@@ -41,7 +52,7 @@ class SyntaxError constructor(
         )
 
     override fun pushContext(newContext: ExecutionContext): SyntaxError =
-        SyntaxError(message, cause, contexts.addLast(newContext), extraData)
+        SyntaxError(message, cause, contexts.addLast(newContext), extraData, description)
 
     companion object {
         /** The system error Struct functor */
@@ -60,6 +71,7 @@ class SyntaxError constructor(
                     message = m,
                     context = context,
                     extraData = extra,
+                    description = Atom.of(message),
                 )
             }
 
@@ -78,6 +90,7 @@ class SyntaxError constructor(
                     message = m,
                     context = context,
                     extraData = extra,
+                    description = Atom.of(message),
                 )
             }
 
@@ -106,6 +119,7 @@ class SyntaxError constructor(
                     message = m,
                     context = context,
                     extraData = extra,
+                    description = Atom.of(message),
                 )
             }
 

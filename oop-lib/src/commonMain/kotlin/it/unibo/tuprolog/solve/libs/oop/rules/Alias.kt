@@ -40,7 +40,7 @@ class Alias private constructor(
         A = string ; A = array ; A = list.
 
         ?- alias(string, T), type(Name, T).
-        Name = 'String'.
+        Name = 'kotlin.String'.
 
         ?- alias(nope, R).
         no.

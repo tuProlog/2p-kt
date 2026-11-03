@@ -94,4 +94,27 @@ class ChannelStoreSpec :
                 store.findByTerm(err.streamTerm).toList() shouldBe listOf(err)
             }
         }
+
+        test("standard-aliases/user-output-and-user-error") {
+            val output = OutputChannel.of<String> {}
+            val error = OutputChannel.of<String> {}
+            val store = OutputStore.fromStandard(output, error)
+            store["user_output"] shouldBeSameInstanceAs output
+            store["user_error"] shouldBeSameInstanceAs error
+        }
+
+        test("standard-aliases/user-input") {
+            val input = InputChannel.of("")
+            InputStore.fromStandard(input)["user_input"] shouldBeSameInstanceAs input
+        }
+
+        test("standard-aliases/follow-the-standard-channels") {
+            val output = OutputChannel.of<String> {}
+            val error = OutputChannel.of<String> {}
+            val input = InputChannel.of("")
+            val outputs = OutputStore.fromStandard().setStdOut(output).setStdErr(error)
+            outputs["user_output"] shouldBeSameInstanceAs output
+            outputs["user_error"] shouldBeSameInstanceAs error
+            InputStore.fromStandard().setStdIn(input)["user_input"] shouldBeSameInstanceAs input
+        }
     })

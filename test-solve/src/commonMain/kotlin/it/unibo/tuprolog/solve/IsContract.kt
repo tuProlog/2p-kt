@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 
@@ -73,5 +74,15 @@ fun isContract(
         "X" `is` float(intOf(3)) yields {
             kotlin.collections.listOf(it.yes("X" to realOf(3.0)))
         }
+    }
+
+    scenario("is/rounding-functions-of-a-big-float") {
+        solverFactory.answers(
+            "C is ceiling(1.0e30), F is floor(1.0e30), R is round(1.0e30), T is truncate(1.0e30)",
+        ) shouldBe
+            listOf(
+                "yes: C = 1000000000000000000000000000000, F = 1000000000000000000000000000000, " +
+                    "R = 1000000000000000000000000000000, T = 1000000000000000000000000000000",
+            )
     }
 }

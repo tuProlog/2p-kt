@@ -6,6 +6,7 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -58,6 +59,28 @@ private val bindings =
         ),
         Binding("static-property", "type('java.lang.Integer', T), X := T.'MAX_VALUE'", Integer.of(Int.MAX_VALUE)),
         Binding(
+            "cast-3-to-a-type-name",
+            "cast(1, 'java.lang.Long', R), new_object('java.util.ArrayList', [], L), invoke_method(L, add(R), _), " +
+                "invoke_method(L, get(0), X)",
+            Integer.of(1),
+        ),
+        Binding(
+            "colon-equals-cast-to-a-type-name",
+            "R := 1 as 'java.lang.Long', new_object('java.util.ArrayList', [], L), invoke_method(L, add(R), _), " +
+                "invoke_method(L, get(0), X)",
+            Integer.of(1),
+        ),
+        Binding(
+            "type-name-of-a-type-is-qualified",
+            "type('java.util.ArrayList', T), type(X, T)",
+            Atom.of("java.util.ArrayList"),
+        ),
+        Binding(
+            "type-name-of-a-type-resolves-back",
+            "type('java.util.ArrayList', T), type(N, T), type(N, X)",
+            TypeRef.of(ArrayList::class),
+        ),
+        Binding(
             "static-property-assignment",
             "type('${StaticHolder::class.qualifiedName}', T), T.value := 5, X := T.value",
             Integer.of(5),
@@ -72,7 +95,8 @@ private class Failure(
 
 private val failures =
     listOf(
-        Failure("cast-to-a-non-type", "cast(1, foo, _)", "type_error"),
+        Failure("cast-to-a-non-type", "cast(1, foo(bar), _)", "type_error(type_reference, foo(bar))"),
+        Failure("new-object-of-a-non-type", "new_object(foo(bar), [], _)", "type_error(type_reference, foo(bar))"),
         Failure("cast-to-an-unknown-alias", "cast(1, \$nope, _)", "existence_error"),
         Failure("invoke-on-an-unknown-alias", "invoke_method(\$nope, size, _)", "existence_error"),
         Failure("invoke-on-a-non-reference", "invoke_method(1, size, _)", "type_error"),
@@ -99,6 +123,13 @@ private val failures =
         Failure("unbound-type-name", "type(_, _)", "instantiation_error"),
     )
 
+/** Queries that must fail. */
+private val noes =
+    listOf(
+        "cast-to-an-unknown-type-name" to "cast(1, 'no.such.Type', _)",
+        "new-object-of-an-unknown-type-name" to "new_object('no.such.Type', [], _)",
+    )
+
 /** A type with a static mutable property, to assign through a type reference. */
 object StaticHolder {
     @JvmStatic
@@ -118,6 +149,10 @@ class AliasesAndCastsSpec :
             withClue(case.query) { solution.shouldBeInstanceOf<Solution.Halt>() }
             val error = (solution.exception as LogicError).errorStruct[0]
             withClue("$error") { error.toString().startsWith(case.error).shouldBeTrue() }
+        }
+
+        withTests(nameFn = { "fails/${it.first}" }, noes) { (_, query) ->
+            withClue(query) { solve(query).shouldBeInstanceOf<Solution.No>() }
         }
 
         test("cast-to-an-unbound-type/enumerates-the-admissible-types-and-their-supertypes") {

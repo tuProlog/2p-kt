@@ -33,8 +33,7 @@ interface MutableGraph<T, W> : Graph<T, W> {
 
     /**
      * Adds [edge] to this graph, in place (implicitly adding its endpoints, if missing), merging it with
-     * any other outgoing edge `edge.source` already has (unlike the immutable [Graph.plus], which currently
-     * discards them).
+     * any other outgoing edge `edge.source` already has, like the copy-on-write [Graph.plus] does.
      */
     fun add(edge: Edge<T, W>)
 
