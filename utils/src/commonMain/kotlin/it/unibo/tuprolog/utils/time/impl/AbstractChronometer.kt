@@ -85,15 +85,24 @@ internal abstract class AbstractChronometer(
     }
 
     final override fun restart() {
+        val parent = scope?.parent
+        // an unlimited budget has nothing to replenish: no need to read the clock
+        if (isUnlimited && (scope == null || (scope.limit.isInfinite() && parent!!.timeout.isInfinite()))) return
         val now = read()
+        val (newTimeout, newExpired) =
+            when {
+                scope == null -> timeout to false
+                // same timeline: the parent's state at this very reading
+                parent is AbstractChronometer && parent.timeline === timeline -> {
+                    val left = if (parent.isUnlimited) Duration.INFINITE else parent.timeout - parent.elapsedAt(now)
+                    minOf(scope.limit, left).coerceAtLeast(Duration.ZERO) to parent.expiredAt(now)
+                }
+                else -> minOf(scope.limit, parent!!.remaining()) to parent.checkNow()
+            }
         start = now
-        if (scope == null) {
-            expired = false
-        } else {
-            expired = scope.parent.checkNow()
-            timeout = minOf(scope.limit, scope.parent.remaining())
-            isUnlimited = timeout.isInfinite()
-        }
+        expired = newExpired
+        timeout = newTimeout
+        isUnlimited = newTimeout.isInfinite()
         onRestart(now)
     }
 

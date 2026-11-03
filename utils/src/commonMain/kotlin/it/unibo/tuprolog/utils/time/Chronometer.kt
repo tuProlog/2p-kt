@@ -50,7 +50,8 @@ interface Chronometer {
     /**
      * Starts over: from now, the full [timeout] is available again, and expiration is forgotten. A child scope
      * (see [childScope]) restarts within its parent's deadline instead: its [timeout] becomes the least among the
-     * limit it was created with and the parent's remaining time, and it is expired if the parent is.
+     * limit it was created with and the parent's remaining time, and it is expired if the parent is. Restarting
+     * a chronometer that stays unlimited does nothing (there is no budget to replenish), and reads no clock.
      */
     fun restart()
 

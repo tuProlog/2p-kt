@@ -91,10 +91,53 @@ class AdaptiveChronometerSpec :
             fixture.counting.reads shouldBe before + 5
         }
 
-        test("adaptive/restart-resets-the-sampling-interval") {
+        test("adaptive/restart-keeps-the-leap-estimate") {
             val fixture = AdaptiveFixture(1.hours)
             fixture.leaps(300, 1.nanoseconds)
             fixture.chronometer.restart()
-            fixture.leaps(10, 1.nanoseconds) shouldBe listOf(1, 3, 7)
+            fixture.leaps(200, 1.nanoseconds) shouldBe listOf(64, 128, 192)
+        }
+
+        test("adaptive/restart-replans-within-the-new-budget") {
+            // 1 µs per leap, 1 ms budget: right after a restart, the first reading falls within 10% of it
+            val fixture = AdaptiveFixture(1.milliseconds, AdaptiveSamplingPolicy())
+            fixture.leaps(500, 1.microseconds)
+            fixture.chronometer.restart()
+            fixture.leaps(100, 1.microseconds).first() shouldBeLessThanOrEqualTo 100
+        }
+
+        test("adaptive/restarting-without-a-timeout-reads-no-clock") {
+            val fixture = AdaptiveFixture(Duration.INFINITE)
+            repeat(10) { fixture.chronometer.restart() }
+            fixture.counting.reads shouldBe 1L
+        }
+
+        test("adaptive/child-scopes-inherit-the-leap-estimate") {
+            val fixture = AdaptiveFixture(1.hours)
+            fixture.leaps(300, 1.nanoseconds)
+            val child = fixture.chronometer.childScope()
+            val readingsBefore = fixture.counting.reads
+            val readings =
+                (1..200).filter {
+                    val before = fixture.counting.reads
+                    fixture.manual.advanceBy(1.nanoseconds)
+                    child.leap()
+                    fixture.counting.reads > before
+                }
+            readingsBefore shouldBe 11L
+            readings shouldBe listOf(64, 128, 192)
+        }
+
+        test("adaptive/inherited-estimate-respects-the-child-budget") {
+            val fixture = AdaptiveFixture(1.hours, AdaptiveSamplingPolicy())
+            fixture.leaps(5000, 1.microseconds)
+            // 1 µs per leap: a 100 µs child reads the clock within its first 10% of budget, i.e. 10 leaps
+            val child = fixture.chronometer.childScope(100.microseconds)
+            val before = fixture.counting.reads
+            repeat(10) {
+                fixture.manual.advanceBy(1.microseconds)
+                child.leap()
+            }
+            fixture.counting.reads shouldBeGreaterThan before
         }
     })

@@ -72,3 +72,11 @@ tasks.register<JavaExec>("timingBenchmarks") {
             ?: listOf("-wi", "3", "-i", "5", "-w", "2s", "-r", "2s", "-f", "1")
     args(runParameters + listOf("-prof", "gc", "-rf", "json", "-rff", reportFile.get().absolutePath))
 }
+
+// Deterministic clock-read counts per workload (#1012), printed as a Markdown table.
+tasks.register<JavaExec>("clockReadsReport") {
+    group = "benchmark"
+    description = "Prints how many resolution steps and clock reads each benchmark workload takes."
+    classpath = benchmarks.runtimeClasspath + benchmarks.output
+    mainClass.set("it.unibo.tuprolog.examples.benchmarks.ClockReadsReport")
+}

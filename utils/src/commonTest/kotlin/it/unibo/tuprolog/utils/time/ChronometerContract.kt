@@ -230,4 +230,12 @@ fun chronometerContract(
         child.isExpired.shouldBeTrue()
         child.timeout shouldBe Duration.ZERO
     }
+
+    test("$kind/restarting-an-unlimited-chronometer-does-nothing") {
+        val (timeline, chronometer) = fixture(Duration.INFINITE)
+        timeline.advanceBy(5.milliseconds)
+        chronometer.restart()
+        chronometer.elapsed() shouldBe 5.milliseconds
+        chronometer.childScope().also { it.restart() }.timeout shouldBe Duration.INFINITE
+    }
 }

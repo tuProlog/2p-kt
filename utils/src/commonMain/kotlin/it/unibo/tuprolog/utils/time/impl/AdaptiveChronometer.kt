@@ -22,12 +22,24 @@ internal class AdaptiveChronometer(
     start: ComparableTimeMark? = null,
     expired: Boolean = false,
     scope: ChildScope? = null,
+    inheritedEstimate: Estimate? = null,
 ) : AbstractChronometer(timeline, timeout, start, expired, scope) {
+    /** The leap-duration estimate a child scope inherits from its parent, so it doesn't start learning from scratch. */
+    internal class Estimate(
+        val averageLeapNanos: Double,
+        val leapsBetweenSamples: Long,
+    )
+
     private var lastSample: ComparableTimeMark = startMark
     private var leapsSinceSample: Long = 0
-    private var leapsBetweenSamples: Long = policy.minLeaps
+    private var leapsBetweenSamples: Long = inheritedEstimate?.leapsBetweenSamples ?: policy.minLeaps
     private var leapsUntilSample: Long = policy.minLeaps
-    private var averageLeapNanos: Double = NO_ESTIMATE
+    private var averageLeapNanos: Double = inheritedEstimate?.averageLeapNanos ?: NO_ESTIMATE
+
+    init {
+        // with an inherited estimate, the first reading is planned right away, within this scope's own budget
+        if (inheritedEstimate != null && averageLeapNanos >= 0 && !isUnlimited) plan(startMark)
+    }
 
     override fun leap(): Boolean {
         if (isExpired) return true
@@ -75,12 +87,16 @@ internal class AdaptiveChronometer(
         leapsUntilSample = leapsBetweenSamples
     }
 
+    /** The leap-duration estimate describes the workload, not the budget: restarting keeps it, and re-plans. */
     override fun onRestart(now: ComparableTimeMark) {
-        lastSample = now
-        leapsSinceSample = 0
-        leapsBetweenSamples = policy.minLeaps
-        leapsUntilSample = policy.minLeaps
-        averageLeapNanos = NO_ESTIMATE
+        if (averageLeapNanos < 0 || isUnlimited) {
+            lastSample = now
+            leapsSinceSample = 0
+            leapsBetweenSamples = policy.minLeaps
+            leapsUntilSample = policy.minLeaps
+        } else {
+            plan(now)
+        }
     }
 
     override fun newScope(
@@ -88,7 +104,16 @@ internal class AdaptiveChronometer(
         start: ComparableTimeMark,
         expired: Boolean,
         scope: ChildScope,
-    ): Chronometer = AdaptiveChronometer(timeline, timeout, policy, start, expired, scope)
+    ): Chronometer =
+        AdaptiveChronometer(
+            timeline,
+            timeout,
+            policy,
+            start,
+            expired,
+            scope,
+            Estimate(averageLeapNanos, leapsBetweenSamples),
+        )
 
     private companion object {
         const val NO_ESTIMATE = -1.0
