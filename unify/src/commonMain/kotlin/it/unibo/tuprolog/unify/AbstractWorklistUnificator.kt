@@ -1,0 +1,128 @@
+package it.unibo.tuprolog.unify
+
+import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.unify.impl.Bindings
+import it.unibo.tuprolog.unify.impl.UnificationHooks
+import it.unibo.tuprolog.unify.impl.UnificationRun
+import it.unibo.tuprolog.unify.impl.hasCycles
+
+/**
+ * Skeletal [Unificator] implementation, computing most general unifiers with a worklist of pairs of terms still to be
+ * unified, and a table of variable bindings. It is the engine behind [Unificator.default], [Unificator.strict] and
+ * [Unificator.naive], and the class to extend for custom unification strategies.
+ *
+ * Bindings are recorded once and dereferenced when needed, rather than propagated through every pending pair;
+ * compound terms are decomposed one level at a time, when their pair is processed, so a mismatch is found before the
+ * rest of the terms is visited; the public [Substitution] is built once, at the end. Deep terms and long lists are
+ * processed iteratively. All the state of a call is local to it, so an instance can be shared across threads.
+ *
+ * Subclasses can customise:
+ * - [checkTermsEquality], how two constants (or two variables) are compared — what distinguishes [Unificator.strict]
+ *   from [Unificator.naive];
+ * - [handleComparison], invoked on every pair of terms about to be compared, e.g. to take terms' tags into account:
+ *   the pair can be observed, replaced (e.g. by tagged copies), accepted as equal, or rejected, and its orientation is
+ *   preserved, so that unification can be made asymmetric;
+ * - [handleResult], invoked on the outcome of each [mgu] and [merge] call.
+ *
+ * With occurs-check disabled, cyclic bindings such as `X -> f(X)` are allowed, and unifying cyclic terms terminates.
+ *
+ * ```kotlin
+ * val caseInsensitive =
+ *     object : AbstractWorklistUnificator() {
+ *         override fun checkTermsEquality(first: Term, second: Term): Boolean = when {
+ *             first.isAtom && second.isAtom ->
+ *                 first.castToAtom().value.equals(second.castToAtom().value, ignoreCase = true)
+ *             else -> first == second
+ *         }
+ *     }
+ * caseInsensitive.match(Atom.of("Foo"), Atom.of("foo")) // true
+ * ```
+ *
+ * @param context the starting bindings assumed by this [Unificator]; see [Unificator.context]
+ */
+abstract class AbstractWorklistUnificator(
+    override val context: Substitution,
+) : Unificator {
+    /** Creates an [AbstractWorklistUnificator] with an empty starting [context]. */
+    constructor() : this(Substitution.empty())
+
+    private val hooks =
+        object : UnificationHooks {
+            override fun checkTermsEquality(
+                first: Term,
+                second: Term,
+            ): Boolean = this@AbstractWorklistUnificator.checkTermsEquality(first, second)
+
+            override fun handleComparison(step: UnificationStep) =
+                this@AbstractWorklistUnificator.handleComparison(step)
+        }
+
+    private val contextHasCycles: Boolean by lazy { context.hasCycles() }
+
+    /**
+     * Decides whether [first] and [second] are equal, when both are constants or both are (distinct instances of)
+     * variables. Compound terms are never passed: they are compared argument by argument. Defaults to [Term.equals].
+     */
+    protected open fun checkTermsEquality(
+        first: Term,
+        second: Term,
+    ): Boolean = first == second
+
+    /**
+     * Invoked on every pair of terms about to be compared, including identical ones and compound ones (before their
+     * decomposition), but not on the bindings of [context]. The default implementation does nothing, so the pair is
+     * unified as usual. See [UnificationStep] for what can be observed and done.
+     */
+    protected open fun handleComparison(step: UnificationStep) = Unit
+
+    /**
+     * Post-processes the outcome of [request] (possibly [Substitution.failed]) right before [mgu] or [merge] return it.
+     * The default implementation returns [result] unchanged.
+     */
+    protected open fun handleResult(
+        request: UnificationRequest,
+        result: Substitution,
+    ): Substitution = result
+
+    private fun newRun(
+        base: Substitution,
+        request: UnificationRequest,
+    ): UnificationRun? {
+        val occursCheck = request.occurCheckEnabled
+        if (base.isFailed || occursCheck && (if (base === context) contextHasCycles else base.hasCycles())) return null
+        return UnificationRun(hooks, Bindings(base), occursCheck, request)
+    }
+
+    override fun mgu(
+        term1: Term,
+        term2: Term,
+        occurCheckEnabled: Boolean,
+    ): Substitution {
+        val request = MguRequest(term1, term2, occurCheckEnabled)
+        val run = newRun(context, request) ?: return handleResult(request, Substitution.failed())
+        run.push(term1, term2)
+        return handleResult(request, run.solve())
+    }
+
+    /**
+     * Unifies the bindings of [substitution2] with the ones of [context] and [substitution1]: a variable bound by both
+     * gets its two values unified, rather than one overriding the other. The result is idempotent.
+     */
+    override fun merge(
+        substitution1: Substitution,
+        substitution2: Substitution,
+        occurCheckEnabled: Boolean,
+    ): Substitution {
+        val request = MergeRequest(substitution1, substitution2, occurCheckEnabled)
+        val run =
+            when {
+                substitution1.isFailed || substitution2.isFailed || context.isFailed -> null
+                // substitution1 is a consistent set of bindings: with nothing to reconcile it with, use it as is
+                context.isEmpty() -> newRun(substitution1, request)
+                else -> newRun(context, request)?.also { it.pushAll(substitution1) }
+            } ?: return handleResult(request, Substitution.failed())
+        run.pushAll(substitution2)
+        return handleResult(request, run.solve())
+    }
+}
