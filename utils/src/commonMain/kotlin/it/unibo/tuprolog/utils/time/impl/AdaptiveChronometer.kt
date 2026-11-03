@@ -21,7 +21,8 @@ internal class AdaptiveChronometer(
     private val policy: AdaptiveSamplingPolicy,
     start: ComparableTimeMark? = null,
     expired: Boolean = false,
-) : AbstractChronometer(timeline, timeout, start, expired) {
+    scope: ChildScope? = null,
+) : AbstractChronometer(timeline, timeout, start, expired, scope) {
     private var lastSample: ComparableTimeMark = startMark
     private var leapsSinceSample: Long = 0
     private var leapsBetweenSamples: Long = policy.minLeaps
@@ -86,7 +87,8 @@ internal class AdaptiveChronometer(
         timeout: Duration,
         start: ComparableTimeMark,
         expired: Boolean,
-    ): Chronometer = AdaptiveChronometer(timeline, timeout, policy, start, expired)
+        scope: ChildScope,
+    ): Chronometer = AdaptiveChronometer(timeline, timeout, policy, start, expired, scope)
 
     private companion object {
         const val NO_ESTIMATE = -1.0

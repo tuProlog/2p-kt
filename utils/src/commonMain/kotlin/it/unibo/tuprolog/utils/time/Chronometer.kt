@@ -47,7 +47,11 @@ interface Chronometer {
      */
     fun sleep(duration: Duration): Boolean
 
-    /** Starts over: from now, the full [timeout] is available again, and expiration is forgotten. */
+    /**
+     * Starts over: from now, the full [timeout] is available again, and expiration is forgotten. A child scope
+     * (see [childScope]) restarts within its parent's deadline instead: its [timeout] becomes the least among the
+     * limit it was created with and the parent's remaining time, and it is expired if the parent is.
+     */
     fun restart()
 
     /**

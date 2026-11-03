@@ -11,19 +11,26 @@ import kotlin.time.Duration.Companion.nanoseconds
  * Common base of [Chronometer]s: keeps the start mark and the sticky expiration flag, and implements everything
  * but [leap] in terms of actual clock readings. [start] is taken from [timeline] unless given (e.g. by
  * [childScope], so that the parent's and the child's time agree), and [expired] lets a child be born expired.
+ * A child scope also knows its [scope] (parent and requested limit), so that [restart] keeps it within the parent's
+ * deadline.
  */
 internal abstract class AbstractChronometer(
     final override val timeline: Timeline,
-    final override val timeout: Duration,
+    timeout: Duration,
     start: ComparableTimeMark?,
     expired: Boolean,
+    private val scope: ChildScope?,
 ) : Chronometer {
     init {
         require(!timeout.isNegative()) { "The timeout can't be negative: $timeout" }
     }
 
+    final override var timeout: Duration = timeout
+        private set
+
     /** Whether there is no time limit at all. */
-    protected val isUnlimited: Boolean = timeout.isInfinite()
+    protected var isUnlimited: Boolean = timeout.isInfinite()
+        private set
 
     private var start: ComparableTimeMark = start ?: read()
 
@@ -80,7 +87,13 @@ internal abstract class AbstractChronometer(
     final override fun restart() {
         val now = read()
         start = now
-        expired = false
+        if (scope == null) {
+            expired = false
+        } else {
+            expired = scope.parent.checkNow()
+            timeout = minOf(scope.limit, scope.parent.remaining())
+            isUnlimited = timeout.isInfinite()
+        }
         onRestart(now)
     }
 
@@ -91,14 +104,23 @@ internal abstract class AbstractChronometer(
         require(!limit.isNegative()) { "The limit can't be negative: $limit" }
         val now = read()
         val left = if (isUnlimited) Duration.INFINITE else timeout - elapsedAt(now)
-        return newScope(minOf(limit, left).coerceAtLeast(Duration.ZERO), now, expiredAt(now))
+        return newScope(
+            minOf(limit, left).coerceAtLeast(Duration.ZERO),
+            now,
+            expiredAt(now),
+            ChildScope(this, limit),
+        )
     }
 
-    /** Creates a chronometer of this kind, on the same [timeline], with the given [timeout], [start] and [expired]. */
+    /**
+     * Creates a chronometer of this kind, on the same [timeline], with the given [timeout], [start], [expired] and
+     * [scope].
+     */
     protected abstract fun newScope(
         timeout: Duration,
         start: ComparableTimeMark,
         expired: Boolean,
+        scope: ChildScope,
     ): Chronometer
 
     override fun toString(): String =

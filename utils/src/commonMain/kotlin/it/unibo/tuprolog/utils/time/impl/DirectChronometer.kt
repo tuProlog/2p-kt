@@ -11,12 +11,14 @@ internal class DirectChronometer(
     timeout: Duration,
     start: ComparableTimeMark? = null,
     expired: Boolean = false,
-) : AbstractChronometer(timeline, timeout, start, expired) {
+    scope: ChildScope? = null,
+) : AbstractChronometer(timeline, timeout, start, expired, scope) {
     override fun leap(): Boolean = checkNow()
 
     override fun newScope(
         timeout: Duration,
         start: ComparableTimeMark,
         expired: Boolean,
-    ): Chronometer = DirectChronometer(timeline, timeout, start, expired)
+        scope: ChildScope,
+    ): Chronometer = DirectChronometer(timeline, timeout, start, expired, scope)
 }

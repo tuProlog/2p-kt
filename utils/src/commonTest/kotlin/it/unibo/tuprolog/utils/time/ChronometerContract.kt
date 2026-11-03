@@ -199,4 +199,35 @@ fun chronometerContract(
         timeline.advanceBy(1.nanoseconds)
         chronometer.checkNow().shouldBeTrue()
     }
+
+    test("$kind/child-restart-stays-within-the-parent-deadline") {
+        val (timeline, parent) = fixture(10.milliseconds)
+        val child = parent.childScope(8.milliseconds)
+        timeline.advanceBy(6.milliseconds)
+        child.restart()
+        child.timeout shouldBe 4.milliseconds
+        child.isExpired.shouldBeFalse()
+        timeline.advanceBy(1.milliseconds)
+        child.restart()
+        child.timeout shouldBe 3.milliseconds
+    }
+
+    test("$kind/child-restart-keeps-its-own-limit-when-tighter") {
+        val (timeline, parent) = fixture(Duration.INFINITE)
+        val child = parent.childScope(2.milliseconds)
+        timeline.advanceBy(3.milliseconds)
+        child.checkNow().shouldBeTrue()
+        child.restart()
+        child.timeout shouldBe 2.milliseconds
+        child.isExpired.shouldBeFalse()
+    }
+
+    test("$kind/child-restart-after-the-parent-expired-is-expired") {
+        val (timeline, parent) = fixture(10.milliseconds)
+        val child = parent.childScope()
+        timeline.advanceBy(11.milliseconds)
+        child.restart()
+        child.isExpired.shouldBeTrue()
+        child.timeout shouldBe Duration.ZERO
+    }
 }

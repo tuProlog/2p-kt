@@ -15,7 +15,8 @@ internal class SimulatedChronometer(
     private val durationPerLeap: Duration,
     start: ComparableTimeMark? = null,
     expired: Boolean = false,
-) : AbstractChronometer(manualTimeline, timeout, start, expired) {
+    scope: ChildScope? = null,
+) : AbstractChronometer(manualTimeline, timeout, start, expired, scope) {
     init {
         require(!durationPerLeap.isNegative()) { "The duration per leap can't be negative: $durationPerLeap" }
     }
@@ -30,5 +31,6 @@ internal class SimulatedChronometer(
         timeout: Duration,
         start: ComparableTimeMark,
         expired: Boolean,
-    ): Chronometer = SimulatedChronometer(manualTimeline, timeout, durationPerLeap, start, expired)
+        scope: ChildScope,
+    ): Chronometer = SimulatedChronometer(manualTimeline, timeout, durationPerLeap, start, expired, scope)
 }
