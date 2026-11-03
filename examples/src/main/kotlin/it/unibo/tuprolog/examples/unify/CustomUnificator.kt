@@ -9,7 +9,7 @@ import it.unibo.tuprolog.unify.AbstractWorklistUnificator
 /**
  * Demonstrates defining a custom unification strategy by extending
  * `it.unibo.tuprolog.unify.AbstractWorklistUnificator` and overriding
- * [AbstractWorklistUnificator.checkTermsEquality][it.unibo.tuprolog.unify.AbstractWorklistUnificator.checkTermsEquality],
+ * [AbstractWorklistUnificator.checkTermsEquality],
  * the hook used to decide whether two non-variable, non-compound terms are considered equal.
  *
  * The custom unificator treats two numeric terms as equal whenever their absolute values match,

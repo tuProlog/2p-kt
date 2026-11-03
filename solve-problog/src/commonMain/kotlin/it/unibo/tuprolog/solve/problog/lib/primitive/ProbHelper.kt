@@ -133,7 +133,10 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                             }
                         yieldAll(
                             newGoals.map {
-                                merge(mgu(third, Struct.of(goal.functor, it)), mgu(first, ProbExplanation.TRUE.toTerm()))
+                                merge(
+                                    mgu(third, Struct.of(goal.functor, it)),
+                                    mgu(first, ProbExplanation.TRUE.toTerm()),
+                                )
                             },
                         )
                     }

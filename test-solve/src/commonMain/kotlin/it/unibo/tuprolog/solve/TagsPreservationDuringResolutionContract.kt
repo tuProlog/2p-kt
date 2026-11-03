@@ -17,10 +17,10 @@ fun tagsPreservationDuringResolutionContract(
     disabled: Set<String> = emptySet(),
 ) = contract(solverFactory, disabled) {
     // Every scenario runs against both unification engines (see TagsUnificationEngine), which differ in which tags
-    // are observable: the worklist engine compares compound terms before decomposing them, so tags at depths `F`
-    // and `G` are visible, whereas the equation-based one decomposes matching compound terms straight into equations
-    // of their arguments, so only tags at depth `X` are. Tags at depth `CLAUSE` are never visible, as the clause
-    // itself is not unified, only its head.
+    // are observable: the worklist engine compares compound terms before decomposing them, so tags at every depth are
+    // visible (at depth `CLAUSE` too, as clauses are retrieved from the theory by unifying them as a whole), whereas
+    // the equation-based one decomposes matching compound terms straight into equations of their arguments, so only
+    // tags at depth `X` are.
 
     // Case 1: the theory clause is tagged (at each of the four depths), and the query is *not*.
     //
@@ -174,8 +174,7 @@ private fun untaggedQuery(): Struct = logicProgramming { "f"("g"("x")) }
 /** Whether this engine lets custom unificators see tags attached at [depth]. */
 private fun TagsUnificationEngine.sees(depth: Depth): Boolean =
     when (depth) {
-        Depth.CLAUSE -> false
-        Depth.F, Depth.G -> compoundTagsVisible
+        Depth.CLAUSE, Depth.F, Depth.G -> compoundTagsVisible
         Depth.X -> true
     }
 

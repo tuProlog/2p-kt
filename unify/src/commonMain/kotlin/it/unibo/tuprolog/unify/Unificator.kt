@@ -44,6 +44,7 @@ import kotlin.jvm.JvmStatic
  */
 interface Unificator {
     // --8<-- [start:operations]
+
     /**
      * The bindings assumed as already holding before unification starts; every [mgu]/[merge] call is implicitly
      * performed against this context, as if it were merged into the result. If [context] is [Substitution.failed],
@@ -142,6 +143,8 @@ interface Unificator {
     ): Substitution = merge(substitution1, substitution2, true)
 
     companion object {
+        // --8<-- [start:default]
+
         /**
          * The default unification strategy: an empty-context [strict] [Unificator], comparing [Term]s' identity
          * through plain [Term.equals], and computing unifiers with the worklist-based [AbstractWorklistUnificator]
@@ -150,7 +153,6 @@ interface Unificator {
          * Note: unlike what the name might suggest, [default] performs **no caching** on its own — wrap it (or any
          * other [Unificator]) with [cached] if memoization is needed.
          */
-        // --8<-- [start:default]
         @JvmStatic
         @JsName("default")
         val default by lazy { strict() }
@@ -176,13 +178,14 @@ interface Unificator {
         @JsName("mergeWith")
         infix fun Substitution.mergeWith(other: Substitution): Substitution = default.merge(this, other)
 
+        // --8<-- [start:naive]
+
         /**
          * Creates a naive unification strategy, with the given starting [context], that checks [Term]s' equality
          * through [Term.equals], except for numeric terms which are compared *by value* rather than by exact
          * representation — e.g. an [it.unibo.tuprolog.core.Integer] `1` and a [it.unibo.tuprolog.core.Real] `1.0`
          * are considered equal.
          */
-        // --8<-- [start:naive]
         @JvmStatic
         @JsName("naiveWithContext")
         fun naive(context: Substitution): Unificator =
@@ -221,6 +224,8 @@ interface Unificator {
         @JsName("strict")
         fun strict(): Unificator = strict(Substitution.empty())
 
+        // --8<-- [start:cached]
+
         /**
          * Decorates [other] so that its most recently computed [Unificator.mgu]/[Unificator.merge] results (and,
          * transitively, [Unificator.match]/[Unificator.unify], which are defined in terms of [Unificator.mgu]) are
@@ -233,7 +238,6 @@ interface Unificator {
          * @param capacity the maximum amount of entries the cache may store
          * @return a decorated, cached [Unificator]
          */
-        // --8<-- [start:cached]
         @JvmStatic
         @JsName("cached")
         fun cached(
