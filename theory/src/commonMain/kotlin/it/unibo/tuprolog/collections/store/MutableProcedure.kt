@@ -49,10 +49,8 @@ internal class MutableProcedure(
         if (dead > COMPACTION_SLACK && dead > live) {
             entries = EntryDeque.of(entries.alive())
             dead = 0
-            indexes = arrayOfNulls(arity * MAX_INDEX_DEPTH)
-            return
         }
-        // buckets are compacted on their own too, or lookups in a hot bucket would skip up to `live` dead entries
+        // indexes are kept, compacting each bucket on its own: rebuilding them all would cost O(n) every n removals
         for (slot in indexes.indices) {
             val index = indexes[slot] as? MutableArgIndex ?: continue
             val key = keyOf(entry, slot)
