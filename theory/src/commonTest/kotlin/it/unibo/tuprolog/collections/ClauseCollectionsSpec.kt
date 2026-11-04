@@ -25,6 +25,7 @@ import it.unibo.tuprolog.utils.setTags
  * instances (with their tags) are the ones returned.
  */
 
+// reals are passed as terms: on Kotlin/JS, `1.0 is Int` holds
 private fun p(vararg args: Any): Clause =
     Fact.of(
         Struct.of(
@@ -32,7 +33,6 @@ private fun p(vararg args: Any): Clause =
             args.map {
                 when (it) {
                     is Int -> Integer.of(it)
-                    is Double -> Real.of(it)
                     is String -> if (it[0].isUpperCase()) Var.of(it) else Atom.of(it)
                     else -> it as it.unibo.tuprolog.core.Term
                 }
@@ -165,8 +165,8 @@ class ClauseCollectionsSpec :
 
         test("set/naive-unificator") {
             val set = MutableClauseSet.of(Unificator.naive(), clauses(20))
-            set.add(p(1.0)) shouldBe true // not a variant of p(1), though they unify
-            set[p(1)].toList() shouldBe listOf(p(1), p(1.0))
+            set.add(p(Real.of(1.0))) shouldBe true // not a variant of p(1), though they unify
+            set[p(1)].toList() shouldBe listOf(p(1), p(Real.of(1.0)))
         }
 
         test("map/variant-keys-and-unification-lookups") {
