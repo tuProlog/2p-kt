@@ -183,12 +183,12 @@ inline fun assertSolutionEquals(
 fun assertSolverSolutionsCorrect(
     solver: Solver,
     goalToSolutions: List<Pair<Struct, List<Solution>>>,
-    maxDuration: TimeDuration,
+    options: SolveOptions,
 ) {
     goalToSolutions.forEach { (goal, solutionList) ->
         if (loggingOn) solver.logKBs()
 
-        val solutions = solver.solve(goal, maxDuration).toList()
+        val solutions = solver.solve(goal, options).toList()
         assertSolutionEquals(solutionList, solutions)
 
         if (loggingOn) logGoalAndSolutions(goal, solutions)

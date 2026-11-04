@@ -9,10 +9,10 @@ import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.runConc
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.runProlog
 import it.unibo.tuprolog.examples.concurrent.ConcurrentSolverPerformance.theoryNQueens
 import it.unibo.tuprolog.solve.concurrent.ConcurrentSolverFactory
-import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.ClausesReader
+import kotlin.time.measureTime
 
 /**
  * Compares the wall-clock time taken to solve the N-Queens counting problem with
@@ -45,12 +45,7 @@ object ConcurrentSolverPerformance {
         return ClausesReader.withDefaultOperators().readTheory(inputStream)
     }
 
-    private fun computeTime(block: () -> Unit): Long {
-        val start = currentTimeInstant()
-        block()
-        val end = currentTimeInstant()
-        return end - start
-    }
+    private fun computeTime(block: () -> Unit): Long = measureTime(block).inWholeMilliseconds
 
     /**
      * Solves [query] against [theory] using a concurrent solver built via

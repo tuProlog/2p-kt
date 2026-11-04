@@ -38,12 +38,12 @@ fun customDataContract(
 
             assertSolutionEquals(
                 listOf(setQuery.yes()),
-                solver.solve(setQuery, shortDuration).toList(),
+                solver.solve(setQuery, shortBudget).toList(),
             )
 
             assertSolutionEquals(
                 listOf(getQuery.no()),
-                solver.solve(getQuery, shortDuration).toList(),
+                solver.solve(getQuery, shortBudget).toList(),
             )
 
             assertSolutionEquals(
@@ -51,7 +51,7 @@ fun customDataContract(
                     query.yes(X to 1),
                     query.no(),
                 ),
-                solver.solve(query, shortDuration).toList(),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -68,12 +68,12 @@ fun customDataContract(
 
             assertSolutionEquals(
                 listOf(setQuery.yes()),
-                solver.solve(setQuery, shortDuration).toList(),
+                solver.solve(setQuery, shortBudget).toList(),
             )
 
             assertSolutionEquals(
                 listOf(getQuery.no()),
-                solver.solve(getQuery, shortDuration).toList(),
+                solver.solve(getQuery, shortBudget).toList(),
             )
 
             assertSolutionEquals(
@@ -81,7 +81,7 @@ fun customDataContract(
                     query.yes(X to 1),
                     query.yes(X to 1),
                 ),
-                solver.solve(query, shortDuration).toList(),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -99,12 +99,12 @@ fun customDataContract(
 
             assertSolutionEquals(
                 listOf(setQuery.yes()),
-                solver.solve(setQuery, shortDuration).toList(),
+                solver.solve(setQuery, shortBudget).toList(),
             )
 
             assertSolutionEquals(
                 listOf(getQuery.yes(X to 1)),
-                solver.solve(getQuery, shortDuration).toList(),
+                solver.solve(getQuery, shortBudget).toList(),
             )
 
             assertSolutionEquals(
@@ -112,7 +112,7 @@ fun customDataContract(
                     query.yes(X to 1),
                     query.yes(X to 1),
                 ),
-                solver.solve(query, shortDuration).toList(),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }

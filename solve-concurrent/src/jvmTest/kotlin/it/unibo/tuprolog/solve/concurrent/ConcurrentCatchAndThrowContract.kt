@@ -14,7 +14,7 @@ fun concurrentCatchAndThrowContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = (catch(true, C, write("something")) and `throw`("blabla"))
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

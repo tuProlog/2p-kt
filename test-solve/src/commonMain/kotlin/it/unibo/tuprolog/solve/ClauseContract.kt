@@ -97,7 +97,7 @@ fun clauseContract(
                 )
 
             var query = clause("f"(A), B)
-            var solutions = solver.solve(query, mediumDuration).toList()
+            var solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -107,7 +107,7 @@ fun clauseContract(
             )
 
             query = clause("f"(1), Z)
-            solutions = solver.solve(query, mediumDuration).toList()
+            solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(

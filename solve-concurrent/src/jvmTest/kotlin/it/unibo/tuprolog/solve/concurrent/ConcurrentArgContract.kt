@@ -36,7 +36,7 @@ fun concurrentArgContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = arg(1, "X", "a")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -58,7 +58,7 @@ fun concurrentArgContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = arg(0, "atom", "A")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -81,7 +81,7 @@ fun concurrentArgContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = arg(0, 3, "A")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -104,7 +104,7 @@ fun concurrentArgContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = arg(intOf(-3), "foo"("a", "b"), "A")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -127,7 +127,7 @@ fun concurrentArgContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = arg("a", "foo"("a", "b"), "X")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

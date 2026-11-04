@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
@@ -25,6 +24,7 @@ import it.unibo.tuprolog.solve.setBinaryDecisionDiagram
 import it.unibo.tuprolog.solve.setProbability
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
+import kotlin.time.Duration
 
 internal open class ProblogSolver(
     private val solver: Solver,
@@ -128,14 +128,14 @@ internal open class ProblogSolver(
 
     override fun solve(
         goal: Struct,
-        timeout: TimeDuration,
+        timeout: Duration,
     ): Sequence<Solution> = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
     override fun solve(goal: Struct): Sequence<Solution> = solve(goal, SolveOptions.DEFAULT)
 
     override fun solveList(
         goal: Struct,
-        timeout: TimeDuration,
+        timeout: Duration,
     ): List<Solution> = solve(goal, timeout).toList()
 
     override fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
@@ -147,7 +147,7 @@ internal open class ProblogSolver(
 
     override fun solveOnce(
         goal: Struct,
-        timeout: TimeDuration,
+        timeout: Duration,
     ): Solution = solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
 
     override fun solveOnce(goal: Struct): Solution = solve(goal, SolveOptions.someLazily(1)).first()

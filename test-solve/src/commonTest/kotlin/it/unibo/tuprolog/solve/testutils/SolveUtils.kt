@@ -10,8 +10,6 @@ import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
@@ -37,8 +35,6 @@ internal object SolveUtils {
     internal val aSignature = Signature("ciao", 2)
     internal val anArgumentList = listOf(Atom.of("a"), Truth.TRUE)
     internal val anExecutionContext = DummyInstances.executionContext
-    internal const val aRequestIssuingInstant = 0L
-    internal const val anExecutionMaxDuration = 300L
 
     internal val aVarargSignature = Signature("ciao", 2, true)
     internal val varargArgumentList = anArgumentList + Truth.TRUE
@@ -108,7 +104,5 @@ internal object SolveUtils {
         signature: Signature = aSignature,
         arguments: KtList<Term> = anArgumentList,
         executionContext: ExecutionContext = anExecutionContext,
-        requestIssuingInstant: TimeInstant = aRequestIssuingInstant,
-        executionMaxDuration: TimeDuration = anExecutionMaxDuration,
-    ) = Solve.Request(signature, arguments, executionContext, requestIssuingInstant, executionMaxDuration)
+    ) = Solve.Request(signature, arguments, executionContext)
 }

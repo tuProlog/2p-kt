@@ -37,7 +37,7 @@ fun concurrentSubAtomContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = sub_atom("abracadabra", intOf(3), "L", intOf(3), "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         sequenceOf(
@@ -55,7 +55,7 @@ fun concurrentSubAtomContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = sub_atom("banana", intOf(3), intOf(2), "T", "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         sequenceOf(
@@ -73,7 +73,7 @@ fun concurrentSubAtomContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = sub_atom("Banana", intOf(3), intOf(2), "Y", "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -95,7 +95,7 @@ fun concurrentSubAtomContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = sub_atom(5, 2, 2, "_", "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -120,7 +120,7 @@ fun concurrentSubAtomContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = sub_atom("banana", 4, 2, "_", 2)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -145,7 +145,7 @@ fun concurrentSubAtomContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = sub_atom("banana", "a", 2, "_", "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -168,7 +168,7 @@ fun concurrentSubAtomContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = sub_atom("banana", 4, "n", "_", "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -191,7 +191,7 @@ fun concurrentSubAtomContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = sub_atom("banana", 4, 2, "m", "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

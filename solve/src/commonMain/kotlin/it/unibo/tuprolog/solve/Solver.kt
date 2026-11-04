@@ -11,6 +11,7 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
+import kotlin.time.Duration
 
 /**
  * General type for logic solvers, i.e. any entity capable of solving some logic query -- provided as a [Struct] --
@@ -44,7 +45,7 @@ interface Solver : ExecutionContextAware {
     @JsName("solveWithTimeout")
     fun solve(
         goal: Struct,
-        timeout: TimeDuration,
+        timeout: Duration,
     ): Sequence<Solution> = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
     /** Shorthand for [solve] with [SolveOptions.DEFAULT] (i.e. all solutions, lazily, without a timeout). */
@@ -68,7 +69,7 @@ interface Solver : ExecutionContextAware {
     @JsName("solveListWithTimeout")
     fun solveList(
         goal: Struct,
-        timeout: TimeDuration,
+        timeout: Duration,
     ): List<Solution> = solve(goal, timeout).toList()
 
     /** Shorthand for [solveList] with [SolveOptions.DEFAULT]. */
@@ -90,7 +91,7 @@ interface Solver : ExecutionContextAware {
     @JsName("solveOnceWithTimeout")
     fun solveOnce(
         goal: Struct,
-        timeout: TimeDuration,
+        timeout: Duration,
     ): Solution = solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
 
     /** Shorthand for [solveOnce] with [SolveOptions.someLazily] of `1`. */

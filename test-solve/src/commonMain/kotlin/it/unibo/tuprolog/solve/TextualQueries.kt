@@ -18,11 +18,11 @@ import it.unibo.tuprolog.theory.Theory
 fun SolverFactory.answers(
     query: String,
     vararg clauses: String,
-    timeout: TimeDuration = durations.mediumDuration,
+    budget: SolveOptions = durations.mediumBudget,
 ): List<String> {
     val solver = solverWithDefaultBuiltins(staticKb = Theory.of(clauses.map { it.parseAsClause() }))
     val formatter = TermFormatter.readable(solver.operators)
-    return solver.solve(query.parseAsStruct(solver.operators), timeout).map { it.render(formatter) }.toList()
+    return solver.solve(query.parseAsStruct(solver.operators), budget).map { it.render(formatter) }.toList()
 }
 
 private val durations = object : SolverTest {}

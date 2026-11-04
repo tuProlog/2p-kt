@@ -45,7 +45,7 @@ data class StatePrimitiveSelection(
                     if (libraries.hasPrimitive(signature)) {
                         val childContext = createChild()
                         try {
-                            val request = childContext.toRequest(goalStruct, signature, executionTime)
+                            val request = childContext.toRequest(goalStruct, signature)
                             val primitive =
                                 libraries.primitives[signature]
                                     ?: error("Inconsistent behaviour of Library.contains and Library.get")

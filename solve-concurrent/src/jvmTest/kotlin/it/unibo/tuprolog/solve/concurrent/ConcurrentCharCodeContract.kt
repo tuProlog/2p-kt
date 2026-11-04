@@ -18,7 +18,7 @@ fun concurrentCharCodeContract() =
             logicProgramming {
                 val solver = solverWithDefaultBuiltins()
                 val query = atom_length("X", 4)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

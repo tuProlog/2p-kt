@@ -3,21 +3,18 @@ package it.unibo.tuprolog.solve
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
-import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.sideffects.SideEffect
-import it.unibo.tuprolog.solve.testutils.SolveUtils.aRequestIssuingInstant
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSignature
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aVarargSignature
 import it.unibo.tuprolog.solve.testutils.SolveUtils.anArgumentList
 import it.unibo.tuprolog.solve.testutils.SolveUtils.anExecutionContext
-import it.unibo.tuprolog.solve.testutils.SolveUtils.anExecutionMaxDuration
 import it.unibo.tuprolog.solve.testutils.SolveUtils.createRequest
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestFailedResponse
 import it.unibo.tuprolog.solve.testutils.SolveUtils.defaultRequestHaltedResponse
@@ -29,7 +26,10 @@ import it.unibo.tuprolog.solve.testutils.SolveUtils.differentStaticKB
 import it.unibo.tuprolog.solve.testutils.SolveUtils.solutionException
 import it.unibo.tuprolog.solve.testutils.SolveUtils.solutionSubstitution
 import it.unibo.tuprolog.solve.testutils.SolveUtils.varargArgumentList
-import kotlin.math.abs
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import it.unibo.tuprolog.utils.time.Timeline
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Test class for [Solve.Request]
@@ -39,28 +39,34 @@ import kotlin.math.abs
 class SolveRequestSpec :
     FunSpec({
         test("request-inserted-data-correct") {
-            val toBeTested =
-                Solve.Request(
-                    aSignature,
-                    anArgumentList,
-                    anExecutionContext,
-                    aRequestIssuingInstant,
-                    anExecutionMaxDuration,
-                )
+            val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext)
 
             toBeTested.signature shouldBe aSignature
             toBeTested.arguments shouldBe anArgumentList
             toBeTested.context shouldBe anExecutionContext
-            toBeTested.startTime shouldBe aRequestIssuingInstant
-            toBeTested.maxDuration shouldBe anExecutionMaxDuration
         }
 
-        test("request-default-values-correct") {
-            val toBeTested = Solve.Request(aSignature, anArgumentList, anExecutionContext)
+        test("request-timing-is-its-context-timing") {
+            val timeline = Timeline.manual()
+            val chronometer = ChronometerFactory.simulated(timeline).create(300.milliseconds)
+            val toBeTested = Solve.Request(aSignature, anArgumentList, DummyInstances.executionContext(chronometer))
+            timeline.advanceBy(100.milliseconds)
 
-            val now = currentTimeInstant()
-            (now - toBeTested.startTime < TOLERANCE).shouldBeTrue()
-            (abs(TimeDuration.MAX_VALUE - now - toBeTested.maxDuration) < TOLERANCE).shouldBeTrue()
+            toBeTested.chronometer shouldBeSameInstanceAs chronometer
+            toBeTested.maxDuration shouldBe 300.milliseconds
+            toBeTested.elapsedTime shouldBe 100.milliseconds
+            toBeTested.remainingTime shouldBe 200.milliseconds
+        }
+
+        test("nested-resolutions-are-timed-by-a-child-scope") {
+            val timeline = Timeline.manual()
+            val chronometer = ChronometerFactory.simulated(timeline).create(300.milliseconds)
+            val request = Solve.Request(aSignature, anArgumentList, DummyInstances.executionContext(chronometer))
+            timeline.advanceBy(100.milliseconds)
+            val children = ChronometerFactory.childrenOf(request.chronometer)
+
+            children.create(Duration.INFINITE).timeout shouldBe 200.milliseconds
+            children.create(50.milliseconds).timeout shouldBe 50.milliseconds
         }
 
         test("request-constructor-complains-with-wrong-arity-and-arguments-count") {
@@ -74,16 +80,6 @@ class SolveRequestSpec :
 
         test("request-constructor-permits-more-than-arity-arguments-if-signature-vararg") {
             createRequest(aVarargSignature, anArgumentList + Truth.FAIL)
-        }
-
-        test("request-constructor-complains-with-negative-max-duration") {
-            createRequest(executionMaxDuration = 0)
-            shouldThrow<TimeOutException> { createRequest(executionMaxDuration = -1) }
-        }
-
-        test("request-constructor-complains-with-negative-request-issuing-instant") {
-            createRequest(requestIssuingInstant = 0)
-            shouldThrow<IllegalArgumentException> { createRequest(requestIssuingInstant = -1) }
         }
 
         test("request-computes-correctly-query-struct") {
@@ -205,8 +201,6 @@ class SolveRequestSpec :
             createRequest().(case.reply)(expected.sideEffects.toTypedArray()) shouldBe expected
         }
     })
-
-private const val TOLERANCE = 10L
 
 private class ResponseCase(
     val id: String,

@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.exception.testutils
 
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import kotlin.time.Duration
 
 /**
  * Utils singleton to help testing [TimeOutException]
@@ -15,7 +15,7 @@ internal object TimeOutExceptionUtils {
     internal const val aMessage = TuPrologRuntimeExceptionUtils.aMessage
     internal val aCause = TuPrologRuntimeExceptionUtils.aCause
     internal val aContext = TuPrologRuntimeExceptionUtils.aContext
-    internal const val anExceededTimeDuration = TimeDuration.MAX_VALUE
+    internal val anExceededTimeDuration = Duration.INFINITE
 
     internal val aDifferentContext = TuPrologRuntimeExceptionUtils.aDifferentContext
 
@@ -24,7 +24,7 @@ internal object TimeOutExceptionUtils {
         expectedMessage: String?,
         expectedCause: Throwable?,
         expectedContext: ExecutionContext,
-        expectedExceededTimeDuration: TimeDuration,
+        expectedExceededTimeDuration: Duration,
         actualException: TimeOutException,
     ) {
         TuPrologRuntimeExceptionUtils.assertSameMessageCauseContext(

@@ -107,7 +107,7 @@ fun callContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(fail and 1)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -137,7 +137,7 @@ fun callContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(write(3) and 1)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
@@ -167,7 +167,7 @@ fun callContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
 
             val query = call(1 or true)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(
