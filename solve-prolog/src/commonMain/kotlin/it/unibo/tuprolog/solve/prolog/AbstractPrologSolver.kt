@@ -8,7 +8,6 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
-import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -108,12 +107,11 @@ abstract class AbstractPrologSolver(
         operators = getAllOperators(libraries).toOperatorSet(),
         inputChannels = inputChannels,
         outputChannels = outputChannels,
-        startTime = 0,
     )
 
     /**
      * Builds the root [PrologExecutionContext] for [goal] (carrying over this solver's current [Theory] knowledge
-     * bases, [Runtime] libraries, [FlagStore], channels and [SolveOptions.timeout]) and returns the lazy
+     * bases, [Runtime] libraries, [FlagStore], channels, and a fresh chronometer from [options]) and returns the lazy
      * [Sequence] of [Solution]s obtained by driving a fresh [it.unibo.tuprolog.solve.prolog.fsm.StateInit]
      * through the state machine via [solutionIterator].
      */
@@ -133,8 +131,7 @@ abstract class AbstractPrologSolver(
                 inputChannels = inputChannels,
                 outputChannels = outputChannels,
                 customData = currentContext.customData,
-                startTime = currentTimeInstant(),
-                maxDuration = options.timeout,
+                chronometer = options.createChronometer(),
             )
         return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
     }

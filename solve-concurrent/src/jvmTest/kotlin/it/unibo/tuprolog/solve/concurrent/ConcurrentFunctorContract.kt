@@ -44,7 +44,7 @@ fun concurrentFunctorContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = functor("X", "Y", 3)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -66,7 +66,7 @@ fun concurrentFunctorContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = functor("X", "foo", "N")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -88,7 +88,7 @@ fun concurrentFunctorContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = functor("X", "foo", "a")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -111,7 +111,7 @@ fun concurrentFunctorContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = functor("F", 1.5, 1)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -134,7 +134,7 @@ fun concurrentFunctorContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = functor("F", "foo"("a"), 1)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -160,7 +160,7 @@ fun concurrentFunctorContract() =
                     current_flag("max_arity", A) and (
                         (X `is` (A + 1)) and functor(T, "foo", X)
                     )
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -181,7 +181,7 @@ fun concurrentFunctorContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = functor("T", "foo", intOf(-1))
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

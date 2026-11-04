@@ -107,7 +107,7 @@ sealed class ChoicePointContext(
                 executionContext!!.copy(
                     primitives = alternatives,
                     step = context.step + 1,
-                    startTime = context.startTime,
+                    chronometer = context.chronometer,
                     flags = context.flags,
                     dynamicKb = context.dynamicKb,
                     staticKb = context.staticKb,
@@ -145,7 +145,7 @@ sealed class ChoicePointContext(
                 executionContext!!.copy(
                     rules = alternatives,
                     step = context.step + 1,
-                    startTime = context.startTime,
+                    chronometer = context.chronometer,
                     flags = context.flags,
                     dynamicKb = context.dynamicKb,
                     staticKb = context.staticKb,

@@ -1,7 +1,5 @@
 package it.unibo.tuprolog.solve.function.testutils
 
-import io.kotest.assertions.withClue
-import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Empty
@@ -10,8 +8,6 @@ import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.solve.DummyInstances
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.function.Compute
 
 /**
@@ -25,8 +21,6 @@ internal object ComputeUtils {
     internal val aSignature = Signature("ciao", 2)
     internal val anArgumentList = listOf(Atom.of("a"), Truth.TRUE)
     internal val anExecutionContext = DummyInstances.executionContext
-    internal const val aRequestIssuingInstant = 0L
-    internal const val anExecutionMaxDuration = 300L
 
     internal val aVarargSignature = Signature("ciao", 2, true)
     internal val varargArgumentList = anArgumentList + Truth.TRUE
@@ -36,24 +30,10 @@ internal object ComputeUtils {
         expectedSignature: Signature,
         expectedArguments: List<Term>,
         expectedContext: ExecutionContext,
-        expectedRequestIssuingInstant: TimeInstant,
-        expectedMaxDuration: TimeDuration,
     ) {
-        val toleranceInMillis = 10L // 10 ms
         signature shouldBe expectedSignature
         arguments shouldBe expectedArguments
         context shouldBe expectedContext
-        withClue(
-            "Actual issuing instant `$requestIssuingInstant` diverges more than `$toleranceInMillis` from " +
-                "expected one `$expectedRequestIssuingInstant`",
-        ) {
-            (
-                requestIssuingInstant -
-                    expectedRequestIssuingInstant <
-                    toleranceInMillis
-            ).shouldBeTrue()
-        }
-        executionMaxDuration shouldBe expectedMaxDuration
     }
 
     // Response parameters
@@ -67,7 +47,5 @@ internal object ComputeUtils {
         signature: Signature = aSignature,
         arguments: List<Term> = anArgumentList,
         executionContext: ExecutionContext = anExecutionContext,
-        requestIssuingInstant: TimeInstant = aRequestIssuingInstant,
-        executionMaxDuration: TimeDuration = anExecutionMaxDuration,
-    ) = Compute.Request(signature, arguments, executionContext, requestIssuingInstant, executionMaxDuration)
+    ) = Compute.Request(signature, arguments, executionContext)
 }

@@ -26,7 +26,7 @@ fun failContract(
                 )
 
             val query = atomOf("undef_pred")
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 kotlin.collections.listOf(

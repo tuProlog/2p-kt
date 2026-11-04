@@ -1,36 +1,35 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.utils.time.Chronometer
 import kotlin.js.JsName
+import kotlin.time.Duration
 
 /**
  * A type for entities bound to a maximum execution duration, e.g. an [ExecutionContext] or a
- * [it.unibo.tuprolog.solve.primitive.Solve.Request], used to enforce [it.unibo.tuprolog.solve.SolveOptions.timeout]
- * across a resolution and its nested requests.
+ * [it.unibo.tuprolog.solve.primitive.Solve.Request]: their timing is that of the [chronometer] of the resolution
+ * they belong to, which enforces [SolveOptions.timeout] across the resolution and its nested requests.
  */
 interface Durable {
-    /** The time instant this entity's execution started at. */
-    @JsName("startTime")
-    val startTime: TimeInstant
-
     /**
-     * The time instant by which this entity's execution should be over, computed as [startTime] `+` [maxDuration]
-     * (saturating to `TimeInstant.MAX_VALUE` on overflow).
+     * The chronometer of the resolution this entity belongs to. It is resolution-level, non-backtrackable state:
+     * every context of one resolution shares it, so backtracking neither restores elapsed time nor replenishes
+     * the budget.
      */
-    @JsName("endTime")
-    val endTime: TimeInstant
-        get() = (startTime + maxDuration).let { if (it < 0L) TimeInstant.MAX_VALUE else it }
+    @JsName("chronometer")
+    val chronometer: Chronometer
 
-    /** How much time is left before [endTime], computed against the current time instant. */
-    @JsName("remainingTime")
-    val remainingTime: TimeDuration
-        get() = endTime - currentTimeInstant()
-
-    /** How much time elapsed since [startTime], computed against the current time instant. */
-    @JsName("elapsedTime")
-    val elapsedTime: TimeDuration
-        get() = currentTimeInstant() - startTime
-
-    /** The maximum duration this entity's execution is allowed to run for, starting from [startTime]. */
+    /** The maximum duration the resolution is allowed to run for ([Duration.INFINITE] if unlimited). */
     @JsName("maxDuration")
-    val maxDuration: TimeDuration
+    val maxDuration: Duration
+        get() = chronometer.timeout
+
+    /** How much time elapsed since the resolution started, read from the clock. */
+    @JsName("elapsedTime")
+    val elapsedTime: Duration
+        get() = chronometer.elapsed()
+
+    /** How much time is left before the resolution times out (never negative), read from the clock. */
+    @JsName("remainingTime")
+    val remainingTime: Duration
+        get() = chronometer.remaining()
 }

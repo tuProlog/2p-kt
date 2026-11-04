@@ -72,7 +72,9 @@ Signals that resolution must stop immediately (raised by `halt/0`/`halt/1`), car
 
 ### `TimeOutException`
 
-Raised when a `Solver` exceeds its allotted `maxDuration`; carries `exceededDuration: TimeDuration`.
+Raised when a `Solver` exceeds its allotted `maxDuration`; carries `exceededDuration: Duration`, the timeout that
+expired. It is not a `LogicError`, so `catch/3` can't intercept it (see
+[Resolution time](solver-api.md#resolution-time)).
 
 ### `Warning`
 

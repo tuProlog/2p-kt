@@ -13,6 +13,9 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.utils.time.Chronometer
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration.Companion.milliseconds
 
 class TimeoutExceptionSpec :
     FunSpec({
@@ -104,9 +107,7 @@ private object DummyContext : ExecutionContext {
     override val outputChannels: OutputStore
         get() = TODO("Not yet implemented")
 
-    override val startTime: TimeInstant = 0
-
-    override val maxDuration: TimeDuration = 10L
+    override val chronometer: Chronometer = ChronometerFactory.default.create(10.milliseconds)
 
     override fun toString(): String = "DummyContext"
 }

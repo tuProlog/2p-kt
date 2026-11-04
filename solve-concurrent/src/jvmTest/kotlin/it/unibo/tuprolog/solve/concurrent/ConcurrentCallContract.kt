@@ -28,7 +28,7 @@ fun concurrentCallContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = call(write(3) and "X")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -49,7 +49,7 @@ fun concurrentCallContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = call(write(3) and call(1))
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -71,7 +71,7 @@ fun concurrentCallContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = call("X")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -92,7 +92,7 @@ fun concurrentCallContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = call(1)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -114,7 +114,7 @@ fun concurrentCallContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = call(fail and 1)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -137,7 +137,7 @@ fun concurrentCallContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = call(write(3) and 1)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -160,7 +160,7 @@ fun concurrentCallContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = call(1 or true)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
