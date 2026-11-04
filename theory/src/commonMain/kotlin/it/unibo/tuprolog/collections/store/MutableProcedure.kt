@@ -42,13 +42,28 @@ internal class MutableProcedure(
         }
     }
 
-    fun removed() {
+    /** Records that [entry], one of this procedure's, was just removed. */
+    fun removed(entry: Entry) {
         live--
         dead++
         if (dead > COMPACTION_SLACK && dead > live) {
             entries = EntryDeque.of(entries.alive())
             dead = 0
             indexes = arrayOfNulls(arity * MAX_INDEX_DEPTH)
+            return
+        }
+        // buckets are compacted on their own too, or lookups in a hot bucket would skip up to `live` dead entries
+        for (slot in indexes.indices) {
+            val index = indexes[slot] as? MutableArgIndex ?: continue
+            val key = keyOf(entry, slot)
+            val deque = (if (key.isExact) index.buckets[key] else index.wildcards) ?: continue
+            if (++deque.dead <= COMPACTION_SLACK || 2 * deque.dead <= deque.size) continue
+            val compacted = EntryDeque.of(deque.alive())
+            when {
+                !key.isExact -> index.wildcards = compacted
+                compacted.size == 0 -> index.buckets.remove(key)
+                else -> index.buckets[key] = compacted
+            }
         }
     }
 
