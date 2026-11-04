@@ -51,7 +51,7 @@ fun numberCharsContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
             // val query = number_chars("X", listOf("3", ".", "3", "E", "+", "0"))
             val query = number_chars(X, logicListOf("3", ".", "9"))
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.yes("X" to 3.9)),

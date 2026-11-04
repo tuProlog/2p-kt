@@ -10,6 +10,7 @@ import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.theory.Theory
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * An object containing a collection of notable databases to be used when testing Solver functionality.
@@ -78,7 +79,7 @@ object TestingClauseTheories {
     internal fun systemError(uncaught: Term) = SystemError.forUncaughtException(aContext, uncaught)
 
     /** A [TimeOutException] built against [aContext], for goals expected to never terminate within their budget. */
-    internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1)
+    internal val timeOutException = TimeOutException(context = aContext, exceededDuration = 1.milliseconds)
 
     /**
      * A database containing the following facts:

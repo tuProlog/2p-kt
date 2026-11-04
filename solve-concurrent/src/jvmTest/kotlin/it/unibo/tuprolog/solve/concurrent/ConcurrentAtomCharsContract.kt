@@ -55,7 +55,7 @@ fun concurrentAtomCharsContract() =
                 val solver = solverWithDefaultBuiltins()
                 val query = atom_chars("A", "L")
 
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -77,7 +77,7 @@ fun concurrentAtomCharsContract() =
                 val solver = solverWithDefaultBuiltins()
                 val query = atom_chars("A", "iso")
 
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

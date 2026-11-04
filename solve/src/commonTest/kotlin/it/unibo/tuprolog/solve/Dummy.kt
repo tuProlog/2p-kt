@@ -12,6 +12,9 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.utils.time.Chronometer
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration
 
 object Dummy {
     object Context : ExecutionContext {
@@ -25,11 +28,7 @@ object Dummy {
 
         override val customData: CustomDataStore = CustomDataStore.empty()
 
-        override val startTime: TimeInstant
-            get() = 0
-
-        override val maxDuration: TimeDuration
-            get() = TimeDuration.MAX_VALUE
+        override val chronometer: Chronometer = ChronometerFactory.default.create(Duration.INFINITE)
 
         override fun createSolver(
             unificator: Unificator,

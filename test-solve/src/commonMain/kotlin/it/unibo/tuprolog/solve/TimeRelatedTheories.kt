@@ -7,25 +7,39 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * A theory whose solutions each take a known amount of time (via `sleep/1`), and the expected [Solution]s of
  * resolving it with a per-solution timeout (see [maxDurationFor]) that lets exactly 0, 1, 2 or 3 of them arrive in
- * time; used by [solverContract] to check that a `Solver.solve(goal, maxDuration)` call's timeout is honored.
+ * time; used by [solverContract] to check that a `Solver.solve(goal, maxDuration)` call's timeout is honored, on
+ * simulated time (see [simulatedTimeOptions]), so that the outcome does not depend on the host machine's speed.
  */
 object TimeRelatedTheories {
-    internal val timeOutException = TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1)
+    internal val timeOutException =
+        TimeOutException(context = DummyInstances.executionContext, exceededDuration = 1.milliseconds)
 
-    /** The k-th solution of `a(X)` busy-waits `k * SLEEP_STEP` ms, so solution times are this far apart. */
+    /** The k-th solution of `a(X)` sleeps `k * SLEEP_STEP` ms, so solution times are this far apart. */
     const val SLEEP_STEP = 500L
 
     /**
      * A timeout that lets exactly [solutions] solutions of `a(X)` arrive in time. The timeout restarts with each
-     * solution, so the margin left to the last expected solution is `SLEEP_STEP - 100` ms. That margin absorbs a slow
-     * or busy machine: running late can only turn an expected solution into a timeout, never the other way round.
+     * solution, so the margin left to the last expected solution is `SLEEP_STEP - 100` ms.
      */
     @Suppress("MagicNumber")
-    fun maxDurationFor(solutions: Int): Long = SLEEP_STEP * (solutions + 1) - 100
+    fun maxDurationFor(solutions: Int): Duration = (SLEEP_STEP * (solutions + 1) - 100).milliseconds
+
+    /**
+     * Options solving with [maxDurationFor] `(solutions)` as timeout, on simulated time: `sleep/1` advances a virtual
+     * clock, and resolution steps take no time, so the outcome is deterministic and immediate.
+     */
+    fun simulatedTimeOptions(solutions: Int): SolveOptions =
+        SolveOptions
+            .allLazilyWithTimeout(
+                maxDurationFor(solutions),
+            ).setChronometerFactory(ChronometerFactory.simulated())
 
     /**
      * Clause database used for time-related tests:

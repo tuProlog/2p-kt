@@ -12,7 +12,6 @@ import it.unibo.tuprolog.solve.concurrent.fsm.EndState
 import it.unibo.tuprolog.solve.concurrent.fsm.State
 import it.unibo.tuprolog.solve.concurrent.fsm.StateGoalSelection
 import it.unibo.tuprolog.solve.concurrent.fsm.toGoals
-import it.unibo.tuprolog.solve.currentTimeInstant
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
@@ -133,8 +132,7 @@ internal open class ConcurrentSolverImpl(
                 inputChannels = inputChannels,
                 outputChannels = outputChannels,
                 customData = currentContext.customData,
-                maxDuration = options.timeout,
-                startTime = currentTimeInstant(),
+                chronometer = options.createChronometer(),
             )
         return StateGoalSelection(currentContext)
     }
@@ -192,6 +190,5 @@ internal open class ConcurrentSolverImpl(
             operators = getAllOperators(libraries).toOperatorSet(),
             inputChannels = inputChannels,
             outputChannels = outputChannels,
-            startTime = 0L,
         )
 }

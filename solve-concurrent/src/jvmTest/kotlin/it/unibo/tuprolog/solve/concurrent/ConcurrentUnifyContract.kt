@@ -39,7 +39,7 @@ fun concurrentUnifyContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = ("f"("A", "B", "C")) eq ("f"("g"("B", "B"), "g"("C", "C"), "g"("D", "D")))
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.yes(

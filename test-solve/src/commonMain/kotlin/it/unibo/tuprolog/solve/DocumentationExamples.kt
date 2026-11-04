@@ -12,7 +12,8 @@ import it.unibo.tuprolog.unify.Unificator
 
 private val EXAMPLE_BLOCK = Regex("```prolog\\n([\\s\\S]*?)```")
 
-private const val EXAMPLE_TIMEOUT: TimeDuration = 10_000
+// documentation examples take < 128 steps, but `sleep(10)`, which takes 10 ms, i.e. 10k steps (see stepBudget)
+private val EXAMPLE_BUDGET: SolveOptions get() = SolverTest.stepBudget(100_000)
 
 /** Whether [markdown] contains a ```` ```prolog ```` example block. */
 fun hasExample(markdown: String): Boolean = EXAMPLE_BLOCK.containsMatchIn(markdown)
@@ -79,7 +80,7 @@ private fun Solver.check(
 ): String? {
     if (!query.startsWith("?-")) return "not a query"
     val goal = Struct.parse(query.removePrefix("?-").trim(), operators)
-    val solutions = solve(goal, EXAMPLE_TIMEOUT).iterator()
+    val solutions = solve(goal, EXAMPLE_BUDGET).iterator()
 
     fun next(): Solution? = if (solutions.hasNext()) solutions.next() else null
     return when {

@@ -29,7 +29,7 @@ fun andContract(
                 )
 
             val query = "nofoo"("X") and call("X")
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(

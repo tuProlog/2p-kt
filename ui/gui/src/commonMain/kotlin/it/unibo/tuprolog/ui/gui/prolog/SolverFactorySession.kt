@@ -63,7 +63,7 @@ open class SolverFactorySession(
             if (request.timeout.inWholeMilliseconds == 0L) {
                 SolveOptions.allLazily()
             } else {
-                SolveOptions.allLazilyWithTimeout(request.timeout.inWholeMilliseconds)
+                SolveOptions.allLazilyWithTimeout(request.timeout)
             }
         val options = configureSolveOptions(plainOptions)
         val solutions = solver.solve(query, options).iterator()

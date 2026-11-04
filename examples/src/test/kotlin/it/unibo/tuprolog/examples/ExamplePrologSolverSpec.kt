@@ -32,6 +32,7 @@ import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.theory.Theory
+import kotlin.time.Duration.Companion.milliseconds
 
 class ExamplePrologSolverSpec :
     FunSpec({
@@ -103,7 +104,7 @@ class ExamplePrologSolverSpec :
 
             val goal = Struct.of("f", Var.of("X"))
 
-            val solutions = prolog.solve(goal, SolveOptions.allLazilyWithTimeout(1 /* ms */))
+            val solutions = prolog.solve(goal, SolveOptions.allLazilyWithTimeout(1.milliseconds))
 
             for (solution in solutions) {
                 println(solution.query) // f(X_2)

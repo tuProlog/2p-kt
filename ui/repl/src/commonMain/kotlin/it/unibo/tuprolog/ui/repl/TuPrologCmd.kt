@@ -13,7 +13,6 @@ import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
@@ -23,6 +22,8 @@ import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.theory.Theory
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Root [clikt](https://ajalt.github.io/clikt/) command of the 2P-Kt REPL: `java -jar 2p-repl.jar`.
@@ -139,10 +140,10 @@ class TuPrologCmd(
 
     /**
      * The `-t`/`--timeout` option's value (milliseconds, defaulting to [DEFAULT_TIMEOUT]), converted to the
-     * [TimeDuration] expected by [it.unibo.tuprolog.solve.Solver.solve]. Exposed so [TuPrologSolveQuery] can
+     * [Duration] expected by [it.unibo.tuprolog.solve.Solver.solve]. Exposed so [TuPrologSolveQuery] can
      * reuse the same timeout its parent command was configured with.
      */
-    fun getTimeout(): TimeDuration = timeout.toLong()
+    fun getTimeout(): Duration = timeout.toLong().milliseconds
 
     /**
      * Builds a fresh [Solver] according to this command's options: it loads and merges every theory file

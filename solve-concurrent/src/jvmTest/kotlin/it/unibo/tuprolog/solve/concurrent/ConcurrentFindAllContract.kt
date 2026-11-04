@@ -57,7 +57,7 @@ fun concurrentFindAllContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = findall("X", "Goal", "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -79,7 +79,7 @@ fun concurrentFindAllContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = findall("X", 4, "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -102,7 +102,7 @@ fun concurrentFindAllContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = findall("X", call(1), "S")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

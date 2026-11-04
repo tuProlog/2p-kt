@@ -21,7 +21,7 @@ fun concurrentNotProvableContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = ((("X" eq 1) or ("X" eq 2)) and "not"(("!" and fail)))
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         sequenceOf(
@@ -41,7 +41,7 @@ fun concurrentNotProvableContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = "not"(3)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -63,7 +63,7 @@ fun concurrentNotProvableContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = "not"("X")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
