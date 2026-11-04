@@ -8,7 +8,7 @@ kotlinx-serialization = "1.12.0"
 ktMpp = "6.1.1"
 kotest = "6.2.6"
 kover = "0.9.11"
-ksp = "2.3.12"
+ksp = "2.3.13"
 okio = "3.18.2"
 
 [plugins]
