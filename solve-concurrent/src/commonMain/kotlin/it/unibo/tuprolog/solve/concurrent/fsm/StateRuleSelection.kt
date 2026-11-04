@@ -16,7 +16,6 @@ import it.unibo.tuprolog.solve.flags.LastCallOptimization
 import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.utils.buffered
 
 /**
  * "Rule Selection", the clause-resolution counterpart of [StatePrimitiveSelection]: `true`/`false` succeed/fail
@@ -118,18 +117,21 @@ data class StateRuleSelection(
                                 },
                             )
                         }
-                        ruleSources.any { currentGoalStruct in it } -> {
-                            val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }
-                            rules
-                                .map {
+                        else -> {
+                            // one lookup per source: an empty result is the "no matching clause" case
+                            val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.toList()
+                            if (rules.isEmpty()) {
+                                listOf(missingProcedure(ruleSources, currentGoalStruct.extractSignature()))
+                            } else {
+                                rules.map {
                                     if (context.isTailRecursive) {
                                         StateRuleExecution(context.replaceWithChildAppendingRules(it))
                                     } else {
                                         StateRuleExecution(context.createChildAppendingRules(it))
                                     }
-                                }.asIterable()
+                                }
+                            }
                         }
-                        else -> listOf(missingProcedure(ruleSources, currentGoalStruct.extractSignature()))
                     }
                 }
             else ->
@@ -156,14 +158,8 @@ data class StateRuleSelection(
                     } ?: false
                 }
 
-    private fun Theory.selectClauses(term: Struct): Sequence<Rule> =
-        get(term).map { it.freshCopy() }.ensureRules().let {
-            if (isMutable) {
-                it.buffered()
-            } else {
-                it
-            }
-        }
+    // mutable theories follow the logical update view (#1019): no need to snapshot their clauses
+    private fun Theory.selectClauses(term: Struct): Sequence<Rule> = get(term).map { it.freshCopy() }.ensureRules()
 
     override fun clone(context: ConcurrentExecutionContext): StateRuleSelection = copy(context = context)
 }

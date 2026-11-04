@@ -7,7 +7,6 @@ import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.dsl.unify.logicProgramming
 import it.unibo.tuprolog.dsl.unify.lp
-import it.unibo.tuprolog.theory.impl.AbstractIndexedTheory
 import it.unibo.tuprolog.theory.impl.AbstractListedTheory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.collections.List as KtList
@@ -53,11 +52,8 @@ fun theoryUnificatorTests(theoryGenerator: (Unificator, Iterable<Clause>) -> The
                 theory1["f"(X)].toList() shouldBe clauses
                 theory2["f"(X)].toList() shouldBe clauses
                 theory1["f"(1)].toList() shouldBe clauses.subList(1, 2)
-                if (theory2 is AbstractIndexedTheory) {
-                    theory2["f"(1)].toList() shouldBe clauses.subList(1, 2)
-                } else {
-                    theory2["f"(1)].toList() shouldBe clauses.subList(1, 3)
-                }
+                // indexes use the unificator's keys (#1019), so every implementation honours its notion of equality
+                theory2["f"(1)].toList() shouldBe clauses.subList(1, 3)
             }
         }
 
