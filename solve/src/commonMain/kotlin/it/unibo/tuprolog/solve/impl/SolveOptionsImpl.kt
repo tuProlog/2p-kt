@@ -1,22 +1,26 @@
 package it.unibo.tuprolog.solve.impl
 
 import it.unibo.tuprolog.solve.SolveOptions
-import it.unibo.tuprolog.solve.TimeDuration
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration
 
 internal data class SolveOptionsImpl(
     override val isLazy: Boolean,
-    override val timeout: TimeDuration = SolveOptions.MAX_TIMEOUT,
+    override val timeout: Duration = SolveOptions.MAX_TIMEOUT,
     override val limit: Int = SolveOptions.ALL_SOLUTIONS,
+    override val chronometerFactory: ChronometerFactory? = null,
     override val customOptions: Map<String, Any> = emptyMap(),
 ) : SolveOptions {
     init {
-        require(timeout >= 0L) { "Invalid timeout: $timeout" }
+        require(!timeout.isNegative()) { "Invalid timeout: $timeout" }
         require(limit != 0) { "Invalid limit: $limit" }
     }
 
     override fun setLazy(value: Boolean): SolveOptions = copy(isLazy = value)
 
-    override fun setTimeout(value: TimeDuration): SolveOptions = copy(timeout = value)
+    override fun setTimeout(value: Duration): SolveOptions = copy(timeout = value)
+
+    override fun setChronometerFactory(value: ChronometerFactory?): SolveOptions = copy(chronometerFactory = value)
 
     override fun setLimit(value: Int): SolveOptions = copy(limit = value)
 

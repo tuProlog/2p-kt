@@ -29,7 +29,7 @@ fun orContract(
 
             //            val query = ";"(("!" and fail()), true)
             val query = "!" and fail or true
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.no()),
@@ -50,7 +50,7 @@ fun orContract(
 
             //            val query = ";"("!", call(3))
             val query = "!" or call(3)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.yes()),
@@ -71,7 +71,7 @@ fun orContract(
 
             //            val query = ";"(("X" eq 1 and "!"), "X" eq 2)
             val query = ("X" eq 1 and "!") or ("X" eq 2)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(query.yes("X" to 1)),
@@ -92,7 +92,7 @@ fun orContract(
 
             //            val query = ";"("X" eq 1, "X" eq 2)
             val query = ("X" eq 1) or ("X" eq 2)
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 with(query) {

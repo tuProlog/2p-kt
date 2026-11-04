@@ -31,7 +31,7 @@ fun concurrentIsContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = intOf(77) `is` "N"
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -53,7 +53,7 @@ fun concurrentIsContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = intOf(77) `is` "foo"
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

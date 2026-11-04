@@ -19,7 +19,7 @@ fun concurrentAtomLengthContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = char_code("X", "a")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

@@ -24,7 +24,7 @@ fun concurrentOrContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = ("X" eq 1) or ("X" eq 2)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         sequenceOf(

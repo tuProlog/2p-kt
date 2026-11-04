@@ -4,9 +4,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.TimeInstant
-import it.unibo.tuprolog.solve.currentTimeInstant
 import kotlin.js.JsName
 
 /** A base class for Computation requests and responses */
@@ -19,15 +16,9 @@ sealed class Compute {
         /** Arguments with which the function is invoked in this [Request] */
         @JsName("arguments")
         val arguments: List<Term>,
-        /** The context that's current at Request making */
+        /** The context that's current at Request making; its chronometer times the resolution, if needed */
         @JsName("context")
         val context: C,
-        /** The time instant when the request was submitted for evaluation */
-        @JsName("requestIssuingInstant")
-        val requestIssuingInstant: TimeInstant = currentTimeInstant(),
-        /** The execution max duration after which the computation should end, because no more useful */
-        @JsName("executionMaxDuration")
-        val executionMaxDuration: TimeDuration = TimeDuration.MAX_VALUE,
     ) : Compute() {
         init {
             when {
@@ -41,12 +32,6 @@ sealed class Compute {
                         "Trying to create Compute.Request of signature `$signature` " +
                             "with wrong number of arguments ${arguments.toList()}"
                     }
-            }
-            require(requestIssuingInstant >= 0) {
-                "The request issuing instant can't be negative: $requestIssuingInstant"
-            }
-            require(executionMaxDuration >= 0) {
-                "The execution max duration can't be negative: $executionMaxDuration"
             }
         }
 
