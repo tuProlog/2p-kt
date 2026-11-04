@@ -9,8 +9,8 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
 import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
+import kotlin.time.Duration
 
 /**
  * The `solve` subcommand of [TuPrologCmd]: `java -jar 2p-repl.jar solve QUERY [-n N]`.
@@ -48,7 +48,7 @@ class TuPrologSolveQuery :
 
     private fun evalAndPrint(solver: Solver) {
         try {
-            val duration: TimeDuration = parentCommand.getTimeout()
+            val duration: Duration = parentCommand.getTimeout()
             val solutions = solver.solve(Struct.parse(query), duration).iterator()
             val groundQueriesHaveBooleanSolution =
                 solver.flags[GroundQueriesHaveBooleanSolution] == GroundQueriesHaveBooleanSolution.ON

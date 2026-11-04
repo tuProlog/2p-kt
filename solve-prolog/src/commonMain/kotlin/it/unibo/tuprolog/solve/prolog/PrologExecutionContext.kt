@@ -10,8 +10,6 @@ import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
@@ -26,6 +24,9 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cached
+import it.unibo.tuprolog.utils.time.Chronometer
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration
 import kotlin.collections.List as KtList
 import kotlin.collections.Set as KtSet
 
@@ -54,8 +55,10 @@ import kotlin.collections.Set as KtSet
  * - [relevantVariables]: the [Var]s still of interest to some ancestor frame, used to trim [substitution]s of
  *   variables local to a finished sub-goal when popping back to [parent] (see [isVariableInteresting]).
  *
- * @throws IllegalArgumentException if [depth] and [parent] are inconsistent (`depth == 0` iff `parent == null`),
- * or if [startTime] or [maxDuration] are negative.
+ * - [chronometer]: the resolution's chronometer, shared by every frame of the resolution (see
+ *   [it.unibo.tuprolog.solve.Durable.chronometer]); defaults to an unlimited one.
+ *
+ * @throws IllegalArgumentException if [depth] and [parent] are inconsistent (`depth == 0` iff `parent == null`).
  */
 data class PrologExecutionContext(
     override val procedure: Struct? = null,
@@ -73,8 +76,7 @@ data class PrologExecutionContext(
     val goals: Cursor<out Term> = Cursor.empty(),
     val rules: Cursor<out Rule> = Cursor.empty(),
     val primitives: Cursor<out Solve.Response> = Cursor.empty(),
-    override val startTime: TimeInstant,
-    override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
+    override val chronometer: Chronometer = ChronometerFactory.default.create(Duration.INFINITE),
     val choicePoints: ChoicePointContext? = null,
     val parent: PrologExecutionContext? = null,
     val depth: Int = 0,
@@ -83,8 +85,6 @@ data class PrologExecutionContext(
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))
-        require(startTime >= 0)
-        require(maxDuration >= 0)
     }
 
     /** Whether this is the outermost frame of a resolution (i.e. it has no [parent]). */
@@ -220,9 +220,7 @@ data class PrologExecutionContext(
             "goals=$goals, " +
             "rules=$rules, " +
             "primitives=$primitives, " +
-            "startTime=$startTime, " +
-            "endTime=$endTime, " +
-            "maxDuration=$maxDuration, " +
+            "chronometer=$chronometer, " +
             "unificator=$unificator, " +
             "choicePoints=$choicePoints" +
             ")"

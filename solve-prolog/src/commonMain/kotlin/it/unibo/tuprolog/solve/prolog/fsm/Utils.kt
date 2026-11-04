@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Signature
-import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.appendPrimitives
@@ -137,9 +136,8 @@ fun PrologExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
     return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
 }
 
-/** Builds the [Solve.Request] passed to a `Primitive`'s `solve` from this context, [goal] and [signature], at [startTime]. */
+/** Builds the [Solve.Request] passed to a `Primitive`'s `solve` from this context, [goal] and [signature]. */
 fun PrologExecutionContext.toRequest(
     goal: Struct,
     signature: Signature,
-    startTime: TimeInstant,
-) = Solve.Request(signature, goal.args, this, startTime)
+) = Solve.Request(signature, goal.args, this)

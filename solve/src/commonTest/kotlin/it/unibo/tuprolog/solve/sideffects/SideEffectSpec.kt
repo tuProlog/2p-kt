@@ -16,8 +16,6 @@ import it.unibo.tuprolog.core.operators.Specifier
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -30,6 +28,9 @@ import it.unibo.tuprolog.solve.sideffects.impl.DefaultSideEffectFactory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.utils.time.Chronometer
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration
 
 /** An [ExecutionContext] whose [update] really updates, so side effects can be applied to it. */
 private data class Context(
@@ -46,8 +47,7 @@ private data class Context(
     override val procedure: Struct? = null
     override val substitution: Substitution.Unifier = Substitution.empty()
     override val logicStackTrace: List<Struct> = emptyList()
-    override val startTime: TimeInstant = 0
-    override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE
+    override val chronometer: Chronometer = ChronometerFactory.default.create(Duration.INFINITE)
 
     override fun createSolver(
         unificator: Unificator,

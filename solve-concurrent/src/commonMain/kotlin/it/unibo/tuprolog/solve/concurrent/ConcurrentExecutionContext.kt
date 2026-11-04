@@ -9,8 +9,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.MutableSolver
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.TimeInstant
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.data.CustomDataStore
@@ -24,6 +22,9 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Cursor
+import it.unibo.tuprolog.utils.time.Chronometer
+import it.unibo.tuprolog.utils.time.ChronometerFactory
+import kotlin.time.Duration
 import kotlin.collections.List as KtList
 
 /**
@@ -68,8 +69,7 @@ data class ConcurrentExecutionContext(
     val goals: Cursor<out Term> = Cursor.empty(),
     val rule: Rule? = null,
     val primitive: Solve.Response? = null,
-    override val startTime: TimeInstant,
-    override val maxDuration: TimeDuration = TimeDuration.MAX_VALUE,
+    override val chronometer: Chronometer = ChronometerFactory.default.create(Duration.INFINITE),
     val parent: ConcurrentExecutionContext? = null,
     val depth: Int = 0,
     val step: Long = 0,
@@ -211,11 +211,10 @@ data class ConcurrentExecutionContext(
             "goals=$goals, " +
             "rules=$rule, " +
             "primitives=$primitive, " +
-            "startTime=$startTime, " +
+            "chronometer=$chronometer, " +
             "operators=${operators.joinToString(",", "{", "}") { "'${it.functor}':${it.specifier}" }}, " +
             "inputChannels=${inputChannels.keys}, " +
             "outputChannels=${outputChannels.keys}, " +
-            "maxDuration=$maxDuration, " +
             "depth=$depth, " +
             "step=$step" +
             ")"

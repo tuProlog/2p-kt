@@ -22,7 +22,7 @@ fun concurrentClauseContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = clause(`_`, "B")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -58,7 +58,7 @@ fun concurrentClauseContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = clause(4, "B")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -96,7 +96,7 @@ fun concurrentClauseContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = clause("f"(`_`), 5)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -134,7 +134,7 @@ fun concurrentClauseContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = clause(atom(`_`), "Body")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(
@@ -178,13 +178,13 @@ fun concurrentClauseContract() =
                     )
 
                 var query = clause("f"(A), B)
-                var solutions = fromSequence(solver.solve(query, mediumDuration))
+                var solutions = fromSequence(solver.solve(query, mediumBudget))
                 var expected = fromSequence(query.yes(B to "g"(A)))
 
                 expected.assertingEquals(solutions)
 
                 query = clause("f"(1), Z)
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.yes(Z to "g"(1)))
 
                 expected.assertingEquals(solutions)

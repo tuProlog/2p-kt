@@ -42,7 +42,7 @@ fun flagsContract(
 
             assertSolutionEquals(
                 listOf(query.yes()),
-                solver.solve(query, shortDuration).toList(),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -62,7 +62,7 @@ fun flagsContract(
 
             assertSolutionEquals(
                 listOf(query.yes()),
-                solver.solve(query, shortDuration).toList(),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -81,7 +81,7 @@ fun flagsContract(
 
                 assertSolutionEquals(
                     listOf(query.yes(V to value)),
-                    solver.solve(query, shortDuration).toList(),
+                    solver.solve(query, shortBudget).toList(),
                 )
             }
         }
@@ -94,7 +94,7 @@ fun flagsContract(
         logicProgramming {
             val solver = solverFactory.solverWithDefaultBuiltins()
 
-            val solutions = solver.solve(current_flag(F, `_`), shortDuration).toList()
+            val solutions = solver.solve(current_flag(F, `_`), shortBudget).toList()
 
             solutions.isNotEmpty().shouldBeTrue()
 
@@ -114,7 +114,7 @@ fun flagsContract(
                             0,
                         ),
                     ),
-                    solver.solveOnce(query, shortDuration),
+                    solver.solveOnce(query, shortBudget),
                 )
 
                 query = set_flag(term, "value")
@@ -128,7 +128,7 @@ fun flagsContract(
                             0,
                         ),
                     ),
-                    solver.solveOnce(query, shortDuration),
+                    solver.solveOnce(query, shortBudget),
                 )
             }
         }
@@ -150,7 +150,7 @@ fun flagsContract(
 
                 assertSolutionEquals(
                     query.no(),
-                    solver.solveOnce(query, shortDuration),
+                    solver.solveOnce(query, shortBudget),
                 )
             }
         }
@@ -169,7 +169,7 @@ fun flagsContract(
 
             val selectedFlags =
                 solver
-                    .solve(query, shortDuration)
+                    .solve(query, shortBudget)
                     .filterIsInstance<Solution.Yes>()
                     .map { it.substitution[F]!! to it.substitution[X]!! }
                     .toMap()
@@ -200,7 +200,7 @@ fun flagsContract(
                         ),
                     ),
                 ),
-                solver.solveList(query, shortDuration),
+                solver.solveList(query, shortBudget),
             )
         }
     }
@@ -231,7 +231,7 @@ fun flagsContract(
                         ),
                     ),
                 ),
-                solver.solveList(query, shortDuration),
+                solver.solveList(query, shortBudget),
             )
         }
     }
@@ -259,7 +259,7 @@ fun flagsContract(
                         ),
                     ),
                 ),
-                solver.solveList(query, shortDuration),
+                solver.solveList(query, shortBudget),
             )
         }
     }
@@ -281,7 +281,7 @@ fun flagsContract(
 
                 assertSolutionEquals(
                     query.yes(X to value),
-                    solver.solveOnce(query, shortDuration),
+                    solver.solveOnce(query, shortBudget),
                 )
 
                 solver.flags[flag] shouldBe value.toTerm()
@@ -305,7 +305,7 @@ fun flagsContract(
 
             assertSolutionEquals(
                 listOf(query.yes()),
-                solver.solve(query, shortDuration).toList(),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -325,7 +325,7 @@ fun flagsContract(
 
             assertSolutionEquals(
                 listOf(query.yes()),
-                solver.solve(query, shortDuration).toList(),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -346,7 +346,7 @@ fun flagsContract(
 
             assertSolutionEquals(
                 listOf(query.yes()),
-                solver.solve(query, shortDuration).toList(),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -359,7 +359,7 @@ fun flagsContract(
             val wildcard = varOf("_P")
             val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
 
-            val solution = solver.solveOnce(query, shortDuration)
+            val solution = solver.solveOnce(query, shortBudget)
 
             solution.isYes.shouldBeTrue()
             solution.valueOf("X") shouldBe Atom.of("lino")
@@ -382,7 +382,7 @@ fun flagsContract(
             val wildcard = varOf("_P")
             val query = structOf("f", X, wildcard) eq structOf("f", "lino", "joey")
 
-            val solution = solver.solveOnce(query, shortDuration)
+            val solution = solver.solveOnce(query, shortBudget)
 
             solution.isYes.shouldBeTrue()
             solution.valueOf("X") shouldBe Atom.of("lino")
@@ -398,7 +398,7 @@ fun flagsContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = member(X, logicListOf(1, 1, 1))
 
-            (solver.solveList(query, shortDuration).count { it.isYes }) shouldBe 3
+            (solver.solveList(query, shortBudget).count { it.isYes }) shouldBe 3
         }
     }
 
@@ -412,7 +412,7 @@ fun flagsContract(
                 )
             val query = member(X, logicListOf(1, 1, 1))
 
-            (solver.solveList(query, shortDuration).count { it.isYes }) shouldBe 1
+            (solver.solveList(query, shortBudget).count { it.isYes }) shouldBe 1
         }
     }
 

@@ -5,8 +5,8 @@ import io.kotest.core.spec.style.funSpec
 import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.Expectation
+import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.SolverFactory
-import it.unibo.tuprolog.solve.TimeDuration
 
 /**
  * Registers [ConcurrentSolverFactory] cases. Solutions are compared as multisets ([MultiSet]), since a concurrent
@@ -23,12 +23,12 @@ class ConcurrentContractScope internal constructor(
     /** A query on a fresh solver with default built-ins, which must yield exactly the expected solutions. */
     fun case(
         id: String,
-        timeout: TimeDuration = mediumDuration,
+        budget: SolveOptions = mediumBudget,
         expectation: LogicProgrammingScope.() -> Expectation,
     ) = scenario(id) {
         logicProgramming {
             val expected = expectation()
-            val solutions = solverWithDefaultBuiltins().solve(expected.query, timeout)
+            val solutions = solverWithDefaultBuiltins().solve(expected.query, budget)
             fromSequence(expected.solutions).assertingEquals(fromSequence(solutions))
         }
     }

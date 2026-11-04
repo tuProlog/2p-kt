@@ -16,6 +16,10 @@ import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 data class StateGoalSelection(
     override val context: PrologExecutionContext,
 ) : AbstractState(context) {
+    /** A mandatory refresh point before publishing a solution, so that none is published past the deadline. */
+    override val isTimeout: Boolean
+        get() = if (context.goals.isOver && context.isRoot) context.chronometer.checkNow() else super.isTimeout
+
     @Suppress("ktlint:standard:discouraged-comment-location")
     override fun computeNext(): State =
         if (context.goals.isOver) {
@@ -36,7 +40,7 @@ data class StateGoalSelection(
                             goals = it.goals.next, // go on with parent's goals
                             procedure = it.procedure,
                             step = nextStep(),
-                            startTime = context.startTime,
+                            chronometer = context.chronometer,
                             operators = context.operators,
                             inputChannels = context.inputChannels,
                             outputChannels = context.outputChannels,

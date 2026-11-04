@@ -267,7 +267,7 @@ fun concurrentSolverContract() =
                     )
 
                 val query = "ftog"(X, Y)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         sequenceOf(
@@ -295,19 +295,19 @@ fun concurrentSolverContract() =
 
                 var query = findall(N, "a"(N), L)
 
-                var solutions = fromSequence(solver.solve(query, mediumDuration))
+                var solutions = fromSequence(solver.solve(query, mediumBudget))
                 var expected = fromSequence(query.yes(L to logicListOf(1, 2, 3)))
 
                 expected.assertingEquals(solutions)
 
                 query = findall(`_`, false, L)
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.yes(L to emptyLogicList))
 
                 expected.assertingEquals(solutions)
 
                 query = findall(`_`, G, `_`)
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected =
                     fromSequence(
                         query.halt(
@@ -355,7 +355,7 @@ fun concurrentSolverContract() =
 
                 val query = tupleOf(terms.map { write(it) }.append(nl))
 
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -376,7 +376,7 @@ fun concurrentSolverContract() =
 
                 val query = write("b") and write("c") and write("d") and nl
 
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -397,7 +397,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solver = solverWithDefaultBuiltins(staticKb = CustomTheories.ifThenTheory1),
                 goalToSolutions = ifThen1ToSolution,
-                maxDuration = mediumDuration,
+                options = mediumBudget,
             )
         }
 
@@ -407,7 +407,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solver = solverWithDefaultBuiltins(staticKb = CustomTheories.ifThenTheory2),
                 goalToSolutions = ifThen2ToSolution,
-                maxDuration = mediumDuration,
+                options = mediumBudget,
             )
         }
 
@@ -417,7 +417,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solver = solverWithDefaultBuiltins(staticKb = CustomTheories.ifThenTheory1),
                 goalToSolutions = ifThenElse1ToSolution,
-                maxDuration = mediumDuration,
+                options = mediumBudget,
             )
         }
 
@@ -427,7 +427,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solver = solverWithDefaultBuiltins(staticKb = CustomTheories.ifThenTheory2),
                 goalToSolutions = ifThenElse2ToSolution,
-                maxDuration = mediumDuration,
+                options = mediumBudget,
             )
         }
 
@@ -440,7 +440,7 @@ fun concurrentSolverContract() =
                         staticKb = TimeRelatedTheories.timeRelatedTheory,
                     ),
                 goalToSolutions = noSolutionInTimeGoalToSolution,
-                maxDuration = TimeRelatedTheories.maxDurationFor(0),
+                options = TimeRelatedTheories.simulatedTimeOptions(0),
             )
         }
 
@@ -453,7 +453,7 @@ fun concurrentSolverContract() =
                         staticKb = TimeRelatedTheories.timeRelatedTheory,
                     ),
                 goalToSolutions = oneSolutionInTimeGoalToSolution,
-                maxDuration = TimeRelatedTheories.maxDurationFor(1),
+                options = TimeRelatedTheories.simulatedTimeOptions(1),
             )
         }
 
@@ -466,7 +466,7 @@ fun concurrentSolverContract() =
                         staticKb = TimeRelatedTheories.timeRelatedTheory,
                     ),
                 goalToSolutions = twoSolutionsInTimeGoalToSolution,
-                maxDuration = TimeRelatedTheories.maxDurationFor(2),
+                options = TimeRelatedTheories.simulatedTimeOptions(2),
             )
         }
 
@@ -479,7 +479,7 @@ fun concurrentSolverContract() =
                         staticKb = TimeRelatedTheories.timeRelatedTheory,
                     ),
                 goalToSolutions = allSolutionsInTimeGoalToSolution,
-                maxDuration = TimeRelatedTheories.maxDurationFor(3),
+                options = TimeRelatedTheories.simulatedTimeOptions(3),
             )
         }
 
@@ -489,7 +489,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = TestingClauseTheories.simpleFactTheory),
                 simpleFactTheoryNotableGoalToSolutions,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -499,7 +499,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = TestingClauseTheories.simpleCutTheory),
                 simpleCutTheoryNotableGoalToSolutions,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -509,7 +509,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = TestingClauseTheories.simpleCutAndConjunctionTheory),
                 simpleCutAndConjunctionTheoryNotableGoalToSolutions,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -519,7 +519,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = TestingClauseTheories.cutConjunctionAndBacktrackingTheory),
                 cutConjunctionAndBacktrackingTheoryNotableGoalToSolutions,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -529,7 +529,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = TestingClauseTheories.infiniteComputationTheory),
                 infiniteComputationTheoryNotableGoalToSolution,
-                shortDuration,
+                shortBudget,
             )
         }
 
@@ -539,7 +539,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.prologStandardExampleTheory),
                 prologStandardExampleTheoryNotableGoalToSolution,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -549,7 +549,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.prologStandardExampleWithCutTheory),
                 prologStandardExampleWithCutTheoryNotableGoalToSolution,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -559,7 +559,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = TestingClauseTheories.customReverseListTheory),
                 customReverseListTheoryNotableGoalToSolution,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -569,7 +569,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.conjunctionStandardExampleTheory),
                 conjunctionStandardExampleTheoryNotableGoalToSolution,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -605,7 +605,7 @@ fun concurrentSolverContract() =
                     assertConcurrentSolverSolutionsCorrect(
                         solverWithDefaultBuiltins(staticKb = database),
                         goalToSolutions,
-                        mediumDuration,
+                        mediumBudget,
                     )
                 }
             }
@@ -617,13 +617,13 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.callStandardExampleTheory),
                 callStandardExampleTheoryGoalsToSolution(callErrorSignature),
-                mediumDuration,
+                mediumBudget,
             )
 
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 callTestingGoalsToSolutions(callErrorSignature),
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -644,7 +644,7 @@ fun concurrentSolverContract() =
                         assertConcurrentSolverSolutionsCorrect(
                             solverWithDefaultBuiltins(staticKb = database),
                             goalToSolutions,
-                            mediumDuration,
+                            mediumBudget,
                         )
                     }
             }
@@ -658,13 +658,13 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.catchAndThrowTheoryExample),
                 catchAndThrowTheoryExampleNotableGoalToSolution,
-                mediumDuration,
+                mediumBudget,
             )
 
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 catchTestingGoalsToSolutions,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -705,7 +705,7 @@ fun concurrentSolverContract() =
                         assertConcurrentSolverSolutionsCorrect(
                             solverWithDefaultBuiltins(staticKb = database),
                             goalToSolutions,
-                            mediumDuration,
+                            mediumBudget,
                         )
                     }
             }
@@ -717,7 +717,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 haltTestingGoalsToSolutions,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -727,7 +727,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.notStandardExampleTheory),
                 notStandardExampleTheoryNotableGoalToSolution(nafErrorSignature, notErrorSignature),
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -777,7 +777,7 @@ fun concurrentSolverContract() =
                         assertConcurrentSolverSolutionsCorrect(
                             solverWithDefaultBuiltins(staticKb = database),
                             goalToSolutions,
-                            mediumDuration,
+                            mediumBudget,
                         )
                     }
             }
@@ -789,7 +789,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = PrologStandardExampleTheories.ifThenStandardExampleTheory),
                 ifThenStandardExampleTheoryNotableGoalToSolution,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -799,7 +799,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 ifThenElseStandardExampleNotableGoalToSolution,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -809,7 +809,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(staticKb = TestingClauseTheories.customRangeListGeneratorTheory),
                 customRangeListGeneratorTheoryNotableGoalToSolution,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -825,7 +825,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = atomOf("a")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -844,7 +844,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = "a"(N)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes(N to 1))
 
                 expected.assertingEquals(solutions)
@@ -956,7 +956,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = atomOf("a")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(sequenceOf(query.yes(), query.yes()))
 
                 expected.assertingEquals(solutions)
@@ -968,7 +968,7 @@ fun concurrentSolverContract() =
             logicProgramming {
                 val solver = solverWithDefaultBuiltins()
                 val query = atomOf("a")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.no())
 
                 expected.assertingEquals(solutions)
@@ -987,7 +987,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = "a"(N)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(sequenceOf(query.yes(N to 1), query.yes(N to 2)))
 
                 expected.assertingEquals(solutions)
@@ -1008,7 +1008,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = atomOf("a")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -1019,7 +1019,7 @@ fun concurrentSolverContract() =
             logicProgramming {
                 val solver = solverWithDefaultBuiltins()
 
-                assertConcurrentSolverSolutionsCorrect(solver, CustomTheories.memberGoalToSolution, mediumDuration)
+                assertConcurrentSolverSolutionsCorrect(solver, CustomTheories.memberGoalToSolution, mediumBudget)
             }
         }
 
@@ -1038,7 +1038,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = "a"(N)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes(N to 2))
 
                 expected.assertingEquals(solutions)
@@ -1059,7 +1059,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = "a"(N)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(sequenceOf(query.yes(N to 3), query.yes(N to 2)))
 
                 expected.assertingEquals(solutions)
@@ -1080,7 +1080,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = "a"(N)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes(N to 2))
 
                 expected.assertingEquals(solutions)
@@ -1101,7 +1101,7 @@ fun concurrentSolverContract() =
                             ),
                     )
                 val query = "a"(N)
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes(N to 2))
 
                 expected.assertingEquals(solutions)
@@ -1114,7 +1114,7 @@ fun concurrentSolverContract() =
 
                 val query = assertz("f"(2) impliedBy false) and asserta("f"(1) impliedBy true)
 
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -1140,7 +1140,7 @@ fun concurrentSolverContract() =
 
                 val query = retract("f"(X)) // retract(f(X))
 
-                val solutions = fromSequence(solver.solve(query, longDuration))
+                val solutions = fromSequence(solver.solve(query, longBudget))
                 val expected = fromSequence(sequenceOf(query.yes(X to 1), query.yes(X to 2)))
 
                 expected.assertingEquals(solutions)
@@ -1158,7 +1158,7 @@ fun concurrentSolverContract() =
 
                 val n = 100
 
-                val solutions = fromSequence(solver.solve(query, mediumDuration).take(n).toList())
+                val solutions = fromSequence(solver.solve(query, mediumBudget).take(n).toList())
                 val expected = fromSequence((0 until n).map { query.yes(X to it) })
 
                 expected.assertingEquals(solutions)
@@ -1171,35 +1171,35 @@ fun concurrentSolverContract() =
 
                 var query = functor("a"("b", "c"), X, Y)
 
-                var solutions = fromSequence(solver.solve(query, mediumDuration))
+                var solutions = fromSequence(solver.solve(query, mediumBudget))
                 var expected = fromSequence(query.yes(X to "a", Y to 2))
 
                 expected.assertingEquals(solutions)
 
                 query = functor("a"("b", "c"), "a", Y)
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.yes(Y to 2))
 
                 expected.assertingEquals(solutions)
 
                 query = functor("a"("b", "c"), X, 2)
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.yes(X to "a"))
 
                 expected.assertingEquals(solutions)
 
                 query = functor(X, "a", 2)
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.yes(X to structOf("a", anonymous(), anonymous())))
 
                 expected.assertingEquals(solutions)
 
                 query = functor(X, Y, 2)
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected =
                     fromSequence(
                         query.halt(
@@ -1216,7 +1216,7 @@ fun concurrentSolverContract() =
 
                 query = functor(X, "a", "2")
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected =
                     fromSequence(
                         query.halt(
@@ -1240,21 +1240,21 @@ fun concurrentSolverContract() =
 
                 var query = "a"("b", "c") univ X
 
-                var solutions = fromSequence(solver.solve(query, mediumDuration))
+                var solutions = fromSequence(solver.solve(query, mediumBudget))
                 var expected = fromSequence(query.yes(X to logicListOf("a", "b", "c")))
 
                 expected.assertingEquals(solutions)
 
                 query = X univ logicListOf("a", "b", "c")
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.yes(X to structOf("a", "b", "c")))
 
                 expected.assertingEquals(solutions)
 
                 query = X univ Y
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected =
                     fromSequence(
                         query.halt(
@@ -1271,7 +1271,7 @@ fun concurrentSolverContract() =
 
                 query = "a"("b", "c") univ "a"
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected =
                     fromSequence(
                         query.halt(
@@ -1302,7 +1302,7 @@ fun concurrentSolverContract() =
 
                 var query = retractall("f"(X))
 
-                var solutions = fromSequence(solver.solve(query, longDuration))
+                var solutions = fromSequence(solver.solve(query, longBudget))
                 var expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -1312,7 +1312,7 @@ fun concurrentSolverContract() =
 
                 query = retractall("f"(X))
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.yes())
 
                 expected.assertingEquals(solutions)
@@ -1325,28 +1325,28 @@ fun concurrentSolverContract() =
 
                 var query = append(logicListOf(1, 2, 3), logicListOf(4, 5, 6), X)
 
-                var solutions = fromSequence(solver.solve(query, mediumDuration))
+                var solutions = fromSequence(solver.solve(query, mediumBudget))
                 var expected = fromSequence(query.yes(X to logicListOf(1, 2, 3, 4, 5, 6)))
 
                 expected.assertingEquals(solutions)
 
                 query = append(logicListOf(1, 2, 3), X, logicListOf(1, 2, 3, 4, 5, 6))
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.yes(X to logicListOf(4, 5, 6)))
 
                 expected.assertingEquals(solutions)
 
                 query = append(X, X, logicListOf(1, 2, 3, 4, 5, 6))
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected = fromSequence(query.no())
 
                 expected.assertingEquals(solutions)
 
                 query = append(X, Y, logicListOf(1, 2, 3, 4, 5, 6))
 
-                solutions = fromSequence(solver.solve(query, mediumDuration))
+                solutions = fromSequence(solver.solve(query, mediumBudget))
                 expected =
                     fromSequence(
                         sequenceOf(
@@ -1368,7 +1368,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 TestingTermOperators.greaterThanTesting,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -1376,7 +1376,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 TestingTermOperators.equalTesting,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -1384,7 +1384,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 TestingTermOperators.lowerThanTesting,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -1392,7 +1392,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 TestingTermOperators.greaterThanOrEqualTesting,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -1400,7 +1400,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 TestingTermOperators.lowerThanOrEqualTesting,
-                mediumDuration,
+                mediumBudget,
             )
         }
 
@@ -1408,7 +1408,7 @@ fun concurrentSolverContract() =
             assertConcurrentSolverSolutionsCorrect(
                 solverWithDefaultBuiltins(),
                 TestingTermOperators.notEqualTesting,
-                mediumDuration,
+                mediumBudget,
             )
         }
     }
@@ -1427,7 +1427,7 @@ private fun ConcurrentContractScope.testAssert(
                 assertX("f"(3)) and
                 "f"(X)
 
-        val solutions = fromSequence(solver.solve(query, mediumDuration))
+        val solutions = fromSequence(solver.solve(query, mediumBudget))
         val ints = if (inverse) (3 downTo 1) else (1..3)
         val expected = fromSequence((ints).map { query.yes(X to it) })
 

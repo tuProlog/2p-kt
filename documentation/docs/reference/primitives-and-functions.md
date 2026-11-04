@@ -20,13 +20,15 @@ responses as integers in the range, `repeat/0` returns an infinite sequence, and
 `Solve.Request` is an immutable `data class`:
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/Solve.kt:25:40"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/Solve.kt:25:36"
 ```
 
 - `signature` / `arguments` — what is being called and with what; validated at construction against arity/vararg;
 - `context: C` — the `ExecutionContext` (an immutable snapshot of the solver's state — see
   [Solver API](solver-api.md#executioncontextaware)) current when the request was made;
-- `startTime` / `maxDuration` (from `Durable`) — used to enforce timeouts;
+- `chronometer` (from `Durable`, i.e. the context's) — the resolution's timing: `maxDuration`, `elapsedTime` and
+  `remainingTime` derive from it, and `solve(goal, limit)` times nested resolutions by a child scope of it (see
+  [Resolution time](solver-api.md#resolution-time));
 - `query: Struct` — the request rebuilt as a `Struct`, lazily.
 
 Because everything is `val`, a primitive cannot mutate its own request or the context it was given: `subSolver()`

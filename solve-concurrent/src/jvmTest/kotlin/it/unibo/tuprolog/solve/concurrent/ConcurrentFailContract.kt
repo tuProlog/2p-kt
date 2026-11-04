@@ -22,7 +22,7 @@ fun concurrentFailContract() =
                     )
 
                 val query = atomOf("undef_pred")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

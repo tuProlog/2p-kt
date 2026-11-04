@@ -25,7 +25,7 @@ fun concurrentAndContract() =
                     )
 
                 val query = "nofoo"("X") and call("X")
-                val solutions = fromSequence(solver.solve(query, mediumDuration))
+                val solutions = fromSequence(solver.solve(query, mediumBudget))
                 val expected =
                     fromSequence(
                         query.halt(

@@ -5,15 +5,11 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.solve.TimeDuration
-import it.unibo.tuprolog.solve.currentTimeInstant
-import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.aRequestIssuingInstant
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.aResult
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.aSignature
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.aVarargSignature
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.anArgumentList
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.anExecutionContext
-import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.anExecutionMaxDuration
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.assertContainsCorrectData
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.createRequest
 import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.defaultResponse
@@ -27,34 +23,9 @@ import it.unibo.tuprolog.solve.function.testutils.ComputeUtils.varargArgumentLis
 class ComputeRequestSpec :
     FunSpec({
         test("request-inserted-data-correct") {
-            val toBeTested =
-                Compute.Request(
-                    aSignature,
-                    anArgumentList,
-                    anExecutionContext,
-                    aRequestIssuingInstant,
-                    anExecutionMaxDuration,
-                )
-
-            toBeTested.assertContainsCorrectData(
-                aSignature,
-                anArgumentList,
-                anExecutionContext,
-                aRequestIssuingInstant,
-                anExecutionMaxDuration,
-            )
-        }
-
-        test("request-default-values-correct") {
             val toBeTested = Compute.Request(aSignature, anArgumentList, anExecutionContext)
 
-            toBeTested.assertContainsCorrectData(
-                aSignature,
-                anArgumentList,
-                anExecutionContext,
-                currentTimeInstant(),
-                TimeDuration.MAX_VALUE,
-            )
+            toBeTested.assertContainsCorrectData(aSignature, anArgumentList, anExecutionContext)
         }
 
         test("request-constructor-complains-with-wrong-arity-and-arguments-count") {
@@ -68,16 +39,6 @@ class ComputeRequestSpec :
 
         test("request-constructor-permits-more-than-arity-arguments-if-signature-vararg") {
             createRequest(aVarargSignature, anArgumentList + Truth.FAIL)
-        }
-
-        test("request-constructor-complains-with-negative-max-duration") {
-            createRequest(executionMaxDuration = 0)
-            shouldThrow<IllegalArgumentException> { createRequest(executionMaxDuration = -1) }
-        }
-
-        test("request-constructor-complains-with-negative-request-issuing-instant") {
-            createRequest(requestIssuingInstant = 0)
-            shouldThrow<IllegalArgumentException> { createRequest(requestIssuingInstant = -1) }
         }
 
         test("request-computes-correctly-query-struct") {

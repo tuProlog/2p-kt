@@ -128,7 +128,7 @@ fun functorContract(
                 current_flag("max_arity", A) and (
                     (X `is` (A + 1)) and functor(T, "foo", X)
                 )
-            val solutions = solver.solve(query, mediumDuration).toList()
+            val solutions = solver.solve(query, mediumBudget).toList()
 
             assertSolutionEquals(
                 listOf(

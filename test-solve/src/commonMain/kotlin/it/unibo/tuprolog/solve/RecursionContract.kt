@@ -100,7 +100,7 @@ private fun ContractScope.testRecursion(
                 stdOut = OutputChannel.of { prints.add(it) },
             )
 
-        val sol = solver.solveOnce(atomOf("check_temperature"), mediumDuration)
+        val sol = solver.solveOnce(atomOf("check_temperature"), mediumBudget)
 
         sol.isYes.shouldBeTrue()
 
@@ -143,7 +143,7 @@ private fun ContractScope.testTailRecursion(
 
         val query = "recursive"(n)
 
-        val sol = solver.solveOnce(query, longDuration)
+        val sol = solver.solveOnce(query, longBudget)
 
         assertSolutionEquals(
             query.halt(
