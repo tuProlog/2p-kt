@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.theory
 
+import it.unibo.tuprolog.collections.MutableClauseDeque
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
@@ -8,7 +9,6 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.impl.MutableIndexedTheory
-import it.unibo.tuprolog.theory.impl.MutableListedTheory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
@@ -20,9 +20,9 @@ import kotlin.jvm.JvmStatic
  * Prolog `dynamic` knowledge base updated on (almost) every resolution step — at the cost of the usual aliasing
  * caveat: every reference to a `MutableTheory` observes every mutation performed through any other reference.
  *
- * As with [Theory], a `MutableTheory` can be backed by an indexed or a listed data structure (see
- * [indexedOf]/[listedOf]); [Theory.toMutableTheory] and [Theory.toImmutableTheory] convert between the two
- * flavours, copying the underlying clauses only when actually needed.
+ * A `MutableTheory` is a [MutableClauseDeque]: `add`/`addLast` mean `assertZ`, `addFirst` means `assertA`,
+ * `removeFirstMatching` means `retract`. [Theory.toMutableTheory] and [Theory.toImmutableTheory] convert between
+ * the two flavours, copying the underlying clauses only when actually needed.
  *
  * Lookups ([get]) and iterations ([clauses]) follow the *logical update view* (ISO/IEC 13211-1, 7.5.4): they see the
  * clauses as of when they started (the call to [get], or to `iterator()`), whatever assertions and retractions happen
@@ -30,8 +30,46 @@ import kotlin.jvm.JvmStatic
  *
  * @see Theory
  */
-interface MutableTheory : Theory {
+interface MutableTheory :
+    Theory,
+    MutableClauseDeque {
     override fun setUnificator(unificator: Unificator): MutableTheory
+
+    override fun toMutable(): MutableTheory = clone()
+
+    override fun add(clause: Clause): Boolean {
+        assertZ(clause)
+        return true
+    }
+
+    override fun addAll(clauses: Iterable<Clause>): Boolean = clauses.toList().also { assertZ(it) }.isNotEmpty()
+
+    override fun addFirst(clause: Clause) {
+        assertA(clause)
+    }
+
+    override fun addLast(clause: Clause) {
+        assertZ(clause)
+    }
+
+    override fun removeFirstMatching(query: Clause): Clause? = retract(query).firstClause
+
+    override fun removeAllMatching(query: Clause): List<Clause> = retractAll(query).clauses?.toList() ?: emptyList()
+
+    // the first clause is the first one matching itself
+    override fun removeFirst(): Clause? = firstOrNull()?.also { retract(it) }
+
+    override fun removeLast(): Clause? {
+        val all = clauses.toList()
+        clear()
+        assertZ(all.dropLast(1))
+        return all.lastOrNull()
+    }
+
+    // retracting each clause in order removes exactly that clause, as earlier ones are gone
+    override fun clear() {
+        retract(clauses.toList())
+    }
 
     override val isMutable: Boolean get() = true
 
@@ -157,49 +195,5 @@ interface MutableTheory : Theory {
             unificator: Unificator,
             clauses: Iterable<Clause>,
         ): MutableTheory = MutableIndexedTheory(unificator, clauses)
-
-        /** Creates a [MutableTheory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("emptyListed")
-        fun emptyListed(unificator: Unificator): MutableTheory = listedOf(unificator, emptySequence())
-
-        /** Creates a [MutableTheory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOf")
-        fun listedOf(
-            unificator: Unificator,
-            vararg clause: Clause,
-        ): MutableTheory = listedOf(unificator, clause.asIterable())
-
-        /** Let developers easily create a [MutableTheory] backed by a list, while avoiding variables names
-         * clashing by using a different [Scope] for each [Clause] */
-        @JvmStatic
-        @JsName("listedOfScopes")
-        fun listedOf(
-            unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): MutableTheory =
-            listedOf(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
-
-        /** Creates a [MutableTheory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOfSequence")
-        fun listedOf(
-            unificator: Unificator,
-            clauses: Sequence<Clause>,
-        ): MutableTheory = listedOf(unificator, clauses.asIterable())
-
-        /** Creates a [MutableTheory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOfIterable")
-        fun listedOf(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): MutableTheory = MutableListedTheory(unificator, clauses)
     }
 }

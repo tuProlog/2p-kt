@@ -36,6 +36,23 @@ internal class MappedMutableProblogTheory(
 
     override fun toMutableTheory(): MutableProblogTheory = MutableProblogTheory.of(unificator, this)
 
+    // clause-collection operations (#1019) go through assertions and retractions, which map probabilistic clauses
+    override fun toMutable(): MutableTheory = super<MutableProblogTheory>.toMutable()
+
+    override fun toImmutable(): Theory = super<MutableProblogTheory>.toImmutable()
+
+    override fun add(clause: Clause): Boolean = super<MutableProblogTheory>.add(clause)
+
+    override fun addAll(clauses: Iterable<Clause>): Boolean = super<MutableProblogTheory>.addAll(clauses)
+
+    override fun addFirst(clause: Clause) = super<MutableProblogTheory>.addFirst(clause)
+
+    override fun addLast(clause: Clause) = super<MutableProblogTheory>.addLast(clause)
+
+    override fun removeFirstMatching(query: Clause): Clause? = super<MutableProblogTheory>.removeFirstMatching(query)
+
+    override fun removeAllMatching(query: Clause): List<Clause> = super<MutableProblogTheory>.removeAllMatching(query)
+
     override fun toImmutableTheory(): ProblogTheory = MappedProblogTheory(null, unificator, theory.toImmutableTheory())
 
     override fun plus(theory: ProblogTheory): MutableProblogTheory =

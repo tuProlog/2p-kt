@@ -160,13 +160,15 @@ private class PositionsToClauses(
  * [FrozenProcedure]s. Updates return new stores sharing every procedure they do not touch.
  */
 internal class FrozenStore private constructor(
-    val unificator: Unificator,
+    override val unificator: Unificator,
     val clauses: Array<Clause>,
     private val procedures: Map<ProcedureKey?, FrozenProcedure>,
-) {
-    val size: Int get() = clauses.size
+) : ClauseSource {
+    override val size: Int get() = clauses.size
 
-    fun matching(query: Clause): Sequence<Clause> =
+    override fun ordered(): Sequence<Clause> = clauses.asSequence()
+
+    override fun matching(query: Clause): Sequence<Clause> =
         procedures[procedureKeyOf(query)]?.matching(query) ?: emptySequence()
 
     /** A store with [added] (already validated) at the beginning or end. */

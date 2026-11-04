@@ -2,12 +2,10 @@ package it.unibo.tuprolog.theory
 
 import io.kotest.core.spec.style.funSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.dsl.unify.logicProgramming
 import it.unibo.tuprolog.dsl.unify.lp
-import it.unibo.tuprolog.theory.impl.AbstractListedTheory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.collections.List as KtList
 
@@ -59,11 +57,7 @@ fun theoryUnificatorTests(theoryGenerator: (Unificator, Iterable<Clause>) -> The
 
         test("change-unificator") {
             val theory3 = theory1.setUnificator(unificator2)
-            if (theory1.let { it.isMutable && it is AbstractListedTheory }) {
-                theory3 shouldBeSameInstanceAs theory1
-            } else {
-                theory3 shouldNotBeSameInstanceAs theory1
-            }
+            theory3 shouldNotBeSameInstanceAs theory1
             theory3.unificator shouldBe unificator2
             theory2 shouldBe theory1
             theory2 shouldBe theory3

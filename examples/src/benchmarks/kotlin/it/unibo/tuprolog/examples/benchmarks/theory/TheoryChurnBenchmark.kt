@@ -18,7 +18,7 @@ import kotlinx.benchmark.State
  */
 @State(Scope.Benchmark)
 class TheoryChurnBenchmark {
-    @Param("mutable", "mutable-listed")
+    @Param("mutable")
     var impl: String = "mutable"
 
     @Param("0", "10000", "100000")

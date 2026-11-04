@@ -100,6 +100,10 @@ internal class IndexedTheory private constructor(
         store.minusAll(clause)?.let { (store, removed) -> RetractResult.Success(with(store), removed) }
             ?: RetractResult.Failure(this)
 
+    override fun firstOrNull(): Clause? = clauses.firstOrNull()
+
+    override fun lastOrNull(): Clause? = clauses.lastOrNull()
+
     override fun toMutableTheory(): MutableTheory = MutableIndexedTheory(unificator, clauses, tags)
 
     private val hashCodeCache: Int by lazy { super.hashCode() }
