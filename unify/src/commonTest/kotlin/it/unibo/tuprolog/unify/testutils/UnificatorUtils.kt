@@ -205,6 +205,9 @@ internal object UnificatorUtils {
             )
     }
 
+    /** The ids of the cases whose expectation only holds for strict unification, not for naive (by value) one */
+    internal val naiveDivergences = setOf("contradiction/real-integer")
+
     /** Contains a mapping between faulty equations and their failed result Triple(mgu, isMatching, unifiedTerm) */
     internal val failedUnifications by lazy {
         EquationUtils.allContradictionEquations.map {

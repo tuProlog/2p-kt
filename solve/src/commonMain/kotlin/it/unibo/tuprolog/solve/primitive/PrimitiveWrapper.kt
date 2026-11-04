@@ -71,6 +71,17 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             term2: Term,
         ): Substitution = context.unificator.mgu(term1, term2)
 
+        /**
+         * Merges [substitution1] and [substitution2] with the context's unificator, as if they had been computed by
+         * unifying the respective terms at once: a variable bound by both gets its two values unified, whereas
+         * [Substitution.plus] would fail unless they are equal.
+         */
+        @JvmStatic
+        fun <C : ExecutionContext> Solve.Request<C>.merge(
+            substitution1: Substitution,
+            substitution2: Substitution,
+        ): Substitution = context.unificator.merge(substitution1, substitution2)
+
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.match(
             term1: Term,

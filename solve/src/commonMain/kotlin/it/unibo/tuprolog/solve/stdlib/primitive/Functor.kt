@@ -51,13 +51,13 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                 if (third !is Var) {
                     ensuringArgumentIsArity(2)
                 }
-                mgu(second, Atom.of(first.functor)) + mgu(third, Integer.of(first.arity))
+                merge(mgu(second, Atom.of(first.functor)), mgu(third, Integer.of(first.arity)))
             }
             is Numeric -> {
                 if (third !is Var) {
                     ensuringArgumentIsArity(2)
                 }
-                mgu(first, second) + mgu(third, Integer.of(0))
+                merge(mgu(first, second), mgu(third, Integer.of(0)))
             }
             is Var -> {
                 when (second) {
@@ -73,7 +73,7 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
                         val arity = (third as Integer)
 
                         if (arity.intValue == BigInteger.ZERO) {
-                            Substitution.of(first to second) + mgu(third, Integer.of(0))
+                            merge(Substitution.of(first to second), mgu(third, Integer.of(0)))
                         } else {
                             throw TypeError.forArgument(context, signature, TypeError.Expected.ATOM, second, 1)
                         }

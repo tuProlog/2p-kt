@@ -105,8 +105,10 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                     val goalArgs = goal.args.toTypedArray()
                     goalArgs[1] = goalArgs[1].withBodyExplanation(Var.anonymous())
                     yield(
-                        mgu(third, Struct.of(goal.functor, *goalArgs)) +
+                        merge(
+                            mgu(third, Struct.of(goal.functor, *goalArgs)),
                             mgu(first, ProbExplanation.TRUE.toTerm()),
+                        ),
                     )
                 }
                 // Edge case: assert family
@@ -118,7 +120,7 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                             else -> subGoal.safeToStruct().extractSignature()
                         }
                     if (subGoalSignature in context.libraries || (subGoal is Clause && !subGoal.isWellFormed)) {
-                        yield(mgu(third, goal) + mgu(first, ProbExplanation.TRUE.toTerm()))
+                        yield(merge(mgu(third, goal), mgu(first, ProbExplanation.TRUE.toTerm())))
                     } else {
                         val newGoals =
                             when (subGoal) {
@@ -131,7 +133,10 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                             }
                         yieldAll(
                             newGoals.map {
-                                mgu(third, Struct.of(goal.functor, it)) + mgu(first, ProbExplanation.TRUE.toTerm())
+                                merge(
+                                    mgu(third, Struct.of(goal.functor, it)),
+                                    mgu(first, ProbExplanation.TRUE.toTerm()),
+                                )
                             },
                         )
                     }
@@ -160,7 +165,7 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                 "clause" -> {
                     val subGoal = goal[0]
                     if (subGoal !is Struct || context.libraries.hasProtected(subGoal.extractSignature())) {
-                        yield(mgu(third, goal) + mgu(first, ProbExplanation.TRUE.toTerm()))
+                        yield(merge(mgu(third, goal), mgu(first, ProbExplanation.TRUE.toTerm())))
                     } else {
                         yield(
                             mgu(
@@ -182,7 +187,7 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                         goalSignature.toIndicator() in context.staticKb ||
                         goalSignature.toIndicator() in context.dynamicKb
                     ) {
-                        yield(mgu(third, goal) + mgu(first, ProbExplanation.TRUE.toTerm()))
+                        yield(merge(mgu(third, goal), mgu(first, ProbExplanation.TRUE.toTerm())))
                     }
 
                     // Solve probabilistic goal
