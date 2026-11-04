@@ -47,7 +47,7 @@ internal class MutableIndexedTheory private constructor(
 
     override fun toMutableTheory(): MutableTheory = this
 
-    override val clauses: Iterable<Clause> = Iterable { store.clauses().iterator() }
+    override val clauses: Iterable<Clause> = Iterable { store.ordered().iterator() }
 
     override fun iterator(): Iterator<Clause> = clauses.iterator()
 
@@ -104,6 +104,19 @@ internal class MutableIndexedTheory private constructor(
     override fun assertZ(clauses: Sequence<Clause>): MutableIndexedTheory = assertZ(clauses.asIterable())
 
     override fun abolish(indicator: Indicator): MutableTheory = also { super.abolish(indicator) }
+
+    override fun removeFirst(): Clause? =
+        store
+            .entries()
+            .firstOrNull()
+            ?.also { store.remove(it) }
+            ?.clause
+
+    override fun removeLast(): Clause? = store.lastEntry()?.also { store.remove(it) }?.clause
+
+    override fun lastOrNull(): Clause? = store.lastEntry()?.clause
+
+    override fun clear() = store.clear()
 
     override fun toImmutableTheory(): Theory = IndexedTheory(unificator, clauses, tags)
 

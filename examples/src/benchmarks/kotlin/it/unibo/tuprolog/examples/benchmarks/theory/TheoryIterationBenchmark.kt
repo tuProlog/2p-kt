@@ -17,7 +17,7 @@ import kotlinx.benchmark.State
  */
 @State(Scope.Benchmark)
 class TheoryIterationBenchmark {
-    @Param("immutable", "mutable", "listed", "mutable-listed")
+    @Param("immutable", "mutable")
     var impl: String = "immutable"
 
     @Param("1000", "100000")

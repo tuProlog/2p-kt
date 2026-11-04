@@ -11,7 +11,7 @@ import kotlinx.benchmark.State
 /** Average time to build a theory of [TheoryWorkloads.standard] clauses (3 × size + 1) in one go (#1019). */
 @State(Scope.Benchmark)
 class TheoryConstructionBenchmark {
-    @Param("immutable", "mutable", "listed", "mutable-listed")
+    @Param("immutable", "mutable")
     var impl: String = "immutable"
 
     @Param("10", "100", "1000", "10000", "100000")
@@ -36,7 +36,7 @@ class TheoryConstructionBenchmark {
  */
 @State(Scope.Benchmark)
 class TheoryIncrementalConstructionBenchmark {
-    @Param("immutable", "mutable", "listed", "mutable-listed")
+    @Param("immutable", "mutable")
     var impl: String = "immutable"
 
     @Param("10", "100", "1000")

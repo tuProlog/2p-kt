@@ -1,14 +1,13 @@
 package it.unibo.tuprolog.theory
 
+import it.unibo.tuprolog.collections.ClauseDeque
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.unify.UnificationAware
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
@@ -19,22 +18,14 @@ import kotlin.jvm.JvmStatic
  * queried by unification against a goal, and grown or shrunk with the usual ISO-inspired vocabulary
  * (`assertA`/`assertZ`/`retract`/`abolish`).
  *
- * `Theory` is deliberately a thin, Prolog-flavoured façade: how clauses are actually stored, searched and
- * mutated is delegated to a `ClauseCollection` (see the `it.unibo.tuprolog.collections` package) chosen at
- * construction time. Two independent axes of variation exist, both hidden behind this same interface:
- * - **mutable vs. immutable**: a plain `Theory` is a persistent data structure — every `assertA`/`assertZ`/
- *   `retract` returns a *new* `Theory`, leaving `this` untouched; a [MutableTheory] (obtained via
- *   [toMutableTheory]) edits itself in place instead, which is cheaper when a program asserts/retracts
- *   clauses very frequently (e.g. a Prolog `dynamic` predicate).
- * - **indexed vs. listed**: an *indexed* theory (the default, see [indexedOf]) keeps clauses in a
- *   discrimination-tree-like structure (see `it.unibo.tuprolog.collections.rete.custom.ReteTree`) indexed by
- *   directive-vs-rule, functor, arity and first-argument shape, trading memory and update cost for fast
- *   lookup; a *listed* theory (see [listedOf]) is a thin wrapper around an ordered clause list, cheap to
- *   build and to keep in insertion order, but linear to query (each `get` scans and unifies against every
- *   clause). A knowledge base that is queried far more often than it is changed (a typical static, "library"
- *   theory) benefits from indexing; one that is asserted/retracted on nearly every resolution step, or kept
- *   small, may not be worth indexing at all — which is exactly why solvers (see `:solve`) build their static
- *   knowledge base with [of] (indexed) and their dynamic one with [listedOf].
+ * A `Theory` is a [ClauseDeque] (see the `it.unibo.tuprolog.collections` package), taggable, and comes in two
+ * flavours (#1019):
+ * - a plain `Theory` is **immutable** and optimised for **reads** (static knowledge bases): clauses are grouped
+ *   by procedure (functor and arity), and each procedure is indexed on demand on any argument a lookup binds,
+ *   according to the [Unificator]'s [index keys][Unificator.indexKey]. Every `assertA`/`assertZ`/`retract`
+ *   returns a *new* `Theory`, sharing with `this` every procedure it does not touch;
+ * - a [MutableTheory] (obtained via [toMutableTheory]) is optimised for **writes** (dynamic knowledge bases): it
+ *   edits itself in place, in amortised constant time after lookup, and its lookups follow the logical update view.
  *
  * Example — building a small theory and querying it:
  * ```kotlin
@@ -52,9 +43,8 @@ import kotlin.jvm.JvmStatic
  * @see it.unibo.tuprolog.collections.ClauseCollection
  */
 interface Theory :
-    Iterable<Clause>,
-    Taggable<Theory>,
-    UnificationAware {
+    ClauseDeque,
+    Taggable<Theory> {
     /** Whether this [Theory] supports in-place mutation; `true` for [MutableTheory], `false` otherwise. */
     @JsName("isMutable")
     val isMutable: Boolean
@@ -72,41 +62,23 @@ interface Theory :
     @JsName("toImmutableTheory")
     fun toImmutableTheory(): Theory
 
+    /** A new [MutableTheory] with the same clauses, [Unificator] and tags: unlike [toMutableTheory], always a copy. */
+    override fun toMutable(): MutableTheory = toMutableTheory().let { if (it === this) it.clone() else it }
+
+    /** Same as [toImmutableTheory]. */
+    override fun toImmutable(): Theory = toImmutableTheory()
+
     /** All [Clause]s in this theory */
-    @JsName("clauses")
-    val clauses: Iterable<Clause>
-
-    /** Only [clauses] that are [Rule]s */
-    @JsName("rules")
-    val rules: Iterable<Rule>
-        get() =
-            clauses
-                .asSequence()
-                .map { it.asRule() }
-                .filterNotNull()
-                .asIterable()
-
-    /** Only [clauses] that are [Directive]s */
-    @JsName("directives")
-    val directives: Iterable<Directive>
-        get() =
-            clauses
-                .asSequence()
-                .map { it.asDirective() }
-                .filterNotNull()
-                .asIterable()
+    override val clauses: Iterable<Clause>
 
     /** The amount of clauses in this [Theory] */
-    @JsName("size")
-    val size: Long
+    override val size: Long
 
     /** Whether this [Theory] is empty or not */
-    @JsName("isEmpty")
-    val isEmpty: Boolean
+    override val isEmpty: Boolean
 
     /** Whether this [Theory] is full or not */
-    @JsName("isNonEmpty")
-    val isNonEmpty: Boolean
+    override val isNonEmpty: Boolean
 
     /**
      * Adds all the clauses of the given [theory] after all the clauses of this one, returning the resulting
@@ -124,8 +96,7 @@ interface Theory :
     operator fun plus(clause: Clause): Theory = assertZ(clause)
 
     /** Checks if given clause is contained in this theory */
-    @JsName("contains")
-    operator fun contains(clause: Clause): Boolean
+    override operator fun contains(clause: Clause): Boolean
 
     /** Checks if given clause is present in this theory */
     @JsName("containsHead")
@@ -139,8 +110,7 @@ interface Theory :
     operator fun contains(indicator: Indicator): Boolean
 
     /** Retrieves the [Sequence] of clauses in this theory that could unify against the given [clause] */
-    @JsName("get")
-    operator fun get(clause: Clause): Sequence<Clause>
+    override operator fun get(clause: Clause): Sequence<Clause>
 
     /** Retrieves the [Sequence] of [Rule]s in this theory whose head could unify against the given [head] */
     @JsName("getByHead")
@@ -372,49 +342,5 @@ interface Theory :
             unificator: Unificator,
             clauses: Iterable<Clause>,
         ): Theory = IndexedTheoryFactory.Default.theoryOf(clauses, unificator)
-
-        /** Creates an empty [Theory] backed by a list */
-        @JvmStatic
-        @JsName("emptyListed")
-        fun emptyListed(unificator: Unificator): Theory = listedOf(unificator, emptySequence())
-
-        /** Creates a [Theory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOf")
-        fun listedOf(
-            unificator: Unificator,
-            vararg clause: Clause,
-        ): Theory = listedOf(unificator, clause.asIterable())
-
-        /** Let developers easily create a [Theory] backed by a list, while avoiding variables names
-         * clashing by using a different [Scope] for each [Clause] */
-        @JvmStatic
-        @JsName("listedOfScopes")
-        fun listedOf(
-            unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): Theory =
-            listedOf(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
-
-        /** Creates a [Theory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOfSequence")
-        fun listedOf(
-            unificator: Unificator,
-            clauses: Sequence<Clause>,
-        ): Theory = listedOf(unificator, clauses.asIterable())
-
-        /** Creates a [Theory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOfIterable")
-        fun listedOf(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): Theory = ListedTheoryFactory.Default.theoryOf(clauses, unificator)
     }
 }

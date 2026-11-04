@@ -83,6 +83,8 @@ internal class EntryView(
     operator fun get(i: Int): Entry = array[from + i]!!
 
     fun asSequence(): Sequence<Entry> = (from until to).asSequence().map { array[it]!! }
+
+    fun asReversedSequence(): Sequence<Entry> = (to - 1 downTo from).asSequence().map { array[it]!! }
 }
 
 private val EMPTY_VIEW = EntryDeque().view()
@@ -213,8 +215,8 @@ private class MatchingEntries(
 
 /** A mutable, write-optimised clause store: see the comment at the top of this file. */
 internal class MutableStore(
-    val unificator: Unificator,
-) {
+    override val unificator: Unificator,
+) : ClauseSource {
     private var generation: Long = 0
     private var lowestOrder: Long = 0
     private var highestOrder: Long = 0
@@ -223,7 +225,7 @@ internal class MutableStore(
     private val procedures = HashMap<ProcedureKey?, MutableProcedure>()
 
     /** Number of live clauses. */
-    var size: Int = 0
+    override var size: Int = 0
         private set
 
     /** Adds [clause] (already validated) at the beginning or end. */
@@ -258,21 +260,31 @@ internal class MutableStore(
     }
 
     /** The clauses matching [query] as of this call (logical update view), lazily. */
-    fun matching(query: Clause): Sequence<Clause> = matchingEntries(query).map { it.clause }
+    override fun matching(query: Clause): Sequence<Clause> = matchingEntries(query).map { it.clause }
 
-    /** All clauses, as of the call to [Sequence.iterator]. */
-    fun clauses(): Sequence<Clause> =
+    /** All live entries, in order, as of the call to [Sequence.iterator]. */
+    fun entries(): Sequence<Entry> =
         Sequence {
             val generation = generation
             all
                 .view()
                 .asSequence()
                 .filter { it.isVisibleAt(generation) }
-                .map { it.clause }
                 .iterator()
         }
 
-    private fun remove(entry: Entry) {
+    override fun ordered(): Sequence<Clause> = entries().map { it.clause }
+
+    /** The last live entry, or `null` if empty. */
+    fun lastEntry(): Entry? = all.view().asReversedSequence().firstOrNull { it.isAlive }
+
+    /** Removes all clauses. */
+    fun clear() {
+        entries().toList().forEach { remove(it) }
+    }
+
+    /** Removes [entry], which must be alive. */
+    fun remove(entry: Entry) {
         entry.erased = ++generation
         size--
         dead++
@@ -286,8 +298,13 @@ internal class MutableStore(
         }
     }
 
-    /** Removes the first clause matching [query], returning it, or `null` if none matches. */
-    fun removeFirst(query: Clause): Clause? = matchingEntries(query).firstOrNull()?.also { remove(it) }?.clause
+    /**
+     * Removes the first clause matching [query] (and satisfying [filter]), returning it, or `null` if none matches.
+     */
+    fun removeFirst(
+        query: Clause,
+        filter: (Clause) -> Boolean = { true },
+    ): Clause? = matchingEntries(query).firstOrNull { filter(it.clause) }?.also { remove(it) }?.clause
 
     /** Removes all clauses matching [query], returning them (empty if none matches). */
     fun removeAll(query: Clause): List<Clause> = matchingEntries(query).toList().onEach { remove(it) }.map { it.clause }

@@ -16,7 +16,8 @@ import it.unibo.tuprolog.unify.Unificator
 /**
  * The theory implementations compared by the `:theory` benchmarks (#1019), by JMH `impl` parameter. `immutable` and
  * `mutable` are whatever [Theory.of] and [MutableTheory.of] build, so the same benchmark sources measure both the
- * implementation before #1019 and the one after it. `listed` and `mutable-listed` are the linear-scan baselines.
+ * implementation before #1019 and the one after it. Before #1019, `listed` and `mutable-listed` measured
+ * linear-scan theories too (see the baseline results), removed since.
  */
 enum class TheoryImpl(
     val id: String,
@@ -24,13 +25,9 @@ enum class TheoryImpl(
 ) {
     IMMUTABLE("immutable", { u, cs -> Theory.of(u, cs) }),
     MUTABLE("mutable", { u, cs -> MutableTheory.of(u, cs) }),
-
-    // Baselines from before #1019, removed with the listed theories themselves.
-    LISTED("listed", { u, cs -> Theory.listedOf(u, cs) }),
-    MUTABLE_LISTED("mutable-listed", { u, cs -> MutableTheory.listedOf(u, cs) }),
     ;
 
-    val isMutable: Boolean get() = this == MUTABLE || this == MUTABLE_LISTED
+    val isMutable: Boolean get() = this == MUTABLE
 
     fun build(
         clauses: List<Clause>,
