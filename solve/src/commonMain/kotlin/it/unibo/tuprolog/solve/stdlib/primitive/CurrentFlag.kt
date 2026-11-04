@@ -38,7 +38,7 @@ object CurrentFlag : BinaryRelation.WithoutSideEffects<ExecutionContext>("curren
                 context.flags
                     .asSequence()
                     .map { (k, v) -> Atom.of(k) to v }
-                    .map { (k, v) -> mgu(k, first) + mgu(v, second) }
+                    .map { (k, v) -> merge(mgu(k, first), mgu(v, second)) }
                     .filter { it.isSuccess }
             }
             else -> {

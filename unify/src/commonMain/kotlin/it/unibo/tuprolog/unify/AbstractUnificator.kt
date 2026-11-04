@@ -12,6 +12,13 @@ import it.unibo.tuprolog.core.Var
  * them (structurally comparing [Term]s, applying resulting variable assignments to the remaining equations) until
  * either a contradiction is found (failure) or no equation can be simplified further (success).
  *
+ * **Deprecated: slow, and only kept as a didactic reference.** Applying every variable assignment to all the pending
+ * equations costs far more time and memory than [AbstractWorklistUnificator], which is the engine of the built-in
+ * strategies, and offers the same customisation points ([AbstractWorklistUnificator.checkTermsEquality],
+ * [AbstractWorklistUnificator.handleComparison] in place of [handleEquation], and
+ * [AbstractWorklistUnificator.handleResult]). Moreover, with occurs-check disabled, this algorithm may not terminate
+ * on cyclic terms (e.g. `f(X, Y) = f(f(Y), g(X))`).
+ *
  * The only decision left to subclasses is [checkTermsEquality], namely *how* two non-variable [Term]s are compared
  * while building equations — this is exactly what distinguishes [Unificator.strict] from [Unificator.naive].
  * Subclasses that additionally need to observe or alter the equation-solving process itself (e.g. to reject some
@@ -32,6 +39,10 @@ import it.unibo.tuprolog.core.Var
  *
  * @param context the starting bindings assumed by this [Unificator]; see [Unificator.context]
  */
+@Deprecated(
+    "Slow, equation-based reference implementation: extend AbstractWorklistUnificator instead",
+    ReplaceWith("AbstractWorklistUnificator", "it.unibo.tuprolog.unify.AbstractWorklistUnificator"),
+)
 abstract class AbstractUnificator(
     override val context: Substitution,
 ) : Unificator {
@@ -88,7 +99,7 @@ abstract class AbstractUnificator(
     private fun equationsFor(
         term1: Term,
         term2: Term,
-    ): Sequence<Equation> = Equation.allOf(term1, term2, this::checkTermsEquality)
+    ): Sequence<Equation> = Equation.allOf(term1, term2, equalityChecker)
 
     private fun equationsFor(
         substitution1: Substitution,
@@ -97,6 +108,8 @@ abstract class AbstractUnificator(
         Equation.from(
             (substitution1.asSequence() + substitution2.asSequence()).map { it.toPair() },
         )
+
+    private val equalityChecker: (Term, Term) -> Boolean = this::checkTermsEquality
 
     /** A function to apply given [substitution] to [equations], skipping the equation at given [exceptIndex] */
     private fun applySubstitutionToEquations(
@@ -110,10 +123,11 @@ abstract class AbstractUnificator(
             if (equations[i].isContradiction || equations[i].isIdentity) return
 
             val currentEq = equations[i]
-            val (newLhs, newRhs) = currentEq.apply(substitution).toPair()
+            val newLhs = currentEq.lhs.apply(substitution)
+            val newRhs = currentEq.rhs.apply(substitution)
 
             if (currentEq.lhs != newLhs || currentEq.rhs != newRhs) {
-                equations[i] = Equation.of(newLhs, newRhs, this::checkTermsEquality)
+                equations[i] = Equation.of(newLhs, newRhs, equalityChecker)
                 changed = true
             }
         }

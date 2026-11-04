@@ -71,7 +71,7 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
                         .asSequence()
                         .flatMap { it.allSupertypes(false) }
                         .distinct()
-                        .map { cast(first, it, third) + mgu(second, TypeRef.of(it)) }
+                        .map { merge(cast(first, it, third), mgu(second, TypeRef.of(it))) }
                         .map { replyWith(it) }
                 }
                 else -> {

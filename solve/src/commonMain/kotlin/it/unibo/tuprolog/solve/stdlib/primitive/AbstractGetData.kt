@@ -21,7 +21,7 @@ abstract class AbstractGetData(
                     .asSequence()
                     .filter { (_, v) -> v is Term }
                     .map { (k, v) -> Atom.of(k) to (v as Term) }
-                    .map { (k, v) -> mgu(first, k) + mgu(second, v) }
+                    .map { (k, v) -> merge(mgu(first, k), mgu(second, v)) }
                     .filterIsInstance<Substitution.Unifier>()
                     .map { replyWith(it) } + replyFail()
             is Atom ->
