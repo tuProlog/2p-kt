@@ -8,36 +8,6 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.theory.MutableTheory
-import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.unify.Unificator
-
-/**
- * The theory implementations compared by the `:theory` benchmarks (#1019), by JMH `impl` parameter. `immutable` and
- * `mutable` are whatever [Theory.of] and [MutableTheory.of] build, so the same benchmark sources measure both the
- * implementation before #1019 and the one after it. Before #1019, `listed` and `mutable-listed` measured
- * linear-scan theories too (see the baseline results), removed since.
- */
-enum class TheoryImpl(
-    val id: String,
-    private val factory: (Unificator, List<Clause>) -> Theory,
-) {
-    IMMUTABLE("immutable", { u, cs -> Theory.of(u, cs) }),
-    MUTABLE("mutable", { u, cs -> MutableTheory.of(u, cs) }),
-    ;
-
-    val isMutable: Boolean get() = this == MUTABLE
-
-    fun build(
-        clauses: List<Clause>,
-        unificator: Unificator = Unificator.default,
-    ): Theory = factory(unificator, clauses)
-
-    companion object {
-        fun byId(id: String): TheoryImpl = entries.first { it.id == id }
-    }
-}
 
 /**
  * Deterministic clause generators for the `:theory` benchmarks (#1019).
@@ -75,30 +45,4 @@ object TheoryWorkloads {
         size: Int,
         predicates: Int,
     ): List<Clause> = List(size) { i -> Fact.of(Struct.of("k_${i % predicates}", c(i))) }
-}
-
-/** The lookups measured by `TheoryLookupBenchmark`, against [TheoryWorkloads.standard] of a given size. */
-enum class TheoryQuery(
-    val id: String,
-    private val factory: (Int) -> Clause,
-) {
-    ARG0_BOUND("arg0-bound", { n ->
-        Fact.of(Struct.of("p", TheoryWorkloads.c(n / 2), Var.anonymous(), Var.anonymous()))
-    }),
-    ARG1_BOUND("arg1-bound", { _ -> Fact.of(Struct.of("p", Var.anonymous(), TheoryWorkloads.d(7), Var.anonymous())) }),
-    LAST_BOUND("last-bound", { n -> Fact.of(Struct.of("p", Var.anonymous(), Var.anonymous(), Integer.of(n / 2))) }),
-    ALL_VARS("all-vars", { _ -> Fact.of(Struct.of("p", Var.anonymous(), Var.anonymous(), Var.anonymous())) }),
-    ZERO_ARITY("zero-arity", { _ -> Rule.of(Atom.of("r"), Var.anonymous()) }),
-    NESTED_ARG0(
-        "nested-arg0",
-        { n -> Fact.of(Struct.of("q", Struct.of("f", Struct.of("g", TheoryWorkloads.c(n / 2))), Var.anonymous())) },
-    ),
-    NO_MATCH("no-match", { _ -> Fact.of(Struct.of("p", Atom.of("zzz"), Var.anonymous(), Var.anonymous())) }),
-    ;
-
-    fun query(size: Int): Clause = factory(size)
-
-    companion object {
-        fun byId(id: String): TheoryQuery = entries.first { it.id == id }
-    }
 }
