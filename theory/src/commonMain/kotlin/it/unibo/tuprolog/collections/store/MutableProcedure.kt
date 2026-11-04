@@ -15,13 +15,13 @@ internal class MutableProcedure(
     var live: Int = 0
     var dead: Int = 0
 
-    // NotIndexable, a MutableArgIndex, or null if not built yet
-    private var indexes: Array<Any?> = arrayOfNulls(arity)
+    // per (argument, depth): NotIndexable, a MutableArgIndex, or null if not built yet
+    private var indexes: Array<Any?> = arrayOfNulls(arity * MAX_INDEX_DEPTH)
 
     private fun keyOf(
         entry: Entry,
-        argument: Int,
-    ): IndexKey = unificator.indexKey(entry.clause.head!!.getArgAt(argument))
+        slot: Int,
+    ): IndexKey = unificator.nestedKey(entry.clause.head!!, slot / MAX_INDEX_DEPTH, slot % MAX_INDEX_DEPTH)
 
     fun add(
         entry: Entry,
@@ -29,11 +29,11 @@ internal class MutableProcedure(
     ) {
         if (atStart) entries.addFirst(entry) else entries.addLast(entry)
         live++
-        for (argument in indexes.indices) {
-            val index = indexes[argument] ?: continue
-            val key = keyOf(entry, argument)
+        for (slot in indexes.indices) {
+            val index = indexes[slot] ?: continue
+            val key = keyOf(entry, slot)
             if (index === NotIndexable) {
-                if (key.isExact) indexes[argument] = null
+                if (key.isExact) indexes[slot] = null
                 continue
             }
             index as MutableArgIndex
@@ -48,24 +48,24 @@ internal class MutableProcedure(
         if (dead > COMPACTION_SLACK && dead > live) {
             entries = EntryDeque.of(entries.alive())
             dead = 0
-            indexes = arrayOfNulls(arity)
+            indexes = arrayOfNulls(arity * MAX_INDEX_DEPTH)
         }
     }
 
-    private fun index(argument: Int): MutableArgIndex? {
-        val cached = indexes[argument]
+    private fun index(slot: Int): MutableArgIndex? {
+        val cached = indexes[slot]
         if (cached != null) return if (cached === NotIndexable) null else cached as MutableArgIndex
         val buckets = HashMap<IndexKey, EntryDeque>()
         val wildcards = EntryDeque()
         for (entry in entries.alive()) {
-            val key = keyOf(entry, argument)
+            val key = keyOf(entry, slot)
             if (key.isExact) buckets.getOrPut(key) { EntryDeque() }.addLast(entry) else wildcards.addLast(entry)
         }
         if (buckets.isEmpty()) {
-            indexes[argument] = NotIndexable
+            indexes[slot] = NotIndexable
             return null
         }
-        return MutableArgIndex(buckets, wildcards).also { indexes[argument] = it }
+        return MutableArgIndex(buckets, wildcards).also { indexes[slot] = it }
     }
 
     /** Views over the entries worth unifying with [query]: their merge, by order, holds all candidates. */
@@ -74,16 +74,18 @@ internal class MutableProcedure(
         if (head == null || live < INDEX_THRESHOLD) return entries.view() to EMPTY_VIEW
         var bestCost = entries.size
         var best: Pair<EntryView, EntryView>? = null
-        for (argument in 0 until head.arity) {
-            val key = unificator.indexKey(head.getArgAt(argument))
-            if (!key.isExact) continue
-            val index = index(argument) ?: continue
-            val bucket = index.buckets[key]
-            val cost = (bucket?.size ?: 0) + index.wildcards.size
-            if (cost < bestCost) {
-                bestCost = cost
-                best = (bucket?.view() ?: EMPTY_VIEW) to index.wildcards.view()
-                if (cost == 0) break
+        search@ for (argument in 0 until head.arity) {
+            for (depth in 0 until MAX_INDEX_DEPTH) {
+                val key = unificator.nestedKey(head, argument, depth)
+                if (!key.isExact) break
+                val index = index(argument * MAX_INDEX_DEPTH + depth) ?: continue
+                val bucket = index.buckets[key]
+                val cost = (bucket?.size ?: 0) + index.wildcards.size
+                if (cost < bestCost) {
+                    bestCost = cost
+                    best = (bucket?.view() ?: EMPTY_VIEW) to index.wildcards.view()
+                    if (cost == 0) break@search
+                }
             }
         }
         return best ?: (entries.view() to EMPTY_VIEW)

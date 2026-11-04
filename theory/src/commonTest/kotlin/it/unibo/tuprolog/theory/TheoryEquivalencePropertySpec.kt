@@ -270,6 +270,34 @@ private val regressions =
                     Op.Get(Rule.of(Struct.of("p", Var.anonymous(), Var.anonymous()), Var.anonymous())),
                 )
         },
+        // nested-argument indexes: deep keys, variables and non-compounds at every level, other functors and arities
+        RegressionCase("indexed-nested-arguments") {
+            fun f(t: Term) = Struct.of("f", t)
+
+            fun g(t: Term) = Struct.of("g", t)
+
+            fun p(t: Term) = Rule.of(Struct.of("p", t, Atom.of("a")), Truth.TRUE)
+
+            fun q(t: Term) = Rule.of(Struct.of("p", t, Var.anonymous()), Var.anonymous())
+            List(10) { Op.AssertZ(p(f(g(Integer.of(it))))) } +
+                listOf(
+                    Op.AssertZ(p(f(Var.of("X")))),
+                    Op.AssertZ(p(Var.of("X"))),
+                    Op.AssertA(p(f(Atom.of("b")))),
+                    Op.AssertZ(p(Struct.of("f", g(Integer.of(3)), Atom.of("c")))),
+                    Op.AssertZ(p(Struct.of("h", g(Integer.of(3))))),
+                    Op.AssertZ(p(f(g(Var.of("Y"))))),
+                    Op.Get(q(f(g(Integer.of(3))))),
+                    Op.Get(q(f(g(Real.of(3.0))))),
+                    Op.Get(q(f(Var.of("Z")))),
+                    Op.Get(q(f(g(Struct.of("k", Atom.of("c")))))),
+                    Op.Retract(q(f(g(Integer.of(3))))),
+                    Op.RetractAll(q(f(g(Integer.of(5))))),
+                    Op.Get(q(f(g(Integer.of(5))))),
+                    Op.AssertA(p(f(g(Integer.of(5))))),
+                    Op.Get(q(f(g(Integer.of(5))))),
+                )
+        },
         RegressionCase("abolish-keeps-other-arities") {
             listOf(
                 Op.AssertZ(Rule.of(Atom.of("p"), Truth.TRUE)),

@@ -15,16 +15,20 @@ internal class FrozenProcedure(
 ) {
     private val arity: Int = clauses.firstOrNull()?.head?.arity ?: 0
 
-    // NotIndexable, a FrozenArgIndex, or null if not built yet; races only ever store equivalent values
-    private val indexes: Array<Any?> = arrayOfNulls(arity)
+    // per (argument, depth): NotIndexable, a FrozenArgIndex, or null if not built yet; races only store equivalent values
+    private val indexes: Array<Any?> = arrayOfNulls(arity * MAX_INDEX_DEPTH)
 
     val size: Int get() = clauses.size
 
-    private fun index(argument: Int): FrozenArgIndex? {
-        val cached = indexes[argument]
+    private fun index(
+        argument: Int,
+        depth: Int,
+    ): FrozenArgIndex? {
+        val slot = argument * MAX_INDEX_DEPTH + depth
+        val cached = indexes[slot]
         if (cached != null) return if (cached === NotIndexable) null else cached as FrozenArgIndex
-        val built = FrozenArgIndex.build(clauses, argument, unificator)
-        indexes[argument] = built ?: NotIndexable
+        val built = FrozenArgIndex.build(clauses, argument, depth, unificator)
+        indexes[slot] = built ?: NotIndexable
         return built
     }
 
@@ -35,17 +39,19 @@ internal class FrozenProcedure(
         var bestCost = clauses.size
         var bestBucket: IntArray? = null
         var bestWildcards: IntArray? = null
-        for (argument in 0 until head.arity) {
-            val key = unificator.indexKey(head.getArgAt(argument))
-            if (!key.isExact) continue
-            val index = index(argument) ?: continue
-            val bucket = index.buckets[key] ?: NO_POSITIONS
-            val cost = bucket.size + index.wildcards.size
-            if (cost < bestCost) {
-                bestCost = cost
-                bestBucket = bucket
-                bestWildcards = index.wildcards
-                if (cost == 0) break
+        search@ for (argument in 0 until head.arity) {
+            for (depth in 0 until MAX_INDEX_DEPTH) {
+                val key = unificator.nestedKey(head, argument, depth)
+                if (!key.isExact) break
+                val index = index(argument, depth) ?: continue
+                val bucket = index.buckets[key] ?: NO_POSITIONS
+                val cost = bucket.size + index.wildcards.size
+                if (cost < bestCost) {
+                    bestCost = cost
+                    bestBucket = bucket
+                    bestWildcards = index.wildcards
+                    if (cost == 0) break@search
+                }
             }
         }
         return if (bestBucket == null) clauses.indices.iterator() else MergedPositions(bestBucket, bestWildcards!!)

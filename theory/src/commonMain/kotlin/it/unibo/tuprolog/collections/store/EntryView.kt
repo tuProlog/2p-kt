@@ -12,5 +12,27 @@ internal class EntryView(
 
     fun asSequence(): Sequence<Entry> = (from until to).asSequence().map { array[it]!! }
 
+    /** The entries visible at [generation], mapped through [transform], without intermediate sequences. */
+    fun <T> visibleAt(
+        generation: Long,
+        transform: (Entry) -> T,
+    ): Iterator<T> =
+        object : Iterator<T> {
+            private var i = nextVisible(from)
+
+            private fun nextVisible(start: Int): Int {
+                var j = start
+                while (j < to && !array[j]!!.isVisibleAt(generation)) j++
+                return j
+            }
+
+            override fun hasNext(): Boolean = i < to
+
+            override fun next(): T {
+                if (i >= to) throw NoSuchElementException()
+                return transform(array[i]!!).also { i = nextVisible(i + 1) }
+            }
+        }
+
     fun asReversedSequence(): Sequence<Entry> = (to - 1 downTo from).asSequence().map { array[it]!! }
 }

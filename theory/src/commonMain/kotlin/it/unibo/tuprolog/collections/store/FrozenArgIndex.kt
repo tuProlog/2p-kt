@@ -17,12 +17,13 @@ internal class FrozenArgIndex private constructor(
         fun build(
             clauses: Array<Clause>,
             argument: Int,
+            depth: Int,
             unificator: Unificator,
         ): FrozenArgIndex? {
             val buckets = HashMap<IndexKey, MutableList<Int>>()
             val wildcards = mutableListOf<Int>()
             for (i in clauses.indices) {
-                val key = unificator.indexKey(clauses[i].head!!.getArgAt(argument))
+                val key = unificator.nestedKey(clauses[i].head!!, argument, depth)
                 if (key.isExact) buckets.getOrPut(key) { mutableListOf() }.add(i) else wildcards.add(i)
             }
             if (buckets.isEmpty()) return null

@@ -63,17 +63,9 @@ internal class MutableStore(
     override fun matching(query: Clause): Sequence<Clause> = matchingEntries(query).map { it.clause }
 
     /** All live entries, in order, as of the call to [Sequence.iterator]. */
-    fun entries(): Sequence<Entry> =
-        Sequence {
-            val generation = generation
-            all
-                .view()
-                .asSequence()
-                .filter { it.isVisibleAt(generation) }
-                .iterator()
-        }
+    fun entries(): Sequence<Entry> = Sequence { all.view().visibleAt(generation) { it } }
 
-    override fun ordered(): Sequence<Clause> = entries().map { it.clause }
+    override fun ordered(): Sequence<Clause> = Sequence { all.view().visibleAt(generation) { it.clause } }
 
     /** The last live entry, or `null` if empty. */
     fun lastEntry(): Entry? = all.view().asReversedSequence().firstOrNull { it.isAlive }
