@@ -22,7 +22,7 @@ object InternalHelp : BinaryRelation.WithoutSideEffects<ExecutionContext>("__hel
         second: Term,
     ): Sequence<Substitution> =
         helpEntries()
-            .map { (subject, help) -> mgu(first, subject) + mgu(second, Atom.of(help)) }
+            .map { (subject, help) -> merge(mgu(first, subject), mgu(second, Atom.of(help))) }
             .filter { it.isSuccess }
 
     private fun Solve.Request<ExecutionContext>.helpEntries(): Sequence<Pair<Term, String>> =

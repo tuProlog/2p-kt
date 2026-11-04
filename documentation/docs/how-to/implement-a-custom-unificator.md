@@ -10,7 +10,7 @@ This is a usage recipe; see the Explanation section for the rationale behind plu
 `Unificator`'s companion object ships two ready-made strategies:
 
 ```kotlin
---8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:92:94"
+--8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:default"
 ```
 
 - `Unificator.default` (an alias for `strict()`) compares terms with plain `Term.equals`.
@@ -37,7 +37,7 @@ val strictWithContext = Unificator.strict(context)
 `mgu`, `match`, and `unify` all accept an `occurCheckEnabled: Boolean` parameter (`true` by default):
 
 ```kotlin
---8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:23:29"
+--8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:operations"
 ```
 
 ```kotlin
@@ -50,22 +50,22 @@ The infix operators `mguWith`, `matches`, and `unifyWith` always perform occurs-
 
 ## 3. Implement a custom unification strategy
 
-Subclass `AbstractUnificator` and override `checkTermsEquality`, which decides whether two terms are
-considered equal while building the unification equations. For reference, this is how the built-in `naive()`
-strategy implements value-based comparison of numbers:
+Subclass `AbstractWorklistUnificator` and override `checkTermsEquality`, which decides whether two constants are
+considered equal. For reference, this is how the built-in `naive()` strategy implements value-based comparison of
+numbers:
 
 ```kotlin
---8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:117:133"
+--8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:naive"
 ```
 
 Follow the same pattern for your own strategy — for instance, comparing atoms case-insensitively:
 
 ```kotlin
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.unify.AbstractUnificator
+import it.unibo.tuprolog.unify.AbstractWorklistUnificator
 
 val caseInsensitive =
-    object : AbstractUnificator() {
+    object : AbstractWorklistUnificator() {
         override fun checkTermsEquality(
             first: Term,
             second: Term,
@@ -80,15 +80,34 @@ val caseInsensitive =
 caseInsensitive.match(Atom.of("Foo"), Atom.of("foo")) // true
 ```
 
-`AbstractUnificator()` (no-arg) starts from an empty context; pass a `Substitution` to the constructor if you
+`AbstractWorklistUnificator()` (no-arg) starts from an empty context; pass a `Substitution` to the constructor if you
 need a starting context, same as the built-in factories.
+
+To make unification depend on more than the structure of terms — e.g. on their tags — override `handleComparison`,
+which sees every pair of terms about to be compared, left operand's side first, and may replace, accept or reject it:
+
+```kotlin
+import it.unibo.tuprolog.unify.AbstractWorklistUnificator
+import it.unibo.tuprolog.unify.UnificationStep
+
+// a goal may only unify with clause heads whose terms carry (at least) the goal's tags
+val tagAware =
+    object : AbstractWorklistUnificator() {
+        override fun handleComparison(step: UnificationStep) {
+            if (!step.rhs.tags.entries.containsAll(step.lhs.tags.entries)) step.reject()
+        }
+    }
+```
+
+Do not extend the deprecated `AbstractUnificator`: it is a much slower, equation-based engine, only kept as a didactic
+reference.
 
 ## 4. Add caching, if needed
 
 Any `Unificator` — built-in or custom — can be wrapped to cache its results (LRU, capacity 32 by default):
 
 ```kotlin
---8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:165:175"
+--8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:cached"
 ```
 
 ```kotlin

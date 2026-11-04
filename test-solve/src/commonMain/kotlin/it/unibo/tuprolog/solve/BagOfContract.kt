@@ -27,6 +27,13 @@ fun bagOfContract(
         }
     }
 
+    // the witness Y is bound to f(Z) by the goal, then unified with the instance of the bag: Y = f(c), Z = c
+    case("bag-of/witness-unified-with-the-bag") {
+        bagof("X", ("X" eq "f"("c")) and ("Y" eq "f"("Z")), logicListOf("Y")) yields {
+            listOf(it.yes("Y" to "f"("c"), "Z" to "c"))
+        }
+    }
+
     case("bag-of/bag-of-fail") { bagof("X", fail, "L") yields { listOf(it.no()) } }
 
     case("bag-of/bag-of-same-as-findall") {

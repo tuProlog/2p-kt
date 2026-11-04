@@ -45,7 +45,7 @@ abstract class AbstractCollectionOf(
                     .map { first[it.substitution] }
                     .filterNot { it in nonPresentable }
                     .map { it.freshCopy() }
-            sub + mgu(third, LogicList.of(processSolutions(solValues)))
+            merge(sub, mgu(third, LogicList.of(processSolutions(solValues))))
         }
     }
 

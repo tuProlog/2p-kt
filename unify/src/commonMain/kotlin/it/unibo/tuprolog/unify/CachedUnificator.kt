@@ -7,7 +7,7 @@ import it.unibo.tuprolog.utils.Optional
 
 private typealias MguRequestForTerms = Triple<Term, Term, Boolean>
 private typealias MguRequestForSubstitutions = Triple<Substitution, Substitution, Boolean>
-private typealias MguRequest = Triple<*, *, Boolean>
+private typealias CacheKey = Triple<*, *, Boolean>
 
 /**
  * A [Unificator] decorator that memoizes the results of [mgu] and [merge] calls made on [decorated], in a shared
@@ -32,7 +32,7 @@ class CachedUnificator(
     val decorated: Unificator,
     cacheCapacity: Int,
 ) : Unificator {
-    private val mguCache: Cache<MguRequest, Substitution> = Cache.simpleLru(cacheCapacity)
+    private val mguCache: Cache<CacheKey, Substitution> = Cache.simpleLru(cacheCapacity)
 
     /** Delegates to [decorated]'s context. */
     override val context: Substitution

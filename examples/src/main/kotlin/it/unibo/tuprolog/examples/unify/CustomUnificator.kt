@@ -4,18 +4,18 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.unify.AbstractUnificator
+import it.unibo.tuprolog.unify.AbstractWorklistUnificator
 
 /**
  * Demonstrates defining a custom unification strategy by extending
- * `it.unibo.tuprolog.unify.AbstractUnificator` and overriding
- * [AbstractUnificator.checkTermsEquality][it.unibo.tuprolog.unify.AbstractUnificator.checkTermsEquality],
+ * `it.unibo.tuprolog.unify.AbstractWorklistUnificator` and overriding
+ * [AbstractWorklistUnificator.checkTermsEquality],
  * the hook used to decide whether two non-variable, non-compound terms are considered equal.
  *
  * The custom unificator treats two numeric terms as equal whenever their absolute values match,
  * falling back to plain equality (`==`) for every other kind of term. As a result,
  * `f(1)` and `f(-1)` are found to [match][it.unibo.tuprolog.unify.Unificator.match] even though
- * `1` and `-1` are not structurally equal, showing how `AbstractUnificator` can be extended to
+ * `1` and `-1` are not structurally equal, showing how `AbstractWorklistUnificator` can be extended to
  * implement domain-specific notions of "sameness" beyond standard Prolog unification.
  *
  * Running this example prints `true` (the terms match) and `f(1)` (the unified term, using the
@@ -26,7 +26,7 @@ import it.unibo.tuprolog.unify.AbstractUnificator
 fun main() {
     Scope.empty {
         val unificator =
-            object : AbstractUnificator() {
+            object : AbstractWorklistUnificator() {
                 override fun checkTermsEquality(
                     first: Term,
                     second: Term,
