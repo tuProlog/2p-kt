@@ -66,6 +66,10 @@ internal object ArithmeticEvaluatorUtils {
             ResultCase("rem", Struct.of("rem", Integer.of(5), Integer.of(2)), Integer.of(1)),
             ResultCase("rem-negative-dividend", Struct.of("rem", Integer.of(-7), Integer.of(2)), Integer.of(-1)),
             ResultCase("rem-negative-divisor", Struct.of("rem", Integer.of(7), Integer.of(-2)), Integer.of(1)),
+            ResultCase("mod", Struct.of("mod", Integer.of(7), Integer.of(2)), Integer.of(1)),
+            ResultCase("mod-negative-dividend", Struct.of("mod", Integer.of(-7), Integer.of(2)), Integer.of(1)),
+            ResultCase("mod-negative-divisor", Struct.of("mod", Integer.of(7), Integer.of(-2)), Integer.of(-1)),
+            ResultCase("mod-both-negative", Struct.of("mod", Integer.of(-7), Integer.of(-2)), Integer.of(-1)),
             ResultCase("division", Struct.of("/", Integer.of(2), Integer.of(4)), Real.of(0.5)),
         )
     }
