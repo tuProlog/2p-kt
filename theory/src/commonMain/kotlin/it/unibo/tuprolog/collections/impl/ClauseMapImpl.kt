@@ -7,15 +7,6 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.isVariantOf
 import it.unibo.tuprolog.unify.Unificator
 
-/** A clause stored as a key, compared by identity: variants are told apart by the store, not by the value map. */
-private class KeyRef(
-    val clause: Clause,
-) {
-    override fun equals(other: Any?): Boolean = other is KeyRef && other.clause === clause
-
-    override fun hashCode(): Int = clause.hashCode()
-}
-
 /** A [MutableClauseMap] whose keys live in a [MutableStore], so that lookups by unification use its indexes. */
 internal class ClauseMapImpl<V>(
     override val unificator: Unificator,

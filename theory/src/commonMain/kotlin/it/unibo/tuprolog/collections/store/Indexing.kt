@@ -2,8 +2,6 @@ package it.unibo.tuprolog.collections.store
 
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.unify.Unificator
-
 /*
  * Shared vocabulary of the clause stores (#1019).
  *
@@ -15,34 +13,8 @@ import it.unibo.tuprolog.unify.Unificator
  * whose key is not exact (variables): both lists are sorted by clause order, and are merged lazily.
  */
 
-/** A procedure: rules (and facts) sharing head functor and arity. */
-internal data class ProcedureKey(
-    val functor: String,
-    val arity: Int,
-)
-
-/** The key of the procedure [clause] belongs to, `null` for directives. */
-internal fun procedureKeyOf(clause: Clause): ProcedureKey? = clause.head?.let { ProcedureKey(it.functor, it.arity) }
-
 /** Procedures with fewer clauses than this are scanned: indexing them would cost more than it saves. */
 internal const val INDEX_THRESHOLD = 8
 
-/** Marks an argument whose index would contain no exact key at all, so as not to rebuild it at every lookup. */
-internal object NotIndexable
-
 /** The head of a query worth indexing, or `null` if the query cannot select candidates through argument indexes. */
 internal fun Clause.indexableHead(): Struct? = head?.takeIf { it.arity > 0 }
-
-/** What clause collections and theories read from a store. */
-internal interface ClauseSource {
-    val unificator: Unificator
-
-    /** Number of clauses. */
-    val size: Int
-
-    /** All clauses, in order (for mutable stores, as of the call to `iterator()`). */
-    fun ordered(): Sequence<Clause>
-
-    /** The clauses unifying with [query], in order (for mutable stores, as of this call), lazily. */
-    fun matching(query: Clause): Sequence<Clause>
-}
