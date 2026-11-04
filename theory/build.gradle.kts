@@ -17,6 +17,7 @@ kotlin {
         commonTest {
             dependencies {
                 api(project(":dsl-unify"))
+                implementation(libs.kotest.property)
             }
         }
     }
