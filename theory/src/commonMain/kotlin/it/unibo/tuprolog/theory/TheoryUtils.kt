@@ -26,3 +26,6 @@ internal object TheoryUtils {
 
     fun checkClausesCorrect(clauses: Sequence<Clause>) = clauses.also { actualCheck(it) }
 }
+
+/** These clauses as a list, after checking each of them is well formed (in a single pass). */
+internal fun Iterable<Clause>.validated(): List<Clause> = map { TheoryUtils.checkClauseCorrect(it) }

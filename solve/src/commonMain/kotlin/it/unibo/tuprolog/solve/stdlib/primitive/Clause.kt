@@ -10,7 +10,6 @@ import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVAT
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.utils.buffered
 
 object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
     override val help: String =
@@ -51,7 +50,7 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
             throw PermissionError.of(context, signature, ACCESS, PRIVATE_PROCEDURE, headSignature.toIndicator())
         }
         val template = Rule.of(head, second)
-        return (context.staticKb[head] + context.dynamicKb[head].buffered())
+        return (context.staticKb[head] + context.dynamicKb[head])
             .map {
                 // a fresh copy each time: variables of an earlier answer must not clash with this one's
                 mgu(it.freshCopy(), template)

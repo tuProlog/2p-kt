@@ -24,6 +24,10 @@ import kotlin.jvm.JvmStatic
  * [indexedOf]/[listedOf]); [Theory.toMutableTheory] and [Theory.toImmutableTheory] convert between the two
  * flavours, copying the underlying clauses only when actually needed.
  *
+ * Lookups ([get]) and iterations ([clauses]) follow the *logical update view* (ISO/IEC 13211-1, 7.5.4): they see the
+ * clauses as of when they started (the call to [get], or to `iterator()`), whatever assertions and retractions happen
+ * while they are consumed. There is therefore no need to copy their results before updating the theory.
+ *
  * @see Theory
  */
 interface MutableTheory : Theory {

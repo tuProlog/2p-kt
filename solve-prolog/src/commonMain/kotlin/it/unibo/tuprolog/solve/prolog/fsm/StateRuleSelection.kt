@@ -18,7 +18,6 @@ import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.cursor
 
 /**
@@ -224,16 +223,16 @@ data class StateRuleSelection(
                             }
                         }
 
-                        ruleSources.any { currentGoalStruct in it } -> {
+                        else -> {
+                            // one lookup per source: an empty result is the "no matching clause" case
                             val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.cursor()
-                            if (context.isTailRecursive) {
-                                StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
-                            } else {
-                                StateRuleExecution(context.createChildAppendingRulesAndChoicePoints(rules))
+                            when {
+                                rules.isOver -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
+                                context.isTailRecursive ->
+                                    StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
+                                else -> StateRuleExecution(context.createChildAppendingRulesAndChoicePoints(rules))
                             }
                         }
-
-                        else -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
                     }
                 }
             else -> {
@@ -249,14 +248,8 @@ data class StateRuleSelection(
         }
     }
 
-    private fun Theory.selectClauses(term: Struct): Sequence<Rule> =
-        get(term).map { it.freshCopy() }.ensureRules().let {
-            if (isMutable) {
-                it.buffered()
-            } else {
-                it
-            }
-        }
+    // mutable theories follow the logical update view (#1019): no need to snapshot their clauses
+    private fun Theory.selectClauses(term: Struct): Sequence<Rule> = get(term).map { it.freshCopy() }.ensureRules()
 
     override fun clone(context: PrologExecutionContext): StateRuleSelection = copy(context = context)
 }
