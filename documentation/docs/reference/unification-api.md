@@ -39,7 +39,7 @@ carries a `context: Substitution` — pre-existing bindings assumed while unifyi
 each with an `occurCheckEnabled` toggle (default `true`):
 
 ```kotlin
---8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:23:70"
+--8<-- "unify/src/commonMain/kotlin/it/unibo/tuprolog/unify/Unificator.kt:operations"
 ```
 
 - `mgu(term1, term2)` — computes the most general unifier, or `Substitution.failed()` if the terms don't unify;
@@ -47,7 +47,8 @@ each with an `occurCheckEnabled` toggle (default `true`):
 - `unify(term1, term2)` — applies the MGU to `term1` and returns the resulting `Term`, or `null` on failure.
 
 A related operation, `merge(sub1, sub2, occurCheckEnabled)`, combines two `Substitution`s the same way `mgu` combines
-two `Term`s (used internally when composing partial unifiers).
+two `Term`s: a variable bound by both gets its two values unified, rather than one overriding the other (unlike
+`Substitution.plus`, which fails unless they are equal). Solvers use it to accumulate the bindings of a resolution.
 
 Operands are not interchangeable in general: when they have distinct semantic roles (a goal vs. a rule head, e.g.),
 the *subject* term should be passed first and the *reference* term second, since the returned substitution/unified
@@ -57,7 +58,7 @@ term can retain that orientation even though unifiability itself is symmetric.
 
 The companion object provides three strategies, each obtainable with or without a starting `context: Substitution`:
 
-- `Unificator.default` — `strict()` wrapped nowhere further; uses `Term.equals` for identity;
+- `Unificator.default` — an empty-context `strict()`, uses `Term.equals` for identity;
 - `Unificator.strict(context = Substitution.empty())` — compares terms via `==`;
 - `Unificator.naive(context = Substitution.empty())` — like `strict`, but compares `Integer`/`Numeric` terms by
   *value* rather than by type-and-value.
@@ -70,8 +71,22 @@ val strictWithContext = Unificator.strict(someSubstitution)
 ### Caching
 
 `Unificator.cached(other: Unificator, capacity: Int = 32)` decorates any `Unificator` with an LRU cache (via
-`CachedUnificator`) that memoizes recent `mgu`/`match`/`unify` calls. `Unificator.default` already uses an
-internal LRU cache of `DEFAULT_CACHE_CAPACITY` (32) entries.
+`CachedUnificator`) that memoizes recent `mgu`/`match`/`unify` calls. `Unificator.default` performs no caching on its
+own.
+
+### How unification works
+
+The built-in strategies are `AbstractWorklistUnificator`s: they keep a stack of pairs of terms still to unify and a
+table of variable bindings. Each pair is popped, its variables are replaced by what they are currently bound to, and
+then either a variable gets bound, or two compound terms with the same functor and arity are split into the pairs of
+their arguments, or the unification fails. Bindings are recorded once and never propagated to the pending pairs; the
+resulting `Substitution` is built once, at the end. Long lists and deep terms are processed iteratively.
+
+With occurs-check disabled, cyclic bindings such as `X -> f(X)` are allowed, and unifying cyclic terms terminates. All
+the state of an operation is local to it: a `Unificator` can be shared across threads.
+
+`AbstractUnificator`, the equation-based (Martelli–Montanari style) engine used before, is deprecated: it is much slower,
+and kept as a didactic reference only.
 
 ### Infix operators
 
@@ -87,17 +102,30 @@ val merged = substitution1 mergeWith substitution2
 
 ### Custom unification strategies
 
-Implementing a custom `Unificator` amounts to subclassing `AbstractUnificator` and overriding
-`checkTermsEquality(first: Term, second: Term): Boolean`, the primitive used throughout the unification algorithm to
-decide whether two non-variable terms are equal:
+Implementing a custom `Unificator` amounts to subclassing `AbstractWorklistUnificator` and overriding any of:
+
+- `checkTermsEquality(first: Term, second: Term): Boolean`, which decides whether two constants (or two variables) are
+  equal — compound terms are compared argument by argument instead;
+- `handleComparison(step: UnificationStep)`, invoked on every pair of terms about to be compared (compound ones
+  included, before their decomposition): `step.lhs` always stems from the left operand and `step.rhs` from the right
+  one, and the pair can be replaced (`step.replace(...)`, e.g. with tagged copies), accepted as equal
+  (`step.accept()`) or rejected (`step.reject()`) — e.g. to take terms' tags into account, possibly asymmetrically;
+- `handleResult(request: UnificationRequest, result: Substitution): Substitution`, invoked on each outcome.
 
 ```kotlin
 val absoluteValueUnificator =
-    object : AbstractUnificator() {
+    object : AbstractWorklistUnificator() {
         override fun checkTermsEquality(first: Term, second: Term): Boolean = when {
             first is Integer && second is Integer ->
                 first.value.absoluteValue.compareTo(second.value.absoluteValue) == 0
             else -> first == second
+        }
+    }
+
+val sameTagsUnificator =
+    object : AbstractWorklistUnificator() {
+        override fun handleComparison(step: UnificationStep) {
+            if (step.lhs.tags != step.rhs.tags) step.reject()
         }
     }
 ```

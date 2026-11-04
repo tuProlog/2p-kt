@@ -38,10 +38,13 @@ import kotlin.jvm.JvmStatic
  * unificator.unify(x, Atom.of("a")) // a
  * ```
  *
- * To customize how terms are compared, or to observe/alter the equation-solving process, extend [AbstractUnificator]
- * instead of implementing this interface directly.
+ * The built-in strategies are [AbstractWorklistUnificator]s. To customize how terms are compared, or to observe/alter
+ * the unification process (e.g. to take terms' tags into account), extend [AbstractWorklistUnificator] instead of
+ * implementing this interface directly.
  */
 interface Unificator {
+    // --8<-- [start:operations]
+
     /**
      * The bindings assumed as already holding before unification starts; every [mgu]/[merge] call is implicitly
      * performed against this context, as if it were merged into the result. If [context] is [Substitution.failed],
@@ -115,6 +118,7 @@ interface Unificator {
         term1: Term,
         term2: Term,
     ): Term? = unify(term1, term2, true)
+    // --8<-- [end:operations]
 
     /**
      * Merges [substitution1] and [substitution2] into a single [Substitution], as if their bindings had been
@@ -139,9 +143,12 @@ interface Unificator {
     ): Substitution = merge(substitution1, substitution2, true)
 
     companion object {
+        // --8<-- [start:default]
+
         /**
          * The default unification strategy: an empty-context [strict] [Unificator], comparing [Term]s' identity
-         * through plain [Term.equals].
+         * through plain [Term.equals], and computing unifiers with the worklist-based [AbstractWorklistUnificator]
+         * engine.
          *
          * Note: unlike what the name might suggest, [default] performs **no caching** on its own — wrap it (or any
          * other [Unificator]) with [cached] if memoization is needed.
@@ -149,6 +156,7 @@ interface Unificator {
         @JvmStatic
         @JsName("default")
         val default by lazy { strict() }
+        // --8<-- [end:default]
 
         /** Computes the Most General Unifier of [this] and [other], using the [default] unification strategy. */
         @JvmStatic
@@ -170,6 +178,8 @@ interface Unificator {
         @JsName("mergeWith")
         infix fun Substitution.mergeWith(other: Substitution): Substitution = default.merge(this, other)
 
+        // --8<-- [start:naive]
+
         /**
          * Creates a naive unification strategy, with the given starting [context], that checks [Term]s' equality
          * through [Term.equals], except for numeric terms which are compared *by value* rather than by exact
@@ -179,7 +189,7 @@ interface Unificator {
         @JvmStatic
         @JsName("naiveWithContext")
         fun naive(context: Substitution): Unificator =
-            object : AbstractUnificator(context) {
+            object : AbstractWorklistUnificator(context) {
                 override fun checkTermsEquality(
                     first: Term,
                     second: Term,
@@ -193,6 +203,7 @@ interface Unificator {
                     else -> first == second
                 }
             }
+        // --8<-- [end:naive]
 
         /** Creates a naive unification strategy (see [naive]) with an empty starting context. */
         @JvmStatic
@@ -206,18 +217,14 @@ interface Unificator {
          */
         @JvmStatic
         @JsName("strictWithContext")
-        fun strict(context: Substitution): Unificator =
-            object : AbstractUnificator(context) {
-                override fun checkTermsEquality(
-                    first: Term,
-                    second: Term,
-                ) = first == second
-            }
+        fun strict(context: Substitution): Unificator = object : AbstractWorklistUnificator(context) {}
 
         /** Creates a strict unification strategy (see [strict]) with an empty starting context. */
         @JvmStatic
         @JsName("strict")
         fun strict(): Unificator = strict(Substitution.empty())
+
+        // --8<-- [start:cached]
 
         /**
          * Decorates [other] so that its most recently computed [Unificator.mgu]/[Unificator.merge] results (and,
@@ -242,6 +249,7 @@ interface Unificator {
             } else {
                 CachedUnificator(other, capacity)
             }
+        // --8<-- [end:cached]
 
         /** The default capacity of the LRU cache used by [cached] when no explicit capacity is provided. */
         const val DEFAULT_CACHE_CAPACITY = 32
