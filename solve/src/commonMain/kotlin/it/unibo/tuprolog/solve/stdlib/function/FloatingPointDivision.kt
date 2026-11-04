@@ -6,7 +6,6 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.BinaryMathFunction
 import org.gciatto.kt.math.BigDecimal
-import org.gciatto.kt.math.MathContext
 
 /**
  * Implementation of `'/'/2` arithmetic functor
@@ -68,6 +67,6 @@ object FloatingPointDivision : BinaryMathFunction("/") {
         if (divisor.compareTo(BigDecimal.ZERO) == 0) {
             throwZeroDivisorError(context)
         } else {
-            Numeric.of(dividend.div(divisor, MathContext()))
+            computeReal(context) { dividend.div(divisor, it) }
         }
 }

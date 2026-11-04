@@ -75,7 +75,7 @@ interface NotableFlag : Helpable {
     companion object {
         /** Looks up the built-in [NotableFlag] ([Bounded], [DoubleQuotes], [LastCallOptimization], [MaxArity],
          * [TrackVariables], [Unknown], [ShowWildCardVariablesInSolutions], [UniqueSolutions],
-         * [GroundQueriesHaveBooleanSolution]) named [name], or `null` if none matches. */
+         * [GroundQueriesHaveBooleanSolution], [RealPrecisionMode], [RealPrecisionDigits], [RealRoundingMode]) named [name], or `null` if none matches. */
         @JsName("fromName")
         @JvmStatic
         fun fromName(name: String): NotableFlag? =
@@ -89,6 +89,9 @@ interface NotableFlag : Helpable {
                 ShowWildCardVariablesInSolutions,
                 UniqueSolutions,
                 GroundQueriesHaveBooleanSolution,
+                RealPrecisionMode,
+                RealPrecisionDigits,
+                RealRoundingMode,
             ).firstOrNull { it.name == name }
     }
 }

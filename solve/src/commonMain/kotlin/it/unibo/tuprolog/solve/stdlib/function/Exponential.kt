@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.UnaryMathFunction
 import org.gciatto.kt.math.BigDecimal
-import kotlin.math.exp
+import org.gciatto.kt.math.big.exp
 
 /**
  * Implementation of `exp/1` arithmetic functor
@@ -18,7 +18,7 @@ object Exponential : UnaryMathFunction("exp") {
         """
         `exp(+Number)`
         
-        Evaluates to `e` (Euler's number) raised to `Number`, always as a real value. Results too large to be represented, e.g. `exp(1000)`, raise the `float_overflow` evaluation error.
+        Evaluates to `e` (Euler's number) raised to `Number`, always as a real value. Reals are arbitrary-precision decimals, so `exp(1000)` is about `1.97E+434`: only results whose exponent exceeds the host integer range, e.g. `exp(1.0e10)`, raise the `float_overflow` evaluation error.
 
         **Examples**
 
@@ -29,7 +29,7 @@ object Exponential : UnaryMathFunction("exp") {
         ?- X is exp(1), X > 2.718, X < 2.719.
         yes.
 
-        ?- X is exp(1000).
+        ?- X is exp(1.0e10).
         throws error(evaluation_error(float_overflow), _).
         ```
         """.trimIndent()
@@ -50,5 +50,5 @@ object Exponential : UnaryMathFunction("exp") {
     private fun commonBehaviour(
         decimal: BigDecimal,
         context: ExecutionContext,
-    ) = realOf(exp(decimal.toDouble()), context)
+    ) = computeReal(context) { decimal.exp(it) }
 }

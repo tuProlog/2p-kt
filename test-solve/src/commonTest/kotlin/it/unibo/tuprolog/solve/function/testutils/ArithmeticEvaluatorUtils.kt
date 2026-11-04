@@ -71,6 +71,12 @@ internal object ArithmeticEvaluatorUtils {
             ResultCase("mod-negative-divisor", Struct.of("mod", Integer.of(7), Integer.of(-2)), Integer.of(-1)),
             ResultCase("mod-both-negative", Struct.of("mod", Integer.of(-7), Integer.of(-2)), Integer.of(-1)),
             ResultCase("division", Struct.of("/", Integer.of(2), Integer.of(4)), Real.of(0.5)),
+            ResultCase(
+                "division-rounded-to-16-digits",
+                Struct.of("/", Integer.of(1), Integer.of(3)),
+                Real.of("0.3333333333333333"),
+            ),
+            ResultCase("sum-exact", Struct.of("+", Real.of("0.1"), Real.of("0.2")), Real.of("0.3")),
         )
     }
 }
