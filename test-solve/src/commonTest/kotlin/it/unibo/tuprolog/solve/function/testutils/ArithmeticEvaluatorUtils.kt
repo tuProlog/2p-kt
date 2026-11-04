@@ -64,6 +64,8 @@ internal object ArithmeticEvaluatorUtils {
         listOf(
             ResultCase("abs", Struct.of("abs", Integer.of(-1)), Integer.of(1)),
             ResultCase("rem", Struct.of("rem", Integer.of(5), Integer.of(2)), Integer.of(1)),
+            ResultCase("rem-negative-dividend", Struct.of("rem", Integer.of(-7), Integer.of(2)), Integer.of(-1)),
+            ResultCase("rem-negative-divisor", Struct.of("rem", Integer.of(7), Integer.of(-2)), Integer.of(1)),
             ResultCase("division", Struct.of("/", Integer.of(2), Integer.of(4)), Real.of(0.5)),
         )
     }

@@ -68,6 +68,6 @@ object FloatingPointDivision : BinaryMathFunction("/") {
         if (divisor.compareTo(BigDecimal.ZERO) == 0) {
             throwZeroDivisorError(context)
         } else {
-            Numeric.of(dividend.div(divisor, MathContext())!!)
+            Numeric.of(dividend.div(divisor, MathContext()))
         }
 }
