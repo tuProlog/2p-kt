@@ -11,6 +11,9 @@ internal class EntryDeque private constructor(
 
     val size: Int get() = tail - head
 
+    /** How many of this deque's entries were removed from the store, but are still here. */
+    var dead: Int = 0
+
     fun addLast(entry: Entry) {
         if (tail == array.size) grow()
         array[tail++] = entry

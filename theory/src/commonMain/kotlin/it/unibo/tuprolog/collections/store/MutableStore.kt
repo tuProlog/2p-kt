@@ -82,7 +82,7 @@ internal class MutableStore(
         dead++
         val key = procedureKeyOf(entry.clause)
         val procedure = procedures[key]!!
-        procedure.removed()
+        procedure.removed(entry)
         if (procedure.live == 0) procedures.remove(key)
         if (dead > COMPACTION_SLACK && dead > size) {
             all = EntryDeque.of(all.alive())
