@@ -3,117 +3,90 @@
 A Prolog engine spends most of its time doing one thing over and over: given a goal, find the clauses in the
 knowledge base whose head *might* unify with it. Get this operation right and resolution is fast; get it wrong
 and every call degenerates into a linear scan of the whole program. This page explains how 2P-Kt models
-knowledge bases (`Theory`), how it stores clauses (`ClauseCollection`), and what indexing strategy it actually
-uses to make clause retrieval fast.
+knowledge bases (`Theory`), the clause collections they belong to, and the indexing strategy behind clause
+retrieval (redesigned in [#1019](https://github.com/tuProlog/2p-kt/issues/1019)).
 
-## Theories are just clause collections with a Prolog-shaped face
+## Theories are clause deques with a Prolog-shaped face
 
-In 2P-Kt, a knowledge base is a `Theory`:
+A knowledge base is a `Theory`: an ordered, taggable collection of clauses (facts, rules and directives),
+queried by unification and updated with the ISO-flavoured vocabulary (`assertA`/`assertZ`/`retract`/`abolish`).
+`Theory` is a `ClauseDeque`, one of the *clause collections* of the `it.unibo.tuprolog.collections` package:
 
-```kotlin
---8<-- "theory/src/commonMain/kotlin/it/unibo/tuprolog/theory/Theory.kt:17:23"
-```
+| Collection | Order | Duplicates | Notes |
+|---|---|---|---|
+| `ClauseMultiSet` | none promised | allowed | equality ignores order |
+| `ClauseSet` | none promised | no two variants | `add` skips variants of present clauses |
+| `ClauseQueue` | Prolog order | allowed | `first()`; mutable: `addLast`, `removeFirst` |
+| `ClauseDeque` | Prolog order | allowed | `last()`; mutable: `addFirst`, `removeLast` — `Theory` is one |
+| `ClauseList` | Prolog order | allowed | positional access |
+| `ClauseMap<V>` | key insertion | keys by variant | attaches data to clauses without touching their tags |
 
-`Theory` is deliberately a thin, Prolog-flavoured façade (`assertA`/`assertZ`/`retract`/`abolish`, mirroring
-ISO built-ins) over a lower-level, general-purpose storage abstraction: `ClauseCollection`, in the
-`it.unibo.tuprolog.collections` package. The split exists because clause *storage* (how clauses are kept,
-searched, and mutated) is orthogonal to the *vocabulary* Prolog programmers expect. `Theory` speaks the
-vocabulary; `ClauseCollection` does the storing.
+Each comes as a read-only interface with a `Mutable…` counterpart, mirroring Kotlin's collections:
+`toMutable()` always copies, `toImmutable()` returns the very collection if it is immutable already.
 
-```kotlin
---8<-- "theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/ClauseCollection.kt:11:34"
-```
+All of them are *unification-aware*: membership comes in two flavours, both served by the same indexes.
 
-Two design axes recur throughout the `:theory` module, and every concrete type sits at a point in this
-2×2 space:
+- **Matching**: `get(query)`, `contains(query)`, `firstMatching`, `countMatching`, `removeFirstMatching`,
+  `removeAllMatching` consider the clauses unifying with a query, according to the collection's `Unificator`.
+  This is what Prolog means by "the clauses for this goal".
+- **Identity**: `containsVariant`, `countVariants`, and the keys of sets and maps consider clauses *variants* of
+  each other when they are equal up to a consistent renaming of variables (`Term.isVariantOf`), tags ignored.
 
-- **mutable vs. immutable** — a `MutableClauseCollection`/`MutableTheory` edits itself in place; an immutable
-  one returns a fresh collection from every `add`/`retrieve` call, leaving the original untouched. Immutability
-  is the default and matches the immutable-everything philosophy of `:core` (terms, substitutions, clauses are
-  all persistent data structures); mutability is opt-in, via `toMutableTheory()`, for the (common) case where a
-  Prolog program repeatedly asserts/retracts clauses and copying on every step would be wasteful.
-- **indexed vs. listed** — `IndexedTheory` trades memory and update cost for fast lookup; `ListedTheory` is a
-  thin wrapper around an ordered list, cheap to build and to keep in insertion order, but linear to query. Which
-  one a solver uses is a knob, not a hardcoded choice: `Theory.empty()` gives you the indexed variant by default,
-  `Theory.emptyListed()` gives you the listed one.
+Because of this, clause collections are not `kotlin.collections.Collection`s, whose `contains` and `equals`
+would have to commit to one of the two notions. Collections are not taggable (theories are), but they preserve
+clause tags, as they always return the very instances they were given.
 
-Why keep both? A knowledge base loaded once and queried thousands of times (a typical `staticKb`) wants
-indexing. A knowledge base that is asserted/retracted on nearly every resolution step, or where clause order
-must be preserved exactly and cheaply (e.g. `clause/2` introspection, or very small dynamic databases), may not
-be worth indexing at all. Exposing the trade-off as two interchangeable implementations of the same `Theory`
-interface lets the rest of the solver stay agnostic to the choice.
+## Two flavours of theory: read-optimised and write-optimised
 
-## What "indexed" actually means here: a RETE-inspired discrimination tree
+- A plain **`Theory` is immutable** and serves **static knowledge bases**, which are loaded once and queried
+  over and over. Its clauses live in arrays; every update returns a new theory that shares, with the original,
+  every procedure (and every index) it does not touch.
+- A **`MutableTheory` is updated in place** and serves **dynamic knowledge bases**, which `assert/1` and
+  `retract/1` change on many resolution steps. Assertions and retractions take amortised constant time after
+  lookup, and the clause count is maintained, not recomputed.
 
-The old documentation page for this topic (`clausedb-theories-and-RETE.md`) was never actually written, and the
-name survives mostly as a promise: "clause storage uses RETE". That promise is *partially* accurate. The
-current code does contain a package literally named
-`it.unibo.tuprolog.collections.rete` (in the `:theory` module), and `IndexedTheory` is backed by it — so the
-RETE terminology is not purely aspirational. What is worth being precise about is *which part* of RETE 2P-Kt
-actually implements.
+Solvers use exactly this split: their static KB is a `Theory`, their dynamic KB a `MutableTheory`.
 
-Forgy's original RETE algorithm (1979) is a network for efficiently re-evaluating many production-rule conditions against a
-working memory that changes incrementally, built from an **alpha network** (single-condition filters) feeding a
-**beta network** (joins across conditions, with partial-match memories). 2P-Kt's `rete` package implements the
-alpha-network idea — fast, incremental first-argument discrimination — and does **not** implement RETE's beta
-network / join memories, because Prolog clause selection has no analogue of a multi-condition join: a goal
-selects clauses by matching against a single term (the head), not by joining several partial patterns. So
-calling this "a discrimination tree", "clause indexing", or "RETE-inspired indexing" is more accurate than
-calling it "a RETE engine" outright; this page uses "RETE-style indexing" to keep the codebase's own naming
-while being honest about scope.
+## Indexing: procedures, then arguments, on demand
 
-The tree itself, `ReteTree`, is the engine behind `IndexedTheory`:
+Both flavours share the same indexing scheme, drawn from the logic-programming literature rather than from
+production-rule engines:
 
-```kotlin
---8<-- "theory/src/commonMain/kotlin/it/unibo/tuprolog/collections/rete/custom/ReteTree.kt:10:33"
-```
+1. **Procedures.** Clauses are grouped by the functor and arity of their head (directives form one more group).
+   A goal only ever looks at its own procedure, so `parent(X, Y)` never touches `sibling/2`, and the relative
+   order of clauses only needs to be preserved within a procedure (iteration over the whole theory keeps the
+   global order separately).
+2. **Just-in-time argument indexes.** Within a procedure large enough to benefit, an index on argument *i* is
+   built the first time a lookup binds argument *i*, as in YAP's demand-driven indexing (Costa, Sagonas and Lopes,
+   ICLP 2007) and SWI-Prolog's JIT indexing. Each lookup then uses, among the arguments it binds, the index
+   yielding the fewest candidates. So `p(X, a, Y)` is as fast as `p(a, X, Y)` whenever the second argument
+   discriminates, which first-argument indexing (the WAM's `switch_on_term`) cannot offer.
+3. **Candidates.** An index maps keys to the clauses having that key as argument; clauses with a variable there
+   are candidates for every key. A lookup merges, in clause order, the clauses with the query's key and those with
+   a variable, and unifies only those, lazily: asking for the first match stops at the first match.
 
-Its shape (see `it.unibo.tuprolog.collections.rete.custom.nodes`) is a chain of discrimination levels:
+Keys come from the unificator: `Unificator.indexKey(term)` abstracts a term into an `IndexKey` (an atom by value,
+a number by value, a compound by functor and arity, a variable as a wildcard). The contract mirrors the one
+between `hashCode` and `equals`: terms that unify must have equal keys, unless one of them is a wildcard. This is
+what lets indexing honour each unificator's notion of equality: `Unificator.naive()`, which unifies `1` with
+`1.0`, gives both the same key. A custom unificator that takes tags into account only to *reject* more pairs keeps
+the default keys; one that *accepts* pairs with different principal symbols must override `indexKey` with coarser
+keys, down to `IndexKey.Wildcard`, which disables indexing on that term. A reserved `IndexKey.AnyOfArity` keeps
+room for future patterns, i.e. structures whose functor is a variable.
 
-1. **`RootNode`** splits directives from rules right away (`DirectiveIndex` vs. `RuleNode`), since the two are
-   never candidates for the same goal.
-2. **`FunctorIndexingNode`** groups clauses by the functor of the goal's head — so a query for `parent(X, Y)`
-   never even looks at `sibling/2` clauses.
-3. **`ArityIndexing` / `FunctorIndexingNode`'s children** further split by arity (`nestedArity()`), since Prolog
-   allows same-named predicates with different arities to coexist and be entirely unrelated (`foo/1` vs.
-   `foo/2`).
-4. Below that, **leaf-level indexes** (`AtomIndex`, `NumericIndex`, `CompoundIndex`, `VariableIndex`, under
-   `rete/custom/leaf`) discriminate on the *first argument*'s shape, which is the cheapest and most common
-   ISO/WAM-style indexing heuristic: variables can unify with anything and must always be considered, but atoms,
-   numbers and compound terms of a specific shape can be bucketed and only re-checked against candidates that
-   could possibly unify.
+## The logical update view, for free
 
-Every `assertA`/`assertZ`/`retractFirst`/`retractOnly`/`retractAll` operation walks down this same discrimination
-path instead of touching the whole clause set, and `deepCopy()` gives `IndexedTheory` its immutable-update story
-(the `add`/`retrieve` methods on `AbstractReteClauseCollection` copy the tree before mutating it). Note also the
-`isOrdered` flag on `ReteTree`: the same indexing structure serves both order-preserving lookups (needed for
-correct Prolog backtracking order) and order-agnostic ones, by changing how each node's cache is rebuilt rather
-than by using a different data structure.
-
-`ListedTheory`, by contrast, has no tree at all — `AbstractListedTheory` is backed directly by a `ClauseQueue`
-holding clauses as an ordinary ordered sequence, and `get(clause)` degenerates to a linear scan with per-clause
-unification checks. That is the price paid for its simplicity and cheap ordering guarantees.
-
-## Two clause-collection shapes: queues and multisets
-
-Independently of RETE-vs-listed, `:theory` distinguishes two general-purpose collection shapes, both built on
-top of the same node structure:
-
-- **`ClauseQueue`** preserves insertion order and exposes `addFirst`/`addLast` plus FIFO/LIFO-ordered retrieval —
-  this is what backs Prolog's "clauses are tried in the order they were asserted" semantics.
-- **`ClauseMultiSet`** drops ordering guarantees in exchange for a slightly cheaper `count`/`get` when many
-  clauses can match a single query shape and their relative order does not matter.
-
-`Theory` uses `ClauseQueue` (order matters for correct SLD resolution), but the queue/multiset split exists at
-the `ClauseCollection` level because not every consumer of "a bunch of indexed clauses" is a knowledge base —
-some are index buckets internal to the RETE tree itself.
+ISO Prolog prescribes the *logical update view* for dynamic predicates: a call sees the clauses as they were when
+it started, whatever `assert/1` and `retract/1` do while it backtracks through them. `MutableTheory` implements it
+with generations (Lindholm and O'Keefe, ICLP 1987): every update increments the theory's generation, every clause
+records the generations it was added and removed in, and a lookup only yields the clauses alive at the generation
+it started at. Retracted clauses are only marked, and physically dropped once they outnumber the live ones, so
+storage stays proportional to the live clauses. Lookups and iterations are therefore lazy *and* safe while the
+theory changes: the solver no longer copies the clauses of a dynamic predicate on every call.
 
 ## Why this design
 
-The recurring theme is: **keep the Prolog-facing API (`Theory`) stable while letting the storage strategy vary
-underneath it**. A solver only ever depends on `Theory`'s interface; whether a particular knowledge base is
-indexed or listed, mutable or immutable, is a construction-time decision, not something the resolution engine
-(see [Solver design](solver-design.md) and [The state-machine solver](state-machine.md)) needs to know about.
-This mirrors the same "many implementations, one contract" pattern used for `Solver` itself
-(`:solve-prolog` vs. `:solve-concurrent`): 2P-Kt consistently prefers swappable implementations behind narrow
-interfaces over one-size-fits-all data structures.
+Resolution needs one operation to be fast — "the clauses for this goal, in order" — and two kinds of knowledge
+base with opposite update patterns. A single storage engine, with read- and write-optimised flavours behind the
+same `Theory` contract, gives both without making the solver aware of the difference, and the same engine serves
+every clause collection, so programmatic manipulation of logic programs gets the same indexing as resolution.

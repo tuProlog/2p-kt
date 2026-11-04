@@ -12,6 +12,34 @@ Plan for #1019, checked against `develop` at `d3fc692`.
 - Benchmarks are JVM-only (JMH). The optimisations are algorithmic and allocation-level, not JVM-specific, so they
   should carry over to JS.
 
+## Implementation status (branch `ccr-0b4a13b3-ejoi9f`)
+
+Done, as planned unless noted:
+
+- **Step 0**: benchmarks (`examples/src/benchmarks/.../theory`), `theoryMatchReport`, `TheoryEquivalencePropertySpec`.
+  The property test found bugs in the listed theories (e.g. `retract` removed every duplicate of the retracted
+  clause), which were then removed rather than fixed.
+- **Step 1**: U1 (builder → indexed dynamic KB), U3 (one lookup per goal, both solvers), dead generic RETE removed.
+- **Step 2**: `Unificator.indexKey`/`IndexKey` (`:unify`), `Term.isVariantOf`/`variantHashCode` (`:core`), `TagKey`
+  (`:utils`).
+- **Steps 3–4**: `FrozenStore` (immutable) and `MutableStore` (generations, logical update view), `IndexedTheory` and
+  `MutableIndexedTheory` over them, `buffered()` dropped from both solvers and from `retract/1`, `clause/2`.
+  The RETE indexed theories ignored the unificator (with `naive`, `f(1)` did not retrieve `f(1.0)` once indexed): fixed by
+  unificator-owned keys.
+- **Step 5**: RETE, previous collections, listed theories and `ListedTheoryFactory` removed; §5 collections
+  implemented; `Theory : ClauseDeque`, `MutableTheory : MutableClauseDeque`; docs page rewritten.
+
+Deviations from the design below:
+
+- Variant identity (`containsVariant`, sets, map keys) is computed among the clauses *matching* a clause, through
+  the same indexes, instead of through a pluggable `ClauseEquivalence` with its own hash: one notion, consistent
+  with the unificator, no extra structure. `variantHashCode` exists in `:core` for future hash-based uses.
+- Immutable collections other than `Theory` have no persistent `plus`/`minus`: they are snapshots, updated through
+  `toMutable()`. `Theory` keeps its persistent API.
+- Immutable `ClauseMap.of` returns the (mutable) implementation behind a read-only interface, like Kotlin's `mapOf`.
+- Not done (Step 6, gated by measurements): `matchingWithMgu` / `candidates`, deep indexing, joint indexes, tuning
+  `INDEX_THRESHOLD`.
+
 ## 1. Findings (verified)
 
 ### Inside `:theory`
