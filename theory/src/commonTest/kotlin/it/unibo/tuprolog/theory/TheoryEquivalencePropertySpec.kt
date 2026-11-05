@@ -321,6 +321,34 @@ private val regressions =
                     Op.Get(q(f(g(Integer.of(5))))),
                 )
         },
+        // deep indexes on any argument of compound arguments (here, the second one of g/2), mixed with other shapes
+        RegressionCase("indexed-deep-arguments") {
+            fun g(
+                a: Term,
+                b: Term,
+            ) = Struct.of("g", a, b)
+
+            fun p(t: Term) = Rule.of(Struct.of("p", t, Atom.of("a")), Truth.TRUE)
+
+            fun q(t: Term) = Rule.of(Struct.of("p", t, Var.anonymous()), Var.anonymous())
+            List(10) { Op.AssertZ(p(g(Atom.of("k"), Struct.of("f", Integer.of(it))))) } +
+                listOf(
+                    Op.AssertZ(p(g(Var.of("X"), Struct.of("f", Integer.of(3))))),
+                    Op.AssertZ(p(g(Atom.of("k"), Var.of("Y")))),
+                    Op.AssertA(p(Struct.of("g", Integer.of(3)))),
+                    Op.AssertZ(p(Var.of("Z"))),
+                    Op.AssertZ(p(g(Atom.of("k"), Struct.of("f", Real.of(3.0))))),
+                    Op.Get(q(g(Var.anonymous(), Struct.of("f", Integer.of(3))))),
+                    Op.Candidates(q(g(Var.anonymous(), Struct.of("f", Integer.of(3))))),
+                    Op.Get(q(g(Atom.of("k"), Struct.of("f", Real.of(3.0))))),
+                    Op.Get(q(g(Atom.of("j"), Struct.of("f", Integer.of(4))))),
+                    Op.Retract(q(g(Var.anonymous(), Struct.of("f", Integer.of(5))))),
+                    Op.AssertZ(p(g(Atom.of("k"), Struct.of("h", Integer.of(5))))),
+                    Op.Get(q(g(Var.anonymous(), Struct.of("f", Integer.of(5))))),
+                    Op.RetractAll(q(g(Atom.of("k"), Var.anonymous()))),
+                    Op.Get(q(g(Var.anonymous(), Struct.of("f", Integer.of(3))))),
+                )
+        },
         RegressionCase("abolish-keeps-other-arities") {
             listOf(
                 Op.AssertZ(Rule.of(Atom.of("p"), Truth.TRUE)),

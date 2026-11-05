@@ -15,7 +15,7 @@ class MutableProcedureSpec :
     FunSpec({
         // #1019: asserting and retracting the same clause over and over must not grow its bucket with dead entries
         test("hot-bucket-stays-compact") {
-            val procedure = MutableProcedure(2, Unificator.default)
+            val procedure = MutableProcedure(Unificator.default)
             var order = 0L
             repeat(1000) { procedure.add(Entry(p(Atom.of("c_$it")), ++order, order), atStart = false) }
             val fresh = p(Atom.of("fresh"))

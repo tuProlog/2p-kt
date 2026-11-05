@@ -36,7 +36,7 @@ internal class MutableStore(
         val entry = Entry(clause, if (atStart) --lowestOrder else ++highestOrder, ++generation)
         if (atStart) all.addFirst(entry) else all.addLast(entry)
         val key = procedureKeyOf(clause)
-        procedures.getOrPut(key) { MutableProcedure(key?.arity ?: 0, unificator) }.add(entry, atStart)
+        procedures.getOrPut(key) { MutableProcedure(unificator) }.add(entry, atStart)
         size++
     }
 

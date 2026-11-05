@@ -13,22 +13,15 @@ internal class FrozenProcedure(
     val clauses: Array<Clause>,
     private val unificator: Unificator,
 ) {
-    private val arity: Int = clauses.firstOrNull()?.head?.arity ?: 0
-
-    // per (argument, depth): NotIndexable, a FrozenArgIndex, or null if not built yet; races only store equivalent values
-    private val indexes: Array<Any?> = arrayOfNulls(arity * MAX_INDEX_DEPTH)
+    private var indexes = FrozenIndexes(emptyMap())
 
     val size: Int get() = clauses.size
 
-    private fun index(
-        argument: Int,
-        depth: Int,
-    ): FrozenArgIndex? {
-        val slot = argument * MAX_INDEX_DEPTH + depth
-        val cached = indexes[slot]
+    private fun index(path: Int): FrozenArgIndex? {
+        val cached = indexes.byPath[path]
         if (cached != null) return if (cached === NotIndexable) null else cached as FrozenArgIndex
-        val built = FrozenArgIndex.build(clauses, argument, depth, unificator)
-        indexes[slot] = built ?: NotIndexable
+        val built = FrozenArgIndex.build(clauses, path, unificator)
+        indexes = FrozenIndexes(indexes.byPath + (path to (built ?: NotIndexable)))
         return built
     }
 
@@ -39,22 +32,24 @@ internal class FrozenProcedure(
         var bestCost = clauses.size
         var bestBucket: IntArray? = null
         var bestWildcards: IntArray? = null
-        search@ for (argument in 0 until head.arity) {
-            for (depth in 0 until MAX_INDEX_DEPTH) {
-                val key = unificator.nestedKey(head, argument, depth)
-                if (!key.isExact) break
-                val index = index(argument, depth) ?: continue
-                val bucket = index.buckets[key] ?: NO_POSITIONS
-                val cost = bucket.size + index.wildcards.size
-                if (cost < bestCost) {
-                    bestCost = cost
-                    bestBucket = bucket
-                    bestWildcards = index.wildcards
-                    if (cost == 0) break@search
-                }
+        unificator.searchPositions(head) { path, key ->
+            val index = index(path) ?: return@searchPositions Visit.SKIP
+            val bucket = index.buckets[key] ?: NO_POSITIONS
+            val cost = bucket.size + index.wildcards.size
+            if (cost < bestCost) {
+                bestCost = cost
+                bestBucket = bucket
+                bestWildcards = index.wildcards
+            }
+            // deeper positions only help where this one leaves several clauses with the query's key
+            when {
+                cost == 0 -> Visit.STOP
+                bucket.size > 1 -> Visit.DESCEND
+                else -> Visit.SKIP
             }
         }
-        return if (bestBucket == null) clauses.indices.iterator() else MergedPositions(bestBucket, bestWildcards!!)
+        val bucket = bestBucket ?: return clauses.indices.iterator()
+        return MergedPositions(bucket, bestWildcards!!)
     }
 
     /** Positions of the clauses unifying with [query], in order. */
