@@ -55,9 +55,11 @@ Step 6 (gated experiments; numbers in `examples/benchmarks/README.md`, "Clause s
   - Kept: rule selection takes `candidates`, renames each one and unifies `goal :- B` with the renamed `H :- B`
     (unifying `B` with itself is immediate), and passes the unifier on to rule execution (`MatchedRule`), which no
     longer unifies. As fast as `candidates`, exact determinism, same semantics: 1.2–1.4× on solver workloads, 7–15%
-    fewer bytes allocated, 33–58% fewer unifications. `ClauseCollection.candidates` is the only API addition.
+    fewer bytes allocated, 33–64% fewer unifications. `ClauseCollection.candidates` is the only API addition.
+  - `retract/1` and `clause/2` take `candidates` too, as they unify each clause themselves anyway.
   - Both stores also pre-check the keys of every bound argument before unifying (computed lazily, from the second
-    candidate on): `joint-args` takes 1–2 unifications instead of ~√n.
+    candidate on when an index selected them, from the first one when the procedure is scanned): `joint-args` takes
+    1–2 unifications instead of ~√n.
 - **(b) Deeper indexing, kept.** Indexed positions are paths (an argument, then an argument of the compound found
   there, up to depth 4), and lookups look into all the arguments of a compound position wherever the query's bucket
   there holds more than one clause (SWI-Prolog's deep indexing condition, relaxed). `nested-arg1` goes from a full
