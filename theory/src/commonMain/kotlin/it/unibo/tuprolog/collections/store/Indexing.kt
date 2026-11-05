@@ -6,14 +6,21 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.IndexKey
 import it.unibo.tuprolog.unify.Unificator
 /*
- * Shared vocabulary of the clause stores (#1019).
+ * Shared vocabulary of the clause stores (FrozenStore, MutableStore).
  *
  * Clauses are grouped into procedures (same head functor and arity; directives form one more procedure, whose key is
  * `null`). Clause order only matters within a procedure for lookups, while the global order is kept separately for
- * whole-store iteration. Within a procedure, argument indexes are built on demand (just-in-time, as in YAP and
- * SWI-Prolog), on the first lookup that binds that argument (or a position within it, see searchPositions); each
- * lookup then uses the bound position whose index yields the fewest candidates. Candidates are the clauses whose key for that argument equals the query's, plus those
- * whose key is not exact (variables): both lists are sorted by clause order, and are merged lazily.
+ * whole-store iteration. Within a procedure, indexes are built on demand (just-in-time), on the first lookup that
+ * binds a position: a head argument, or an argument of a compound found there (a path, see searchPositions). Each
+ * lookup then uses the bound position whose index yields the fewest candidates. Candidates at a position are the
+ * clauses whose key there equals the query's, plus those whose key there is not exact (variables): both lists are
+ * sorted by clause order, and are merged lazily.
+ *
+ * References:
+ * - V. Santos Costa, K. Sagonas, R. Lopes. Demand-Driven Indexing of Prolog Clauses. ICLP 2007 (YAP's JITI).
+ * - J. Wielemaker et al. SWI-Prolog. TPLP 12(1-2), 2012; SWI-Prolog manual, "Just-in-time clause indexing" and
+ *   "Deep indexing".
+ * - D. H. D. Warren. An Abstract Prolog Instruction Set. SRI TN 309, 1983 (first-argument indexing).
  */
 
 /** Procedures with fewer clauses than this are scanned: indexing them would cost more than it saves. */

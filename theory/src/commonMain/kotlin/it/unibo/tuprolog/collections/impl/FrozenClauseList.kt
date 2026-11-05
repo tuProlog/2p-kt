@@ -15,8 +15,6 @@ internal class FrozenClauseList(
 
     override fun asList(): List<Clause> = store.clauses.asList()
 
-    override fun get(index: Int): Clause = store.clauses[index]
-
     override fun firstOrNull(): Clause? = store.clauses.firstOrNull()
 
     override fun lastOrNull(): Clause? = store.clauses.lastOrNull()

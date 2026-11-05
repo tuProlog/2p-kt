@@ -22,19 +22,30 @@ import kotlin.jvm.JvmStatic
  *
  * A `MutableTheory` is a [MutableClauseDeque]: `add`/`addLast` mean `assertZ`, `addFirst` means `assertA`,
  * `removeFirstMatching` means `retract`. [Theory.toMutableTheory] and [Theory.toImmutableTheory] convert between
- * the two flavours, copying the underlying clauses only when actually needed.
+ * the two flavours: they return `this` when it already has the requested flavour, and copy the clauses otherwise.
+ * [setUnificator] (with a different unificator) and [clone] also return a copy, as they change how clauses are indexed.
  *
- * Lookups ([get]) and iterations ([clauses]) follow the *logical update view* (ISO/IEC 13211-1, 7.5.4): they see the
- * clauses as of when they started (the call to [get], or to `iterator()`), whatever assertions and retractions happen
- * while they are consumed. There is therefore no need to copy their results before updating the theory.
+ * Lookups ([get], [candidates]) and iterations ([clauses]) follow the *logical update view* (ISO/IEC 13211-1, 7.5.4):
+ * they see the clauses as of when they started (the call to [get], or to `iterator()`), whatever assertions and
+ * retractions happen while they are consumed. There is therefore no need to copy their results before updating the
+ * theory. This is implemented with generation counters (every clause records the generations it was added and removed
+ * in, and a lookup only yields the clauses alive at the generation it started at), after Lindholm and O'Keefe.
+ * Retracted clauses are reclaimed once they outnumber the live ones, so storage stays proportional to the live clauses.
+ *
+ * References:
+ * - T. Lindholm, R. A. O'Keefe. *Efficient Implementation of a Defensible Semantics for Dynamic Prolog Code*.
+ *   ICLP 1987, MIT Press.
+ * - ISO/IEC 13211-1:1995, *Information technology — Programming languages — Prolog — Part 1: General core*, 7.5.4.
  *
  * @see Theory
  */
 interface MutableTheory :
     Theory,
     MutableClauseDeque {
+    /** A [MutableTheory] using [unificator]: `this`, if it equals the current one, a new (independent) copy otherwise. */
     override fun setUnificator(unificator: Unificator): MutableTheory
 
+    /** An independent copy of this theory, like [clone]. */
     override fun toMutable(): MutableTheory = clone()
 
     override fun add(clause: Clause): Boolean {
@@ -75,6 +86,7 @@ interface MutableTheory :
 
     override fun toMutableTheory(): MutableTheory = this
 
+    /** Appends the clauses of [theory] to this one, in place, and returns `this`; equivalent to `assertZ(theory.clauses)`. */
     override operator fun plus(theory: Theory): MutableTheory
 
     override operator fun plus(clause: Clause): MutableTheory = assertZ(clause)
@@ -111,15 +123,19 @@ interface MutableTheory :
 
     override fun replaceTags(tags: Map<String, Any>): MutableTheory
 
+    /** A new, independent [MutableTheory] with the same clauses, [unificator] and tags. */
     override fun clone(): MutableTheory
 
     companion object {
-        /** Creates an empty [MutableTheory] */
+        /** Creates an empty [MutableTheory] using the given [unificator]. */
         @JvmStatic
         @JsName("empty")
         fun empty(unificator: Unificator): MutableTheory = indexedOf(unificator, emptyList())
 
-        /** Creates a [MutableTheory], containing the given clauses */
+        /**
+         * Creates a [MutableTheory] containing the given clauses, in order, using the given [unificator].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -127,7 +143,10 @@ interface MutableTheory :
             vararg clause: Clause,
         ): MutableTheory = indexedOf(unificator, *clause)
 
-        /** Creates a [MutableTheory], containing the given clauses */
+        /**
+         * Creates a [MutableTheory] containing the given clauses, in order, using the given [unificator].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("ofIterable")
         fun of(
@@ -135,7 +154,10 @@ interface MutableTheory :
             clauses: Iterable<Clause>,
         ): MutableTheory = indexedOf(unificator, clauses)
 
-        /** Creates a [MutableTheory], containing the given clauses */
+        /**
+         * Creates a [MutableTheory] containing the given clauses, in order, using the given [unificator].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("ofSequence")
         fun of(
@@ -143,8 +165,10 @@ interface MutableTheory :
             clauses: Sequence<Clause>,
         ): MutableTheory = indexedOf(unificator, clauses)
 
-        /** Let developers easily create a [MutableTheory], while avoiding variables names clashing by using a
-         * different [Scope] for each [Clause] */
+        /**
+         * Creates a [MutableTheory] from clause factories, each run in a fresh [Scope], so that variables with the same
+         * name in different clauses are different variables.
+         */
         @JvmStatic
         @JsName("ofScopes")
         fun of(
@@ -152,12 +176,12 @@ interface MutableTheory :
             vararg clauses: Scope.() -> Clause,
         ): MutableTheory = indexedOf(unificator, *clauses)
 
-        /** Creates an empty [MutableTheory] backed by an indexed data structure */
+        /** Same as [empty]: every [MutableTheory] is indexed. */
         @JvmStatic
         @JsName("emptyIndexed")
         fun emptyIndexed(unificator: Unificator): MutableTheory = indexedOf(unificator, emptyList())
 
-        /** Creates a [MutableTheory] backed by an indexed data structure, containing the given clauses */
+        /** Same as [of]: every [MutableTheory] is indexed. */
         @JvmStatic
         @JsName("indexedOf")
         fun indexedOf(
@@ -165,8 +189,7 @@ interface MutableTheory :
             vararg clause: Clause,
         ): MutableTheory = indexedOf(unificator, clause.asIterable())
 
-        /** Let developers easily create a [MutableTheory] backed by an indexed data structure, while avoiding variables names
-         * clashing by using a different [Scope] for each [Clause] */
+        /** Same as [of]: every [MutableTheory] is indexed. */
         @JvmStatic
         @JsName("indexedOfScopes")
         fun indexedOf(
@@ -180,7 +203,7 @@ interface MutableTheory :
                 },
             )
 
-        /** Creates a [MutableTheory] backed by an indexed data structure, containing the given clauses */
+        /** Same as [of]: every [MutableTheory] is indexed. */
         @JvmStatic
         @JsName("indexedOfSequence")
         fun indexedOf(
@@ -188,7 +211,7 @@ interface MutableTheory :
             clauses: Sequence<Clause>,
         ): MutableTheory = indexedOf(unificator, clauses.asIterable())
 
-        /** Creates a [MutableTheory] backed by an indexed data structure, containing the given clauses */
+        /** Same as [of]: every [MutableTheory] is indexed. */
         @JvmStatic
         @JsName("indexedOfIterable")
         fun indexedOf(

@@ -11,21 +11,21 @@ import it.unibo.tuprolog.theory.validated
 import it.unibo.tuprolog.unify.Unificator
 
 /**
- * The immutable, read-optimised [Theory] (#1019), backed by a [FrozenStore]: clause lookups go through argument
+ * The immutable, read-optimised [Theory], backed by a [FrozenStore]: clause lookups go through argument
  * indexes built on demand; updates return new theories sharing every procedure they do not touch.
  */
 internal class IndexedTheory private constructor(
     private val store: FrozenStore,
     tags: Map<String, Any>,
 ) : AbstractTheory(tags) {
-    /** Construct a Clause database from given clauses */
+    /** Builds a theory from the given clauses, after checking they are well formed. */
     constructor(
         unificator: Unificator,
         clauses: Iterable<Clause>,
         tags: Map<String, Any> = emptyMap(),
     ) : this(FrozenStore.of(unificator, clauses.validated()), tags)
 
-    /** Construct a Clause database from given clauses */
+    /** Builds a theory from the given clauses, after checking they are well formed. */
     constructor(
         unificator: Unificator,
         clauses: Sequence<Clause>,
@@ -75,12 +75,8 @@ internal class IndexedTheory private constructor(
 
     override fun plus(clause: Clause): Theory = assertZ(clause)
 
-    override fun plus(theory: Theory): Theory =
-        when {
-            isEmpty -> theory.toImmutableTheory()
-            theory.isEmpty -> this
-            else -> assertZ(theory.clauses)
-        }
+    // not `theory` itself when this is empty: the result keeps this theory's unificator and tags
+    override fun plus(theory: Theory): Theory = assertZ(theory.clauses)
 
     override fun retract(clause: Clause): RetractResult<IndexedTheory> =
         store.minusFirst(clause)?.let { (store, removed) -> RetractResult.Success(with(store), listOf(removed)) }

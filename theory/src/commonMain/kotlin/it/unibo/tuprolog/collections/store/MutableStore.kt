@@ -3,8 +3,8 @@ package it.unibo.tuprolog.collections.store
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator
 /*
- * A write-optimised clause store (#1019), implementing the logical update view through generations (Lindholm and
- * O'Keefe, ICLP 1987): every update increments the store's generation; an entry records the generation it was added
+ * A write-optimised clause store, implementing the logical update view (ISO/IEC 13211-1, 7.5.4) through generations
+ * (T. Lindholm, R. A. O'Keefe, Efficient Implementation of a Defensible Semantics for Dynamic Prolog Code, ICLP 1987): every update increments the store's generation; an entry records the generation it was added
  * in and the one it was removed in; a lookup only sees the entries alive at the generation current when it started.
  * Removal only marks entries, which are physically dropped later, when they outnumber the live ones.
  *

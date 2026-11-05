@@ -11,7 +11,10 @@ import kotlin.jvm.JvmStatic
  * storage is optimised for updates at both ends and for lookups by unification.
  */
 interface ClauseList : ClauseDeque {
-    /** The clause at [index]; throws [IndexOutOfBoundsException] if there is none. */
+    /**
+     * The clause at [index].
+     * @throws IndexOutOfBoundsException if there is no clause at [index]
+     */
     @JsName("getAt")
     operator fun get(index: Int): Clause = asList()[index]
 
@@ -31,10 +34,12 @@ interface ClauseList : ClauseDeque {
     override fun toImmutable(): ClauseList
 
     companion object {
+        /** An empty [ClauseList] matching clauses with [unificator]. */
         @JvmStatic
         @JsName("empty")
         fun empty(unificator: Unificator = Unificator.default): ClauseList = of(unificator, emptyList())
 
+        /** A [ClauseList] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -42,6 +47,7 @@ interface ClauseList : ClauseDeque {
             vararg clauses: Clause,
         ): ClauseList = of(unificator, clauses.asIterable())
 
+        /** A [ClauseList] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("ofIterable")
         fun of(
@@ -49,6 +55,7 @@ interface ClauseList : ClauseDeque {
             clauses: Iterable<Clause>,
         ): ClauseList = FrozenClauseList.of(unificator, clauses)
 
+        /** A [ClauseList] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("ofSequence")
         fun of(

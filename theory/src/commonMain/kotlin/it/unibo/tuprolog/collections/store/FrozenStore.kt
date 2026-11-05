@@ -4,7 +4,7 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator
 
 /**
- * An immutable, read-optimised clause store (#1019): clauses in an array (global order) and grouped into
+ * An immutable, read-optimised clause store: clauses in an array (global order) and grouped into
  * [FrozenProcedure]s. Updates return new stores sharing every procedure they do not touch.
  */
 internal class FrozenStore private constructor(

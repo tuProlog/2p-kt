@@ -5,7 +5,7 @@ import it.unibo.tuprolog.collections.store.ClauseSource
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.unify.Unificator
 /*
- * Clause collections (#1019) are thin façades over the clause stores: a FrozenStore for immutable ones, a MutableStore
+ * Clause collections are thin façades over the clause stores: a FrozenStore for immutable ones, a MutableStore
  * for mutable ones. Ordered and unordered collections share the stores (unordered ones simply promise no order).
  */
 

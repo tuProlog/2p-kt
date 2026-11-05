@@ -12,7 +12,10 @@ interface ClauseDeque : ClauseQueue {
     @JsName("lastOrNull")
     fun lastOrNull(): Clause? = clauses.lastOrNull()
 
-    /** The last clause; throws [NoSuchElementException] if empty. */
+    /**
+     * The last clause.
+     * @throws NoSuchElementException if this deque is empty
+     */
     @JsName("last")
     fun last(): Clause = lastOrNull() ?: throw NoSuchElementException("Empty clause collection")
 
@@ -21,10 +24,12 @@ interface ClauseDeque : ClauseQueue {
     override fun toImmutable(): ClauseDeque
 
     companion object {
+        /** An empty [ClauseDeque] matching clauses with [unificator]. */
         @JvmStatic
         @JsName("empty")
         fun empty(unificator: Unificator = Unificator.default): ClauseDeque = of(unificator, emptyList())
 
+        /** A [ClauseDeque] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -32,6 +37,7 @@ interface ClauseDeque : ClauseQueue {
             vararg clauses: Clause,
         ): ClauseDeque = of(unificator, clauses.asIterable())
 
+        /** A [ClauseDeque] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("ofIterable")
         fun of(
@@ -39,6 +45,7 @@ interface ClauseDeque : ClauseQueue {
             clauses: Iterable<Clause>,
         ): ClauseDeque = FrozenClauseList.of(unificator, clauses)
 
+        /** A [ClauseDeque] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("ofSequence")
         fun of(
