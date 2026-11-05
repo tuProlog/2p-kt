@@ -30,6 +30,5 @@ internal class LazyTupleImpl(
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         LazyTupleImpl(cursor.map { it.apply(unifier) }, tags)
 
-    override fun freshCopy(scope: Scope): Tuple =
-        LazyTupleImpl(cursor.map { it.freshCopy(scope) }).setTags(tags)
+    override fun freshCopy(scope: Scope): Tuple = LazyTupleImpl(cursor.map { it.freshCopy(scope) }).setTags(tags)
 }

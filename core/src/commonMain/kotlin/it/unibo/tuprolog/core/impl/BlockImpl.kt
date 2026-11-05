@@ -39,7 +39,6 @@ internal open class BlockImpl(
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { BlockIterator(this) }.asSequence()
 
-
     override fun unfold(): Sequence<Term> = Iterable { BlockUnfolder(this) }.asSequence()
 
     // explicit, as on Kotlin/JS the interface's default implementations are not exposed under their @JsName

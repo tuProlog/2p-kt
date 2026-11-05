@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Recursive
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
@@ -49,8 +48,7 @@ internal abstract class RecursiveImpl(
     /** Computes [size] by traversing this term, iteratively. */
     protected open fun computeSize(): Int = unfoldedSequence.count()
 
-    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean =
-        unifier.isEmpty() || knownGround == true
+    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty() || knownGround == true
 
     override val items: Iterable<Term>
         get() = toSequence().asIterable()
