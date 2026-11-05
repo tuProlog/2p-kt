@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.BlockImpl
+import it.unibo.tuprolog.core.impl.LazyTupleImpl
+import it.unibo.tuprolog.utils.cursor
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
@@ -64,11 +66,22 @@ interface Block : Recursive {
         /** Creates a [Block] wrapping the given [terms]. */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(terms: Iterable<Term>): Block = of(terms.toList())
+        fun of(terms: Iterable<Term>): Block =
+            when (terms) {
+                is KtList<Term> -> of(terms)
+                else -> of(terms.asSequence())
+            }
 
         /** Creates a [Block] wrapping the given [terms]. */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(terms: Sequence<Term>): Block = of(terms.toList())
+        fun of(terms: Sequence<Term>): Block {
+            val cursor = terms.cursor()
+            return when {
+                cursor.isOver -> empty()
+                cursor.next.isOver -> BlockImpl(cursor.current!!)
+                else -> BlockImpl(LazyTupleImpl(cursor))
+            }
+        }
     }
 }

@@ -3,69 +3,47 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.core.TupleIterator
 import it.unibo.tuprolog.utils.setTags
 
 internal class TupleImpl(
     override val left: Term,
     override val right: Term,
     tags: Map<String, Any> = emptyMap(),
-) : RecursiveImpl(TUPLE_FUNCTOR, listOf(left, right), tags),
-    Tuple {
+) : AbstractTuple(listOf(left, right), tags) {
     private val eagerGround: Boolean? = knownGroundOf(left, right)
 
     private val eagerSize: Int? = if (right.isTuple) right.knownSize?.plus(1) else 2
 
     override val isGround: Boolean
-        get() = eagerGround ?: super<RecursiveImpl>.isGround
+        get() = eagerGround ?: super<AbstractTuple>.isGround
 
     override val knownGround: Boolean?
         get() = eagerGround ?: super.knownGround
 
     override val size: Int
-        get() = eagerSize ?: super<RecursiveImpl>.size
+        get() = eagerSize ?: super<AbstractTuple>.size
 
     override val knownSize: Int?
         get() = eagerSize ?: super.knownSize
 
-    override val unfoldedSequence: Sequence<Term>
-        get() = Iterable { TupleIterator(this) }.asSequence()
-
-
-    override fun unfold(): Sequence<Term> = Iterable { TupleUnfolder(this) }.asSequence()
-
-    // explicit, as on Kotlin/JS the interface's default implementations are not exposed under their @JsName
-    override fun toList(): List<Term> = unfoldedList
-
-    override fun toArray(): Array<Term> = unfoldedArray
-
-    override fun toSequence(): Sequence<Term> = unfoldedSequence
-
-    override val functor: String = TUPLE_FUNCTOR
-
-    override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")
-
     override fun copyWithTags(tags: Map<String, Any>): Tuple = TupleImpl(left, right, tags)
-
-    override fun freshCopy(): Tuple = super.freshCopy().castToTuple()
 
     override fun freshCopy(scope: Scope): Tuple =
         when {
             isGround -> this
-            else -> scope.tupleOf(unfoldedSequence.map { it.freshCopy(scope) }).setTags(tags)
+            else -> Tuple.of(unfoldedSequence.map { it.freshCopy(scope) }.toList()).setTags(tags)
         }
 
     /**
      * Applies [unifier] to every item, iteratively, rebuilding the tuple from its end: the longest suffix
-     * left unchanged by [unifier] is reused as is (as is the whole tuple, if nothing changes).
+     * left unchanged by [unifier] is reused as is (as is the whole tuple, if nothing changes). A lazy
+     * suffix, if any, is substituted lazily.
      */
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term {
-        val nodes = mutableListOf<Tuple>()
+        val nodes = mutableListOf<TupleImpl>()
         var current: Term = this
-        while (current is Tuple) {
+        while (current is TupleImpl) {
             nodes.add(current)
             current = current.right
         }
@@ -83,6 +61,4 @@ internal class TupleImpl(
         }
         return result
     }
-
-    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTuple(this)
 }

@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
+import it.unibo.tuprolog.core.impl.LazyTupleImpl
 import it.unibo.tuprolog.core.impl.TupleImpl
+import it.unibo.tuprolog.utils.cursor
 import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
@@ -71,17 +73,13 @@ interface Tuple : Recursive {
         fun wrapIfNeeded(
             terms: Iterable<Term>,
             ifEmpty: () -> Term = { Truth.TRUE },
-        ): Term {
-            val i = terms.iterator()
-            if (!i.hasNext()) return ifEmpty()
-            val first = i.next()
-            if (!i.hasNext()) return first
-            val items = mutableListOf(first)
-            while (i.hasNext()) {
-                items.add(i.next())
+        ): Term =
+            when {
+                terms !is KtList<Term> -> wrapIfNeeded(terms.asSequence(), ifEmpty)
+                terms.isEmpty() -> ifEmpty()
+                terms.size == 1 -> terms[0]
+                else -> of(terms)
             }
-            return of(items)
-        }
 
         /** @see wrapIfNeeded */
         @JvmStatic
@@ -90,7 +88,14 @@ interface Tuple : Recursive {
         fun wrapIfNeeded(
             terms: Sequence<Term>,
             ifEmpty: () -> Term = { Truth.TRUE },
-        ): Term = wrapIfNeeded(terms.asIterable(), ifEmpty)
+        ): Term {
+            val cursor = terms.cursor()
+            return when {
+                cursor.isOver -> ifEmpty()
+                cursor.next.isOver -> cursor.current!!
+                else -> LazyTupleImpl(cursor)
+            }
+        }
 
         /** Creates a [Tuple] with [left] and [right] as its two direct arguments. */
         @JvmStatic
@@ -115,7 +120,26 @@ interface Tuple : Recursive {
          */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(terms: Iterable<Term>): Tuple = of(terms.toList())
+        fun of(terms: Iterable<Term>): Tuple =
+            when (terms) {
+                is KtList<Term> -> of(terms)
+                else -> of(terms.asSequence())
+            }
+
+        /**
+         * Creates a right-nested [Tuple] out of [terms], lazily: only the first 2 items are pulled out of [terms]
+         * upon construction, while the others are pulled as the tuple is traversed.
+         * @throws IllegalArgumentException if [terms] has fewer than 2 elements
+         */
+        @JvmStatic
+        @JsName("ofSequence")
+        fun of(terms: Sequence<Term>): Tuple {
+            val cursor = terms.cursor()
+            require(!cursor.isOver && !cursor.next.isOver) {
+                "Tuples require at least 2 terms"
+            }
+            return LazyTupleImpl(cursor)
+        }
 
         /**
          * Creates a right-nested [Tuple] out of [terms].
