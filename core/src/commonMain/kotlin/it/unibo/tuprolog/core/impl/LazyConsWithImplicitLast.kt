@@ -14,19 +14,29 @@ internal class LazyConsWithImplicitLast(
     tags: Map<String, Any> = emptyMap(),
 ) : AbstractCons(emptyList(), tags),
     Cons {
-    override val head: Term by lazy { cursor.current!! }
+    override val head: Term
+        get() = cursor.current!!
 
-    override val tail: Term by lazy {
-        cursor.next.let {
-            when {
-                it.isOver -> EmptyList.instance
-                it.next.isOver -> it.current!!
-                else -> LazyConsWithImplicitLast(it)
-            }
-        }
-    }
+    private var cachedTail: Term? = null
 
-    override val args: List<Term> = LazyTwoItemsList({ head }, { tail })
+    override val tail: Term
+        get() =
+            cachedTail ?: cursor.next
+                .let {
+                    when {
+                        it.isOver -> EmptyList.instance
+                        it.next.isOver -> it.current!!
+                        else -> LazyConsWithImplicitLast(it)
+                    }
+                }.also { cachedTail = it }
+
+    override val firstChild: Term
+        get() = head
+
+    override val secondChild: Term
+        get() = tail
+
+    override val args: List<Term> = LazyArgs()
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         LazyConsWithImplicitLast(cursor.map { it.apply(unifier) }, tags)

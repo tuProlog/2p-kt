@@ -15,14 +15,24 @@ internal class LazyTupleImpl(
     private val cursor: Cursor<out Term>,
     tags: Map<String, Any> = emptyMap(),
 ) : AbstractTuple(emptyList(), tags) {
-    override val left: Term by lazy { cursor.current!! }
+    override val left: Term
+        get() = cursor.current!!
 
-    override val right: Term by lazy {
-        val next = cursor.next
-        if (next.next.isOver) next.current!! else LazyTupleImpl(next)
-    }
+    private var cachedRight: Term? = null
 
-    override val args: List<Term> = LazyTwoItemsList({ left }, { right })
+    override val right: Term
+        get() =
+            cachedRight ?: cursor.next
+                .let { if (it.next.isOver) it.current!! else LazyTupleImpl(it) }
+                .also { cachedRight = it }
+
+    override val firstChild: Term
+        get() = left
+
+    override val secondChild: Term
+        get() = right
+
+    override val args: List<Term> = LazyArgs()
 
     override fun copyWithTags(tags: Map<String, Any>): Tuple =
         if (this.tags === tags) this else LazyTupleImpl(cursor, tags)

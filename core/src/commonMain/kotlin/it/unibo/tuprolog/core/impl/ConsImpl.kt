@@ -15,37 +15,19 @@ internal class ConsImpl(
     Cons {
     // Metadata is propagated from the tail in O(1) when the tail already knows it, and otherwise computed
     // on demand (iteratively), so that consing onto a lazy list never traverses it.
-    private val eagerGround: Boolean? = knownGroundOf(head, tail)
-
-    private val eagerLast: Term? = if (tail.isCons) (tail as? AbstractCons)?.knownLast else tail
-
-    private val eagerSize: Int? =
-        when {
-            tail.isCons -> tail.knownSize?.plus(1)
-            tail.isEmptyList -> 1
-            else -> 2
-        }
-
-    override val isGround: Boolean
-        get() = eagerGround ?: super<AbstractCons>.isGround
-
-    override val knownGround: Boolean?
-        get() = eagerGround ?: super.knownGround
-
-    override val last: Term
-        get() = eagerLast ?: super<AbstractCons>.last
-
-    override val knownLast: Term?
-        get() = eagerLast ?: super.knownLast
-
-    override val size: Int
-        get() = eagerSize ?: super<AbstractCons>.size
-
-    override val knownSize: Int?
-        get() = eagerSize ?: super.knownSize
+    init {
+        cachedGround = knownGroundOf(head, tail)
+        cachedLast = if (tail.isCons) (tail as? AbstractCons)?.knownLast else tail
+        cachedSize =
+            when {
+                tail.isCons -> successorOfKnownSize(tail.knownSize)
+                tail.isEmptyList -> 1
+                else -> 2
+            }
+    }
 
     override val estimatedLength: Int
-        get() = eagerSize ?: 1
+        get() = if (knownSize >= 0) knownSize else 1
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         if (estimatedLength >= SWITCH_TO_LAZY_THRESHOLD) {

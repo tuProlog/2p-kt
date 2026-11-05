@@ -15,35 +15,34 @@ internal abstract class RecursiveImpl(
     tags: Map<String, Any>,
 ) : AbstractStruct(functor, args, tags),
     Recursive {
-    override val unfoldedList: KtList<Term> by lazy { unfoldedSequence.toList() }
+    private var cachedUnfoldedList: KtList<Term>? = null
+
+    override val unfoldedList: KtList<Term>
+        get() = cachedUnfoldedList ?: unfoldedSequence.toList().also { cachedUnfoldedList = it }
 
     override val unfoldedArray: Array<Term>
         get() = unfoldedList.toTypedArray()
 
-    private val groundness: Lazy<Boolean> = lazy { checkGroundness() }
-
-    private val sizeCache: Lazy<Int> = lazy { computeSize() }
-
     /**
-     * Whether this term is ground, computed at most once, by an iterative traversal of [unfoldedSequence].
-     * Subclasses knowing it in advance (i.e. [knownGround]) should override this property to return it.
+     * This term's size, if already computed or known at construction, or -1 otherwise. Eager nodes set it at
+     * construction when their children already know theirs, so that it propagates in O(1); otherwise, it is
+     * computed on demand, iteratively, by [computeSize].
      */
-    override val isGround: Boolean
-        get() = groundness.value
+    protected var cachedSize: Int = -1
 
     override val size: Int
-        get() = sizeCache.value
+        get() = if (cachedSize >= 0) cachedSize else computeSize().also { cachedSize = it }
 
     /**
      * This term's groundness, if it is already known (i.e. it can be read without traversing any lazy
      * descendant), or `null` otherwise.
      */
-    internal open val knownGround: Boolean?
-        get() = groundness.valueIfInitialized()
+    internal val knownGround: Boolean?
+        get() = cachedGround
 
-    /** This term's [size], if it is already known, or `null` otherwise. See [knownGround]. */
-    internal open val knownSize: Int?
-        get() = sizeCache.valueIfInitialized()
+    /** This term's [size], if it is already known, or -1 otherwise. See [knownGround]. */
+    internal val knownSize: Int
+        get() = cachedSize
 
     /** Computes [size] by traversing this term, iteratively. */
     protected open fun computeSize(): Int = unfoldedSequence.count()
@@ -68,40 +67,42 @@ internal abstract class RecursiveImpl(
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCollection(this)
 
-    /** A list of two items, each computed lazily (and at most once) on first access. */
-    protected class LazyTwoItemsList<T>(
-        firstGenerator: () -> T,
-        secondGenerator: () -> T,
-    ) : AbstractList<T>() {
-        private val fst: T by lazy(firstGenerator)
-        private val snd: T by lazy(secondGenerator)
+    /** The two children of a lazy node, which computes and memoizes them by itself. See [LazyArgs]. */
+    protected open val firstChild: Term
+        get() = args[0]
 
+    protected open val secondChild: Term
+        get() = args[1]
+
+    /** The args of a lazy node: a view over its [firstChild] and [secondChild], computed on access. */
+    protected inner class LazyArgs : AbstractList<Term>() {
         override val size: Int
             get() = 2
 
-        override fun get(index: Int): T =
+        override fun get(index: Int): Term =
             when (index) {
-                0 -> fst
-                1 -> snd
+                0 -> firstChild
+                1 -> secondChild
                 else -> throw IndexOutOfBoundsException("Index out of range: $index")
             }
     }
 }
 
-internal fun <T> Lazy<T>.valueIfInitialized(): T? = if (isInitialized()) value else null
-
 /** The groundness of [this] term, if known without traversing any lazy descendant, or `null` otherwise. */
 internal val Term.knownGround: Boolean?
     get() = if (this is RecursiveImpl) knownGround else isGround
 
-/** The size of [this] recursive term, if known without traversing any lazy descendant, or `null` otherwise. */
-internal val Term.knownSize: Int?
+/** The size of [this] recursive term, if known without traversing any lazy descendant, or -1 otherwise. */
+internal val Term.knownSize: Int
     get() =
         when (this) {
             is RecursiveImpl -> knownSize
             is Recursive -> size
-            else -> null
+            else -> -1
         }
+
+/** [size] + 1 if [size] is known (i.e. non-negative), or -1 otherwise. */
+internal fun successorOfKnownSize(size: Int): Int = if (size >= 0) size + 1 else -1
 
 /** The groundness of a term whose only children are [first] and [second], if known, or `null` otherwise. */
 internal fun knownGroundOf(

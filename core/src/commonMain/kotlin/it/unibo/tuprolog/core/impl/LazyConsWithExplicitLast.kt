@@ -19,17 +19,21 @@ internal class LazyConsWithExplicitLast(
     override val head: Term
         get() = cursor.current!!
 
-    override val tail: Term by lazy {
-        cursor.next.let {
-            if (it.isOver) {
-                termination
-            } else {
-                LazyConsWithExplicitLast(it, termination)
-            }
-        }
-    }
+    private var cachedTail: Term? = null
 
-    override val last: Term by lazy {
+    override val tail: Term
+        get() =
+            cachedTail ?: cursor.next
+                .let { if (it.isOver) termination else LazyConsWithExplicitLast(it, termination) }
+                .also { cachedTail = it }
+
+    override val firstChild: Term
+        get() = head
+
+    override val secondChild: Term
+        get() = tail
+
+    override fun computeLast(): Term {
         var current: Term = this
         while (current.isCons) {
             if (current is LazyConsWithExplicitLast) {
@@ -38,10 +42,10 @@ internal class LazyConsWithExplicitLast(
                 current = current.castToList().last
             }
         }
-        current
+        return current
     }
 
-    override val args: List<Term> = LazyTwoItemsList({ head }, { tail })
+    override val args: List<Term> = LazyArgs()
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         LazyConsWithExplicitLast(cursor.map { it.apply(unifier) }, termination.apply(unifier), tags)

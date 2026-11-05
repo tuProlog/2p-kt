@@ -11,21 +11,10 @@ internal class TupleImpl(
     override val right: Term,
     tags: Map<String, Any> = emptyMap(),
 ) : AbstractTuple(listOf(left, right), tags) {
-    private val eagerGround: Boolean? = knownGroundOf(left, right)
-
-    private val eagerSize: Int? = if (right.isTuple) right.knownSize?.plus(1) else 2
-
-    override val isGround: Boolean
-        get() = eagerGround ?: super<AbstractTuple>.isGround
-
-    override val knownGround: Boolean?
-        get() = eagerGround ?: super.knownGround
-
-    override val size: Int
-        get() = eagerSize ?: super<AbstractTuple>.size
-
-    override val knownSize: Int?
-        get() = eagerSize ?: super.knownSize
+    init {
+        cachedGround = knownGroundOf(left, right)
+        cachedSize = if (right.isTuple) successorOfKnownSize(right.knownSize) else 2
+    }
 
     override fun copyWithTags(tags: Map<String, Any>): Tuple = TupleImpl(left, right, tags)
 

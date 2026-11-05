@@ -15,8 +15,14 @@ internal abstract class AbstractStruct(
     tags: Map<String, Any> = emptyMap(),
 ) : TermImpl(tags),
     Struct {
+    // Caches below are plain fields filled on first use (racy single-check idiom, as in String.hashCode): their
+    // values are immutable, so a race just computes them twice. Unlike `by lazy`, they cost no extra object.
+
+    /** This term's groundness, if already computed (or known at construction), or `null` otherwise. */
+    protected var cachedGround: Boolean? = null
+
     override val isGround: Boolean
-        get() = checkGroundness()
+        get() = cachedGround ?: checkGroundness().also { cachedGround = it }
 
     protected open fun checkGroundness(): Boolean = args.all { it.isGround }
 
@@ -46,12 +52,19 @@ internal abstract class AbstractStruct(
         useVarCompleteName: Boolean,
     ): Boolean = compareIteratively(this, other) { a, b -> a.equals(b, useVarCompleteName) }
 
-    override val hashCodeCache: Int by lazy {
-        var result = functor.hashCode()
-        result = 31 * result + arity
-        result = 31 * result + argsHashCode()
-        result
-    }
+    // 0 means "not computed yet": a term whose hash is actually 0 just recomputes it at every call
+    private var cachedHashCode: Int = 0
+
+    override val hashCodeCache: Int
+        get() {
+            if (cachedHashCode == 0) {
+                var result = functor.hashCode()
+                result = 31 * result + arity
+                result = 31 * result + argsHashCode()
+                cachedHashCode = result
+            }
+            return cachedHashCode
+        }
 
     protected open fun argsHashCode(): Int = itemWiseHashCode(args)
 
