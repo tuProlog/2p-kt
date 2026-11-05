@@ -289,3 +289,65 @@ Intermediate runs found three scaling regressions, all fixed:
   (0.09× at 10k); `bb2dd7e` compacts each bucket on its own.
 - `bb2dd7e`: rebuilding all indexes after compacting a procedure made mutable inserts 0.69× at 10k; `9ef849a` keeps
   them. Mutable insert-then-retract is now 1.07–1.34× the baseline from 10 to 10k (but for the noisy 1k point above), and 1.7–1.8M ops/s at 100k.
+
+#### Step 6: gated experiments
+
+Baseline `6cbce03` (the results above) against `theory-perf-step6`'s head, both with the Step 6 benchmark additions
+(`nested-arg1` and `joint-args` lookups, solver counts in `theoryMatchReport`). Same machine and JDK,
+`-wi 2..3 -i 3..5 -w 1s -r 1s -f 2`, baseline and after alternating per class; the noisiest classes were run twice and
+the run with error bars below 10% is reported. The verdict for each experiment is in `theory/docs/PERFORMANCE-PLAN.md`
+("Implementation status").
+
+**(a) One unification per selected clause.** Solver workloads (ops/s, bytes allocated per solution set):
+
+| Workload | Before | After | Speedup | B/op before | B/op after |
+|---|---:|---:|---:|---:|---:|
+| fact-table-arg0 | 138.9 ± 1.7 | 167.5 ± 4.5 | 1.21× | 21.7M | 20.0M |
+| fact-table-arg1 | 139.4 ± 2.4 | 167.4 ± 2.1 | 1.20× | 21.7M | 19.9M |
+| dynamic-table-arg0 | 137.7 ± 4.2 | 168.1 ± 2.7 | 1.22× | 21.7M | 20.0M |
+| dynamic-counter | 84.6 ± 1.2 | 97.5 ± 1.7 | 1.15× | 36.7M | 34.8M |
+| dynamic-churn | 129.9 ± 2.0 | 152.1 ± 3.1 | 1.17× | 24.6M | 23.3M |
+| determinism | 108.6 ± 1.8 | 138.5 ± 2.6 | 1.27× | 28.4M | 25.0M |
+| tiny | 1.71M ± 0.04M | 1.69M ± 0.02M | 0.99× | | |
+| deep-recursion | 62.9 ± 1.4 | 74.4 ± 1.2 | 1.18× | 54.1M | 51.6M |
+| nrev | 90.8 ± 1.8 | 105.5 ± 3.6 | 1.16× | 26.4M | 25.2M |
+| backtracking | 6.92 ± 0.12 | 9.00 ± 0.41 | 1.30× | 326M | 299M |
+| failing-search | 26.8 ± 3.9 | 36.6 ± 1.0 | 1.37× | 106M | 94M |
+| nested-solving | 48.3 ± 0.6 | 62.9 ± 0.5 | 1.30× | 59.7M | 52.8M |
+| primitives | 142.1 ± 3.1 | 168.3 ± 3.4 | 1.18× | 22.0M | 21.0M |
+
+Unifications per workload (`theoryMatchReport`; `match` calls are the theory's, `mgu` calls the solver's):
+
+| Workload | Before (match + mgu) | After (match + mgu) |
+|---|---:|---:|
+| fact-table-arg0, fact-table-arg1, dynamic-table-arg0 | 1502 + 1501 = 3003 | 0 + 2002 = 2002 |
+| dynamic-counter | 3004 + 2003 = 5007 | 1500 + 2004 = 3504 |
+| dynamic-churn | 2002 + 1501 = 3503 | 1000 + 2002 = 3002 |
+| determinism | 3003 + 2002 = 5005 | 1 + 2002 = 2003 |
+| nrev | 1053 + 556 = 1609 | 0 + 586 = 586 |
+| deep-recursion | 4002 + 4001 = 8003 | 0 + 6002 = 6002 |
+| backtracking | 22738 + 13409 = 36147 | 1957 + 13415 = 15372 |
+
+The remaining `match` calls come from `retract/1` and `clause/2`, which still use `Theory.get`.
+
+**(b), (c) Deep positions and key pre-check.** Lookups (ops/s, `all` / `first`, immutable; mutable is within 10%):
+
+| Query | Size | Before | After | Speedup |
+|---|---:|---:|---:|---:|
+| nested-arg1, all | 1k | 3,489 | 1,417,000 | 406× |
+| nested-arg1, all | 10k | 349 | 1,469,000 | 4,207× |
+| nested-arg1, first | 10k | 741 | 1,455,000 | 1,965× |
+| joint-args, all | 1k | 157,100 | 832,000 | 5.3× |
+| joint-args, all | 10k | 45,820 | 307,300 | 6.7× |
+| joint-args, first | 10k | 88,620 | 511,800 | 5.8× |
+
+Every other lookup at 10, 1k and 10k is within noise or 0.92–0.97× (the cost of the position search), the worst
+being mutable `last-bound` `all` at 1k (0.92×). `joint-args` stays ~2× (1k) to ~5× (10k) slower than a lookup
+served by one selective argument: joint indexes were not implemented (see the plan).
+
+**(d) `INDEX_THRESHOLD` from 8 to 4.** Lookups into procedures of 4 to 64 clauses, thresholds 4 to 64 (a
+throwaway benchmark): indexing is 1.3–2.2× faster than scanning from 8 clauses on, and from 4 on 1.4–1.5× for
+selective lookups (7–8× without a match), 0.8× for `joint-args`.
+
+**Costs.** Mutable insert-then-retract at 1k clauses is 0.88× (`assertZ`) and 0.90× (`retract-last`): index updates
+now go through path-based keys. Immutable mutations, churn and iteration are unchanged (0.95–1.08×).

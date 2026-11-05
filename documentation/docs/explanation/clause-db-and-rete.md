@@ -61,9 +61,20 @@ production-rule engines:
    ICLP 2007) and SWI-Prolog's JIT indexing. Each lookup then uses, among the arguments it binds, the index
    yielding the fewest candidates. So `p(X, a, Y)` is as fast as `p(a, X, Y)` whenever the second argument
    discriminates, which first-argument indexing (the WAM's `switch_on_term`) cannot offer.
-3. **Candidates.** An index maps keys to the clauses having that key as argument; clauses with a variable there
+3. **Deep positions.** Where an argument's index cannot tell clauses apart (several clauses share the query's key
+   there, as in `p(f(X, a))` among many `p(f(k, …))`), lookups also consider the arguments of that compound term,
+   down to depth 4, with indexes of their own, as SWI-Prolog's deep indexing does.
+4. **Candidates.** An index maps keys to the clauses having that key at its position; clauses with a variable there
    are candidates for every key. A lookup merges, in clause order, the clauses with the query's key and those with
-   a variable, and unifies only those, lazily: asking for the first match stops at the first match.
+   a variable, compares the keys of the query's other bound arguments with theirs, and only unifies the clauses
+   passing that check, lazily: asking for the first match stops at the first match. `candidates(query)` stops before
+   unifying, for callers that unify the clauses themselves anyway.
+
+Procedures with fewer than 4 clauses are simply scanned.
+
+Solvers use `candidates`: their resolution step renames each candidate clause and unifies it with the goal once,
+and that unifier is the one resolution goes on with, so no clause is unified twice. Only clauses unifying with the
+goal are kept, so the solver still knows exactly when a goal has no other alternative, and opens no choice point.
 
 Keys come from the unificator: `Unificator.indexKey(term)` abstracts a term into an `IndexKey` (an atom by value,
 a number by value, a compound by functor and arity, a variable as a wildcard). The contract mirrors the one
