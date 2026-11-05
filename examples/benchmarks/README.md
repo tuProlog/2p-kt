@@ -504,14 +504,17 @@ Unifications per workload (`theoryMatchReport`; `match` calls are the theory's, 
 | Workload | Before (match + mgu) | After (match + mgu) |
 |---|---:|---:|
 | fact-table-arg0, fact-table-arg1, dynamic-table-arg0 | 1502 + 1501 = 3003 | 0 + 2002 = 2002 |
-| dynamic-counter | 3004 + 2003 = 5007 | 1500 + 2004 = 3504 |
-| dynamic-churn | 2002 + 1501 = 3503 | 1000 + 2002 = 3002 |
+| dynamic-counter | 3004 + 2003 = 5007 | 1000 + 2004 = 3004 |
+| dynamic-churn | 2002 + 1501 = 3503 | 500 + 2002 = 2502 |
 | determinism | 3003 + 2002 = 5005 | 1 + 2002 = 2003 |
 | nrev | 1053 + 556 = 1609 | 0 + 586 = 586 |
 | deep-recursion | 4002 + 4001 = 8003 | 0 + 6002 = 6002 |
 | backtracking | 22738 + 13409 = 36147 | 1957 + 13415 = 15372 |
 
-The remaining `match` calls come from `retract/1` and `clause/2`, which still use `Theory.get`.
+`retract/1` and `clause/2` use `candidates` as well. The remaining `match` calls come from outside clause selection:
+removing each retracted clause from the dynamic KB, and other solver code (`backtracking` retracts nothing). The
+timings above predate the `retract/1`/`clause/2` change, and the decoding of index paths once per index (which targets
+the mutable insert-then-retract cost below): both are to be measured again.
 
 **(b), (c) Deep positions and key pre-check.** Lookups (ops/s, `all` / `first`, immutable; mutable is within 10%):
 
