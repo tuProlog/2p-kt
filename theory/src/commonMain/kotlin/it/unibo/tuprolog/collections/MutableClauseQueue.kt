@@ -21,10 +21,12 @@ interface MutableClauseQueue :
     fun removeFirst(): Clause?
 
     companion object {
+        /** A new, empty [MutableClauseQueue] matching clauses with [unificator]. */
         @JvmStatic
         @JsName("empty")
         fun empty(unificator: Unificator = Unificator.default): MutableClauseQueue = of(unificator, emptyList())
 
+        /** A new [MutableClauseQueue] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -32,6 +34,7 @@ interface MutableClauseQueue :
             vararg clauses: Clause,
         ): MutableClauseQueue = of(unificator, clauses.asIterable())
 
+        /** A new [MutableClauseQueue] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("ofIterable")
         fun of(
@@ -39,6 +42,7 @@ interface MutableClauseQueue :
             clauses: Iterable<Clause>,
         ): MutableClauseQueue = MutableClauseListImpl.of(unificator, clauses)
 
+        /** A new [MutableClauseQueue] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("ofSequence")
         fun of(

@@ -12,7 +12,7 @@ import it.unibo.tuprolog.theory.validated
 import it.unibo.tuprolog.unify.Unificator
 
 /**
- * The mutable, write-optimised [MutableTheory] (#1019), backed by a [MutableStore]: assertions and retractions are
+ * The mutable, write-optimised [MutableTheory], backed by a [MutableStore]: assertions and retractions are
  * amortised O(1) after lookup, and lookups and iterations follow the logical update view: they see the clauses as of
  * when they started, whatever happens to the theory while they are consumed.
  */
@@ -21,14 +21,14 @@ internal class MutableIndexedTheory private constructor(
     tags: Map<String, Any>,
 ) : AbstractTheory(tags),
     MutableTheory {
-    /** Construct a Clause database from given clauses */
+    /** Builds a theory from the given clauses, after checking they are well formed. */
     constructor(
         unificator: Unificator,
         clauses: Iterable<Clause>,
         tags: Map<String, Any> = emptyMap(),
     ) : this(MutableStore(unificator).also { it.addAll(clauses.validated()) }, tags)
 
-    /** Construct a Clause database from given clauses */
+    /** Builds a theory from the given clauses, after checking they are well formed. */
     constructor(
         unificator: Unificator,
         clauses: Sequence<Clause>,

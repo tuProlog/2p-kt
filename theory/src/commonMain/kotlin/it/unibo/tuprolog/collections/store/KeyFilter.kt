@@ -7,8 +7,9 @@ import it.unibo.tuprolog.unify.Unificator
 
 /**
  * Rejects, without unifying, the clauses of a procedure whose head has an exact key differing from the query's on some
- * argument (the key pre-check of WAM and SWI-Prolog indexing). Indexes select candidates on one argument only: this
- * checks all the others, before anything costlier (unification, renaming) happens. One filter serves one iteration.
+ * head argument (a key pre-check, like the WAM's `switch_on_term` and SWI-Prolog's clause keys). An index selects
+ * candidates on one position only: this checks every head argument (deep positions are not checked), before anything
+ * costlier (unification, renaming) happens. One filter serves one iteration.
  * When candidates come from an index, it accepts the first one unchecked, and computes the query's keys when a second
  * one shows up, so that lookups with a single candidate (the common case, with a selective index) pay nothing for it.
  * When they come from a scan (small procedures, or no index usable), it checks them all.

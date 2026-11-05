@@ -6,10 +6,13 @@ import it.unibo.tuprolog.theory.impl.MutableIndexedTheory
 import it.unibo.tuprolog.unify.Unificator
 
 /**
- * A [TheoryFactory] producing the default [Theory]/[MutableTheory] implementations (#1019): clauses are grouped by
- * procedure, and indexed on demand on whichever argument a lookup binds, so retrieval only unifies the (typically
- * few) clauses that could actually unify with a goal. Immutable theories are optimised for reads, mutable ones for
- * updates.
+ * A [TheoryFactory] producing the default [Theory]/[MutableTheory] implementations, the ones [Theory.of] and
+ * [MutableTheory.of] return: clauses are grouped by procedure, and indexed on demand on whichever argument (or
+ * sub-argument) a lookup binds, so retrieval only unifies the (typically few) clauses that could actually unify with a
+ * goal. Immutable theories are optimised for reads, mutable ones for updates. See [Theory] for the indexing scheme
+ * and its references, and [MutableTheory] for the logical update view.
+ *
+ * @param unificator the default [Unificator] of the theories built without an explicit one
  */
 class IndexedTheoryFactory(
     override val unificator: Unificator,

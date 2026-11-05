@@ -11,10 +11,15 @@ interface MutableClauseSet :
     ClauseSet,
     MutableClauseMultiSet {
     companion object {
+        /** A new, empty [MutableClauseSet] matching clauses with [unificator]. */
         @JvmStatic
         @JsName("empty")
         fun empty(unificator: Unificator = Unificator.default): MutableClauseSet = of(unificator, emptyList())
 
+        /**
+         * A new [MutableClauseSet] of the given clauses, matching clauses with [unificator], skipping those that are
+         * variants of a clause already added.
+         */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -22,6 +27,10 @@ interface MutableClauseSet :
             vararg clauses: Clause,
         ): MutableClauseSet = of(unificator, clauses.asIterable())
 
+        /**
+         * A new [MutableClauseSet] of the given clauses, matching clauses with [unificator], skipping those that are
+         * variants of a clause already added.
+         */
         @JvmStatic
         @JsName("ofIterable")
         fun of(
@@ -29,6 +38,10 @@ interface MutableClauseSet :
             clauses: Iterable<Clause>,
         ): MutableClauseSet = MutableClauseSetImpl.of(unificator, clauses)
 
+        /**
+         * A new [MutableClauseSet] of the given clauses, matching clauses with [unificator], skipping those that are
+         * variants of a clause already added.
+         */
         @JvmStatic
         @JsName("ofSequence")
         fun of(

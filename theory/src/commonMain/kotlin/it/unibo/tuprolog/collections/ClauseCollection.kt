@@ -8,7 +8,7 @@ import it.unibo.tuprolog.unify.UnificationAware
 import kotlin.js.JsName
 
 /**
- * A read-only, unification-aware collection of [Clause]s (#1019), the root of the clause-collection family:
+ * A read-only, unification-aware collection of [Clause]s, the root of the clause-collection family:
  * [ClauseMultiSet] and [ClauseSet] (unordered), [ClauseQueue], [ClauseDeque] and [ClauseList] (ordered, as Prolog
  * orders clauses), each with a mutable counterpart, plus [ClauseMap]. `Theory` is a [ClauseDeque].
  *

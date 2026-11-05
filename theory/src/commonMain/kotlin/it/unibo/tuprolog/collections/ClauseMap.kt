@@ -8,13 +8,15 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
- * A read-only map from clauses to values (#1019), keyed by variant: two clauses that are variants of each other (see
+ * A read-only map from clauses to values, keyed by variant: two clauses that are variants of each other (see
  * [ClauseCollection.containsVariant]) are the same key. Besides lookups by key, [entriesMatching] retrieves, through
  * clause indexes, the entries whose key unifies with a query. Useful to attach data to clauses without changing their
  * tags: provenance, probabilities, statistics.
+ *
+ * Two maps are equal when they hold equal keys (by [Clause.equals], not by variant) associated with equal values.
  */
 interface ClauseMap<out V> : UnificationAware {
-    /** The number of entries. */
+    /** The number of entries (an `Int`, like `Map.size`, while clause collections count clauses with a `Long`). */
     @JsName("size")
     val size: Int
 
@@ -22,7 +24,7 @@ interface ClauseMap<out V> : UnificationAware {
     @JsName("isEmpty")
     val isEmpty: Boolean get() = size == 0
 
-    /** The keys, in insertion order. */
+    /** The keys, in insertion order: a read-only view, which reflects later changes to a mutable map. */
     @JsName("keys")
     val keys: ClauseSet
 
@@ -47,10 +49,15 @@ interface ClauseMap<out V> : UnificationAware {
     fun asMap(): Map<Clause, V> = entries.toMap()
 
     companion object {
+        /** An empty [ClauseMap] matching clauses with [unificator]. */
         @JvmStatic
         @JsName("empty")
         fun <V> empty(unificator: Unificator = Unificator.default): ClauseMap<V> = of(unificator, emptyList())
 
+        /**
+         * A [ClauseMap] of the given entries, in order, matching clauses with [unificator]: an entry whose key is a
+         * variant of an earlier one replaces its value, keeping the earlier key.
+         */
         @JvmStatic
         @JsName("of")
         fun <V> of(
@@ -58,6 +65,10 @@ interface ClauseMap<out V> : UnificationAware {
             vararg entries: Pair<Clause, V>,
         ): ClauseMap<V> = of(unificator, entries.asIterable())
 
+        /**
+         * A [ClauseMap] of the given entries, in order, matching clauses with [unificator]: an entry whose key is a
+         * variant of an earlier one replaces its value, keeping the earlier key.
+         */
         @JvmStatic
         @JsName("ofIterable")
         fun <V> of(

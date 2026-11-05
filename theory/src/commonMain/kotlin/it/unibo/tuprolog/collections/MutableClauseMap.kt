@@ -19,7 +19,7 @@ interface MutableClauseMap<V> : ClauseMap<V> {
     @JsName("remove")
     fun remove(key: Clause): V?
 
-    /** Removes the entries whose key unifies with [query], returning them. */
+    /** Removes the entries whose key unifies with [query], returning them in key insertion order. */
     @JsName("removeAllMatching")
     fun removeAllMatching(query: Clause): List<Pair<Clause, V>>
 
@@ -28,10 +28,15 @@ interface MutableClauseMap<V> : ClauseMap<V> {
     fun clear()
 
     companion object {
+        /** A new, empty [MutableClauseMap] matching clauses with [unificator]. */
         @JvmStatic
         @JsName("empty")
         fun <V> empty(unificator: Unificator = Unificator.default): MutableClauseMap<V> = of(unificator, emptyList())
 
+        /**
+         * A new [MutableClauseMap] of the given entries, in order, matching clauses with [unificator]: an entry whose
+         * key is a variant of an earlier one replaces its value, keeping the earlier key.
+         */
         @JvmStatic
         @JsName("of")
         fun <V> of(
@@ -39,6 +44,10 @@ interface MutableClauseMap<V> : ClauseMap<V> {
             vararg entries: Pair<Clause, V>,
         ): MutableClauseMap<V> = of(unificator, entries.asIterable())
 
+        /**
+         * A new [MutableClauseMap] of the given entries, in order, matching clauses with [unificator]: an entry whose
+         * key is a variant of an earlier one replaces its value, keeping the earlier key.
+         */
         @JvmStatic
         @JsName("ofIterable")
         fun <V> of(
