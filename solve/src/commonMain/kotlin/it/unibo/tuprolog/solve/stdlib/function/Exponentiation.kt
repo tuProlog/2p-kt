@@ -6,8 +6,9 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.BinaryMathFunction
 import org.gciatto.kt.math.BigDecimal
-import org.gciatto.kt.math.BigInteger
-import kotlin.math.pow
+import org.gciatto.kt.math.big.isLongValue
+import org.gciatto.kt.math.big.pow
+import kotlin.math.absoluteValue
 
 /**
  * Implementation of `'**'/2` arithmetic functor
@@ -67,17 +68,11 @@ object Exponentiation : BinaryMathFunction("**") {
         context: ExecutionContext,
     ): Numeric = power(real1.value, real2.value, context)
 
-    /** Exact for natural exponents [BigDecimal.pow] supports, floating-point otherwise. */
     private fun power(
         base: BigDecimal,
         exponent: Integer,
         context: ExecutionContext,
-    ): Real =
-        if (exponent.value.signum >= 0 && exponent.value <= BigInteger.of(MAX_EXACT_EXPONENT)) {
-            Real.of(base.pow(exponent.value.toInt()))
-        } else {
-            power(base, exponent.decimalValue, context)
-        }
+    ): Real = power(base, exponent.decimalValue, context)
 
     private fun power(
         base: BigDecimal,
@@ -87,8 +82,19 @@ object Exponentiation : BinaryMathFunction("**") {
         if (base.signum == 0 && exponent.signum < 0) {
             throwUndefinedError(context)
         } else {
-            realOf(base.toDouble().pow(exponent.toDouble()), context)
+            computeReal(context) {
+                when {
+                    !exponent.isLongValue() -> base.pow(exponent, it)
+                    it.precision == 0 && base.precision.toLong() * exponent.toLong().absoluteValue > MAX_EXACT_DIGITS ->
+                        throw ArithmeticException("Too many digits for an exact power")
+                    // big-math's pow with a BigDecimal exponent requires a limited precision, even for integral ones
+                    else -> base.pow(exponent.toLong(), it)
+                }
+            }
         }
 
-    private const val MAX_EXACT_EXPONENT = 999_999_999
+    // ponytail: exact powers are capped at this many (estimated) digits, beyond which they are rounded (or undefined,
+    // with an unlimited real_precision_mode): computing them exactly would exhaust time and memory. Make it a flag if
+    // anyone needs exact results this large.
+    private const val MAX_EXACT_DIGITS = 100_000L
 }

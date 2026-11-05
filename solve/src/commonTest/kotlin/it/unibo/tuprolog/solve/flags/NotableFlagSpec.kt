@@ -23,6 +23,9 @@ private val notableFlags =
         ShowWildCardVariablesInSolutions,
         UniqueSolutions,
         GroundQueriesHaveBooleanSolution,
+        RealPrecisionMode,
+        RealPrecisionDigits,
+        RealRoundingMode,
     )
 
 /** A flag that doesn't override [NotableFlag.help], as a library-defined flag may not: every built-in one does. */

@@ -42,7 +42,7 @@ object DummyInstances {
             override val unificator: Unificator get() = Unificator.default
             override val procedure: Struct by lazy { Atom.of("dummyProcedure") }
             override val libraries: Nothing by lazy { throw NotImplementedError() }
-            override val flags: Nothing by lazy { throw NotImplementedError() }
+            override val flags: FlagStore get() = FlagStore.DEFAULT
             override val staticKb: Nothing by lazy { throw NotImplementedError() }
             override val dynamicKb: Nothing by lazy { throw NotImplementedError() }
             override val operators: OperatorSet by lazy { throw NotImplementedError() }

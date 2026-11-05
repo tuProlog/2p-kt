@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.TermConvertible
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.LogicError
+import it.unibo.tuprolog.solve.flags.FlagDomain
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
@@ -79,8 +80,12 @@ class DomainError(
         ): DomainError =
             message(
                 (index?.let { "The $it-th argument" } ?: "An argument") +
-                    " of `${procedure.pretty()}` should be one of " +
-                    flagValues.joinToString(", ", "{", "}") { "`${it.pretty()}`" } +
+                    " of `${procedure.pretty()}` should be " +
+                    when (flagValues) {
+                        // an IntRange may hold billions of values: never list them
+                        is FlagDomain.IntRange -> "an integer in ${flagValues.minInclusive}..${flagValues.maxInclusive}"
+                        else -> flagValues.joinToString(", ", "one of {", "}") { "`${it.pretty()}`" }
+                    } +
                     " but `${actualValue.pretty()}` has been provided instead",
             ) { m, extra ->
                 DomainError(

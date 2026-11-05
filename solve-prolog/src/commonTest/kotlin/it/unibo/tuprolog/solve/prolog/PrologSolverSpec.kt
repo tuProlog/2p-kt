@@ -249,7 +249,7 @@ private val arithmeticErrorCases =
         ArithmeticErrorCase("log-of-negative", Struct.of("log", Integer.of(-1)), EvaluationError.Type.UNDEFINED),
         ArithmeticErrorCase("sqrt-of-negative", Struct.of("sqrt", Integer.of(-1)), EvaluationError.Type.UNDEFINED),
         ArithmeticErrorCase("sqrt-of-negative-real", Struct.of("sqrt", Real.of(-0.5)), EvaluationError.Type.UNDEFINED),
-        ArithmeticErrorCase("exp-overflows", Struct.of("exp", Integer.of(1000)), EvaluationError.Type.FLOAT_OVERFLOW),
+        ArithmeticErrorCase("exp-overflows", Struct.of("exp", Real.of("1.0E10")), EvaluationError.Type.FLOAT_OVERFLOW),
         ArithmeticErrorCase(
             "power-of-zero-to-negative",
             Struct.of("**", Integer.of(0), Integer.of(-1)),
@@ -267,7 +267,7 @@ private val arithmeticErrorCases =
         ),
         ArithmeticErrorCase(
             "power-overflows",
-            Struct.of("**", Real.of(10.0), Real.of(400.0)),
+            Struct.of("**", Real.of(10.0), Real.of("1.0E10")),
             EvaluationError.Type.FLOAT_OVERFLOW,
         ),
     )

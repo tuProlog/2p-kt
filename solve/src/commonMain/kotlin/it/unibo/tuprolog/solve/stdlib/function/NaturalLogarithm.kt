@@ -6,8 +6,7 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.UnaryMathFunction
 import org.gciatto.kt.math.BigDecimal
-import kotlin.math.E
-import kotlin.math.log
+import org.gciatto.kt.math.big.log
 
 /**
  * Implementation of `log/1` arithmetic functor
@@ -53,6 +52,6 @@ object NaturalLogarithm : UnaryMathFunction("log") {
         if (decimal.signum <= 0) {
             throwUndefinedError(context)
         } else {
-            realOf(log(decimal.toDouble(), E), context)
+            computeReal(context) { mc -> relativelyPrecise(mc) { decimal.log(it) } }
         }
 }

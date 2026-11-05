@@ -35,13 +35,16 @@ object ToFloat : UnaryMathFunction("float") {
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(integer)
+    ): Numeric = commonBehaviour(integer, context)
 
     override fun mathFunction(
         real: Real,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(real)
+    ): Numeric = commonBehaviour(real, context)
 
     /** Implementation of common behaviour for Integer and Real */
-    private fun commonBehaviour(numeric: Numeric) = Numeric.of(numeric.decimalValue)
+    private fun commonBehaviour(
+        numeric: Numeric,
+        context: ExecutionContext,
+    ) = computeReal(context) { numeric.decimalValue.round(it) }
 }
