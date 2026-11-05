@@ -22,5 +22,7 @@ internal abstract class StoreBackedCollection : ClauseCollection {
 
     override fun get(clause: Clause): Sequence<Clause> = source.matching(clause)
 
+    override fun candidates(query: Clause): Sequence<Clause> = source.candidates(query)
+
     override fun toString(): String = joinToString(", ", "${this::class.simpleName}[", "]")
 }

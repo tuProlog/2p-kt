@@ -1,15 +1,13 @@
 package it.unibo.tuprolog.collections.store
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.unify.Unificator
 
-/** Merges two views sorted by [Entry.order], keeping the entries visible at [generation] and unifying with [query]. */
+/** Merges two views sorted by [Entry.order], keeping the entries visible at [generation] whose clause satisfies [accept]. */
 internal class MatchingEntries(
     private val first: EntryView,
     private val second: EntryView,
     private val generation: Long,
-    private val query: Clause,
-    private val unificator: Unificator,
+    private val accept: (Clause) -> Boolean,
 ) : Iterator<Entry> {
     private var i = 0
     private var j = 0
@@ -22,7 +20,7 @@ internal class MatchingEntries(
                     j >= second.size || (i < first.size && first[i].order < second[j].order) -> first[i++]
                     else -> second[j++]
                 }
-            if (candidate.isVisibleAt(generation) && unificator.match(query, candidate.clause)) next = candidate
+            if (candidate.isVisibleAt(generation) && accept(candidate.clause)) next = candidate
         }
         return next != null
     }

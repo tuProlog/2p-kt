@@ -33,7 +33,7 @@ import it.unibo.tuprolog.utils.setTags
 
 /*
  * Every theory implementation must behave like a plain list of clauses (#1019): same clauses in the same order, same
- * lookup results in the same order, same retracted clauses, with tags preserved, for any sequence of operations and
+ * lookup results in the same order (`candidates` being an ordered superset of them), same retracted clauses, with tags preserved, for any sequence of operations and
  * for unificators with different notions of equality (strict, naive, and one that also compares tags).
  */
 
@@ -51,6 +51,11 @@ private sealed interface Op {
     ) : Op
 
     data class Get(
+        val query: Clause,
+    ) : Op
+
+    /** Observes `candidates`, filtered by unification: it must find the same clauses as `get`. */
+    data class Candidates(
         val query: Clause,
     ) : Op
 
@@ -99,6 +104,7 @@ private class Oracle(
             is Op.AssertA -> null.also { clauses.add(0, op.clause) }
             is Op.AssertZ -> null.also { clauses.add(op.clause) }
             is Op.Get -> matches(op.query)
+            is Op.Candidates -> matches(op.query)
             is Op.Retract -> retractFirst(op.query)?.let { listOf(it) }
             is Op.RetractMany -> op.queries.mapNotNull { retractFirst(it) }.takeIf { it.isNotEmpty() }
             is Op.RetractAll -> retractAll(op.query)
@@ -114,11 +120,24 @@ private fun Theory.apply(op: Op): Pair<Theory, List<Clause>?> =
         is Op.AssertA -> assertA(op.clause) to null
         is Op.AssertZ -> assertZ(op.clause) to null
         is Op.Get -> this to get(op.query).toList()
+        is Op.Candidates ->
+            this to
+                candidates(op.query).toList().also { shouldBeInOrder(it) }.filter { unificator.match(op.query, it) }
         is Op.Retract -> retract(op.query).let { it.theory to it.clauses?.toList() }
         is Op.RetractMany -> retract(op.queries).let { it.theory to it.clauses?.toList() }
         is Op.RetractAll -> retractAll(op.query).let { it.theory to it.clauses?.toList() }
         is Op.Abolish -> abolish(op.indicator) to null
     }
+
+/** Checks that [candidates] are clauses of this theory, in the theory's order. */
+private fun Theory.shouldBeInOrder(candidates: List<Clause>) {
+    val remaining = clauses.iterator()
+    for (candidate in candidates) {
+        withClue("candidate $candidate, in order") {
+            remaining.asSequence().any { it === candidate } shouldBe true
+        }
+    }
+}
 
 /** Clauses together with their tags, as clause equality ignores tags. */
 private fun Iterable<Clause>.withTags(): List<Pair<Clause, Map<String, Any>>> = map { it to it.tags }
@@ -205,6 +224,7 @@ private val ops: Arb<Op> =
         4 to arbitrary { Op.AssertZ(clauses.bind()) },
         2 to arbitrary { Op.AssertA(clauses.bind()) },
         3 to arbitrary { Op.Get(queries.bind()) },
+        2 to arbitrary { Op.Candidates(queries.bind()) },
         2 to arbitrary { Op.Retract(queries.bind()) },
         1 to arbitrary { Op.RetractMany(Arb.list(queries, 1..3).bind()) },
         1 to arbitrary { Op.RetractAll(queries.bind()) },
@@ -265,6 +285,7 @@ private val regressions =
                     Op.AssertZ(Rule.of(Struct.of("p", Real.of(1.0), Var.of("X")), Truth.TRUE)),
                     Op.Get(Rule.of(Struct.of("p", Integer.of(1), Var.anonymous()), Var.anonymous())),
                     Op.Get(Rule.of(Struct.of("p", Real.of(1.0), Atom.of("a")), Var.anonymous())),
+                    Op.Candidates(Rule.of(Struct.of("p", Real.of(1.0), Atom.of("a")), Var.anonymous())),
                     Op.Retract(Rule.of(Struct.of("p", Var.anonymous(), Atom.of("a")), Var.anonymous())),
                     Op.RetractAll(Rule.of(Struct.of("p", Integer.of(1), Var.anonymous()), Var.anonymous())),
                     Op.Get(Rule.of(Struct.of("p", Var.anonymous(), Var.anonymous()), Var.anonymous())),
@@ -288,7 +309,9 @@ private val regressions =
                     Op.AssertZ(p(Struct.of("h", g(Integer.of(3))))),
                     Op.AssertZ(p(f(g(Var.of("Y"))))),
                     Op.Get(q(f(g(Integer.of(3))))),
+                    Op.Candidates(q(f(g(Integer.of(3))))),
                     Op.Get(q(f(g(Real.of(3.0))))),
+                    Op.Candidates(q(f(g(Real.of(3.0))))),
                     Op.Get(q(f(Var.of("Z")))),
                     Op.Get(q(f(g(Struct.of("k", Atom.of("c")))))),
                     Op.Retract(q(f(g(Integer.of(3))))),

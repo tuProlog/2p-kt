@@ -19,6 +19,9 @@ internal class FrozenStore private constructor(
     override fun matching(query: Clause): Sequence<Clause> =
         procedures[procedureKeyOf(query)]?.matching(query) ?: emptySequence()
 
+    override fun candidates(query: Clause): Sequence<Clause> =
+        procedures[procedureKeyOf(query)]?.keyMatching(query) ?: emptySequence()
+
     /** A store with [added] (already validated) at the beginning or end. */
     fun plus(
         added: List<Clause>,
