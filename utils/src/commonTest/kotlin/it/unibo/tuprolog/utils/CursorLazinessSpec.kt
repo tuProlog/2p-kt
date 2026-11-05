@@ -41,7 +41,11 @@ class CursorLazinessSpec :
 
         test("map/memoized-current-and-next") {
             var calls = 0
-            val mapped = listOf(1, 2, 3).cursor().map { calls++; it }
+            val mapped =
+                listOf(1, 2, 3).cursor().map {
+                    calls++
+                    it
+                }
             repeat(3) { mapped.next.current }
             repeat(3) { mapped.next.next.current }
             calls shouldBe 2

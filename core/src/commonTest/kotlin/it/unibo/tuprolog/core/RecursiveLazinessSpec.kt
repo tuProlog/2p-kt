@@ -126,7 +126,7 @@ class RecursiveLazinessSpec :
             block.isGround shouldBe case.ground
             block.size shouldBe 1
         }
-    
+
         withTests(nameFn = { "materialization/${it.id}-is-random-access" }, snapshotCases) { case ->
             val term = case.build((0 until 5).map { Var.of("X$it") })
             (term.unfoldedList is RandomAccess) shouldBe true
@@ -156,7 +156,7 @@ class RecursiveLazinessSpec :
             applied.last shouldBe Atom.of("c")
             applied shouldBe LogicList.from(listOf(Atom.of("a"), Atom.of("b")), Atom.of("c"))
         }
-    
+
         withTests(nameFn = { "construction/${it.id}/consumes-bounded-prefix" }, lazyConstructionCases) { case ->
             val source = CountedSource(1_000)
             val term = case.build(source.sequence)
@@ -179,7 +179,10 @@ class RecursiveLazinessSpec :
             term.unfoldedSequence.take(2).toList() shouldBe listOf(a, b)
         }
 
-        withTests(nameFn = { "construction/${it.id}/lazy-is-indistinguishable-from-eager" }, lazyConstructionCases) { case ->
+        withTests(
+            nameFn = { "construction/${it.id}/lazy-is-indistinguishable-from-eager" },
+            lazyConstructionCases,
+        ) { case ->
             val items = (0 until 150).map { if (it % 3 == 0) Var.of("X$it") else Atom.of("a$it") }
             val lazy = case.build(items.asSequence())
             val eager = case.build(items)
