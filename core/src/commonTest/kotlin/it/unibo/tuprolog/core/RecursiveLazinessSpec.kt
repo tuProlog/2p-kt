@@ -39,6 +39,20 @@ internal data class MetadataCase(
 
 private val metadataCases = listOf(MetadataCase("ground", true), MetadataCase("non-ground", false))
 
+/** A recursive term whose flattened snapshots must be array-backed. */
+internal data class SnapshotCase(
+    val id: String,
+    val build: (KtList<Term>) -> Recursive,
+)
+
+private val snapshotCases =
+    listOf(
+        SnapshotCase("list-eager") { LogicList.of(it) },
+        SnapshotCase("list-lazy") { LogicList.of(it.asSequence()) },
+        SnapshotCase("tuple") { Tuple.of(it) },
+        SnapshotCase("block") { Block.of(it) },
+    )
+
 class RecursiveLazinessSpec :
     FunSpec({
         withTests(nameFn = { "wrap/${it.id}-does-not-traverse-lazy-child" }, wrapCases) { case ->
@@ -69,5 +83,35 @@ class RecursiveLazinessSpec :
             val block = Block.of(LogicList.of(case.items().asSequence()) as Term)
             block.isGround shouldBe case.ground
             block.size shouldBe 1
+        }
+    
+        withTests(nameFn = { "materialization/${it.id}-is-random-access" }, snapshotCases) { case ->
+            val term = case.build((0 until 5).map { Var.of("X$it") })
+            (term.unfoldedList is RandomAccess) shouldBe true
+            (term.toList() is RandomAccess) shouldBe true
+        }
+
+        test("apply/lazy-list-with-explicit-last-stays-lazy") {
+            val x = Var.of("X")
+            val list =
+                LogicList.from(
+                    sequence {
+                        yield(x)
+                        yield(Atom.of("b"))
+                        error("suffix evaluated")
+                    },
+                    Var.of("T"),
+                )
+            val applied = list.apply(Substitution.of(x, Atom.of("a"))).castToCons()
+            applied.head shouldBe Atom.of("a")
+            applied.tail.castToCons().head shouldBe Atom.of("b")
+        }
+
+        test("apply/lazy-list-with-explicit-last-substitutes-last") {
+            val t = Var.of("T")
+            val list = LogicList.from(sequenceOf(Atom.of("a"), Atom.of("b")), t)
+            val applied = list.apply(Substitution.of(t, Atom.of("c"))).castToList()
+            applied.last shouldBe Atom.of("c")
+            applied shouldBe LogicList.from(listOf(Atom.of("a"), Atom.of("b")), Atom.of("c"))
         }
     })
