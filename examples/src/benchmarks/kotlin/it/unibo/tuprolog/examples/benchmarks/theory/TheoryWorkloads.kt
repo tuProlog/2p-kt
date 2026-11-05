@@ -40,6 +40,31 @@ object TheoryWorkloads {
             repeat(size) { add(r()) }
         }
 
+    /** The side of the `m/3` grid: each of its first two arguments takes about `sqrt(size)` values. */
+    fun gridSide(size: Int): Int =
+        kotlin.math
+            .sqrt(size.toDouble())
+            .toInt()
+            .coerceAtLeast(1)
+
+    /** `s(f(k, c_i), i)`: the distinguishing key sits in the second argument of a compound first argument. */
+    fun s(i: Int): Fact = Fact.of(Struct.of("s", Struct.of("f", Atom.of("k"), c(i)), Integer.of(i)))
+
+    /** `m(a_(i mod R), b_(i div R), i)`, R = [gridSide]: either bound argument alone selects ~R clauses, both select 1. */
+    fun m(
+        i: Int,
+        size: Int,
+    ): Fact =
+        Fact.of(
+            Struct.of("m", Atom.of("a_${i % gridSide(size)}"), Atom.of("b_${i / gridSide(size)}"), Integer.of(i)),
+        )
+
+    /**
+     * [standard], plus two procedures of `size` clauses for lookups that first-argument-chain indexes cannot serve
+     * well (Step 6 experiments): [s] (deeper indexing) and [m] (joint indexes).
+     */
+    fun lookup(size: Int): List<Clause> = standard(size) + List(size) { s(it) } + List(size) { m(it, size) }
+
     /** `size` facts `k_j(c_i)`, spread round-robin over `predicates` functors `k_0`, …, `k_(predicates-1)`. */
     fun spread(
         size: Int,
