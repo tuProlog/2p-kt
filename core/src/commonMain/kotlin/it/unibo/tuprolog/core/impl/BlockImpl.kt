@@ -13,16 +13,32 @@ internal open class BlockImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : RecursiveImpl(BLOCK_FUNCTOR, listOfNotNull(item), tags),
     Block {
-    override val isGround: Boolean = checkGroundness()
+    private val eagerGround: Boolean? = if (item == null) true else item.knownGround
 
-    override fun checkGroundness(): Boolean = item?.isGround ?: true
+    private val eagerSize: Int? =
+        when {
+            item == null -> 0
+            item.isTuple -> item.knownSize
+            else -> 1
+        }
+
+    override val isGround: Boolean
+        get() = eagerGround ?: super<RecursiveImpl>.isGround
+
+    override val knownGround: Boolean?
+        get() = eagerGround ?: super.knownGround
+
+    override val size: Int
+        get() = eagerSize ?: super<RecursiveImpl>.size
+
+    override val knownSize: Int?
+        get() = eagerSize ?: super.knownSize
 
     override val functor: String = super<Block>.functor
 
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { BlockIterator(this) }.asSequence()
 
-    override val size: Int get() = unfoldedList.size
 
     override fun unfold(): Sequence<Term> = Iterable { BlockUnfolder(this) }.asSequence()
 

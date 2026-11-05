@@ -14,14 +14,25 @@ internal class TupleImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : RecursiveImpl(TUPLE_FUNCTOR, listOf(left, right), tags),
     Tuple {
-    override val isGround: Boolean = checkGroundness()
+    private val eagerGround: Boolean? = knownGroundOf(left, right)
 
-    override fun checkGroundness(): Boolean = left.isGround && right.isGround
+    private val eagerSize: Int? = if (right.isTuple) right.knownSize?.plus(1) else 2
+
+    override val isGround: Boolean
+        get() = eagerGround ?: super<RecursiveImpl>.isGround
+
+    override val knownGround: Boolean?
+        get() = eagerGround ?: super.knownGround
+
+    override val size: Int
+        get() = eagerSize ?: super<RecursiveImpl>.size
+
+    override val knownSize: Int?
+        get() = eagerSize ?: super.knownSize
 
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { TupleIterator(this) }.asSequence()
 
-    override val size: Int get() = unfoldedList.size
 
     override fun unfold(): Sequence<Term> = Iterable { TupleUnfolder(this) }.asSequence()
 

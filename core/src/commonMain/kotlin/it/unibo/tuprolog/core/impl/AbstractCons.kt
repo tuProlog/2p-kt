@@ -26,7 +26,27 @@ internal abstract class AbstractCons(
 
     override val functor: String = CONS_FUNCTOR
 
-    override val isWellFormed: Boolean by lazy { last.isEmptyList }
+    private val lastCache: Lazy<Term> = lazy { unfoldedSequence.last() }
+
+    override val isWellFormed: Boolean
+        get() = last.isEmptyList
+
+    /** This list's [last] term, if it is already known without traversing any lazy suffix, or `null`. */
+    internal open val knownLast: Term?
+        get() = lastCache.valueIfInitialized()
+
+    override val size: Int
+        get() = super<RecursiveImpl>.size
+
+    override fun computeSize(): Int {
+        var count = 0
+        var last: Term? = null
+        for (item in unfoldedSequence) {
+            count++
+            last = item
+        }
+        return if (last?.isEmptyList == true) count - 1 else count
+    }
 
     override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()
 
@@ -45,7 +65,7 @@ internal abstract class AbstractCons(
     override fun toSequence(): Sequence<Term> = LogicListIterator.SkippingLast(this).asSequence()
 
     override val last: Term
-        get() = unfoldedSequence.last()
+        get() = lastCache.value
 
     override fun toString(): String {
         val (ending, take) =

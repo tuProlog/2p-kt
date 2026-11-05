@@ -13,30 +13,39 @@ internal class ConsImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : AbstractCons(listOf(head, tail), tags),
     Cons {
-    override val isGround: Boolean = checkGroundness()
+    // Metadata is propagated from the tail in O(1) when the tail already knows it, and otherwise computed
+    // on demand (iteratively), so that consing onto a lazy list never traverses it.
+    private val eagerGround: Boolean? = knownGroundOf(head, tail)
 
-    override val last: Term =
-        when {
-            tail.isList -> tail.castToList().last
-            else -> tail
-        }
+    private val eagerLast: Term? = if (tail.isCons) (tail as? AbstractCons)?.knownLast else tail
 
-    override val size: Int =
+    private val eagerSize: Int? =
         when {
-            tail.isList -> 1 + tail.castToList().size
+            tail.isCons -> tail.knownSize?.plus(1)
+            tail.isEmptyList -> 1
             else -> 2
         }
 
-    override val isWellFormed: Boolean =
-        when {
-            tail.isList -> tail.castToList().isWellFormed
-            else -> false
-        }
+    override val isGround: Boolean
+        get() = eagerGround ?: super<AbstractCons>.isGround
 
-    override fun checkGroundness(): Boolean = head.isGround && tail.isGround
+    override val knownGround: Boolean?
+        get() = eagerGround ?: super.knownGround
+
+    override val last: Term
+        get() = eagerLast ?: super<AbstractCons>.last
+
+    override val knownLast: Term?
+        get() = eagerLast ?: super.knownLast
+
+    override val size: Int
+        get() = eagerSize ?: super<AbstractCons>.size
+
+    override val knownSize: Int?
+        get() = eagerSize ?: super.knownSize
 
     override val estimatedLength: Int
-        get() = size
+        get() = eagerSize ?: 1
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         if (estimatedLength >= SWITCH_TO_LAZY_THRESHOLD) {

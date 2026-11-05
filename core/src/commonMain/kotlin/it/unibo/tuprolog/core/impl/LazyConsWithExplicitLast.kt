@@ -49,8 +49,6 @@ internal class LazyConsWithExplicitLast(
     override fun copyWithTags(tags: Map<String, Any>): LazyConsWithExplicitLast =
         if (this.tags === tags) this else LazyConsWithExplicitLast(cursor, termination, tags)
 
-    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty()
-
     override fun freshCopy(scope: Scope): Cons =
         LazyConsWithExplicitLast(
             unfoldedSequence.dropLast().map { it.freshCopy(scope) }.cursor(),

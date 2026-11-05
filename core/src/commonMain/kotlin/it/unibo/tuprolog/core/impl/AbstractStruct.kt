@@ -18,7 +18,7 @@ internal abstract class AbstractStruct(
     override val isGround: Boolean
         get() = checkGroundness()
 
-    protected open fun checkGroundness(): Boolean = variables.none()
+    protected open fun checkGroundness(): Boolean = args.all { it.isGround }
 
     override fun freshCopy(): Struct = freshCopy(Scope.empty())
 
