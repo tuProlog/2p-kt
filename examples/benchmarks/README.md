@@ -1,4 +1,4 @@
-# Resolution benchmarks (#1012, #1020)
+# Resolution benchmarks (#1012, #1019, #1020)
 
 JMH benchmarks in `examples/src/benchmarks`. Timing (#1012) measures how timeout handling affects resolution:
 
@@ -39,6 +39,26 @@ worklist-based one (`AbstractWorklistUnificator`), both strict, through the `eng
 ./gradlew :examples:timingBenchmarks -PjmhArgs='-wi 3 -i 5 -w 2s -r 2s -f 1 UnificatorSolverBenchmark'
 python3 examples/benchmarks/engines.py examples/build/reports/benchmarks/jmh.json   # one row per engine pair
 ```
+
+Clause storage (#1019) is benchmarked in `src/benchmarks/kotlin/.../theory`, each over an `impl` parameter
+(`immutable` for `Theory`, `mutable` for `MutableTheory`) and a theory size:
+
+- `TheoryConstructionBenchmark`, `TheoryIncrementalConstructionBenchmark`: building a theory in one go, or by
+  repeated `assertZ`.
+- `TheoryLookupBenchmark`: first and all clauses matching queries bound on different arguments (see `TheoryQuery`).
+- `TheoryMutationBenchmark`: `assertA`, `assertZ`, `retract` of the first and last clause, `retractAll`, `abolish`
+  (on mutable theories, each followed by its inverse).
+- `TheoryChurnBenchmark`: lookups, iteration and `size` after a history of asserts and retracts.
+- `TheoryIterationBenchmark`: iteration, `size`, `hashCode` and `equals` over 1 or 1000 predicates.
+- `TheorySolverBenchmark`: `:solve-prolog` on fact tables and dynamic predicates (`theory-workloads.pl`).
+
+```
+./gradlew :examples:timingBenchmarks -PjmhArgs='-wi 2 -i 3 -w 1s -r 1s -f 1 -p size=1000 benchmarks.theory.TheoryLookupBenchmark[.]'
+./gradlew :examples:theoryMatchReport   # unifications attempted per lookup, deterministic
+```
+
+The old store is roughly quadratic in several operations, so a full run at 100k clauses takes hours: run one class and
+size at a time.
 
 ## Results
 
@@ -232,3 +252,40 @@ was measured too, with the worklist engine (`2026-11-03-unificators-e0762f3-work
 - Resolution is 1.4–2.2× faster, allocating 27–50% less (`tiny` is dominated by set-up).
 - `merge` brings nothing in the solver's state machines, where the two substitutions never share variables: it
   was 2–8% slower (within error bars, but consistently), so they keep using `Substitution.plus`.
+
+### Clause storage (#1019)
+
+Baseline `2a6b358` (develop's `:theory` plus these benchmarks) against `6e974c2`, except `Churn` (`bb2dd7e`) and
+`Mutation` (`9ef849a`): those two commits only change the mutable store's removal path. Apple M1, 16 GB, JDK 17.0.21,
+`-wi 2 -i 3 -w 1s -r 1s -f 1`, one class and size per run, baseline and after alternating. Full tables, including the
+archived intermediate runs, are in [the PR comment](https://github.com/tuProlog/2p-kt/pull/1071#issuecomment-6642318812);
+the raw JSON was not committed.
+
+Speedup of after over baseline (ops/s ratio), geometric mean over each benchmark's cases, with the worst case:
+
+| Benchmark | 10 | 1k | 10k | 100k¹ | Worst case anywhere |
+|---|---:|---:|---:|---:|---|
+| Construction (bulk) | 15.4× | 16.7× | 10.4× | 5.9× | 4.65× (mutable, 100k) |
+| Construction (incremental)² | 53.0× | 269× | – | – | 19.7× (mutable, 1k) |
+| Lookup, first match | 3.5× | 27.3× | 99.7× | 536× | 1.10× (zero-arity) |
+| Lookup, all matches | 3.4× | 24.7× | 89.3× | 441× | 1.00× (zero-arity) |
+| Mutation | 10.1× | 28.3× | 64.2× | 903× | 0.85× (mutable `assertZ`, 1k)³ |
+| Churn (history 0, 1k, 10k, 100k) | 24.4× | 34.2× | 63.0× | 104× | 1.38× (mutable lookup) |
+| Iteration | 4.9× | 36.9× | 92.5× | 309× | 0.91× (immutable `hashCode`)⁴ |
+| Solver (fixed workloads) | | | | | 9.85× mean, 1.48× (`fact-table-arg0`) to 57,518× (`fact-table-arg1`) |
+
+¹ Against the numbers the stopped baseline run reached at 100k. ² Sizes 10 to 1k. ³ Between 1.20× at 100 and 1.13× at
+3k, so within noise at 3 iterations. ⁴ Reads a cached hash in both versions: 0.91–0.99× is measurement noise on a
+nanosecond operation.
+
+Gains grow with size because lookups go through argument indexes instead of scanning the predicate. Zero-arity and
+`hashCode` cases have nothing to index, and stay at about 1×.
+
+Intermediate runs found three scaling regressions, all fixed:
+
+- `a410491`: lookups on a nested first argument (`q(f(g(c)))`) unified with every clause; `6e974c2` indexes the chain
+  of first arguments up to depth 4.
+- `6e974c2`: mutable `assertZ`/`retract-last` left retracted entries in hot index buckets, making each lookup linear
+  (0.09× at 10k); `bb2dd7e` compacts each bucket on its own.
+- `bb2dd7e`: rebuilding all indexes after compacting a procedure made mutable inserts 0.69× at 10k; `9ef849a` keeps
+  them. Mutable insert-then-retract is now 1.07–1.34× the baseline from 10 to 10k (but for the noisy 1k point above), and 1.7–1.8M ops/s at 100k.
