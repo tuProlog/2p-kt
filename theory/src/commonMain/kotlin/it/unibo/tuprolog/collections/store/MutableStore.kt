@@ -61,7 +61,8 @@ internal class MutableStore(
         if (first.size == 0 && second.size == 0) return emptySequence()
         val generation = generation
         return Sequence {
-            val keys = KeyFilter.of(unificator, query)
+            // MutableProcedure.candidates gives EMPTY_VIEW as second view only when it scans the whole procedure
+            val keys = KeyFilter.of(unificator, query, indexed = second !== EMPTY_VIEW)
             MatchingEntries(first, second, generation) { keys(it) && accept(it) }
         }
     }

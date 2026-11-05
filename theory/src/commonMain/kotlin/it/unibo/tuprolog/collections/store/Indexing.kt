@@ -42,23 +42,28 @@ internal fun pathOf(argument: Int): Int = argument + 1
 /** The path of the [argument]-th argument of the compound term at this path. */
 internal fun Int.child(argument: Int): Int = (this shl STEP_BITS) or (argument + 1)
 
+/** The argument indexes [path] steps through, outermost first: decode it once, then use [keyAt] as often as needed. */
+internal fun stepsOf(path: Int): IntArray {
+    var steps = 1
+    while (steps < MAX_INDEX_DEPTH && (path ushr (STEP_BITS * steps)) != 0) steps++
+    return IntArray(steps) { ((path ushr (STEP_BITS * (steps - 1 - it))) and STEP_MASK) - 1 }
+}
+
 /**
- * The key of the term found at [path] in [head]. Paths stop, giving a wildcard, at anything this unificator does not
- * key as a compound (e.g. a variable, which unifies with whatever lies deeper) or lacking the required argument.
+ * The key of the term found in [head] by following [steps] (see [stepsOf]). Paths stop, giving a wildcard, at anything
+ * this unificator does not key as a compound (e.g. a variable, which unifies with whatever lies deeper) or lacking the
+ * required argument.
  */
 internal fun Unificator.keyAt(
     head: Struct,
-    path: Int,
+    steps: IntArray,
 ): IndexKey {
-    var steps = 1
-    while (steps < MAX_INDEX_DEPTH && (path ushr (STEP_BITS * steps)) != 0) steps++
     var term: Term = head
-    for (step in steps - 1 downTo 0) {
-        if (step < steps - 1 && (indexKey(term) !is IndexKey.OfStruct || !term.isStruct)) return IndexKey.Wildcard
+    for (i in steps.indices) {
+        if (i > 0 && (indexKey(term) !is IndexKey.OfStruct || !term.isStruct)) return IndexKey.Wildcard
         val struct = term.castToStruct()
-        val argument = ((path ushr (STEP_BITS * step)) and STEP_MASK) - 1
-        if (argument >= struct.arity) return IndexKey.Wildcard
-        term = struct.getArgAt(argument)
+        if (steps[i] >= struct.arity) return IndexKey.Wildcard
+        term = struct.getArgAt(steps[i])
     }
     return indexKey(term)
 }
