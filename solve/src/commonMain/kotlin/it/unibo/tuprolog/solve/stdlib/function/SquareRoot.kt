@@ -51,6 +51,6 @@ object SquareRoot : UnaryMathFunction("sqrt") {
         if (decimal.signum < 0) {
             throwUndefinedError(context)
         } else {
-            Numeric.of(decimal.sqrt())
+            computeReal(context) { decimal.sqrt(it) }
         }
 }

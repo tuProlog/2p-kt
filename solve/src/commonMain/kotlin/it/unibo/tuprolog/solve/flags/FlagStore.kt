@@ -96,7 +96,7 @@ data class FlagStore(
          * [it.unibo.tuprolog.solve.SolverFactory.defaultFlags]), with every [NotableFlag] set to its
          * [NotableFlag.defaultValue]: [Unknown], [Bounded], [MaxArity], [DoubleQuotes], [LastCallOptimization],
          * [TrackVariables], [ShowWildCardVariablesInSolutions], [UniqueSolutions],
-         * [GroundQueriesHaveBooleanSolution].
+         * [GroundQueriesHaveBooleanSolution], [RealPrecisionMode], [RealPrecisionDigits], [RealRoundingMode].
          */
         @JvmField
         val DEFAULT =
@@ -110,6 +110,9 @@ data class FlagStore(
                 ShowWildCardVariablesInSolutions,
                 UniqueSolutions,
                 GroundQueriesHaveBooleanSolution,
+                RealPrecisionMode,
+                RealPrecisionDigits,
+                RealRoundingMode,
             )
 
         /** Same as [EMPTY], as a factory method. */

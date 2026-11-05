@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.UnaryMathFunction
 import org.gciatto.kt.math.BigDecimal
-import kotlin.math.cos
+import org.gciatto.kt.math.big.cos
 
 /**
  * Implementation of `cos/1` arithmetic functor
@@ -34,13 +34,16 @@ object Cosine : UnaryMathFunction("cos") {
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(integer.decimalValue)
+    ): Numeric = commonBehaviour(integer.decimalValue, context)
 
     override fun mathFunction(
         real: Real,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(real.value)
+    ): Numeric = commonBehaviour(real.value, context)
 
     /** Implements the common behaviour for real and integer */
-    private fun commonBehaviour(decimal: BigDecimal) = Numeric.of(cos(decimal.toDouble()))
+    private fun commonBehaviour(
+        decimal: BigDecimal,
+        context: ExecutionContext,
+    ) = computeReal(context) { mc -> relativelyPrecise(mc) { decimal.cos(it) } }
 }
