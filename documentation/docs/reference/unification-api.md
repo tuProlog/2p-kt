@@ -120,6 +120,10 @@ val absoluteValueUnificator =
                 first.value.absoluteValue.compareTo(second.value.absoluteValue) == 0
             else -> first == second
         }
+
+        // 1 and -1 unify, so they must share an index key (see below)
+        override fun indexKey(term: Term): IndexKey =
+            if (term is Integer) IndexKey.OfInteger(term.value.absoluteValue) else IndexKey.strict(term)
     }
 
 val sameTagsUnificator =
@@ -129,3 +133,28 @@ val sameTagsUnificator =
         }
     }
 ```
+
+A custom strategy unifying terms with different principal symbols, like `absoluteValueUnificator`, must also override
+`indexKey`, as explained next. `sameTagsUnificator` only rejects more pairs, so the default keys suit it.
+
+### Index keys
+
+Clause collections and theories (module `theory`) do not unify a query with every clause: they first narrow the
+clauses down through indexes, by comparing *index keys*. `Unificator.indexKey(term): IndexKey` abstracts a term into
+one of:
+
+| `IndexKey` | For | Exact |
+|---|---|---|
+| `OfAtom(value)` | an atom | yes |
+| `OfInteger(value)` | an integer | yes |
+| `OfNumber(value)` | a real number, or any number for unificators comparing numbers by value | yes |
+| `OfStruct(functor, arity)` | a compound term | yes |
+| `AnyOfArity(arity)` | reserved: a compound term whose functor is a variable | no |
+| `Wildcard` | a variable, or anything a unificator does not want indexed | no |
+
+The contract mirrors the one between `hashCode` and `equals`: **if two terms unify, either their keys are equal, or
+one of them is not exact**. Keys may merge terms that do not unify (indexing becomes less selective, never wrong), but
+must never separate terms that do, or indexed lookups would miss clauses. The default implementation,
+`IndexKey.strict(term)`, suits `strict()` and any unificator that only rejects more pairs (e.g. because of tags);
+`naive()` uses `IndexKey.numbersByValue(term)`. Keys ignore tags. See
+[Clause storage and indexing](../explanation/clause-storage-and-indexing.md) for how indexes use them.

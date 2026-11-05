@@ -12,7 +12,8 @@ with a few build-tooling rationale pages that are useful mostly to contributors:
 2. [Philosophy](philosophy.md) — the design philosophy behind 2P-Kt's modular architecture.
 3. [Term model](term-model.md) — why terms are immutable and what that buys you.
 4. [Variables and scoping](variables-and-scoping.md) — why `Var` equality/scoping works the way it does.
-5. [Clause databases and indexing](clause-db-and-rete.md) — how theories index clauses for fast matching.
+5. [Clause storage and indexing](clause-storage-and-indexing.md) — how theories store and index clauses, and the
+   literature behind it.
 6. [Solver design](solver-design.md) — the rationale behind the `Solver`/`Solution` API's shape.
 7. [The solve-prolog state machine](state-machine.md) — how the prolog SLD-resolution engine actually runs.
 8. [Parser architecture](parsing-architecture.md) — how Prolog source text becomes terms and theories.

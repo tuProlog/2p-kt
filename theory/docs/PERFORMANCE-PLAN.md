@@ -97,7 +97,7 @@ Additional findings:
 
 - `collections/rete/generic/**` (11 `internal` files) is dead code; only its own specs use it.
 - The public `collections` API (`ClauseQueue`, `ClauseMultiSet`, their mutable variants, `ReteTree`) has no user
-  outside `:theory`. It only appears in the docs page `documentation/docs/explanation/clause-db-and-rete.md`.
+  outside `:theory`. It only appears in the docs page `documentation/docs/explanation/clause-storage-and-indexing.md`.
 
 ### How the rest of the repo uses theories
 
@@ -380,7 +380,7 @@ It touches every solver's `ExecutionContext`, so it's out of scope here.
 | **2** | `:core` `isVariantOf` + variant hash; `:unify` `indexKey`/`IndexKey`; `:utils` `TagKey`. Each with specs. | — | low |
 | **3** | Core stores (§3) + immutable `Theory` + immutable `ClauseQueue`/`Deque`/`List`/`MultiSet`/`Set`/`Map` façades; switch `Theory.of/indexedOf/empty`. | Lookup, Construction, Iteration, fact-table-*, consult-large, determinism | medium |
 | **4** | Mutable stores with generations + `MutableTheory` + mutable façades; drop `buffered()` in `StateRuleSelection`, `Retract.kt`, `Clause.kt` (and `:solve-concurrent`); `LogicalUpdateViewSpec`. | Mutation, Churn, LookupWhileMutating, dynamic-* | medium-high |
-| **5** | Delete the RETE, the old `collections`, listed theories, `Cacheable` & co.; document tag propagation; rewrite `clause-db-and-rete.md`; CHANGELOG breaking notes. Then the **checkpoint** full run + README. | full | low |
+| **5** | Delete the RETE, the old `collections`, listed theories, `Cacheable` & co.; document tag propagation; rewrite `clause-storage-and-indexing.md`; CHANGELOG breaking notes. Then the **checkpoint** full run + README. | full | low |
 | **6** | Gated experiments: (a) `matchingWithMgu` vs `candidates` in the solver (§5.3); (b) deep indexing of compound arguments; (c) joint multi-argument indexes or tries; (d) tuning `T` and the selectivity heuristic. | per experiment | — |
 
 Doors kept open: Patterns (`IndexKey.AnyWithArity`, pattern procedures), subsumption queries, tabling (variant
