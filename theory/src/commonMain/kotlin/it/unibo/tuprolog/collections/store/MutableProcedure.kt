@@ -21,8 +21,8 @@ internal class MutableProcedure(
 
     private fun keyOf(
         entry: Entry,
-        path: Int,
-    ): IndexKey = unificator.keyAt(entry.clause.head!!, path)
+        steps: IntArray,
+    ): IndexKey = unificator.keyAt(entry.clause.head!!, steps)
 
     fun add(
         entry: Entry,
@@ -32,7 +32,7 @@ internal class MutableProcedure(
         live++
         for (i in built.indices) {
             val index = built[i]
-            val key = keyOf(entry, index.path)
+            val key = keyOf(entry, index.steps)
             val deque = if (key.isExact) index.buckets.getOrPut(key) { EntryDeque() } else index.wildcards
             if (atStart) deque.addFirst(entry) else deque.addLast(entry)
         }
@@ -40,7 +40,7 @@ internal class MutableProcedure(
         var i = 0
         while (i < unindexable.size) {
             val path = unindexable[i]
-            if (keyOf(entry, path).isExact) {
+            if (keyOf(entry, stepsOf(path)).isExact) {
                 indexes.remove(path)
                 unindexable[i] = unindexable[unindexable.lastIndex]
                 unindexable.removeAt(unindexable.lastIndex)
@@ -61,7 +61,7 @@ internal class MutableProcedure(
         // indexes are kept, compacting each bucket on its own: rebuilding them all would cost O(n) every n removals
         for (i in built.indices) {
             val index = built[i]
-            val key = keyOf(entry, index.path)
+            val key = keyOf(entry, index.steps)
             val deque = (if (key.isExact) index.buckets[key] else index.wildcards) ?: continue
             if (++deque.dead <= COMPACTION_SLACK || 2 * deque.dead <= deque.size) continue
             val compacted = EntryDeque.of(deque.alive())
@@ -78,8 +78,9 @@ internal class MutableProcedure(
         if (cached != null) return if (cached === NotIndexable) null else cached as MutableArgIndex
         val buckets = HashMap<IndexKey, EntryDeque>()
         val wildcards = EntryDeque()
+        val steps = stepsOf(path)
         for (entry in entries.alive()) {
-            val key = keyOf(entry, path)
+            val key = keyOf(entry, steps)
             if (key.isExact) buckets.getOrPut(key) { EntryDeque() }.addLast(entry) else wildcards.addLast(entry)
         }
         if (buckets.isEmpty()) {
@@ -87,7 +88,7 @@ internal class MutableProcedure(
             unindexable.add(path)
             return null
         }
-        return MutableArgIndex(path, buckets, wildcards).also {
+        return MutableArgIndex(path, steps, buckets, wildcards).also {
             indexes[path] = it
             built.add(it)
         }

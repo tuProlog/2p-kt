@@ -56,7 +56,7 @@ internal class FrozenProcedure(
     fun matches(query: Clause): IntIterator {
         val candidates = candidates(query)
         if (!candidates.hasNext()) return candidates
-        val keys = KeyFilter.of(unificator, query)
+        val keys = KeyFilter.of(unificator, query, candidates is MergedPositions)
         return MatchingPositions(candidates, clauses) { keys(it) && unificator.match(query, it) }
     }
 
@@ -64,7 +64,16 @@ internal class FrozenProcedure(
     fun keyMatching(query: Clause): Sequence<Clause> =
         Sequence {
             val candidates = candidates(query)
-            val keys = if (candidates.hasNext()) KeyFilter.of(unificator, query) else null
+            val keys =
+                if (candidates.hasNext()) {
+                    KeyFilter.of(
+                        unificator,
+                        query,
+                        candidates is MergedPositions,
+                    )
+                } else {
+                    null
+                }
             PositionsToClauses(if (keys == null) candidates else MatchingPositions(candidates, clauses, keys), clauses)
         }
 
