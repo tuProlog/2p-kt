@@ -59,8 +59,10 @@ internal class MutableStore(
         val procedure = procedures[procedureKeyOf(query)] ?: return emptySequence()
         val (first, second) = procedure.candidates(query)
         val generation = generation
-        val keys = KeyFilter.of(unificator, query)
-        return Sequence { MatchingEntries(first, second, generation) { keys(it) && accept(it) } }
+        return Sequence {
+            val keys = KeyFilter.of(unificator, query)
+            MatchingEntries(first, second, generation) { keys(it) && accept(it) }
+        }
     }
 
     /** The entries matching [query], as of now, lazily. */
