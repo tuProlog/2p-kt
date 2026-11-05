@@ -50,15 +50,11 @@ internal abstract class AbstractCons(
 
     override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()
 
-    override fun toArray(): Array<Term> =
-        when {
-            isWellFormed -> unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
-            else -> unfoldedArray
-        }
+    override fun toArray(): Array<Term> = toList().toTypedArray()
 
     override fun toList(): List<Term> =
         when {
-            isWellFormed -> unfoldedList.subList(0, unfoldedList.lastIndex)
+            isWellFormed -> toSequence().toList()
             else -> unfoldedList
         }
 

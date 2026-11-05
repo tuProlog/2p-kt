@@ -37,6 +37,13 @@ internal class TupleImpl(
 
     override fun unfold(): Sequence<Term> = Iterable { TupleUnfolder(this) }.asSequence()
 
+    // explicit, as on Kotlin/JS the interface's default implementations are not exposed under their @JsName
+    override fun toList(): List<Term> = unfoldedList
+
+    override fun toArray(): Array<Term> = unfoldedArray
+
+    override fun toSequence(): Sequence<Term> = unfoldedSequence
+
     override val functor: String = TUPLE_FUNCTOR
 
     override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")

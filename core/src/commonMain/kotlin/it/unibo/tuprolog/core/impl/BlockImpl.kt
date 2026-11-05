@@ -42,6 +42,13 @@ internal open class BlockImpl(
 
     override fun unfold(): Sequence<Term> = Iterable { BlockUnfolder(this) }.asSequence()
 
+    // explicit, as on Kotlin/JS the interface's default implementations are not exposed under their @JsName
+    override fun toList(): List<Term> = unfoldedList
+
+    override fun toArray(): Array<Term> = unfoldedArray
+
+    override fun toSequence(): Sequence<Term> = unfoldedSequence
+
     override fun toString(): String = unfoldedSequence.joinToString(", ", "{", "}")
 
     override fun copyWithTags(tags: Map<String, Any>): Block = BlockImpl(item, tags)

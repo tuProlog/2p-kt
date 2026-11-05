@@ -127,11 +127,12 @@ interface Tuple : Recursive {
             require(terms.size >= 2) {
                 "Tuples require at least 2 terms"
             }
-            return terms
-                .slice(0 until terms.lastIndex)
-                .foldRight(terms.last()) { l, r ->
-                    TupleImpl(l, r)
-                }.castToTuple()
+            val i = terms.listIterator(terms.size)
+            var right: Term = i.previous()
+            while (i.hasPrevious()) {
+                right = TupleImpl(i.previous(), right)
+            }
+            return right.castToTuple()
         }
     }
 }

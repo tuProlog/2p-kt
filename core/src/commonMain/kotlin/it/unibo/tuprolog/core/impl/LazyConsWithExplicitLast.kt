@@ -44,7 +44,7 @@ internal class LazyConsWithExplicitLast(
     override val args: List<Term> = LazyTwoItemsList({ head }, { tail })
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
-        LazyConsWithImplicitLast(unfoldedSequence.map { it.apply(unifier) }.cursor(), tags)
+        LazyConsWithExplicitLast(cursor.map { it.apply(unifier) }, termination.apply(unifier), tags)
 
     override fun copyWithTags(tags: Map<String, Any>): LazyConsWithExplicitLast =
         if (this.tags === tags) this else LazyConsWithExplicitLast(cursor, termination, tags)
