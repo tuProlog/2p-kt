@@ -51,16 +51,25 @@ internal class MutableStore(
         }
     }
 
-    /** The entries matching [query], as of now, lazily. */
-    private fun matchingEntries(query: Clause): Sequence<Entry> {
+    /** The entries whose keys agree with [query]'s, and whose clause satisfies [accept], as of now, lazily. */
+    private fun entries(
+        query: Clause,
+        accept: (Clause) -> Boolean,
+    ): Sequence<Entry> {
         val procedure = procedures[procedureKeyOf(query)] ?: return emptySequence()
         val (first, second) = procedure.candidates(query)
         val generation = generation
-        return Sequence { MatchingEntries(first, second, generation, query, unificator) }
+        val keys = KeyFilter.of(unificator, query)
+        return Sequence { MatchingEntries(first, second, generation) { keys(it) && accept(it) } }
     }
+
+    /** The entries matching [query], as of now, lazily. */
+    private fun matchingEntries(query: Clause): Sequence<Entry> = entries(query) { unificator.match(query, it) }
 
     /** The clauses matching [query] as of this call (logical update view), lazily. */
     override fun matching(query: Clause): Sequence<Clause> = matchingEntries(query).map { it.clause }
+
+    override fun candidates(query: Clause): Sequence<Clause> = entries(query) { true }.map { it.clause }
 
     /** All live entries, in order, as of the call to [Sequence.iterator]. */
     fun entries(): Sequence<Entry> = Sequence { all.view().visibleAt(generation) { it } }

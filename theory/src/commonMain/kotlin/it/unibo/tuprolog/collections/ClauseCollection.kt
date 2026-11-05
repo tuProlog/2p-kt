@@ -70,6 +70,14 @@ interface ClauseCollection :
     @JsName("countMatching")
     fun countMatching(query: Clause): Long = get(query).fold(0L) { count, _ -> count + 1 }
 
+    /**
+     * The clauses that may unify with [query], lazily, in iteration order: a superset of [get] found by comparing index
+     * keys only, without unifying anything. Meant for callers that unify the candidates themselves anyway, such as a
+     * solver's resolution step, which renames each clause and computes its most general unifier with the goal.
+     */
+    @JsName("candidates")
+    fun candidates(query: Clause): Sequence<Clause> = get(query)
+
     /** Whether some clause is a variant of [clause] (see [isVariantOf]), among those unifying with it. */
     @JsName("containsVariant")
     fun containsVariant(clause: Clause): Boolean = get(clause).any { it.isVariantOf(clause) }

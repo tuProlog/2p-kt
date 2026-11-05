@@ -15,4 +15,7 @@ internal interface ClauseSource {
 
     /** The clauses unifying with [query], in order (for mutable stores, as of this call), lazily. */
     fun matching(query: Clause): Sequence<Clause>
+
+    /** The clauses whose index keys agree with [query]'s, in order, lazily: a superset of [matching], with no unification. */
+    fun candidates(query: Clause): Sequence<Clause>
 }

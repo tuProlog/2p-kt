@@ -51,6 +51,8 @@ internal class IndexedTheory private constructor(
 
     override fun get(clause: Clause): Sequence<Clause> = store.matching(clause)
 
+    override fun candidates(query: Clause): Sequence<Clause> = store.candidates(query)
+
     override fun createNewTheory(
         clauses: Sequence<Clause>,
         tags: Map<String, Any>,
