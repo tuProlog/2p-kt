@@ -28,12 +28,13 @@ the big picture down to specific APIs, ending with a couple of project-meta page
 1. [Module map](module-map.md) — what the ~30 modules are and how they depend on each other.
 2. [Term hierarchy](term-hierarchy.md) — the core logic-data model everything else is built on.
 3. [Unification API](unification-api.md) — unifying and substituting `Term`s.
-4. [Solver API](solver-api.md) — the platform-agnostic goal-resolution API.
-5. [Primitives and functions](primitives-and-functions.md) — the building blocks a `Solver` executes.
-6. [Default predicates](default-predicates.md) — the standard predicates built from those primitives.
-7. [Libraries](libraries.md) — bundling predicates/functions into a pluggable unit.
-8. [I/O library](io-lib.md) — the `:io-lib` predicate catalogue and platform caveats, a concrete `Library` example.
-9. [Prolog DSL](prolog-dsl.md) — the Kotlin DSL for building terms/theories/queries.
-10. [Errors and exceptions](errors-and-exceptions.md) — the exception hierarchy raised during resolution.
-11. [Web IDE](web-ide.md) — every button, tab, and shortcut of the desktop/browser Prolog IDEs.
-12. [CI/CD pipeline](ci-pipeline.md) — project-meta: how 2P-Kt itself is built, tested, and released.
+4. [Theory and clause collections API](theory-api.md) — knowledge bases and unification-aware clause collections.
+5. [Solver API](solver-api.md) — the platform-agnostic goal-resolution API.
+6. [Primitives and functions](primitives-and-functions.md) — the building blocks a `Solver` executes.
+7. [Default predicates](default-predicates.md) — the standard predicates built from those primitives.
+8. [Libraries](libraries.md) — bundling predicates/functions into a pluggable unit.
+9. [I/O library](io-lib.md) — the `:io-lib` predicate catalogue and platform caveats, a concrete `Library` example.
+10. [Prolog DSL](prolog-dsl.md) — the Kotlin DSL for building terms/theories/queries.
+11. [Errors and exceptions](errors-and-exceptions.md) — the exception hierarchy raised during resolution.
+12. [Web IDE](web-ide.md) — every button, tab, and shortcut of the desktop/browser Prolog IDEs.
+13. [CI/CD pipeline](ci-pipeline.md) — project-meta: how 2P-Kt itself is built, tested, and released.
