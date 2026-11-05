@@ -37,8 +37,11 @@ Deviations from the design below:
 - Immutable collections other than `Theory` have no persistent `plus`/`minus`: they are snapshots, updated through
   `toMutable()`. `Theory` keeps its persistent API.
 - Immutable `ClauseMap.of` returns the (mutable) implementation behind a read-only interface, like Kotlin's `mapOf`.
-- Not done (Step 6, gated by measurements): `matchingWithMgu` / `candidates`, deep indexing, joint indexes, tuning
-  `INDEX_THRESHOLD`.
+- Measurements (results in `examples/benchmarks/README.md`) led to three fixes: nested first-argument indexes up to
+  depth 4 (`MAX_INDEX_DEPTH`), per-bucket compaction of retracted entries in mutable procedures, and keeping indexes
+  when a procedure is compacted.
+- Not done (Step 6): `matchingWithMgu` / `candidates`, joint indexes, tuning `INDEX_THRESHOLD`; nested indexing beyond
+  the first-argument chain.
 
 ## 1. Findings (verified)
 
