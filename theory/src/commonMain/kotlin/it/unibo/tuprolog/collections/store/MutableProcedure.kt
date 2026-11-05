@@ -14,8 +14,10 @@ internal class MutableProcedure(
     var live: Int = 0
     var dead: Int = 0
 
-    // per path (see keyAt): NotIndexable or a MutableArgIndex, once built
+    // per path (see keyAt): NotIndexable or a MutableArgIndex, once built; the lists below hold the same, for updates
     private val indexes = HashMap<Int, Any>()
+    private val built = ArrayList<MutableArgIndex>()
+    private val unindexable = ArrayList<Int>()
 
     private fun keyOf(
         entry: Entry,
@@ -28,17 +30,23 @@ internal class MutableProcedure(
     ) {
         if (atStart) entries.addFirst(entry) else entries.addLast(entry)
         live++
-        val slots = indexes.entries.iterator()
-        while (slots.hasNext()) {
-            val (path, index) = slots.next()
-            val key = keyOf(entry, path)
-            if (index === NotIndexable) {
-                if (key.isExact) slots.remove()
-                continue
-            }
-            index as MutableArgIndex
+        for (i in built.indices) {
+            val index = built[i]
+            val key = keyOf(entry, index.path)
             val deque = if (key.isExact) index.buckets.getOrPut(key) { EntryDeque() } else index.wildcards
             if (atStart) deque.addFirst(entry) else deque.addLast(entry)
+        }
+        // a position with no exact key so far may have one now: build its index again on the next lookup needing it
+        var i = 0
+        while (i < unindexable.size) {
+            val path = unindexable[i]
+            if (keyOf(entry, path).isExact) {
+                indexes.remove(path)
+                unindexable[i] = unindexable[unindexable.lastIndex]
+                unindexable.removeAt(unindexable.lastIndex)
+            } else {
+                i++
+            }
         }
     }
 
@@ -51,9 +59,9 @@ internal class MutableProcedure(
             dead = 0
         }
         // indexes are kept, compacting each bucket on its own: rebuilding them all would cost O(n) every n removals
-        for ((path, slot) in indexes) {
-            val index = slot as? MutableArgIndex ?: continue
-            val key = keyOf(entry, path)
+        for (i in built.indices) {
+            val index = built[i]
+            val key = keyOf(entry, index.path)
             val deque = (if (key.isExact) index.buckets[key] else index.wildcards) ?: continue
             if (++deque.dead <= COMPACTION_SLACK || 2 * deque.dead <= deque.size) continue
             val compacted = EntryDeque.of(deque.alive())
@@ -76,9 +84,13 @@ internal class MutableProcedure(
         }
         if (buckets.isEmpty()) {
             indexes[path] = NotIndexable
+            unindexable.add(path)
             return null
         }
-        return MutableArgIndex(buckets, wildcards).also { indexes[path] = it }
+        return MutableArgIndex(path, buckets, wildcards).also {
+            indexes[path] = it
+            built.add(it)
+        }
     }
 
     /** Views over the entries worth unifying with [query]: their merge, by order, holds all candidates. */
