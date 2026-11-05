@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.concurrent.fsm
 
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
@@ -158,8 +159,19 @@ data class StateRuleSelection(
                     } ?: false
                 }
 
-    // mutable theories follow the logical update view (#1019): no need to snapshot their clauses
-    private fun Theory.selectClauses(term: Struct): Sequence<Rule> = get(term).map { it.freshCopy() }.ensureRules()
+    /**
+     * The rules of this theory whose head unifies with [goal], renamed with fresh variables, each with its mgu (see
+     * [MatchedRule]). Candidates are found through the indexes without unification, then renamed and unified once, so
+     * that only matching rules are yielded (as a solver needs, to avoid useless choice points). Unifying `goal :- B`
+     * with the rule `H :- B` compares whole clauses as `Theory.get` does, but costs no more than unifying heads, since
+     * unifying `B` with itself is immediate. Mutable theories follow the logical update view: no need to copy them.
+     */
+    private fun Theory.selectClauses(goal: Struct): Sequence<Rule> =
+        candidates(Rule.of(goal, Var.anonymous())).mapNotNull { candidate ->
+            val rule = candidate.freshCopy().castToRule()
+            val mgu = context.unificator.mgu(Rule.of(goal, rule.body), rule)
+            if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
+        }
 
     override fun clone(context: ConcurrentExecutionContext): StateRuleSelection = copy(context = context)
 }
