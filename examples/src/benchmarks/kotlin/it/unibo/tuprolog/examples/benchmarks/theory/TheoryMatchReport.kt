@@ -8,7 +8,7 @@ import it.unibo.tuprolog.unify.Unificator
 /**
  * Deterministic counts behind `TheoryLookupBenchmark` (#1019): for each implementation and [TheoryQuery], how many
  * `match` calls the theory performs to find the first match (`first`) and every match (`all`), with
- * [TheoryWorkloads.standard] of size [SIZE]. Then, for each solver workload, how many `match` and `mgu` calls solving
+ * [TheoryWorkloads.lookup] of size [SIZE]. Then, for each solver workload, how many `match` and `mgu` calls solving
  * it to exhaustion takes, i.e. how many unifications resolution performs. Prints Markdown tables.
  *
  * Run with `./gradlew :examples:theoryMatchReport`.
@@ -26,7 +26,7 @@ object TheoryMatchReport {
                 val counts =
                     impls.map { impl ->
                         val unificator = CountingUnificator()
-                        val theory = impl.build(TheoryWorkloads.standard(SIZE), unificator)
+                        val theory = impl.build(TheoryWorkloads.lookup(SIZE), unificator)
                         val pattern = query.query(SIZE)
                         unificator.reset()
                         if (mode == "first") theory[pattern].firstOrNull() else theory[pattern].count()

@@ -8,7 +8,7 @@ import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 
-/** The lookups measured by `TheoryLookupBenchmark`, against [TheoryWorkloads.standard] of a given size. */
+/** The lookups measured by `TheoryLookupBenchmark`, against [TheoryWorkloads.lookup] of a given size. */
 enum class TheoryQuery(
     val id: String,
     private val factory: (Int) -> Clause,
@@ -24,6 +24,14 @@ enum class TheoryQuery(
         "nested-arg0",
         { n -> Fact.of(Struct.of("q", Struct.of("f", Struct.of("g", TheoryWorkloads.c(n / 2))), Var.anonymous())) },
     ),
+    NESTED_ARG1(
+        "nested-arg1",
+        { n -> Fact.of(Struct.of("s", Struct.of("f", Var.anonymous(), TheoryWorkloads.c(n / 2)), Var.anonymous())) },
+    ),
+    JOINT_ARGS("joint-args", { n ->
+        val r = TheoryWorkloads.gridSide(n)
+        Fact.of(Struct.of("m", Atom.of("a_${(n / 2) % r}"), Atom.of("b_${(n / 2) / r}"), Var.anonymous()))
+    }),
     NO_MATCH("no-match", { _ -> Fact.of(Struct.of("p", Atom.of("zzz"), Var.anonymous(), Var.anonymous())) }),
     ;
 

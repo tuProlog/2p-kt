@@ -9,7 +9,7 @@ import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
 
 /**
- * Average time of one [Theory.get] (#1019) against [TheoryWorkloads.standard], per implementation, size and query:
+ * Average time of one [Theory.get] (#1019) against [TheoryWorkloads.lookup], per implementation, size and query:
  * `first` consumes the first match only (which is also what `contains` costs), `all` counts every match.
  */
 @State(Scope.Benchmark)
@@ -20,7 +20,17 @@ class TheoryLookupBenchmark {
     @Param("10", "1000", "100000")
     var size: Int = 10
 
-    @Param("arg0-bound", "arg1-bound", "last-bound", "all-vars", "zero-arity", "nested-arg0", "no-match")
+    @Param(
+        "arg0-bound",
+        "arg1-bound",
+        "last-bound",
+        "all-vars",
+        "zero-arity",
+        "nested-arg0",
+        "nested-arg1",
+        "joint-args",
+        "no-match",
+    )
     var query: String = "arg0-bound"
 
     private lateinit var theory: Theory
@@ -28,7 +38,7 @@ class TheoryLookupBenchmark {
 
     @Setup
     fun setUp() {
-        theory = TheoryImpl.byId(impl).build(TheoryWorkloads.standard(size))
+        theory = TheoryImpl.byId(impl).build(TheoryWorkloads.lookup(size))
         pattern = TheoryQuery.byId(query).query(size)
     }
 
