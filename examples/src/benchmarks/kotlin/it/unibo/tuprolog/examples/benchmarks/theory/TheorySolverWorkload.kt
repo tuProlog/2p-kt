@@ -57,10 +57,11 @@ enum class TheorySolverWorkload(
         }
 
         /** A fresh solver: its dynamic KB holds `dt/2`, and the workloads that update it restore it. */
-        fun solver(): Solver =
+        fun solver(unificator: Unificator = Unificator.default): Solver =
             PrologSolverFactory.solverWithDefaultBuiltins(
-                staticKb = staticKb,
-                dynamicKb = MutableTheory.of(Unificator.default, table("dt")),
+                unificator = unificator,
+                staticKb = staticKb.setUnificator(unificator),
+                dynamicKb = MutableTheory.of(unificator, table("dt")),
             )
     }
 }
