@@ -40,8 +40,38 @@ Deviations from the design below:
 - Measurements (results in `examples/benchmarks/README.md`) led to three fixes: nested first-argument indexes up to
   depth 4 (`MAX_INDEX_DEPTH`), per-bucket compaction of retracted entries in mutable procedures, and keeping indexes
   when a procedure is compacted.
-- Not done (Step 6): `matchingWithMgu` / `candidates`, joint indexes, tuning `INDEX_THRESHOLD`; nested indexing beyond
-  the first-argument chain.
+
+Step 6 (gated experiments; numbers in `examples/benchmarks/README.md`, "Clause storage (#1019)"):
+
+- **(a) U4, kept, differently from §5.3.** Profiling `fact-table-arg0` showed the solver dominating, and the cost of
+  U4 lying less in unifying twice than in *how* rule selection unified: `Theory.get(goal)` unifies `goal :- _` with
+  whole clauses, binding `_` to the clause body (occurs check over the body included). Measured on solver workloads:
+  - `matchingWithMgu` as designed (rename, then unify `goal :- _` once) is no faster than before (±5%): the body
+    binding stays, and must be removed from the unifier afterwards (a primitive binding every variable of the
+    substitution broke otherwise). Not added.
+  - `candidates` with unification left to rule execution is 20–40% faster, but determinism degrades (a choice point
+    per non-unifying candidate left), and it unifies heads only, so clause-level tags are no longer observable to
+    custom unificators (`TagsPreservationDuringResolutionContract` fails).
+  - Kept: rule selection takes `candidates`, renames each one and unifies `goal :- B` with the renamed `H :- B`
+    (unifying `B` with itself is immediate), and passes the unifier on to rule execution (`MatchedRule`), which no
+    longer unifies. As fast as `candidates`, exact determinism, same semantics: 1.2–1.4× on solver workloads, 7–15%
+    fewer bytes allocated, 33–58% fewer unifications. `ClauseCollection.candidates` is the only API addition.
+  - Both stores also pre-check the keys of every bound argument before unifying (computed lazily, from the second
+    candidate on): `joint-args` takes 1–2 unifications instead of ~√n.
+- **(b) Deeper indexing, kept.** Indexed positions are paths (an argument, then an argument of the compound found
+  there, up to depth 4), and lookups look into all the arguments of a compound position wherever the query's bucket
+  there holds more than one clause (SWI-Prolog's deep indexing condition, relaxed). `nested-arg1` goes from a full
+  scan to one unification.
+- **(c) Joint indexes, not done.** With the key pre-check, `joint-args` (two bound arguments selecting ~√n clauses
+  each, one jointly) costs ~√n key comparisons and no extra unification: 5–7× faster than before, but still ~2× (1k)
+  to ~5× (10k) slower than a lookup served by one selective argument. No solver workload needs more; the cheap next
+  step, if one does, is intersecting the two best buckets (both sorted by clause order), not tries.
+- **(d) Tuning.** `INDEX_THRESHOLD` lowered from 8 to 4: an index beats a scan from 4 clauses on (1.4–1.5× on selective
+  lookups, 7–8× without matches, 0.8× on `joint-args`), and scanning 8–32 clauses is 0.45–0.75× an index lookup.
+  No "poor index" assessment: lookups never pick an index costlier than a scan, so a poor index only costs its one-off
+  construction and its upkeep on mutable inserts, and (b) only goes deeper where an index is poor for the query.
+  `fact-table-arg0`'s 1.48× over the old RETE is explained by the solver dominating resolution (the old RETE indexed
+  first arguments too); (a) adds ~1.25× on top.
 
 ## 1. Findings (verified)
 
@@ -303,15 +333,14 @@ MutableClauseMap<V> / MutableTheory   (MutableTheory : Theory, MutableClauseDequ
 | `matching(q): Sequence<Clause>` (`Theory.get` delegates) | clauses unifiable with `q`, lazily, in collection order | now |
 | `firstMatching(q)`, `anyMatching(q)`, `countMatching(q)` | short-circuiting variants | now |
 | `containsVariant(c)`, `countVariants(c)` | identity membership | now |
-| `matchingWithMgu(q, fresh = true): Sequence<ClauseMatch>` | `ClauseMatch(clause, mgu)`: one unification per candidate, optionally on a fresh copy of the clause. This is the solver's resolution step (U4) | Step 6 experiment, alongside `candidates` |
-| `candidates(q)` | ordered key-filtered superset, with no unification | Step 6 experiment |
+| `matchingWithMgu(q, fresh = true): Sequence<ClauseMatch>` | `ClauseMatch(clause, mgu)`: one unification per candidate, optionally on a fresh copy of the clause. This is the solver's resolution step (U4) | measured in Step 6, not added: no faster (see Implementation status) |
+| `candidates(q)` | ordered key-filtered superset, with no unification | done (Step 6): solvers unify each candidate once themselves |
 | `instancesOf(q)`, `generalisationsOf(q)` | one-way matching (subsumption), with the same index (keys filter both directions) | door open: needs `subsumes` in `:unify` |
 | `removeFirstMatching(q)`, `removeAllMatching(q)` (mutable) | `retract`/`retractAll` | now |
 
-`matchingWithMgu` is a better fix for U4 than `candidates`. Determinism detection stays exact, because only
-unifying clauses are yielded, and each candidate is renamed and unified once. Non-unifying ones mostly get rejected
-by the key pre-check before renaming. Step 6 measures both against today on `nrev`, `determinism` and
-`fact-table-*`.
+Design-time expectation: `matchingWithMgu` would fix U4 better than `candidates`, as only unifying clauses would be
+yielded (exact determinism). Step 6 found the cost elsewhere (see Implementation status): solvers now use
+`candidates`, and unify each candidate once themselves, keeping determinism exact.
 
 ### 5.4 Theory metadata: tags or properties?
 
