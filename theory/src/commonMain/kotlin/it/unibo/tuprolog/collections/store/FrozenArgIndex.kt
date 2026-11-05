@@ -5,7 +5,7 @@ import it.unibo.tuprolog.unify.IndexKey
 import it.unibo.tuprolog.unify.Unificator
 
 /**
- * The index of one argument of a [FrozenProcedure]: for each exact key, the positions of the clauses having that key
+ * The index of one position (see [keyAt]) of a [FrozenProcedure]: for each exact key, the positions of the clauses having that key
  * as argument, plus the positions of those whose argument has no exact key. All arrays are sorted. Immutable once
  * built: its fields being `val`s, it can be published to other threads through a data race.
  */
@@ -16,14 +16,13 @@ internal class FrozenArgIndex private constructor(
     companion object {
         fun build(
             clauses: Array<Clause>,
-            argument: Int,
-            depth: Int,
+            path: Int,
             unificator: Unificator,
         ): FrozenArgIndex? {
             val buckets = HashMap<IndexKey, MutableList<Int>>()
             val wildcards = mutableListOf<Int>()
             for (i in clauses.indices) {
-                val key = unificator.nestedKey(clauses[i].head!!, argument, depth)
+                val key = unificator.keyAt(clauses[i].head!!, path)
                 if (key.isExact) buckets.getOrPut(key) { mutableListOf() }.add(i) else wildcards.add(i)
             }
             if (buckets.isEmpty()) return null
