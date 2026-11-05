@@ -1,8 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.function
 
-import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.doubles.plusOrMinus
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.Signature
@@ -27,11 +26,7 @@ class CosineSpec :
                     .castToNumeric()
                     .decimalValue
                     .toDouble()
-            withClue("Cosine of \"PI/2\" should be closer to Zero") {
-                (
-                    toBeTested < 6.123233995736767E-17 &&
-                        toBeTested > 6.123233995736765E-17
-                ).shouldBeTrue()
-            }
+            // cos of the double nearest to pi/2 is 6.12323399573676588613...E-17, correctly rounded to 16 digits
+            toBeTested shouldBe (6.123233995736766E-17 plusOrMinus 1E-32)
         }
     })

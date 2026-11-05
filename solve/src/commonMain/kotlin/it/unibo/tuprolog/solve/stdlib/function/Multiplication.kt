@@ -42,25 +42,26 @@ object Multiplication : BinaryMathFunction("*") {
         real: Real,
         integer: Integer,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(real.value, integer.decimalValue)
+    ): Numeric = commonBehaviour(real.value, integer.decimalValue, context)
 
     override fun mathFunction(
         integer: Integer,
         real: Real,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(integer.decimalValue, real.value)
+    ): Numeric = commonBehaviour(integer.decimalValue, real.value, context)
 
     override fun mathFunction(
         real1: Real,
         real2: Real,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(real1.value, real2.value)
+    ): Numeric = commonBehaviour(real1.value, real2.value, context)
 
     /** Implements common behaviour for mixed Integer and Real */
     private fun commonBehaviour(
         decimal1: BigDecimal,
         decimal2: BigDecimal,
+        context: ExecutionContext,
     ): Real =
-        // TODO: 25/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
-        Numeric.of(decimal1 * decimal2)
+        // TODO: "float_overflow" and "underflow" checks missing (see the standard)
+        computeReal(context) { decimal1.times(decimal2, it) }
 }

@@ -50,7 +50,7 @@ kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest"
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
-ktMath = "io.github.gciatto:kt-math:0.10.2"
+ktMath = "io.github.gciatto:kt-math:2.1.2"
 markdown = "org.jetbrains:markdown:0.7.3"
 plantuml = "net.sourceforge.plantuml:plantuml:1.2026.9"
 rsyntaxtextarea = "com.fifesoft:rsyntaxtextarea:4.0.1"
