@@ -5,14 +5,16 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator
 
 /*
- * Mutable theories follow the logical update view (#1019): a lookup or an iteration sees the clauses as of when it
+ * Mutable theories follow the logical update view: a lookup or an iteration sees the clauses as of when it
  * started, whatever happens to the theory while it is consumed. Sizes cover both scanned and indexed procedures.
  */
 
@@ -80,5 +82,33 @@ class LogicalUpdateViewSpec :
                 theory.assertA(p(i, "b"))
             }
             theory[anyP].toList() shouldBe List(3 * case.size) { p(3 * case.size - 1 - it, "b") }
+        }
+
+        test("directives-follow-the-update-view") {
+            val directive = { i: Int -> Directive.of(Struct.of("init", Integer.of(i))) }
+            val theory = MutableTheory.of(Unificator.default, List(5) { directive(it) })
+            val anyDirective = Directive.of(Var.anonymous())
+            val seen = theory[anyDirective].onEach { theory.retract(it) }.toList()
+            seen shouldBe List(5) { directive(it) }
+            theory.directives.toList() shouldBe emptyList()
+        }
+
+        test("naive-unificator-lookups-follow-the-update-view") {
+            val theory = MutableTheory.of(Unificator.naive(), List(10) { p(it) })
+            val realOne = Fact.of(Struct.of("p", Real.of(1.0), Atom.of("a")))
+            val seen = theory[realOne].onEach { theory.assertZ(p(1, "a")) }.toList()
+            seen shouldBe listOf(p(1))
+            theory[realOne].toList() shouldBe listOf(p(1), p(1))
+        }
+
+        test("lookups-stay-correct-across-compactions") {
+            val theory = theoryOf(100)
+            val pending = theory[anyP]
+            repeat(90) { theory.retract(boundP(it)) }
+            theory.size shouldBe 10L
+            theory[boundP(95)].toList() shouldBe listOf(p(95))
+            theory[boundP(5)].toList() shouldBe emptyList()
+            theory.clauses.toList() shouldBe List(10) { p(90 + it) }
+            pending.toList() shouldBe List(100) { p(it) }
         }
     })
