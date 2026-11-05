@@ -1,7 +1,9 @@
 package it.unibo.tuprolog.core
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.ints.shouldBeLessThanOrEqual
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.List as LogicList
 import kotlin.collections.List as KtList
@@ -51,6 +53,46 @@ private val snapshotCases =
         SnapshotCase("list-lazy") { LogicList.of(it.asSequence()) },
         SnapshotCase("tuple") { Tuple.of(it) },
         SnapshotCase("block") { Block.of(it) },
+    )
+
+/** A sequence of [size] atoms, which counts how many of them have been [produced] so far. */
+internal class CountedSource(
+    size: Int,
+) {
+    var produced = 0
+        private set
+
+    val items: KtList<Term> = (0 until size).map { Atom.of("a$it") }
+
+    val sequence: Sequence<Term> =
+        sequence {
+            for (item in items) {
+                produced++
+                yield(item)
+            }
+        }
+}
+
+private fun throwingSequence(): Sequence<Term> = sequence { error("suffix evaluated") }
+
+/** A way of building a recursive term out of a sequence, which must only consume as much of it as needed. */
+internal data class LazyConstructionCase(
+    val id: String,
+    val buildFromSequence: (Sequence<Term>) -> Recursive,
+    val buildFromList: (KtList<Term>) -> Recursive,
+) {
+    fun build(items: Sequence<Term>): Recursive = buildFromSequence(items)
+
+    fun build(items: KtList<Term>): Recursive = buildFromList(items)
+}
+
+private val lazyConstructionCases =
+    listOf(
+        LazyConstructionCase("tuple", { Tuple.of(it) }, { Tuple.of(it) }),
+        LazyConstructionCase("tuple-from-iterable", { Tuple.of(it.asIterable()) }, { Tuple.of(it) }),
+        LazyConstructionCase("scope-tuple-of", { Scope.empty().tupleOf(it) }, { Tuple.of(it) }),
+        LazyConstructionCase("block", { Block.of(it) }, { Block.of(it) }),
+        LazyConstructionCase("scope-block-of", { Scope.empty().blockOf(it) }, { Block.of(it) }),
     )
 
 class RecursiveLazinessSpec :
@@ -113,5 +155,73 @@ class RecursiveLazinessSpec :
             val applied = list.apply(Substitution.of(t, Atom.of("c"))).castToList()
             applied.last shouldBe Atom.of("c")
             applied shouldBe LogicList.from(listOf(Atom.of("a"), Atom.of("b")), Atom.of("c"))
+        }
+    
+        withTests(nameFn = { "construction/${it.id}/consumes-bounded-prefix" }, lazyConstructionCases) { case ->
+            val source = CountedSource(1_000)
+            val term = case.build(source.sequence)
+            source.produced shouldBeLessThanOrEqual 3
+            term.unfoldedSequence.take(10).toList() shouldBe source.items.take(10)
+            source.produced shouldBeLessThanOrEqual 12
+        }
+
+        withTests(nameFn = { "construction/${it.id}/prefix-on-throwing-suffix" }, lazyConstructionCases) { case ->
+            val (a, b, c) = listOf(Atom.of("a"), Atom.of("b"), Atom.of("c"))
+            val term =
+                case.build(
+                    sequence {
+                        yield(a)
+                        yield(b)
+                        yield(c)
+                        error("suffix evaluated")
+                    },
+                )
+            term.unfoldedSequence.take(2).toList() shouldBe listOf(a, b)
+        }
+
+        withTests(nameFn = { "construction/${it.id}/lazy-is-indistinguishable-from-eager" }, lazyConstructionCases) { case ->
+            val items = (0 until 150).map { if (it % 3 == 0) Var.of("X$it") else Atom.of("a$it") }
+            val lazy = case.build(items.asSequence())
+            val eager = case.build(items)
+            (lazy == eager) shouldBe true
+            (eager == lazy) shouldBe true
+            lazy.hashCode() shouldBe eager.hashCode()
+            lazy.toString() shouldBe eager.toString()
+            lazy.structurallyEquals(eager) shouldBe true
+            lazy.compareTo(eager) shouldBe 0
+            lazy.size shouldBe eager.size
+            lazy.isGround shouldBe eager.isGround
+            lazy.unfoldedList shouldBe eager.unfoldedList
+            lazy.args shouldBe eager.args
+        }
+
+        withTests(nameFn = { "construction/${it.id}/substitution-stays-lazy" }, lazyConstructionCases) { case ->
+            val x = Var.of("X")
+            val term =
+                case.build(
+                    sequence {
+                        yield(x)
+                        yield(Atom.of("b"))
+                        yield(Atom.of("c"))
+                        error("suffix evaluated")
+                    },
+                )
+            val applied = term.apply(Substitution.of(x, Atom.of("a"))).castToRecursive()
+            applied.unfoldedSequence.take(2).toList() shouldBe listOf(Atom.of("a"), Atom.of("b"))
+        }
+
+        test("construction/tuple/requires-two-items") {
+            shouldThrow<IllegalArgumentException> { Tuple.of(emptySequence<Term>()) }
+            shouldThrow<IllegalArgumentException> { Tuple.of(sequenceOf<Term>(Atom.of("a"))) }
+        }
+
+        test("construction/block/zero-and-one-items") {
+            Block.of(emptySequence<Term>()) shouldBe Block.empty()
+            Block.of(sequenceOf<Term>(Atom.of("a"))) shouldBe Block.of(Atom.of("a"))
+        }
+
+        test("construction/tuple/wrap-if-needed-is-lazy") {
+            val wrapped = Tuple.wrapIfNeeded(sequenceOf<Term>(Atom.of("a"), Atom.of("b")) + throwingSequence())
+            wrapped.castToTuple().left shouldBe Atom.of("a")
         }
     })
