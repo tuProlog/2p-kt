@@ -20,12 +20,15 @@ data class StateRuleExecution(
             )
 
     override fun computeNext(): Iterable<State> {
-        val substitution = with(context) { unificator.mgu(currentGoal!!, rule!!.head) }
+        val selected = context.rule!!
+        val rule = if (selected is MatchedRule) selected.rule else selected
+        val substitution =
+            if (selected is MatchedRule) selected.mgu else context.unificator.mgu(context.currentGoal!!, rule.head)
         return listOf(
             when {
                 substitution.isSuccess -> {
                     val newSubstitution = (context.substitution + substitution).castToUnifier()
-                    val subGoals = context.rule!!.prepareForExecution(newSubstitution).body[newSubstitution]
+                    val subGoals = rule.prepareForExecution(newSubstitution).body[newSubstitution]
                     StateGoalSelection(
                         context.copy(
                             goals = subGoals.toGoals(),
