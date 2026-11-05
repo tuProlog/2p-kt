@@ -46,25 +46,26 @@ object Addition : BinaryMathFunction("+") {
         real: Real,
         integer: Integer,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(real.value, integer.decimalValue)
+    ): Numeric = commonBehaviour(real.value, integer.decimalValue, context)
 
     override fun mathFunction(
         integer: Integer,
         real: Real,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(integer.decimalValue, real.value)
+    ): Numeric = commonBehaviour(integer.decimalValue, real.value, context)
 
     override fun mathFunction(
         real1: Real,
         real2: Real,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(real1.value, real2.value)
+    ): Numeric = commonBehaviour(real1.value, real2.value, context)
 
     /** Method implementing the behaviour when the two numbers are of different types */
     private fun commonBehaviour(
         decimal1: BigDecimal,
         decimal2: BigDecimal,
-    ) = Numeric.of(
-        decimal1 + decimal2,
-    ) // TODO: 24/10/2019 "float_overflow" and "underflow" checks missing (see the standard)
+        context: ExecutionContext,
+    ): Real =
+        // TODO: "float_overflow" and "underflow" checks missing (see the standard)
+        computeReal(context) { decimal1.plus(decimal2, it) }
 }

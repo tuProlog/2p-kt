@@ -6,7 +6,7 @@ import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.UnaryMathFunction
 import org.gciatto.kt.math.BigDecimal
-import kotlin.math.atan
+import org.gciatto.kt.math.big.atan
 
 /**
  * Implementation of `atan/1` arithmetic functor
@@ -34,13 +34,16 @@ object ArcTangent : UnaryMathFunction("atan") {
     override fun mathFunction(
         integer: Integer,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(integer.decimalValue)
+    ): Numeric = commonBehaviour(integer.decimalValue, context)
 
     override fun mathFunction(
         real: Real,
         context: ExecutionContext,
-    ): Numeric = commonBehaviour(real.value)
+    ): Numeric = commonBehaviour(real.value, context)
 
     /** Implements the common behaviour for real and integer */
-    private fun commonBehaviour(decimal: BigDecimal) = Numeric.of(atan(decimal.toDouble()))
+    private fun commonBehaviour(
+        decimal: BigDecimal,
+        context: ExecutionContext,
+    ) = computeReal(context) { decimal.atan(it) }
 }

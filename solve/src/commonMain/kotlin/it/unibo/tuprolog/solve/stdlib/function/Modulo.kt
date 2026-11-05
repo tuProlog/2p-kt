@@ -16,7 +16,7 @@ object Modulo : IntegersBinaryMathFunction("mod") {
         """
         `mod(+Dividend, +Divisor)`
         
-        Evaluates the truncated integer remainder of `Dividend` divided by `Divisor`: the current implementation gives the result the sign of `Dividend` (e.g. `-7 mod 2` is `-1` and `7 mod -2` is `1`), rather than the sign of `Divisor`. Both operands must evaluate to integers. A zero divisor raises an evaluation error.
+        Evaluates `Dividend - floor(Dividend / Divisor) * Divisor`, as ISO prescribes: unlike `rem`, the result takes the sign of `Divisor` (e.g. `-7 mod 2` is `1` and `7 mod -2` is `-1`). Both operands must evaluate to integers. A zero divisor raises an evaluation error.
 
         **Examples**
 
@@ -25,7 +25,7 @@ object Modulo : IntegersBinaryMathFunction("mod") {
         X = 1.
 
         ?- X is -7 mod 2.
-        X = -1.
+        X = 1.
 
         ?- X is 7 mod 0.
         throws error(evaluation_error(zero_divisor), _).
@@ -39,6 +39,14 @@ object Modulo : IntegersBinaryMathFunction("mod") {
     ): Numeric =
         when (integer2.value) {
             BigInteger.ZERO -> throwZeroDivisorError(context)
-            else -> Numeric.of(integer1.value.remainder(integer2.value))
+            else -> Numeric.of(floorMod(integer1.value, integer2.value))
         }
+
+    private fun floorMod(
+        dividend: BigInteger,
+        divisor: BigInteger,
+    ): BigInteger {
+        val remainder = dividend.remainder(divisor)
+        return if (remainder.signum != 0 && remainder.signum != divisor.signum) remainder + divisor else remainder
+    }
 }
