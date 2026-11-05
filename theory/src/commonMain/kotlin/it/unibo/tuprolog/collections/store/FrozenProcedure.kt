@@ -59,17 +59,18 @@ internal class FrozenProcedure(
 
     /** Positions of the clauses unifying with [query], in order. */
     fun matches(query: Clause): IntIterator {
+        val candidates = candidates(query)
+        if (!candidates.hasNext()) return candidates
         val keys = KeyFilter.of(unificator, query)
-        return MatchingPositions(candidates(query), clauses) { keys(it) && unificator.match(query, it) }
+        return MatchingPositions(candidates, clauses) { keys(it) && unificator.match(query, it) }
     }
 
     /** The clauses whose keys agree with [query]'s, in order: a superset of those unifying with it. */
     fun keyMatching(query: Clause): Sequence<Clause> =
         Sequence {
-            PositionsToClauses(
-                MatchingPositions(candidates(query), clauses, KeyFilter.of(unificator, query)),
-                clauses,
-            )
+            val candidates = candidates(query)
+            val keys = if (candidates.hasNext()) KeyFilter.of(unificator, query) else null
+            PositionsToClauses(if (keys == null) candidates else MatchingPositions(candidates, clauses, keys), clauses)
         }
 
     fun matching(query: Clause): Sequence<Clause> = Sequence { PositionsToClauses(matches(query), clauses) }

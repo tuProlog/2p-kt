@@ -58,6 +58,7 @@ internal class MutableStore(
     ): Sequence<Entry> {
         val procedure = procedures[procedureKeyOf(query)] ?: return emptySequence()
         val (first, second) = procedure.candidates(query)
+        if (first.size == 0 && second.size == 0) return emptySequence()
         val generation = generation
         return Sequence {
             val keys = KeyFilter.of(unificator, query)
