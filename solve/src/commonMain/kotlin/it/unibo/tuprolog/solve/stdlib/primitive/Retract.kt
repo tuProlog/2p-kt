@@ -3,7 +3,6 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -44,14 +43,20 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
                 else -> return sequenceOf(ensuringArgumentIsCallable(0).replyFail())
             }
         ensuringClauseProcedureHasPermission(clause, PermissionError.Operation.MODIFY)
-        return context.dynamicKb[clause].map {
+        // one unification per candidate (#1019): for a head, unifying `head :- B` with the clause `H :- B` compares
+        // whole clauses, as `Theory.get` does, at the cost of unifying heads, since unifying `B` with itself is free
+        return context.dynamicKb.candidates(clause).mapNotNull { candidate ->
             val substitution =
                 when (first) {
-                    is Clause -> mgu(first, it) as Substitution.Unifier
-                    else -> mgu(first, it.head!!) as Substitution.Unifier
+                    is Clause -> mgu(first, candidate)
+                    else -> mgu(Rule.of(first.castToStruct(), candidate.body), candidate)
                 }
-            replySuccess(substitution) {
-                removeDynamicClauses(it)
+            if (substitution.isSuccess) {
+                replySuccess(substitution.castToUnifier()) {
+                    removeDynamicClauses(candidate)
+                }
+            } else {
+                null
             }
         }
     }
