@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
@@ -47,8 +48,34 @@ internal class TupleImpl(
     override fun freshCopy(scope: Scope): Tuple =
         when {
             isGround -> this
-            else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
+            else -> scope.tupleOf(unfoldedSequence.map { it.freshCopy(scope) }).setTags(tags)
         }
+
+    /**
+     * Applies [unifier] to every item, iteratively, rebuilding the tuple from its end: the longest suffix
+     * left unchanged by [unifier] is reused as is (as is the whole tuple, if nothing changes).
+     */
+    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term {
+        val nodes = mutableListOf<Tuple>()
+        var current: Term = this
+        while (current is Tuple) {
+            nodes.add(current)
+            current = current.right
+        }
+        var result: Term = current.apply(unifier)
+        var shared = result === current
+        for (i in nodes.indices.reversed()) {
+            val node = nodes[i]
+            val left = node.left.apply(unifier)
+            if (shared && left === node.left) {
+                result = node
+            } else {
+                shared = false
+                result = TupleImpl(left, result, node.tags)
+            }
+        }
+        return result
+    }
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTuple(this)
 }

@@ -8,7 +8,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.dequeOf
-import it.unibo.tuprolog.utils.itemWiseEquals
 import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.collections.Collection as KtCollection
 import kotlin.collections.List as KtList
@@ -70,23 +69,6 @@ internal abstract class RecursiveImpl(
     override fun freshCopy(): Recursive = super.freshCopy().castToRecursive()
 
     override fun freshCopy(scope: Scope): Recursive = super.freshCopy(scope).castToRecursive()
-
-    override fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        other.asRecursive()?.let {
-            itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
-                a.structurallyEquals(b)
-            }
-        } ?: false
-
-    override fun itemsAreEqual(
-        other: Struct,
-        useVarCompleteName: Boolean,
-    ): Boolean =
-        other.asRecursive()?.let {
-            itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
-                a.equals(b, useVarCompleteName)
-            }
-        } ?: false
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCollection(this)
 

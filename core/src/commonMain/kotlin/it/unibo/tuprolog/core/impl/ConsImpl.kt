@@ -51,7 +51,9 @@ internal class ConsImpl(
         if (estimatedLength >= SWITCH_TO_LAZY_THRESHOLD) {
             LazyConsWithImplicitLast(unfoldedSequence.cursor().map { it.apply(unifier) }, tags)
         } else {
-            ConsImpl(head.apply(unifier), tail.apply(unifier), tags)
+            val newHead = head.apply(unifier)
+            val newTail = tail.apply(unifier)
+            if (newHead === head && newTail === tail) this else ConsImpl(newHead, newTail, tags)
         }
 
     override fun copyWithTags(tags: Map<String, Any>): ConsImpl =
