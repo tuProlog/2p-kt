@@ -35,7 +35,7 @@ jobs:
       - name: Run tests
         id: run-tests
         if: steps.cache-test-result.outputs.cache-hit != 'true'
-        uses: DanySK/build-check-deploy-gradle-action@4.0.50
+        uses: DanySK/build-check-deploy-gradle-action@4.0.51
         with:
           retries-on-failure: '2'
           java-distribution: ${{ matrix.jdk-dist }}
@@ -95,7 +95,7 @@ jobs:
       - name: Run tests
         id: run-tests
         if: steps.cache-test-result.outputs.cache-hit != 'true'
-        uses: DanySK/build-check-deploy-gradle-action@4.0.50
+        uses: DanySK/build-check-deploy-gradle-action@4.0.51
         with:
           retries-on-failure: '2'
           build-command: |
