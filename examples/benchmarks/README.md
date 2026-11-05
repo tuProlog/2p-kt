@@ -329,9 +329,7 @@ Unifications per workload (`theoryMatchReport`; `match` calls are the theory's, 
 | backtracking | 22738 + 13409 = 36147 | 1957 + 13415 = 15372 |
 
 `retract/1` and `clause/2` use `candidates` as well. The remaining `match` calls come from outside clause selection:
-removing each retracted clause from the dynamic KB, and other solver code (`backtracking` retracts nothing). The
-timings above predate the `retract/1`/`clause/2` change, and the decoding of index paths once per index (which targets
-the mutable insert-then-retract cost below): both are to be measured again.
+removing each retracted clause from the dynamic KB, and other solver code (`backtracking` retracts nothing). 
 
 **(b), (c) Deep positions and key pre-check.** Lookups (ops/s, `all` / `first`, immutable; mutable is within 10%):
 
@@ -354,3 +352,30 @@ selective lookups (7–8× without a match), 0.8× for `joint-args`.
 
 **Costs.** Mutable insert-then-retract at 1k clauses is 0.88× (`assertZ`) and 0.90× (`retract-last`): index updates
 now go through path-based keys. Immutable mutations, churn and iteration are unchanged (0.95–1.08×).
+
+**Final run (#1071's head, `retract/1`/`clause/2` on `candidates`, index paths decoded once).** A single overnight
+campaign on an idle machine, `-wi 3 -i 5 -w 1s -r 1s -f 2`, baseline and after alternating per class
+(the mutable size-10 `first` lookups rerun, see below). Speedups, as geometric mean (range):
+
+| Class | Benchmarks | Speedup |
+|---|---:|---|
+| `TheorySolverBenchmark` | 6 | 1.23× (1.15–1.28×) |
+| `PrologSolverBenchmark` | 7 | 1.22× (0.96× `tiny` – 1.41× `backtracking`) |
+| `TheoryLookupBenchmark` | 144 | 2.24× (0.88–48,000×) |
+| `TheoryMutationBenchmark` | 36 | 0.99× (0.84–1.17×) |
+| `TheoryChurnBenchmark` | 12 | 0.96× (0.88–1.01×) |
+| `TheoryConstructionBenchmark` | 10 | 0.99× (0.76–1.13×) |
+| `TheoryIncrementalConstructionBenchmark` | 6 | 1.03× (0.98–1.09×) |
+| `TheoryIterationBenchmark` | 40 | 1.01× (0.95–1.17×) |
+
+`nested-arg1` reaches 23,000× (`first`) to 48,000× (`all`) at 100k clauses, since it no longer scans the procedure,
+and `joint-args` 6.9–8.0×. Nothing degrades with size. The worst cases are mutable:
+
+- `assertZ` at 1k (0.84×), `retract-first` at 1k (0.90×) and the churn cycle (0.88× at every history length) pay for
+  index maintenance on writes; at 10 and 100k clauses the same operations are 0.93–1.07×.
+- `first` on `all-vars` (0.88–0.96×) and on `joint-args` at 10 clauses (0.89–0.91×) pays for the position search
+  and the key pre-check.
+- `bulk` construction of 10 clauses (0.76×) is a single sub-microsecond row; the other sizes are 0.98–1.07×.
+
+The first run of the mutable size-10 `first` lookups read 0.38–0.44×, with scores swinging 4× within a fork; two
+alternated reruns put them back at 0.89–1.04×, which is what the table reports.
