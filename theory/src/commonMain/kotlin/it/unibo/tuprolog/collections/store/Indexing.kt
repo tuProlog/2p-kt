@@ -16,7 +16,7 @@ import it.unibo.tuprolog.unify.Unificator
  */
 
 /** Procedures with fewer clauses than this are scanned: indexing them would cost more than it saves. */
-internal const val INDEX_THRESHOLD = 8
+internal const val INDEX_THRESHOLD = 4
 
 /** The head of a query worth indexing, or `null` if the query cannot select candidates through argument indexes. */
 internal fun Clause.indexableHead(): Struct? = head?.takeIf { it.arity > 0 }
