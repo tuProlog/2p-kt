@@ -1,8 +1,7 @@
 package it.unibo.tuprolog.testutils
 
 import io.kotest.assertions.fail
-import io.kotest.assertions.withClue
-import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
@@ -21,7 +20,7 @@ import it.unibo.tuprolog.unify.Unificator.Companion.matches
  *
  * @author Enrico
  */
-internal object ReteNodeUtils {
+internal object ClauseFixtures {
     /** A named clause, for parameterized tests */
     internal data class ClauseCase<out C : Clause>(
         val id: String,
@@ -73,17 +72,6 @@ internal object ReteNodeUtils {
 
     internal val rules = ruleCases.map { it.clause }
 
-    /** Contains some well-formed rules with no args head */
-    internal val noArgHeadedRuleCases = ruleCases.filter { it.clause.head.isAtom }
-
-    internal val noArgHeadedRules = noArgHeadedRuleCases.map { it.clause }
-
-    /** Contains some well-formed wules with "a" functor */
-    internal val aFunctorRules = rules.filter { it.head.functor == "a" }
-
-    /** Contains some well-formed wules with "f" functor */
-    internal val fFunctorRules = rules.filter { it.head.functor == "f" }
-
     private fun <C : Clause> matchingQuery(
         id: String,
         query: C,
@@ -104,9 +92,6 @@ internal object ReteNodeUtils {
             ),
             matchingQuery("a-of-any", Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()), rules),
         )
-
-    /** Contains queries and results made excluding queries with non "a" functor from [ruleQueryCases] */
-    internal val aFunctorRuleQueryCases = ruleQueryCases.filter { it.query.head.functor == "a" }
 
     /** Contains some well-formed directives */
     internal val directiveCases =
@@ -194,11 +179,7 @@ internal object ReteNodeUtils {
         expectedClauses: Iterable<Clause>,
         actualClauses: Iterable<Clause>,
     ) {
-//        assertEquals(expectedClauses.toList().sorted(), reteNode.indexedElements.toList().sorted()) TODO enable after solving issue #29 and delete two below assertions
-        withClue("\nExpected:\t$expectedClauses\nActual:\t\t$actualClauses") {
-            expectedClauses.toList().containsAll(actualClauses.toList()).shouldBeTrue()
-        }
-        actualClauses.toList().containsAll(expectedClauses.toList()).shouldBeTrue()
+        actualClauses.toList() shouldContainExactlyInAnyOrder expectedClauses.toList()
 
         actualClauses.forEachStructurallyEqualsHead(
             partialOrderingHeadClauseMap(expectedClauses).toMutableMap(),

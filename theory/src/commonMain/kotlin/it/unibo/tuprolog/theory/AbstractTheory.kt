@@ -45,7 +45,7 @@ internal abstract class AbstractTheory(
 
     override fun toString(asPrologText: Boolean): String =
         if (asPrologText) {
-            clauses.joinToString(".\n", "", ".\n")
+            clauses.joinToString("") { "$it.\n" }
         } else {
             toString()
         }

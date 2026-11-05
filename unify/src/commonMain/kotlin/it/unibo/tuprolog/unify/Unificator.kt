@@ -144,7 +144,7 @@ interface Unificator {
 
     /**
      * The [IndexKey] of [term], which clause collections and theories use to narrow down the clauses worth
-     * unifying with a query (#1019). The default implementation suits unificators comparing constants by equality,
+     * unifying with a query. The default implementation suits unificators comparing constants by equality,
      * possibly rejecting more pairs (e.g. because of tags). A unificator unifying terms with different principal
      * symbols (e.g. different atoms, or numbers of different types) must return coarser keys, down to
      * [IndexKey.Wildcard], which disables indexing on that term.

@@ -6,7 +6,7 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
- * A coarse abstraction of a [Term] that clause indexes (#1019) use to discard clauses which cannot unify with a
+ * A coarse abstraction of a [Term] that clause indexes use to discard clauses which cannot unify with a
  * query without attempting unification. A [Unificator] provides keys through [Unificator.indexKey], under a contract
  * analogous to the one between `hashCode` and `equals`: **if two terms unify, either their keys are equal, or one of
  * them is not [isExact]**. Keys may therefore merge terms that do not unify (indexing becomes less selective, never
