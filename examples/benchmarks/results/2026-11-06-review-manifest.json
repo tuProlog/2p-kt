@@ -1,0 +1,451 @@
+{
+  "head": "2fac5388f65fa38fb8d0512c3e8fc0976325958d",
+  "baseline": "806dab11735f475c9778bd6630f65eb723f8853b",
+  "started": "2026-11-06T08:33:54.089489+00:00",
+  "finished": "2026-11-06T10:53:11.683045+00:00",
+  "settings": [
+    "-wi",
+    "2",
+    "-i",
+    "3",
+    "-w",
+    "1s",
+    "-r",
+    "1s",
+    "-f",
+    "1",
+    "-bm",
+    "thrpt",
+    "-tu",
+    "s",
+    "-prof",
+    "gc",
+    "-jvmArgs",
+    "-Xms512m -Xmx4g"
+  ],
+  "policy": "No further develop 100k cases; estimate 100k baseline throughput from the 1k and 10k measurements using a per-case power law. Previously completed 100k construction data is retained separately, excluded from fitting.",
+  "hardware": "Apple M1, 8 cores (4 performance + 4 efficiency), 16 GB RAM",
+  "os": "macOS 27.0.1 arm64",
+  "jdk": "Homebrew OpenJDK 21.0.12.1 (2026-08-18)",
+  "measured_branch_cases": 293,
+  "measured_baseline_cases": 223,
+  "estimated_baseline_cases": 70,
+  "comparison": "Unmodified develop production source, with theory benchmark sources/resources copied from the measured branch. Alternating branch order per class and size, no concurrent benchmark runs. PrologSolverBenchmark uses timeout=none, chronometer=direct. Added size=10000 lookup/mutation/iteration cases for extrapolation. No further size=100000 baseline runs after user correction; history=100000 churn still has only 1000 live clauses.",
+  "dependency_difference": "develop uses kt-math 2.1.2; the measured branch uses kt-math 0.10.2. This is a branch comparison, not isolation of clause-store changes.",
+  "estimation": "Throughput S(100k)=S(10k)^2/S(1k), per identical benchmark and other parameters. Estimates have no JMH confidence intervals and are not included in measured means. Previously completed baseline 100k construction and aborted lookup logs are excluded and archived separately.",
+  "benchmark_source_sha256": {
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/BenchmarkTheory.kt": "d968218aa53c40bc7e9d25b74bb9d9e18b28be42526826f4e866ce852f9daf93",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/ChronometerSetting.kt": "b540305d539a3fdaf5a378e2525ab0de727a6678956fc02f30fe00b1cda9bec4",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/ClockReadsReport.kt": "9774792ff51c4a8ce37a5c9e6acf6242741becd77f05933b8d310957c763d18e",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/CountingChronometer.kt": "d887a0c1e20cadf2767d6e1a31b3824afec8e581c68eff39336efad12d434267",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/LeapCounter.kt": "0ee765523c4b3d2adc35db4b1be7037876c29c1e6526f0ede73bfcce778c1453",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/PrologSolverBenchmark.kt": "6fda3fb94560dce2ae69fe060f380ee071a96aba2b021f710b7b68de3e9a3747",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/TimeoutOvershootBenchmark.kt": "9fbf38425570741d937cb9192f8f3aeec8dd2cb5095101cd28d8e4544e019b90",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/TimeoutSetting.kt": "3b0baaee40e3a0c17f5d20cd0acfb17c7d5e59f8de4e8797cc941ef2e139ba92",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/UnificationBenchmark.kt": "2bbd4009e025642cc6bae79d271712a98a0fd78d3e546251de8ec108117a7fcf",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/UnificationScenario.kt": "a89012d3b2a6ac53f3cbbccfa6954526b8d83fd5c7495ae5fcabd3f8341a6d25",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/UnificationTask.kt": "46f506413174ca5829cf6bf8c841b655bfd653c4e9c1631d62ca892cd8ebbdd7",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/UnificatorSetting.kt": "34e7f035342790ee6ab4288b5b61360e04f28298f45495ce5afd9aebfd064883",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/UnificatorSolverBenchmark.kt": "45c906430ed490801020fb73c451fe853f22c6ec2372dd911c1c45c5f60a7d76",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/Workload.kt": "d6504ba8a80960889dc0d81fe36867c8cfe9fedb698d54b41787b42f998e314f",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/CountingUnificator.kt": "761057353d2e2af860025a425991d97c64540b0698f2405e3d4fac7f29da1264",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryChurnBenchmark.kt": "2fd1eb9533168d9970eedb01369b227397ce4287cde76fe64f854f3d933dba77",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryConstructionBenchmark.kt": "cf77a9d8ef183121b194afab034b00cfd8caade7388de26232020ea2415ccf2f",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryImpl.kt": "5e68542c297acdc2a36660f5deb9db32142028da15e93c06731224ab6b006f52",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryIncrementalConstructionBenchmark.kt": "41d31748425dac15bc71d029d085de1743e5a939ed013ccf9b6bd2d667e00cb1",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryIterationBenchmark.kt": "56fbec664878e88ab6aab26efccbf16f5ab645355a5263539d57c5b8dfd6a837",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryLookupBenchmark.kt": "558d74658ac581b51fbb8d70b4d2efa9aa26210f6f664aa9178109187249e79c",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryMatchReport.kt": "3375ced2a89225c4769f10a10165ab6e0ecf37385df36e9efc4d1ecc21fa9f6f",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryMutationBenchmark.kt": "f7fae288f9a381bbd8f18ed3791d56a73be18578bf4561b40add0556e84e217d",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryQuery.kt": "a283ce869f19464ba2c546bed54438bc7545cf51b1fc01f5a2ab6cc4c9bdc8be",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheorySolverBenchmark.kt": "04c96e13797ca617aa03e9f0e196ac6475e41359bc3e5ad11537d53473988b1f",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheorySolverWorkload.kt": "f0aff286f058fbd6d76d2f21a7a09ebee759b5de5e888ea25fe39ce487e1c626",
+    "examples/src/benchmarks/kotlin/it/unibo/tuprolog/examples/benchmarks/theory/TheoryWorkloads.kt": "3027be5891c66fe1fe1398e497128c7955f0e531f2ec38f7030f501865fae873",
+    "examples/src/benchmarks/resources/it/unibo/tuprolog/examples/benchmarks/theory-workloads.pl": "a38c75f5314af35b43070977c26a10ed6deff0ebfc5db58866e19a92afd3e772",
+    "examples/src/benchmarks/resources/it/unibo/tuprolog/examples/benchmarks/workloads.pl": "9c4919ef83d79b0b297efa25731bf4a189d2cb52e1e075472bc29b49cbe4ad01"
+  },
+  "runs": [
+    {
+      "name": "00-TheoryConstructionBenchmark-10-develop",
+      "label": "develop",
+      "class": "TheoryConstructionBenchmark",
+      "size": "10",
+      "seconds": 10.77,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "00-TheoryConstructionBenchmark-10-head",
+      "label": "head",
+      "class": "TheoryConstructionBenchmark",
+      "size": "10",
+      "seconds": 10.77,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "01-TheoryConstructionBenchmark-100-head",
+      "label": "head",
+      "class": "TheoryConstructionBenchmark",
+      "size": "100",
+      "seconds": 10.76,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "01-TheoryConstructionBenchmark-100-develop",
+      "label": "develop",
+      "class": "TheoryConstructionBenchmark",
+      "size": "100",
+      "seconds": 10.77,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "02-TheoryConstructionBenchmark-1000-develop",
+      "label": "develop",
+      "class": "TheoryConstructionBenchmark",
+      "size": "1000",
+      "seconds": 10.79,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "02-TheoryConstructionBenchmark-1000-head",
+      "label": "head",
+      "class": "TheoryConstructionBenchmark",
+      "size": "1000",
+      "seconds": 10.78,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "03-TheoryConstructionBenchmark-10000-head",
+      "label": "head",
+      "class": "TheoryConstructionBenchmark",
+      "size": "10000",
+      "seconds": 10.86,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "03-TheoryConstructionBenchmark-10000-develop",
+      "label": "develop",
+      "class": "TheoryConstructionBenchmark",
+      "size": "10000",
+      "seconds": 10.96,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "04-TheoryConstructionBenchmark-100000-develop",
+      "label": "develop",
+      "class": "TheoryConstructionBenchmark",
+      "size": "100000",
+      "seconds": 12.36,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "04-TheoryConstructionBenchmark-100000-head",
+      "label": "head",
+      "class": "TheoryConstructionBenchmark",
+      "size": "100000",
+      "seconds": 11.41,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "05-TheoryIncrementalConstructionBenchmark-10-head",
+      "label": "head",
+      "class": "TheoryIncrementalConstructionBenchmark",
+      "size": "10",
+      "seconds": 10.81,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "05-TheoryIncrementalConstructionBenchmark-10-develop",
+      "label": "develop",
+      "class": "TheoryIncrementalConstructionBenchmark",
+      "size": "10",
+      "seconds": 10.85,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "06-TheoryIncrementalConstructionBenchmark-100-develop",
+      "label": "develop",
+      "class": "TheoryIncrementalConstructionBenchmark",
+      "size": "100",
+      "seconds": 11.05,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "06-TheoryIncrementalConstructionBenchmark-100-head",
+      "label": "head",
+      "class": "TheoryIncrementalConstructionBenchmark",
+      "size": "100",
+      "seconds": 10.87,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "07-TheoryIncrementalConstructionBenchmark-1000-head",
+      "label": "head",
+      "class": "TheoryIncrementalConstructionBenchmark",
+      "size": "1000",
+      "seconds": 10.89,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "07-TheoryIncrementalConstructionBenchmark-1000-develop",
+      "label": "develop",
+      "class": "TheoryIncrementalConstructionBenchmark",
+      "size": "1000",
+      "seconds": 159.05,
+      "exit_code": 0,
+      "records": 2
+    },
+    {
+      "name": "08-TheoryLookupBenchmark-10-develop",
+      "label": "develop",
+      "class": "TheoryLookupBenchmark",
+      "size": "10",
+      "seconds": 191.63,
+      "exit_code": 0,
+      "records": 36
+    },
+    {
+      "name": "08-TheoryLookupBenchmark-10-head",
+      "label": "head",
+      "class": "TheoryLookupBenchmark",
+      "size": "10",
+      "seconds": 190.05,
+      "exit_code": 0,
+      "records": 36
+    },
+    {
+      "name": "09-TheoryLookupBenchmark-1000-head",
+      "label": "head",
+      "class": "TheoryLookupBenchmark",
+      "size": "1000",
+      "seconds": 190.63,
+      "exit_code": 0,
+      "records": 36
+    },
+    {
+      "name": "09-TheoryLookupBenchmark-1000-develop",
+      "label": "develop",
+      "class": "TheoryLookupBenchmark",
+      "size": "1000",
+      "seconds": 193.01,
+      "exit_code": 0,
+      "records": 36
+    },
+    {
+      "name": "10-TheoryLookupBenchmark-10000-develop",
+      "label": "develop",
+      "class": "TheoryLookupBenchmark",
+      "size": "10000",
+      "seconds": 212.46,
+      "exit_code": 0,
+      "records": 36
+    },
+    {
+      "name": "10-TheoryLookupBenchmark-10000-head",
+      "label": "head",
+      "class": "TheoryLookupBenchmark",
+      "size": "10000",
+      "seconds": 194.07,
+      "exit_code": 0,
+      "records": 36
+    },
+    {
+      "name": "11-TheoryLookupBenchmark-100000-head",
+      "label": "head",
+      "class": "TheoryLookupBenchmark",
+      "size": "100000",
+      "seconds": 207.12,
+      "exit_code": 0,
+      "records": 36
+    },
+    {
+      "name": "12-TheoryMutationBenchmark-10-develop",
+      "label": "develop",
+      "class": "TheoryMutationBenchmark",
+      "size": "10",
+      "seconds": 63.97,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "12-TheoryMutationBenchmark-10-head",
+      "label": "head",
+      "class": "TheoryMutationBenchmark",
+      "size": "10",
+      "seconds": 63.79,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "13-TheoryMutationBenchmark-1000-head",
+      "label": "head",
+      "class": "TheoryMutationBenchmark",
+      "size": "1000",
+      "seconds": 64.04,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "13-TheoryMutationBenchmark-1000-develop",
+      "label": "develop",
+      "class": "TheoryMutationBenchmark",
+      "size": "1000",
+      "seconds": 64.66,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "14-TheoryMutationBenchmark-10000-develop",
+      "label": "develop",
+      "class": "TheoryMutationBenchmark",
+      "size": "10000",
+      "seconds": 87.91,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "14-TheoryMutationBenchmark-10000-head",
+      "label": "head",
+      "class": "TheoryMutationBenchmark",
+      "size": "10000",
+      "seconds": 64.3,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "15-TheoryMutationBenchmark-100000-head",
+      "label": "head",
+      "class": "TheoryMutationBenchmark",
+      "size": "100000",
+      "seconds": 67.48,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "16-TheoryChurnBenchmark-default-develop",
+      "label": "develop",
+      "class": "TheoryChurnBenchmark",
+      "size": null,
+      "seconds": 66.12,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "16-TheoryChurnBenchmark-default-head",
+      "label": "head",
+      "class": "TheoryChurnBenchmark",
+      "size": null,
+      "seconds": 64.54,
+      "exit_code": 0,
+      "records": 12
+    },
+    {
+      "name": "17-TheoryIterationBenchmark-1000-head",
+      "label": "head",
+      "class": "TheoryIterationBenchmark",
+      "size": "1000",
+      "seconds": 105.6,
+      "exit_code": 0,
+      "records": 20
+    },
+    {
+      "name": "17-TheoryIterationBenchmark-1000-develop",
+      "label": "develop",
+      "class": "TheoryIterationBenchmark",
+      "size": "1000",
+      "seconds": 106.43,
+      "exit_code": 0,
+      "records": 20
+    },
+    {
+      "name": "18-TheoryIterationBenchmark-10000-develop",
+      "label": "develop",
+      "class": "TheoryIterationBenchmark",
+      "size": "10000",
+      "seconds": 114.11,
+      "exit_code": 0,
+      "records": 20
+    },
+    {
+      "name": "18-TheoryIterationBenchmark-10000-head",
+      "label": "head",
+      "class": "TheoryIterationBenchmark",
+      "size": "10000",
+      "seconds": 105.76,
+      "exit_code": 0,
+      "records": 20
+    },
+    {
+      "name": "19-TheoryIterationBenchmark-100000-head",
+      "label": "head",
+      "class": "TheoryIterationBenchmark",
+      "size": "100000",
+      "seconds": 107.77,
+      "exit_code": 0,
+      "records": 20
+    },
+    {
+      "name": "20-TheorySolverBenchmark-default-develop",
+      "label": "develop",
+      "class": "TheorySolverBenchmark",
+      "size": null,
+      "seconds": 2173.96,
+      "exit_code": 0,
+      "records": 6
+    },
+    {
+      "name": "20-TheorySolverBenchmark-default-head",
+      "label": "head",
+      "class": "TheorySolverBenchmark",
+      "size": null,
+      "seconds": 32.91,
+      "exit_code": 0,
+      "records": 6
+    },
+    {
+      "name": "21-PrologSolverBenchmark-default-head",
+      "label": "head",
+      "class": "PrologSolverBenchmark",
+      "size": null,
+      "seconds": 38.41,
+      "exit_code": 0,
+      "records": 7
+    },
+    {
+      "name": "21-PrologSolverBenchmark-default-develop",
+      "label": "develop",
+      "class": "PrologSolverBenchmark",
+      "size": null,
+      "seconds": 38.98,
+      "exit_code": 0,
+      "records": 7
+    }
+  ],
+  "zero_arity_follow_up": {
+    "size": 1000,
+    "query": "zero-arity",
+    "warmupIterations": 3,
+    "measurementIterations": 5,
+    "forks": 2,
+    "warmupTime": "1 s",
+    "measurementTime": "1 s",
+    "heap": "-Xms512m -Xmx4g",
+    "gcProfiler": true,
+    "cases_per_branch": 4,
+    "included_in_campaign_aggregates": false
+  }
+}

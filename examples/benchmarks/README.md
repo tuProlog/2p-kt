@@ -57,8 +57,9 @@ Clause storage (#1019) is benchmarked in `src/benchmarks/kotlin/.../theory`, eac
 ./gradlew :examples:theoryMatchReport   # unifications attempted per lookup, deterministic
 ```
 
-The old store is roughly quadratic in several operations, so a full run at 100k clauses takes hours: run one class and
-size at a time.
+For the `develop` baseline, **do not run `size=100000`**: several operations are roughly quadratic and take hours.
+Run one class and size at a time up to `size=10000`, then extrapolate the 100k baseline per case as described below.
+Measure the branch at 100k normally, and label every projected baseline and speedup as estimated.
 
 ## Results
 
@@ -255,6 +256,72 @@ was measured too, with the worklist engine (`2026-11-03-unificators-e0762f3-work
 
 ### Clause storage (#1019)
 
+#### Review rerun: `2026-11-06`, `2fac5388f` vs develop `806dab117`
+
+The measured branch includes the review fixes. The baseline is the fetched `develop` commit, with the identical
+`theory` benchmark sources and resource copied in; its production code is unchanged. Apple M1 (8 cores, 16 GB),
+macOS 27.0.1 arm64, Homebrew OpenJDK 21.0.12.1, JMH 1.37. Sequential runs, branch order alternating per class and size;
+`-wi 2 -i 3 -w 1s -r 1s -f 1 -bm thrpt -tu s -prof gc`, fork JVM `-Xms512m -Xmx4g`.
+
+All declared theory cases were run on the branch, plus `size=10000` lookup, mutation and iteration cases for
+calibration. General solver workloads use `chronometer=direct, timeout=none`. There are **293 measured branch cases,
+223 measured baseline cases and 70 extrapolated baseline cases**. The churn `history=100000` cases still hold only
+1000 live clauses; they are measured on both branches.
+
+Baseline `size=100000` scores are **extrapolated**, not measured: for each identical benchmark and other
+parameters, `S(100k) = S(10k)² / S(1k)`, where `S` is throughput. This is a power law through the nearest two
+measured sizes, assuming that scaling continues for one more decade. These projections have no JMH confidence
+interval and can miss cache, GC or algorithmic transitions. They are kept out of the measured geometric means.
+
+Speedup is branch/develop throughput. Each cell reports geometric mean and range. Estimated and measured results
+are separate:
+
+| Benchmark | Measured cases | Measured speedup (geomean; range) | Estimated 100k cases | Estimated speedup (geomean; range) |
+|---|---:|---|---:|---|
+| Bulk construction | 8 | 9.86×; 4.93–14.4× | 2 | ≈ 3.70×; 3.32–4.13× |
+| Incremental construction | 6 | 91.87×; 15.27–2.79e+03× | 0 | —; — |
+| Lookup (first + all) | 108 | 21.48×; 0.76–1.24e+06× | 36 | ≈ 388.98×; 0.90–1.34e+08× |
+| Mutation | 36 | 26.90×; 0.81–1.14e+04× | 12 | ≈ 66.86×; 0.80–2.93e+04× |
+| Churn | 12 | 46.90×; 1.44–2.83e+06× | 0 | —; — |
+| Iteration / size / hash / equality | 40 | 58.40×; 0.75–5.13e+04× | 20 | ≈ 116.38×; 0.23–6.52e+05× |
+| Theory solver workloads | 6 | 11.46×; 1.64–6.98e+04× | 0 | —; — |
+| General solver workloads | 7 | 1.41×; 1.02–1.79× | 0 | —; — |
+
+**Zero-arity check.** The short campaign showed lower zero-arity point estimates, so the four `size=1000` cases were
+rerun on both branches with `-wi 3 -i 5 -w 1s -r 1s -f 2`, the same heap and GC profiler. Scores below include JMH's
+99.9% error; these follow-ups are separate from the campaign aggregates above:
+
+| Operation | Implementation | Develop ops/s | Branch ops/s | Speedup |
+|---|---|---:|---:|---:|
+| all | immutable | 6,194 ± 876 | 6,052 ± 101 | 0.98× |
+| all | mutable | 6,769 ± 79 | 5,917 ± 172 | 0.87× |
+| first | immutable | 4,715,375 ± 79,366 | 4,646,022 ± 115,081 | 0.99× |
+| first | mutable | 4,660,000 ± 113,012 | 4,507,524 ± 172,642 | 0.97× |
+
+The mutable `all` case is **about 13% slower (0.87×)**, with non-overlapping reported 99.9% intervals.
+This control has no argument to index; its point-estimate speedups range from 0.87× to 0.99×.
+The full comparison retains all slower cases and their errors; it does not assume that every decline is noise.
+
+**Scope and provenance.** This compares branches, not the store change in isolation: develop uses `kt-math 2.1.2`,
+while the measured branch uses `0.10.2`. The existing churn benchmark changes predicates; it does not directly time
+distinct-key churn within one live predicate or the custom-head scan fallback added by the review fixes.
+
+An initial baseline 100k bulk-construction run completed and a lookup run was started before the no-100k-baseline
+constraint was applied. The lookup was stopped; both are archived separately and excluded from the table and fits.
+No further baseline `size=100000` cases were run.
+
+- [Full comparison, including per-case errors and allocations](results/2026-11-06-review-comparison.md).
+- Raw JMH JSON: [develop](results/2026-11-06-review-develop-806dab117.json),
+  [branch](results/2026-11-06-review-head-2fac5388f.json).
+- [Extrapolated baseline scores and their two source measurements](results/2026-11-06-review-baseline-estimates.json).
+- Longer zero-arity check: [develop](results/2026-11-06-review-zero-arity-develop.json),
+  [branch](results/2026-11-06-review-zero-arity-head.json).
+- [Manifest: commits, settings, source hashes and durations](results/2026-11-06-review-manifest.json).
+- Excluded initial runs: [bulk construction](results/2026-11-06-review-excluded-develop-100k-construction.json),
+  [aborted lookup log](results/2026-11-06-review-aborted-develop-100k-lookup.log).
+
+#### Historical implementation comparison
+
 Baseline `2a6b358` (develop's `:theory` plus these benchmarks) against `6e974c2`, except `Churn` (`bb2dd7e`) and
 `Mutation` (`9ef849a`): those two commits only change the mutable store's removal path. Apple M1, 16 GB, JDK 17.0.21,
 `-wi 2 -i 3 -w 1s -r 1s -f 1`, one class and size per run, baseline and after alternating. Full tables, including the
@@ -353,7 +420,7 @@ selective lookups (7–8× without a match), 0.8× for `joint-args`.
 **Costs.** Mutable insert-then-retract at 1k clauses is 0.88× (`assertZ`) and 0.90× (`retract-last`): index updates
 now go through path-based keys. Immutable mutations, churn and iteration are unchanged (0.95–1.08×).
 
-**Final run (#1071's head, `retract/1`/`clause/2` on `candidates`, index paths decoded once).** A single overnight
+**Historical final Step 6 run (before the review fixes, `retract/1`/`clause/2` on `candidates`, index paths decoded once).** A single overnight
 campaign on an idle machine, `-wi 3 -i 5 -w 1s -r 1s -f 2`, baseline and after alternating per class
 (the mutable size-10 `first` lookups rerun, see below). Speedups, as geometric mean (range):
 

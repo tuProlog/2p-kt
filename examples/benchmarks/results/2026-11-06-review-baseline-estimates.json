@@ -1,0 +1,2296 @@
+[
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryConstructionBenchmark.bulk",
+    "params": {
+      "impl": "immutable",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 5.802369233770693,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "size": "1000"
+        },
+        "score": 682.3600195063032,
+        "scoreError": 268.3674633561824
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "size": "10000"
+        },
+        "score": 62.92300679035088,
+        "scoreError": 13.920262276683689
+      }
+    ],
+    "branchOpsPerSecond": 19.267664694792426,
+    "estimatedSpeedup": 3.3206547047457122
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryConstructionBenchmark.bulk",
+    "params": {
+      "impl": "mutable",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 5.526425856947095,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "size": "1000"
+        },
+        "score": 695.5347109169734,
+        "scoreError": 137.82461377782275
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "size": "10000"
+        },
+        "score": 61.99855652203352,
+        "scoreError": 29.504498334209025
+      }
+    ],
+    "branchOpsPerSecond": 22.815703237267428,
+    "estimatedSpeedup": 4.128473597196012
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "equals",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 774.7610812711234,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "equals",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 162911.1785168396,
+        "scoreError": 26729.39558349656
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "equals",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 11234.644668117442,
+        "scoreError": 1159.46261612196
+      }
+    ],
+    "branchOpsPerSecond": 2076.282402519853,
+    "estimatedSpeedup": 2.6799002333898456
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "equals",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1060.0251387550218,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "equals",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 120174.71652935713,
+        "scoreError": 13588.909840421573
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "equals",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 11286.639028686848,
+        "scoreError": 2999.0188942021864
+      }
+    ],
+    "branchOpsPerSecond": 2078.328714916607,
+    "estimatedSpeedup": 1.9606409687203856
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "hashCode",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 235922620.64468879,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "hashCode",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 242933097.0288904,
+        "scoreError": 74076414.15789305
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "hashCode",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 239402199.0132636,
+        "scoreError": 44560395.03692985
+      }
+    ],
+    "branchOpsPerSecond": 192216588.7501569,
+    "estimatedSpeedup": 0.8147442081852959
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "hashCode",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 258500832.21359405,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "hashCode",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 223978676.546183,
+        "scoreError": 483744177.8386736
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "hashCode",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 240621433.5533884,
+        "scoreError": 109316961.23459534
+      }
+    ],
+    "branchOpsPerSecond": 191768511.96740898,
+    "estimatedSpeedup": 0.7418487218213461
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "iterate",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 428.92214584169625,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "iterate",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 351497.1616940072,
+        "scoreError": 23439.373205418447
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "iterate",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 12278.63660391736,
+        "scoreError": 6355.535512443216
+      }
+    ],
+    "branchOpsPerSecond": 279653591.6768897,
+    "estimatedSpeedup": 651991.496331137
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "iterate",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 467.0368371537621,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "iterate",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 350943.48563472443,
+        "scoreError": 96142.42133194659
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "iterate",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 12802.481616880317,
+        "scoreError": 4241.975960132967
+      }
+    ],
+    "branchOpsPerSecond": 277156163.71260506,
+    "estimatedSpeedup": 593435.3388517771
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "iterate-after-update",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.014053470210633372,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "iterate-after-update",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 114.48178913319221,
+        "scoreError": 22.592210618370732
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "iterate-after-update",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 1.2684109796289718,
+        "scoreError": 0.8391076831282283
+      }
+    ],
+    "branchOpsPerSecond": 1102.9726061068793,
+    "estimatedSpeedup": 78484.00356463771
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "iterate-after-update",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.2710557944864597,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "iterate-after-update",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 92.6621585918221,
+        "scoreError": 26.807014126133723
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "iterate-after-update",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 5.011647934156655,
+        "scoreError": 2.3053733602335216
+      }
+    ],
+    "branchOpsPerSecond": 1954.8898558968988,
+    "estimatedSpeedup": 7212.130844133469
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "size",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 196658386.63973996,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "size",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 207186593.118705,
+        "scoreError": 8499695.29668276
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "size",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 201853860.84023455,
+        "scoreError": 13233919.090329971
+      }
+    ],
+    "branchOpsPerSecond": 318057806.89067674,
+    "estimatedSpeedup": 1.6173111776480162
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "immutable",
+      "op": "size",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 217663495.46909973,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "size",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 204012178.815281,
+        "scoreError": 75053455.46605064
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "size",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 210727321.3401648,
+        "scoreError": 311396574.0197824
+      }
+    ],
+    "branchOpsPerSecond": 317293798.86844456,
+    "estimatedSpeedup": 1.4577262860941635
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "equals",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 851.5823440411164,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "equals",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 87936.37317413767,
+        "scoreError": 19079.34764266303
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "equals",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 8653.61559084447,
+        "scoreError": 3324.8862937370886
+      }
+    ],
+    "branchOpsPerSecond": 769.0522934520108,
+    "estimatedSpeedup": 0.9030862356804324
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "equals",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 865.9897571825541,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "equals",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 88599.6394466167,
+        "scoreError": 6660.832261727897
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "equals",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 8759.359579948607,
+        "scoreError": 2374.004577185695
+      }
+    ],
+    "branchOpsPerSecond": 792.693777313934,
+    "estimatedSpeedup": 0.9153616087711197
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "hashCode",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1345.7878486929988,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "hashCode",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 90885.74648953944,
+        "scoreError": 24046.878864060298
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "hashCode",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 11059.517767290514,
+        "scoreError": 855.0894093000112
+      }
+    ],
+    "branchOpsPerSecond": 404.93870617832937,
+    "estimatedSpeedup": 0.30089341835832256
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "hashCode",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1295.5638647406745,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "hashCode",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 91953.47953324125,
+        "scoreError": 29289.699403134367
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "hashCode",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 10914.74256775846,
+        "scoreError": 1312.4729563674007
+      }
+    ],
+    "branchOpsPerSecond": 302.8653513117394,
+    "estimatedSpeedup": 0.23377107030718414
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "iterate",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 2110.746822210229,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "iterate",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 186487.98926121622,
+        "scoreError": 58825.63050384638
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "iterate",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 19840.083939174438,
+        "scoreError": 4458.37696301196
+      }
+    ],
+    "branchOpsPerSecond": 5880.56349803405,
+    "estimatedSpeedup": 2.786010826194839
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "iterate",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 2080.6655791383737,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "iterate",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 186962.50443785347,
+        "scoreError": 51899.419299172536
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "iterate",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 19723.246375111456,
+        "scoreError": 4233.822085978753
+      }
+    ],
+    "branchOpsPerSecond": 5719.356709357086,
+    "estimatedSpeedup": 2.7488111336592276
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "iterate-after-update",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.01928114164256533,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "iterate-after-update",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 125.09062280116541,
+        "scoreError": 39.52303512576699
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "iterate-after-update",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 1.553026083614175,
+        "scoreError": 0.2905761809042461
+      }
+    ],
+    "branchOpsPerSecond": 5452.350323073696,
+    "estimatedSpeedup": 282781.5086964046
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "iterate-after-update",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.16721388613306568,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "iterate-after-update",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 123.04670860533498,
+        "scoreError": 44.26693663490102
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "iterate-after-update",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 4.535980414616117,
+        "scoreError": 0.9023340418027707
+      }
+    ],
+    "branchOpsPerSecond": 5316.14119222018,
+    "estimatedSpeedup": 31792.462427370978
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "size",
+      "predicates": "1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1304.4901951156505,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "size",
+          "predicates": "1",
+          "size": "1000"
+        },
+        "score": 143216.09461429672,
+        "scoreError": 13520.029905656334
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "size",
+          "predicates": "1",
+          "size": "10000"
+        },
+        "score": 13668.357297316506,
+        "scoreError": 1038.3787581390916
+      }
+    ],
+    "branchOpsPerSecond": 320686699.1922266,
+    "estimatedSpeedup": 245832.9701464685
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryIterationBenchmark.whole",
+    "params": {
+      "impl": "mutable",
+      "op": "size",
+      "predicates": "1000",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 2496.121638728104,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "size",
+          "predicates": "1000",
+          "size": "1000"
+        },
+        "score": 16332.073916873136,
+        "scoreError": 5431.323742845567
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "size",
+          "predicates": "1000",
+          "size": "10000"
+        },
+        "score": 6384.891785239112,
+        "scoreError": 865.2977397187216
+      }
+    ],
+    "branchOpsPerSecond": 321471412.2139766,
+    "estimatedSpeedup": 128788.3600006697
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "all-vars",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.012885132418658138,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "all-vars",
+          "size": "1000"
+        },
+        "score": 126.54081689354568,
+        "scoreError": 58.76106808802492
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "all-vars",
+          "size": "10000"
+        },
+        "score": 1.2769084470072665,
+        "scoreError": 0.44748481834926673
+      }
+    ],
+    "branchOpsPerSecond": 20.695510197045568,
+    "estimatedSpeedup": 1606.1542500779983
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "arg0-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1098139.6570731555,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "arg0-bound",
+          "size": "1000"
+        },
+        "score": 1169867.4557969705,
+        "scoreError": 1036419.8379434638
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "arg0-bound",
+          "size": "10000"
+        },
+        "score": 1133436.300252436,
+        "scoreError": 470685.0656161987
+      }
+    ],
+    "branchOpsPerSecond": 1622768.8060883314,
+    "estimatedSpeedup": 1.477743559879676
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "arg1-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.016581047129362456,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "arg1-bound",
+          "size": "1000"
+        },
+        "score": 134.14107731651666,
+        "scoreError": 77.64658725811776
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "arg1-bound",
+          "size": "10000"
+        },
+        "score": 1.4913750450401857,
+        "scoreError": 0.08358407504841416
+      }
+    ],
+    "branchOpsPerSecond": 1042.8932021277687,
+    "estimatedSpeedup": 62896.70332586939
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "joint-args",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 24008.109308954885,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "joint-args",
+          "size": "1000"
+        },
+        "score": 172651.298830142,
+        "scoreError": 11302.121173219803
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "joint-args",
+          "size": "10000"
+        },
+        "score": 64381.91714019616,
+        "scoreError": 13134.299411981638
+      }
+    ],
+    "branchOpsPerSecond": 140036.64480433174,
+    "estimatedSpeedup": 5.8328893376080595
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "last-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.01681092107858763,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "last-bound",
+          "size": "1000"
+        },
+        "score": 139.1488925082726,
+        "scoreError": 19.588640309974984
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "last-bound",
+          "size": "10000"
+        },
+        "score": 1.5294512251554295,
+        "scoreError": 0.22608060978672098
+      }
+    ],
+    "branchOpsPerSecond": 1935902.7749964055,
+    "estimatedSpeedup": 115157448.30080724
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "nested-arg0",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 573061.8900766707,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "nested-arg0",
+          "size": "1000"
+        },
+        "score": 618196.0171866984,
+        "scoreError": 166518.80739158895
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "nested-arg0",
+          "size": "10000"
+        },
+        "score": 595201.292040667,
+        "scoreError": 386300.57158662926
+      }
+    ],
+    "branchOpsPerSecond": 2054367.5221203808,
+    "estimatedSpeedup": 3.584896426885976
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "nested-arg1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 31.006008537026055,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "nested-arg1",
+          "size": "1000"
+        },
+        "score": 3490.691458811872,
+        "scoreError": 865.0411105255079
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "nested-arg1",
+          "size": "10000"
+        },
+        "score": 328.98694377139776,
+        "scoreError": 35.09452415698233
+      }
+    ],
+    "branchOpsPerSecond": 1700236.2240345378,
+    "estimatedSpeedup": 54835.701344924426
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "no-match",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 4607038.738802487,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "no-match",
+          "size": "1000"
+        },
+        "score": 4594410.802712777,
+        "scoreError": 1497313.5796469988
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "no-match",
+          "size": "10000"
+        },
+        "score": 4600720.438156441,
+        "scoreError": 1433452.4883679445
+      }
+    ],
+    "branchOpsPerSecond": 27904665.16582333,
+    "estimatedSpeedup": 6.05696343093408
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "immutable",
+      "query": "zero-arity",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 49.358342595844874,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "zero-arity",
+          "size": "1000"
+        },
+        "score": 5958.19421850537,
+        "scoreError": 1051.4313456981045
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "zero-arity",
+          "size": "10000"
+        },
+        "score": 542.297511970662,
+        "scoreError": 165.69716212205034
+      }
+    ],
+    "branchOpsPerSecond": 47.634177583722135,
+    "estimatedSpeedup": 0.9650684175876707
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "all-vars",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.017475092598166774,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "all-vars",
+          "size": "1000"
+        },
+        "score": 129.9935372664695,
+        "scoreError": 23.58416117207673
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "all-vars",
+          "size": "10000"
+        },
+        "score": 1.5071990913262912,
+        "scoreError": 0.469899297816547
+      }
+    ],
+    "branchOpsPerSecond": 20.411076017909053,
+    "estimatedSpeedup": 1168.0096058575552
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "arg0-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1053915.1301122603,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "arg0-bound",
+          "size": "1000"
+        },
+        "score": 1108324.6201725677,
+        "scoreError": 261126.40584734245
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "arg0-bound",
+          "size": "10000"
+        },
+        "score": 1080777.537829036,
+        "scoreError": 802461.0354206696
+      }
+    ],
+    "branchOpsPerSecond": 1978840.8837185062,
+    "estimatedSpeedup": 1.8776093322692171
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "arg1-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.015832516427050258,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "arg1-bound",
+          "size": "1000"
+        },
+        "score": 141.71148049963392,
+        "scoreError": 53.086260107341396
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "arg1-bound",
+          "size": "10000"
+        },
+        "score": 1.4978816184572352,
+        "scoreError": 0.17762276414972378
+      }
+    ],
+    "branchOpsPerSecond": 1103.3766241654057,
+    "estimatedSpeedup": 69690.54030351478
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "joint-args",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 18570.594532765917,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "joint-args",
+          "size": "1000"
+        },
+        "score": 175729.06296829006,
+        "scoreError": 79150.4351072091
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "joint-args",
+          "size": "10000"
+        },
+        "score": 57126.11640928346,
+        "scoreError": 22840.070093306655
+      }
+    ],
+    "branchOpsPerSecond": 120778.13568232888,
+    "estimatedSpeedup": 6.503730156254728
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "last-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.013874892170305776,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "last-bound",
+          "size": "1000"
+        },
+        "score": 140.42036510242164,
+        "scoreError": 8.357998478362683
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "last-bound",
+          "size": "10000"
+        },
+        "score": 1.3958214156227395,
+        "scoreError": 0.5025624090559971
+      }
+    ],
+    "branchOpsPerSecond": 1852508.8193066039,
+    "estimatedSpeedup": 133515186.75375609
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "nested-arg0",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 714416.3485942588,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "nested-arg0",
+          "size": "1000"
+        },
+        "score": 588101.6406504543,
+        "scoreError": 222376.0694565403
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "nested-arg0",
+          "size": "10000"
+        },
+        "score": 648189.3448027285,
+        "scoreError": 223893.10795297386
+      }
+    ],
+    "branchOpsPerSecond": 2125994.5763986725,
+    "estimatedSpeedup": 2.975848159944751
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "nested-arg1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 26.054867264973286,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "nested-arg1",
+          "size": "1000"
+        },
+        "score": 3539.961365410207,
+        "scoreError": 483.53375531885587
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "nested-arg1",
+          "size": "10000"
+        },
+        "score": 303.6992319695533,
+        "scoreError": 110.13619247554725
+      }
+    ],
+    "branchOpsPerSecond": 1571431.6755249705,
+    "estimatedSpeedup": 60312.40380324316
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "no-match",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 3939699.2647126867,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "no-match",
+          "size": "1000"
+        },
+        "score": 4537290.445803843,
+        "scoreError": 317770.0889501135
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "no-match",
+          "size": "10000"
+        },
+        "score": 4227949.838056419,
+        "scoreError": 182807.48542107112
+      }
+    ],
+    "branchOpsPerSecond": 29521306.02292171,
+    "estimatedSpeedup": 7.493289218123768
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all",
+    "params": {
+      "impl": "mutable",
+      "query": "zero-arity",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 41.0694984936807,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "zero-arity",
+          "size": "1000"
+        },
+        "score": 6915.8244114636245,
+        "scoreError": 1796.8845565707018
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "zero-arity",
+          "size": "10000"
+        },
+        "score": 532.9441248847439,
+        "scoreError": 167.04159560673685
+      }
+    ],
+    "branchOpsPerSecond": 48.50949199231764,
+    "estimatedSpeedup": 1.1811561809010578
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "all-vars",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 160.8053856159234,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "all-vars",
+          "size": "1000"
+        },
+        "score": 16500.030438699385,
+        "scoreError": 4332.195745517175
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "all-vars",
+          "size": "10000"
+        },
+        "score": 1628.8934149813267,
+        "scoreError": 568.2520752559727
+      }
+    ],
+    "branchOpsPerSecond": 1692130.130264936,
+    "estimatedSpeedup": 10522.844889701111
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "arg0-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1039682.3382412873,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "arg0-bound",
+          "size": "1000"
+        },
+        "score": 1156008.9264745123,
+        "scoreError": 158099.44066000162
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "arg0-bound",
+          "size": "10000"
+        },
+        "score": 1096303.8190687932,
+        "scoreError": 289174.19345524936
+      }
+    ],
+    "branchOpsPerSecond": 1851770.2849665324,
+    "estimatedSpeedup": 1.7810923749065144
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "arg1-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 63.41613336470865,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "arg1-bound",
+          "size": "1000"
+        },
+        "score": 6070.096824805097,
+        "scoreError": 1594.635614924831
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "arg1-bound",
+          "size": "10000"
+        },
+        "score": 620.4369990406234,
+        "scoreError": 210.65882236373358
+      }
+    ],
+    "branchOpsPerSecond": 1773001.0866882456,
+    "estimatedSpeedup": 27958.202315673323
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "joint-args",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 41694.57930024958,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "joint-args",
+          "size": "1000"
+        },
+        "score": 322610.7449595861,
+        "scoreError": 99606.39628605336
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "joint-args",
+          "size": "10000"
+        },
+        "score": 115978.96054384198,
+        "scoreError": 2913.8906802395045
+      }
+    ],
+    "branchOpsPerSecond": 541519.510198664,
+    "estimatedSpeedup": 12.987767697548698
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "last-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.018186971427939198,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "last-bound",
+          "size": "1000"
+        },
+        "score": 184.50619012257098,
+        "scoreError": 55.25317348241201
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "last-bound",
+          "size": "10000"
+        },
+        "score": 1.8318320905686514,
+        "scoreError": 0.6105595003615544
+      }
+    ],
+    "branchOpsPerSecond": 1849429.7935975073,
+    "estimatedSpeedup": 101689816.85187978
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "nested-arg0",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 626635.3727994903,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "nested-arg0",
+          "size": "1000"
+        },
+        "score": 589037.2201765039,
+        "scoreError": 168738.27902437732
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "nested-arg0",
+          "size": "10000"
+        },
+        "score": 607545.5193300984,
+        "scoreError": 408190.45875128027
+      }
+    ],
+    "branchOpsPerSecond": 1839440.3635820448,
+    "estimatedSpeedup": 2.9354237622500534
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "nested-arg1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 57.964610908099544,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "nested-arg1",
+          "size": "1000"
+        },
+        "score": 6960.885211055577,
+        "scoreError": 475.4209696363021
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "nested-arg1",
+          "size": "10000"
+        },
+        "score": 635.2046936498351,
+        "scoreError": 179.87764405798038
+      }
+    ],
+    "branchOpsPerSecond": 1529006.1430058351,
+    "estimatedSpeedup": 26378.269758939816
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "no-match",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 5004320.602412859,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "no-match",
+          "size": "1000"
+        },
+        "score": 4526232.837614046,
+        "scoreError": 1357004.1392778994
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "no-match",
+          "size": "10000"
+        },
+        "score": 4759277.2813306,
+        "scoreError": 585983.8289119011
+      }
+    ],
+    "branchOpsPerSecond": 22316018.47319014,
+    "estimatedSpeedup": 4.459350278723221
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "immutable",
+      "query": "zero-arity",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 4835052.774452154,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "zero-arity",
+          "size": "1000"
+        },
+        "score": 5179816.771366102,
+        "scoreError": 632110.5814333706
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "query": "zero-arity",
+          "size": "10000"
+        },
+        "score": 5004466.749969218,
+        "scoreError": 1513594.8939762102
+      }
+    ],
+    "branchOpsPerSecond": 4502325.017621349,
+    "estimatedSpeedup": 0.931184255404843
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "all-vars",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 166.6101048937958,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "all-vars",
+          "size": "1000"
+        },
+        "score": 16660.178869020383,
+        "scoreError": 1581.583691932768
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "all-vars",
+          "size": "10000"
+        },
+        "score": 1666.0594674011147,
+        "scoreError": 1043.026718853834
+      }
+    ],
+    "branchOpsPerSecond": 1884393.4824429832,
+    "estimatedSpeedup": 11310.19924418254
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "arg0-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 936556.6875082564,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "arg0-bound",
+          "size": "1000"
+        },
+        "score": 1160018.3980662029,
+        "scoreError": 395465.27789585735
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "arg0-bound",
+          "size": "10000"
+        },
+        "score": 1042316.1652500248,
+        "scoreError": 550115.1961286326
+      }
+    ],
+    "branchOpsPerSecond": 1932672.6441941436,
+    "estimatedSpeedup": 2.0635938752795524
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "arg1-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 54.18146854328536,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "arg1-bound",
+          "size": "1000"
+        },
+        "score": 6086.683470979733,
+        "scoreError": 2092.012788881628
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "arg1-bound",
+          "size": "10000"
+        },
+        "score": 574.2694916289942,
+        "scoreError": 97.03783886147441
+      }
+    ],
+    "branchOpsPerSecond": 1784092.7915788507,
+    "estimatedSpeedup": 32928.099579906106
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "joint-args",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 52663.600581536,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "joint-args",
+          "size": "1000"
+        },
+        "score": 292385.9466990596,
+        "scoreError": 183100.56307544833
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "joint-args",
+          "size": "10000"
+        },
+        "score": 124089.0676595386,
+        "scoreError": 43649.71308469846
+      }
+    ],
+    "branchOpsPerSecond": 498780.37786650803,
+    "estimatedSpeedup": 9.471064878943766
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "last-bound",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.01797218965146964,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "last-bound",
+          "size": "1000"
+        },
+        "score": 188.09832402073005,
+        "scoreError": 55.00501370561707
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "last-bound",
+          "size": "10000"
+        },
+        "score": 1.838624146590093,
+        "scoreError": 0.5806965921081888
+      }
+    ],
+    "branchOpsPerSecond": 1625271.3112092009,
+    "estimatedSpeedup": 90432570.69548547
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "nested-arg0",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 574436.7294788829,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "nested-arg0",
+          "size": "1000"
+        },
+        "score": 628161.9630217435,
+        "scoreError": 240010.35761713266
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "nested-arg0",
+          "size": "10000"
+        },
+        "score": 600699.0125023058,
+        "scoreError": 202079.69081850533
+      }
+    ],
+    "branchOpsPerSecond": 1872423.8143561315,
+    "estimatedSpeedup": 3.2595823321652078
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "nested-arg1",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 70.5576074489068,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "nested-arg1",
+          "size": "1000"
+        },
+        "score": 7100.854945583353,
+        "scoreError": 2439.7073606660783
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "nested-arg1",
+          "size": "10000"
+        },
+        "score": 707.8271934604509,
+        "scoreError": 215.95878503624343
+      }
+    ],
+    "branchOpsPerSecond": 1568153.9266953226,
+    "estimatedSpeedup": 22225.157334464286
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "no-match",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 4250741.181596876,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "no-match",
+          "size": "1000"
+        },
+        "score": 4363337.028440311,
+        "scoreError": 110422.30320645637
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "no-match",
+          "size": "10000"
+        },
+        "score": 4306671.150201484,
+        "scoreError": 1980872.5082794237
+      }
+    ],
+    "branchOpsPerSecond": 31550500.947080877,
+    "estimatedSpeedup": 7.422352855467972
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.first",
+    "params": {
+      "impl": "mutable",
+      "query": "zero-arity",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 4854938.635527025,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "zero-arity",
+          "size": "1000"
+        },
+        "score": 5070392.1475608265,
+        "scoreError": 864151.6811495946
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "query": "zero-arity",
+          "size": "10000"
+        },
+        "score": 4961496.017781925,
+        "scoreError": 2190328.5036391616
+      }
+    ],
+    "branchOpsPerSecond": 4385391.790461607,
+    "estimatedSpeedup": 0.9032847003195034
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "immutable",
+      "op": "abolish",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.0073289330897681635,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "abolish",
+          "size": "1000"
+        },
+        "score": 44.447582745790704,
+        "scoreError": 11.900883935983083
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "abolish",
+          "size": "10000"
+        },
+        "score": 0.5707480704705308,
+        "scoreError": 0.1605379983183156
+      }
+    ],
+    "branchOpsPerSecond": 37.43233256887835,
+    "estimatedSpeedup": 5107.4736404862515
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "immutable",
+      "op": "assertA",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 4.77076480101953,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "assertA",
+          "size": "1000"
+        },
+        "score": 572.0232593957477,
+        "scoreError": 142.542001201704
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "assertA",
+          "size": "10000"
+        },
+        "score": 52.23972081940807,
+        "scoreError": 27.829402948379286
+      }
+    ],
+    "branchOpsPerSecond": 246.70785425296364,
+    "estimatedSpeedup": 51.71243281585403
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "immutable",
+      "op": "assertZ",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 5.177199201044574,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "assertZ",
+          "size": "1000"
+        },
+        "score": 553.8155852443382,
+        "scoreError": 155.63654326733356
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "assertZ",
+          "size": "10000"
+        },
+        "score": 53.546368741988665,
+        "scoreError": 13.477981104449553
+      }
+    ],
+    "branchOpsPerSecond": 248.2737505784132,
+    "estimatedSpeedup": 47.9552246180368
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "immutable",
+      "op": "retract-first",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.008383355677029655,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "retract-first",
+          "size": "1000"
+        },
+        "score": 44.59155849663885,
+        "scoreError": 15.851147011122745
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "retract-first",
+          "size": "10000"
+        },
+        "score": 0.6114138492628354,
+        "scoreError": 0.2276998286853898
+      }
+    ],
+    "branchOpsPerSecond": 224.79694819931626,
+    "estimatedSpeedup": 26814.673844181343
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "immutable",
+      "op": "retract-last",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.007435519302829347,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "retract-last",
+          "size": "1000"
+        },
+        "score": 49.02557956499959,
+        "scoreError": 2.320663289908499
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "retract-last",
+          "size": "10000"
+        },
+        "score": 0.6037637312624454,
+        "scoreError": 0.2690301982625521
+      }
+    ],
+    "branchOpsPerSecond": 217.9451592680215,
+    "estimatedSpeedup": 29311.3567985883
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "immutable",
+      "op": "retractAll",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 0.008319219815476777,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "retractAll",
+          "size": "1000"
+        },
+        "score": 43.77495893865834,
+        "scoreError": 10.720013632728397
+      },
+      {
+        "params": {
+          "impl": "immutable",
+          "op": "retractAll",
+          "size": "10000"
+        },
+        "score": 0.6034678995805566,
+        "scoreError": 0.24468131081012434
+      }
+    ],
+    "branchOpsPerSecond": 153.62094749808898,
+    "estimatedSpeedup": 18465.787766816557
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "mutable",
+      "op": "abolish",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 6.808558821738388,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "abolish",
+          "size": "1000"
+        },
+        "score": 1599.7138015253804,
+        "scoreError": 552.1025751339674
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "abolish",
+          "size": "10000"
+        },
+        "score": 104.36352579149614,
+        "scoreError": 33.67913339757399
+      }
+    ],
+    "branchOpsPerSecond": 14.23399515972735,
+    "estimatedSpeedup": 2.0906032440053255
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "mutable",
+      "op": "assertA",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1852060.9981745926,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "assertA",
+          "size": "1000"
+        },
+        "score": 1777130.8403039342,
+        "scoreError": 607761.451528225
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "assertA",
+          "size": "10000"
+        },
+        "score": 1814209.116386575,
+        "scoreError": 488547.2250612332
+      }
+    ],
+    "branchOpsPerSecond": 1481439.1617205113,
+    "estimatedSpeedup": 0.7998868089013432
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "mutable",
+      "op": "assertZ",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1844563.8207344369,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "assertZ",
+          "size": "1000"
+        },
+        "score": 1672285.3479755397,
+        "scoreError": 388571.3061496859
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "assertZ",
+          "size": "10000"
+        },
+        "score": 1756313.4830718515,
+        "scoreError": 508733.5831192847
+      }
+    ],
+    "branchOpsPerSecond": 1540065.0699627195,
+    "estimatedSpeedup": 0.8349210001037116
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "mutable",
+      "op": "retract-first",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1048619.931813834,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "retract-first",
+          "size": "1000"
+        },
+        "score": 942651.0345163367,
+        "scoreError": 157993.70379367506
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "retract-first",
+          "size": "10000"
+        },
+        "score": 994224.654461335,
+        "scoreError": 228494.91404083846
+      }
+    ],
+    "branchOpsPerSecond": 1165056.1336385624,
+    "estimatedSpeedup": 1.1110375630790508
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "mutable",
+      "op": "retract-last",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 1029820.3670334532,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "retract-last",
+          "size": "1000"
+        },
+        "score": 950512.6631375441,
+        "scoreError": 359795.9611961483
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "retract-last",
+          "size": "10000"
+        },
+        "score": 989372.1744734136,
+        "scoreError": 162009.85665911337
+      }
+    ],
+    "branchOpsPerSecond": 1207121.6554317893,
+    "estimatedSpeedup": 1.1721671993233909
+  },
+  {
+    "benchmark": "it.unibo.tuprolog.examples.benchmarks.theory.TheoryMutationBenchmark.update",
+    "params": {
+      "impl": "mutable",
+      "op": "retractAll",
+      "size": "100000"
+    },
+    "estimatedBaselineOpsPerSecond": 27.95750778279374,
+    "method": "Per-case power law through baseline size=1000 and size=10000; S(100000)=S(10000)^2/S(1000). No JMH error bar is assigned to extrapolation.",
+    "sources": [
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "retractAll",
+          "size": "1000"
+        },
+        "score": 3252.898504380557,
+        "scoreError": 1420.9494366146032
+      },
+      {
+        "params": {
+          "impl": "mutable",
+          "op": "retractAll",
+          "size": "10000"
+        },
+        "score": 301.5674638498947,
+        "scoreError": 137.01851690462422
+      }
+    ],
+    "branchOpsPerSecond": 667.8640446635209,
+    "estimatedSpeedup": 23.888540060589854
+  }
+]
