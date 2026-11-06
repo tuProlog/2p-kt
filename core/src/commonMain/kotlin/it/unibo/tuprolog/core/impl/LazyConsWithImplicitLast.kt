@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
-import it.unibo.tuprolog.utils.setTags
 
 internal class LazyConsWithImplicitLast(
     private val cursor: Cursor<out Term>,
@@ -44,6 +43,5 @@ internal class LazyConsWithImplicitLast(
     override fun copyWithTags(tags: Map<String, Any>): LazyConsWithImplicitLast =
         if (this.tags === tags) this else LazyConsWithImplicitLast(cursor, tags)
 
-    override fun freshCopy(scope: Scope): Cons =
-        LazyConsWithImplicitLast(unfoldedSequence.map { it.freshCopy(scope) }.cursor()).setTags(tags).castToCons()
+    override fun freshCopy(scope: Scope): Cons = LazyConsWithImplicitLast(cursor.map { it.freshCopy(scope) }, tags)
 }
