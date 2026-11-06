@@ -20,6 +20,9 @@ class PrologSolverBenchmark {
         "nrev",
         "nrev-100",
         "bind-vars",
+        "strips-list",
+        "strips-tuple",
+        "strips-block",
         "backtracking",
         "failing-search",
         "nested-solving",
@@ -39,8 +42,10 @@ class PrologSolverBenchmark {
 
     @Setup
     fun setUp() {
-        solver = PrologSolverFactory.solverWithDefaultBuiltins(staticKb = BenchmarkTheory.theory)
-        goal = Workload.byId(workload).goal
+        val workload = Workload.byId(workload)
+        solver = PrologSolverFactory.solverWithDefaultBuiltins(staticKb = workload.theory, flags = workload.flags)
+        goal = workload.goal
+        require(solver.solveOnce(goal).isYes) { "Workload ${workload.id} has no solution" }
         options =
             TimeoutSetting.byId(timeout).options.setChronometerFactory(ChronometerSetting.byId(chronometer).factory)
     }

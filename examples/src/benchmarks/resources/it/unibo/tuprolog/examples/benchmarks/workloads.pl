@@ -43,7 +43,9 @@ primitives(I, N) :-
 % substitutes the (long) remaining suffix of the list
 bind_all([]).
 bind_all([x | T]) :- bind_all(T).
-bind_vars(N) :- length(L, N), bind_all(L).
+vars(0, []) :- !.
+vars(N, [_ | T]) :- N1 is N - 1, vars(N1, T).
+bind_vars(N) :- vars(N, L), bind_all(L).
 
 % overshoot: never terminates, so only the timeout can stop it
 loop :- loop.
