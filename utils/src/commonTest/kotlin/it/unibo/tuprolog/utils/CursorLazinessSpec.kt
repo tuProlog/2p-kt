@@ -51,6 +51,16 @@ class CursorLazinessSpec :
             calls shouldBe 2
         }
 
+        test("map/equal-by-source-and-mappers") {
+            val source = listOf(1, 2, 3).cursor()
+            val inc: (Int) -> Int = { it + 1 }
+            val double: (Int) -> Int = { it * 2 }
+            (source.map(inc).map(double) == source.map(inc).map(double)) shouldBe true
+            source.map(inc).map(double).hashCode() shouldBe source.map(inc).map(double).hashCode()
+            (source.map(inc).map(double) == source.map(double).map(inc)) shouldBe false
+            (source.map(inc) == source.map(inc).map(double)) shouldBe false
+        }
+
         test("map/composed-100k-maps") {
             var cursor: Cursor<out Int> = generateSequence(0) { it + 1 }.cursor()
             repeat(100_000) { cursor = cursor.map { it + 1 } }
