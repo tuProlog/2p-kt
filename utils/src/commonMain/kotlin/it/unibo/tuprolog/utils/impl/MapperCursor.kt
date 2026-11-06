@@ -38,10 +38,10 @@ internal class MapperCursor<R> private constructor(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is MapperCursor<*>) return false
-        return source == other.source && chain === other.chain
+        return source == other.source && (chain === other.chain || chain.mappers contentEquals other.chain.mappers)
     }
 
-    override fun hashCode(): Int = 31 * source.hashCode() + chain.hashCode()
+    override fun hashCode(): Int = 31 * source.hashCode() + chain.mappers.contentHashCode()
 
     /** A persistent, append-only chain of mappers, shared by all the positions of a mapped cursor. */
     internal class MapperChain(
