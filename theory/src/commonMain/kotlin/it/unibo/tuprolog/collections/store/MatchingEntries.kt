@@ -3,7 +3,15 @@ package it.unibo.tuprolog.collections.store
 import it.unibo.tuprolog.core.Clause
 
 /** Merges two views sorted by [Entry.order], keeping the entries visible at [generation] whose clause satisfies [accept]. */
-internal class MatchingEntries(
+internal fun matchingEntries(
+    first: EntryView,
+    second: EntryView,
+    generation: Long,
+    accept: (Clause) -> Boolean,
+): Iterator<Entry> =
+    if (second.size == 0) first.matching(generation, accept) else MatchingEntries(first, second, generation, accept)
+
+private class MatchingEntries(
     private val first: EntryView,
     private val second: EntryView,
     private val generation: Long,

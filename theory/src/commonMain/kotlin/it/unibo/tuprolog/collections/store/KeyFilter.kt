@@ -40,7 +40,8 @@ internal class KeyFilter private constructor(
     }
 
     companion object {
-        private val NONE: (Clause) -> Boolean = { true }
+        /** The filter accepting every clause: callers can skip it. */
+        val NONE: (Clause) -> Boolean = { true }
 
         /** A new filter for one iteration over the candidates for [query], [indexed] or not. */
         fun of(

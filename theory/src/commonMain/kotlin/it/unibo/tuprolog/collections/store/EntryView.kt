@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.collections.store
 
+import it.unibo.tuprolog.core.Clause
+
 /** A snapshot of the content of an [EntryDeque]. */
 internal class EntryView(
     private val array: Array<Entry?>,
@@ -11,6 +13,29 @@ internal class EntryView(
     operator fun get(i: Int): Entry = array[from + i]!!
 
     fun asSequence(): Sequence<Entry> = (from until to).asSequence().map { array[it]!! }
+
+    /** The entries visible at [generation] whose clause satisfies [accept], without intermediate sequences. */
+    fun matching(
+        generation: Long,
+        accept: (Clause) -> Boolean,
+    ): Iterator<Entry> =
+        object : Iterator<Entry> {
+            private var i = from
+            private var next: Entry? = null
+
+            override fun hasNext(): Boolean {
+                while (next == null && i < to) {
+                    val entry = array[i++]!!
+                    if (entry.isVisibleAt(generation) && accept(entry.clause)) next = entry
+                }
+                return next != null
+            }
+
+            override fun next(): Entry {
+                if (!hasNext()) throw NoSuchElementException()
+                return next!!.also { next = null }
+            }
+        }
 
     /** The entries visible at [generation], mapped through [transform], without intermediate sequences. */
     fun <T> visibleAt(

@@ -61,7 +61,7 @@ internal class MutableStore(
         if (customHeadKeys > 0 || unificator.hasCustomHeadKey(query)) {
             val view = all.view()
             val generation = generation
-            return Sequence { MatchingEntries(view, EMPTY_VIEW, generation, accept) }
+            return Sequence { matchingEntries(view, EMPTY_VIEW, generation, accept) }
         }
         val procedure = procedures[procedureKeyOf(query)] ?: return emptySequence()
         val (first, second) = procedure.candidates(query)
@@ -70,7 +70,9 @@ internal class MutableStore(
         return Sequence {
             // MutableProcedure.candidates gives EMPTY_VIEW as second view only when it scans the whole procedure
             val keys = KeyFilter.of(unificator, query, indexed = second !== EMPTY_VIEW)
-            MatchingEntries(first, second, generation) { keys(it) && accept(it) }
+            // no key to check (e.g. zero-arity heads): pass accept as is, sparing a lambda per clause
+            val test = if (keys === KeyFilter.NONE) accept else { clause -> keys(clause) && accept(clause) }
+            matchingEntries(first, second, generation, test)
         }
     }
 
