@@ -51,6 +51,30 @@ class CursorLazinessSpec :
             calls shouldBe 2
         }
 
+        test("map/composition-reuses-intermediate-results") {
+            var calls = 0
+            val mapped = listOf(1, 2, 3).cursor().map { ++calls }
+            val branch = mapped.map { it * 10 }
+            mapped.current shouldBe 1
+            branch.current shouldBe 10
+            mapped.next.current shouldBe 2
+            branch.next.current shouldBe 20
+            mapped.map { it * 100 }.next.current shouldBe 200
+            calls shouldBe 2
+        }
+
+        test("map/composition-preserves-null-results") {
+            var calls = 0
+            val mapped =
+                listOf(1, 2).cursor().map<Int?> {
+                    calls++
+                    null
+                }
+            mapped.current shouldBe null
+            mapped.map { it == null }.current shouldBe true
+            calls shouldBe 1
+        }
+
         test("map/equal-by-source-and-mappers") {
             val source = listOf(1, 2, 3).cursor()
             val inc: (Int) -> Int = { it + 1 }
