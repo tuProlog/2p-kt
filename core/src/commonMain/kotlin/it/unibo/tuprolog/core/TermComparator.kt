@@ -131,7 +131,9 @@ interface TermComparator<T : Term> : Comparator<T> {
                 }
                 val lastOfX = x[last]
                 val lastOfY = y[last]
-                if (!lastOfX.isStruct || !lastOfY.isStruct) return DefaultComparator.compare(lastOfX, lastOfY)
+                if (!lastOfX.isStruct || !lastOfY.isStruct || lastOfX.isAtom || lastOfY.isAtom) {
+                    return DefaultComparator.compare(lastOfX, lastOfY)
+                }
                 x = lastOfX.castToStruct()
                 y = lastOfY.castToStruct()
             }
