@@ -63,7 +63,12 @@ internal class MutableProcedure(
             val index = built[i]
             val key = keyOf(entry, index.steps)
             val deque = (if (key.isExact) index.buckets[key] else index.wildcards) ?: continue
-            if (++deque.dead <= COMPACTION_SLACK || 2 * deque.dead <= deque.size) continue
+            deque.dead++
+            if (key.isExact && deque.dead == deque.size) {
+                index.buckets.remove(key)
+                continue
+            }
+            if (deque.dead <= COMPACTION_SLACK || 2 * deque.dead <= deque.size) continue
             val compacted = EntryDeque.of(deque.alive())
             when {
                 !key.isExact -> index.wildcards = compacted
