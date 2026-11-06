@@ -32,6 +32,7 @@ private val kinds =
     listOf(
         DeepKind("list-eager") { LogicList.of(it) },
         DeepKind("list-lazy") { LogicList.of(it.asSequence()) },
+        DeepKind("list-lazy-implicit-last") { LogicList.from(it.asSequence()) },
         DeepKind("tuple") { Tuple.of(it) },
         DeepKind("block") { Block.of(it) },
     )

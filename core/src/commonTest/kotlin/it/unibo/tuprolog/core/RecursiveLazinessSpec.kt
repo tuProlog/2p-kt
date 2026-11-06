@@ -92,6 +92,7 @@ private val lazyConstructionCases =
         LazyConstructionCase("tuple-from-iterable", { Tuple.of(it.asIterable()) }, { Tuple.of(it) }),
         LazyConstructionCase("scope-tuple-of", { Scope.empty().tupleOf(it) }, { Tuple.of(it) }),
         LazyConstructionCase("block", { Block.of(it) }, { Block.of(it) }),
+        LazyConstructionCase("block-from-iterable", { Block.of(it.asIterable()) }, { Block.of(it) }),
         LazyConstructionCase("scope-block-of", { Scope.empty().blockOf(it) }, { Block.of(it) }),
     )
 
@@ -155,6 +156,65 @@ class RecursiveLazinessSpec :
             val applied = list.apply(Substitution.of(t, Atom.of("c"))).castToList()
             applied.last shouldBe Atom.of("c")
             applied shouldBe LogicList.from(listOf(Atom.of("a"), Atom.of("b")), Atom.of("c"))
+        }
+
+        test("apply/lazy-list-with-implicit-last-stays-lazy") {
+            val x = Var.of("X")
+            val list =
+                LogicList.from(
+                    sequence {
+                        yield(x)
+                        yield(Atom.of("b"))
+                        yield(Atom.of("c"))
+                        error("suffix evaluated")
+                    },
+                )
+            val applied = list.apply(Substitution.of(x, Atom.of("a"))).castToCons()
+            applied.head shouldBe Atom.of("a")
+            applied.tail.castToCons().head shouldBe Atom.of("b")
+        }
+
+        test("fresh-copy/lazy-list-with-implicit-last-stays-lazy") {
+            val x = Var.of("X")
+            val list =
+                LogicList.from(
+                    sequence {
+                        yield(x)
+                        yield(Atom.of("b"))
+                        yield(Atom.of("c"))
+                        error("suffix evaluated")
+                    },
+                )
+            val copy = list.freshCopy().castToCons()
+            copy.head.isVar shouldBe true
+            (copy.head == x) shouldBe false
+            copy.tail.castToCons().head shouldBe Atom.of("b")
+        }
+
+        test("fresh-copy/lazy-list-with-explicit-last-stays-lazy") {
+            val x = Var.of("X")
+            val list =
+                LogicList.from(
+                    sequence {
+                        yield(x)
+                        yield(Atom.of("b"))
+                        error("suffix evaluated")
+                    },
+                    Var.of("T"),
+                )
+            val copy = list.freshCopy().castToCons()
+            copy.head.isVar shouldBe true
+            (copy.head == x) shouldBe false
+            copy.tail.castToCons().head shouldBe Atom.of("b")
+        }
+
+        test("meta/lazy-list-with-explicit-last-ending-in-a-list") {
+            val (a, b, c, d) = listOf("a", "b", "c", "d").map { Atom.of(it) }
+            val list = LogicList.from(sequenceOf(a, b), LogicList.of(c, d))
+            list.last shouldBe LogicList.empty()
+            list.isWellFormed shouldBe true
+            list.size shouldBe 4
+            list shouldBe LogicList.of(a, b, c, d)
         }
 
         withTests(nameFn = { "construction/${it.id}/consumes-bounded-prefix" }, lazyConstructionCases) { case ->
