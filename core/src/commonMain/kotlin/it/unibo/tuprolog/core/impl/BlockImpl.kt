@@ -45,7 +45,7 @@ internal open class BlockImpl(
 
     override fun freshCopy(scope: Scope): Block =
         when {
-            isGround -> this
+            knownGround == true -> this
             else -> scope.blockOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
         }
 

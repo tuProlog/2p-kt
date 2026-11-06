@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.utils.setTags
 
 internal class ConsImpl(
     override val head: Term,
@@ -76,10 +75,19 @@ internal class ConsImpl(
             )
         }
 
-    override fun freshCopy(scope: Scope): Cons =
-        when {
-            isGround -> this
-            isWellFormed -> scope.logicListOf(toList().map { it.freshCopy(scope) }).setTags(tags).castToCons()
-            else -> scope.logicListFrom(unfoldedList.map { it.freshCopy(scope) }).setTags(tags).castToCons()
+    override fun freshCopy(scope: Scope): Cons {
+        if (knownGround == true) return this
+        val nodes = mutableListOf<ConsImpl>()
+        var current: Term = this
+        while (current is ConsImpl && current.knownGround != true) {
+            nodes.add(current)
+            current = current.tail
         }
+        var result: Term = current.freshCopy(scope)
+        for (i in nodes.indices.reversed()) {
+            val node = nodes[i]
+            result = ConsImpl(node.head.freshCopy(scope), result, node.tags)
+        }
+        return result.castToCons()
+    }
 }

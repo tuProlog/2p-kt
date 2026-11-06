@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.utils.setTags
 
 internal class TupleImpl(
     override val left: Term,
@@ -18,11 +17,21 @@ internal class TupleImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Tuple = TupleImpl(left, right, tags)
 
-    override fun freshCopy(scope: Scope): Tuple =
-        when {
-            isGround -> this
-            else -> Tuple.of(unfoldedSequence.map { it.freshCopy(scope) }.toList()).setTags(tags)
+    override fun freshCopy(scope: Scope): Tuple {
+        if (knownGround == true) return this
+        val nodes = mutableListOf<TupleImpl>()
+        var current: Term = this
+        while (current is TupleImpl && current.knownGround != true) {
+            nodes.add(current)
+            current = current.right
         }
+        var result: Term = current.freshCopy(scope)
+        for (i in nodes.indices.reversed()) {
+            val node = nodes[i]
+            result = TupleImpl(node.left.freshCopy(scope), result, node.tags)
+        }
+        return result.castToTuple()
+    }
 
     /**
      * Applies [unifier] to every item: the longest suffix left unchanged by [unifier] is reused as is (as is

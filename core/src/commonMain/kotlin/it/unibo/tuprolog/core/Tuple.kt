@@ -65,7 +65,7 @@ interface Tuple : Recursive {
         fun wrapIfNeeded(
             vararg terms: Term,
             ifEmpty: () -> Term = { Truth.TRUE },
-        ): Term = wrapIfNeeded(terms.asIterable(), ifEmpty)
+        ): Term = wrapIfNeeded(terms.toList(), ifEmpty)
 
         /** @see wrapIfNeeded */
         @JvmStatic
