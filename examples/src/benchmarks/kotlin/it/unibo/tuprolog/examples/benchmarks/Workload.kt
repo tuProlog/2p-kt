@@ -2,6 +2,7 @@ package it.unibo.tuprolog.examples.benchmarks
 
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.parsing.parse
+import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.theory.Theory
@@ -66,6 +67,13 @@ enum class Workload(
 
     /** The theory [goal] is solved against. */
     val theory: Theory by lazy { BenchmarkTheory.load(*resources.toTypedArray()) }
+
+    /** Checks the expected outcome, including the deliberate failure of [FAILING_SEARCH]. */
+    fun checkSolution(solution: Solution) {
+        require(if (this == FAILING_SEARCH) solution.isNo else solution.isYes) {
+            "Unexpected result for workload $id: $solution"
+        }
+    }
 
     companion object {
         /** The [Workload] whose [id] is [id]. */

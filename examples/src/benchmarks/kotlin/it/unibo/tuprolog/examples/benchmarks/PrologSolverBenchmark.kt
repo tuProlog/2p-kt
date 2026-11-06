@@ -45,7 +45,7 @@ class PrologSolverBenchmark {
         val workload = Workload.byId(workload)
         solver = PrologSolverFactory.solverWithDefaultBuiltins(staticKb = workload.theory, flags = workload.flags)
         goal = workload.goal
-        require(solver.solveOnce(goal).isYes) { "Workload ${workload.id} has no solution" }
+        workload.checkSolution(solver.solveOnce(goal))
         options =
             TimeoutSetting.byId(timeout).options.setChronometerFactory(ChronometerSetting.byId(chronometer).factory)
     }

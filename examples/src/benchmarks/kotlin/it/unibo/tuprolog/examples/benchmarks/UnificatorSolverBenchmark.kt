@@ -33,7 +33,7 @@ class UnificatorSolverBenchmark {
                 flags = workload.flags,
             )
         goal = workload.goal
-        require(solver.solveOnce(goal).isYes) { "Workload ${workload.id} has no solution" }
+        workload.checkSolution(solver.solveOnce(goal))
     }
 
     @Benchmark
