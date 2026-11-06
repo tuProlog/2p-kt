@@ -71,17 +71,19 @@ private val deepCases = kinds.flatMap { kind -> operations.map { DeepCase(kind, 
 
 private fun deepItems(): KtList<Term> = (0 until DEPTH).map { Var.of("X$it") }
 
-/** A non-ground list/tuple of 50 variables, where only the first one is going to be substituted. */
+/** A non-ground list/tuple of [size] variables, where only the first one is going to be substituted. */
 internal data class SharingCase(
     val id: String,
     val build: (KtList<Term>) -> Struct,
     val suffix: (Struct) -> Term,
+    val size: Int = 50,
 )
 
 private val sharingCases =
     listOf(
         SharingCase("tuple-apply-keeps-untouched-suffix", { Tuple.of(it) }, { it.castToTuple().right }),
         SharingCase("cons-apply-keeps-untouched-suffix", { LogicList.of(it) }, { it.castToCons().tail }),
+        SharingCase("long-cons-apply-keeps-untouched-suffix", { LogicList.of(it) }, { it.castToCons().tail }, 1_000),
         SharingCase(
             "struct-apply-keeps-untouched-args",
             { Struct.of("f", it[0], Struct.of("g", it.drop(1))) },
@@ -96,7 +98,7 @@ class DeepRecursiveTermsSpec :
         }
 
         withTests(nameFn = { "sharing/${it.id}" }, sharingCases) { case ->
-            val items = (0 until 50).map { Var.of("X$it") }
+            val items = (0 until case.size).map { Var.of("X$it") }
             val original = case.build(items)
             val result = original.apply(Substitution.of(items.first(), Atom.of("a"))).castToStruct()
             (case.suffix(result) === case.suffix(original)) shouldBe true
