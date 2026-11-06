@@ -140,4 +140,8 @@ terms unify, either their keys are equal, or one of them is not exact* (see
 - When in doubt, return `IndexKey.Wildcard` for the terms concerned: it disables indexing on them, which is always
   correct, only slower.
 
+When keys change a clause head's principal symbol, stores scan clauses in order instead of selecting a literal
+functor/arity group. Immutable retractions on this path rebuild the remaining store. Custom keys on arguments alone
+still use the argument indexes.
+
 `Unificator.cached(...)` delegates `indexKey` to the unificator it wraps.

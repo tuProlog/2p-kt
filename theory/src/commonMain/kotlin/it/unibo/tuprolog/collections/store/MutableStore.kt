@@ -22,6 +22,7 @@ internal class MutableStore(
     private var highestOrder: Long = 0
     private var all = EntryDeque()
     private var dead = 0
+    private var customHeadKeys = 0
     private val procedures = HashMap<ProcedureKey?, MutableProcedure>()
 
     /** Number of live clauses. */
@@ -38,6 +39,7 @@ internal class MutableStore(
         val key = procedureKeyOf(clause)
         procedures.getOrPut(key) { MutableProcedure(unificator) }.add(entry, atStart)
         size++
+        if (unificator.hasCustomHeadKey(clause)) customHeadKeys++
     }
 
     fun addAll(
@@ -56,6 +58,11 @@ internal class MutableStore(
         query: Clause,
         accept: (Clause) -> Boolean,
     ): Sequence<Entry> {
+        if (customHeadKeys > 0 || unificator.hasCustomHeadKey(query)) {
+            val view = all.view()
+            val generation = generation
+            return Sequence { MatchingEntries(view, EMPTY_VIEW, generation, accept) }
+        }
         val procedure = procedures[procedureKeyOf(query)] ?: return emptySequence()
         val (first, second) = procedure.candidates(query)
         if (first.size == 0 && second.size == 0) return emptySequence()
@@ -92,6 +99,7 @@ internal class MutableStore(
     fun remove(entry: Entry) {
         entry.erased = ++generation
         size--
+        if (unificator.hasCustomHeadKey(entry.clause)) customHeadKeys--
         dead++
         val key = procedureKeyOf(entry.clause)
         val procedure = procedures[key]!!
