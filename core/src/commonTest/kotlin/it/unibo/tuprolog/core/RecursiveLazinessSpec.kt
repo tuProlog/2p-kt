@@ -5,6 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
 import io.kotest.matchers.ints.shouldBeLessThanOrEqual
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.List as LogicList
 import kotlin.collections.List as KtList
 
@@ -94,6 +95,21 @@ private val lazyConstructionCases =
         LazyConstructionCase("block", { Block.of(it) }, { Block.of(it) }),
         LazyConstructionCase("block-from-iterable", { Block.of(it.asIterable()) }, { Block.of(it) }),
         LazyConstructionCase("scope-block-of", { Scope.empty().blockOf(it) }, { Block.of(it) }),
+    )
+
+internal data class LazyFreshCopyCase(
+    val id: String,
+    val build: (Sequence<Term>) -> Recursive,
+)
+
+private val lazyFreshCopyCases =
+    listOf(
+        LazyFreshCopyCase("tuple") { Tuple.of(it) },
+        LazyFreshCopyCase("block") { Block.of(it) },
+        LazyFreshCopyCase("tuple-ground-prefix") { Tuple.of(Atom.of("prefix"), Tuple.of(it)) },
+        LazyFreshCopyCase("tuple-variable-prefix") { Tuple.of(Var.of("X"), Tuple.of(it)) },
+        LazyFreshCopyCase("cons-ground-prefix") { Cons.of(Atom.of("prefix"), LogicList.of(it)) },
+        LazyFreshCopyCase("cons-variable-prefix") { Cons.of(Var.of("X"), LogicList.of(it)) },
     )
 
 class RecursiveLazinessSpec :
@@ -208,6 +224,17 @@ class RecursiveLazinessSpec :
             copy.tail.castToCons().head shouldBe Atom.of("b")
         }
 
+        withTests(nameFn = { "fresh-copy/preserves-lazy-suffix/${it.id}" }, lazyFreshCopyCases) { case ->
+            val term = case.build(sequenceOf<Term>(Atom.of("a"), Atom.of("b")) + throwingSequence())
+            val copy = term.freshCopy()
+            copy
+                .castToRecursive()
+                .unfoldedSequence
+                .first()
+                .isGround shouldBe
+                term.unfoldedSequence.first().isGround
+        }
+
         test("meta/lazy-list-with-explicit-last-ending-in-a-list") {
             val (a, b, c, d) = listOf("a", "b", "c", "d").map { Atom.of(it) }
             val list = LogicList.from(sequenceOf(a, b), LogicList.of(c, d))
@@ -281,6 +308,11 @@ class RecursiveLazinessSpec :
         test("construction/block/zero-and-one-items") {
             Block.of(emptySequence<Term>()) shouldBe Block.empty()
             Block.of(sequenceOf<Term>(Atom.of("a"))) shouldBe Block.of(Atom.of("a"))
+        }
+
+        test("construction/tuple/wrap-varargs-is-eager") {
+            val tuple = Tuple.wrapIfNeeded(Atom.of("a"), Atom.of("b"))
+            tuple.freshCopy() shouldBeSameInstanceAs tuple
         }
 
         test("construction/tuple/wrap-if-needed-is-lazy") {
