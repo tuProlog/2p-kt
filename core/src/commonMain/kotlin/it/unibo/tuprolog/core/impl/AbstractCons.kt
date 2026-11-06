@@ -14,10 +14,6 @@ internal abstract class AbstractCons(
     tags: Map<String, Any> = emptyMap(),
 ) : RecursiveImpl(CONS_FUNCTOR, args, tags),
     Cons {
-    companion object {
-        const val SWITCH_TO_LAZY_THRESHOLD = 100
-    }
-
     override val estimatedLength: Int
         get() = 1
 

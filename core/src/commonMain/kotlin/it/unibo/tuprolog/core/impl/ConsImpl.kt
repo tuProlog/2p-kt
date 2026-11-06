@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.utils.cursor
 import it.unibo.tuprolog.utils.setTags
 
 internal class ConsImpl(
@@ -29,14 +28,32 @@ internal class ConsImpl(
     override val estimatedLength: Int
         get() = if (knownSize >= 0) knownSize else 1
 
-    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
-        if (estimatedLength >= SWITCH_TO_LAZY_THRESHOLD) {
-            LazyConsWithImplicitLast(unfoldedSequence.cursor().map { it.apply(unifier) }, tags)
-        } else {
-            val newHead = head.apply(unifier)
-            val newTail = tail.apply(unifier)
-            if (newHead === head && newTail === tail) this else ConsImpl(newHead, newTail, tags)
+    /**
+     * Applies [unifier] to every item, iteratively, rebuilding the list from its end: the longest suffix left
+     * unchanged by [unifier] is reused as is (as is the whole list, if nothing changes). Ground suffixes are
+     * not even visited, and a lazy suffix, if any, is substituted lazily.
+     */
+    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term {
+        val nodes = mutableListOf<ConsImpl>()
+        var current: Term = this
+        while (current is ConsImpl && current.knownGround != true) {
+            nodes.add(current)
+            current = current.tail
         }
+        var result: Term = current.apply(unifier)
+        var shared = result === current
+        for (i in nodes.indices.reversed()) {
+            val node = nodes[i]
+            val head = node.head.apply(unifier)
+            if (shared && head === node.head) {
+                result = node
+            } else {
+                shared = false
+                result = ConsImpl(head, result, node.tags)
+            }
+        }
+        return result
+    }
 
     override fun copyWithTags(tags: Map<String, Any>): ConsImpl =
         if (this.tags === tags) {
