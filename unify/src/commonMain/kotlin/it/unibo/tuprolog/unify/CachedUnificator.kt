@@ -38,6 +38,9 @@ class CachedUnificator(
     override val context: Substitution
         get() = decorated.context
 
+    /** Delegates to [decorated]'s keys. */
+    override fun indexKey(term: Term): IndexKey = decorated.indexKey(term)
+
     /** Returns the cached result for ([term1], [term2], [occurCheckEnabled]), computing and caching it if absent. */
     override fun mgu(
         term1: Term,

@@ -12,7 +12,7 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.testutils.ReteNodeUtils.ClauseCase
+import it.unibo.tuprolog.testutils.ClauseFixtures.ClauseCase
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.core.List as LogicList
 
@@ -23,12 +23,12 @@ import it.unibo.tuprolog.core.List as LogicList
  */
 internal object TheoryUtils {
     /** Contains well formed clauses (the head is a [Struct] and the body doesn't contain [Numeric] values) */
-    internal val wellFormedClauseCases get() = ReteNodeUtils.mixedClauseCases
+    internal val wellFormedClauseCases get() = ClauseFixtures.mixedClauseCases
 
-    internal val wellFormedClauses get() = ReteNodeUtils.mixedClauses
+    internal val wellFormedClauses get() = ClauseFixtures.mixedClauses
 
     /** Contains the rules among [wellFormedClauseCases] */
-    internal val wellFormedRuleCases get() = ReteNodeUtils.ruleCases
+    internal val wellFormedRuleCases get() = ClauseFixtures.ruleCases
 
     /** Contains a pair which has in its first element half clauses from [wellFormedClauses] in the second element the other half */
     internal val wellFormedClausesHelves =
@@ -38,10 +38,10 @@ internal object TheoryUtils {
         )
 
     /** Contains well formed clauses queries based on [wellFormedClauses] and expected responses from the ClauseDatabase */
-    internal val clauseQueryCases get() = ReteNodeUtils.mixedClauseQueryCases
+    internal val clauseQueryCases get() = ClauseFixtures.mixedClauseQueryCases
 
     /** Contains rules queries that have Variable as body, to be used when testing the methods accepting only heads */
-    internal val ruleQueryWithVarBodyCases = ReteNodeUtils.ruleQueryCases.filter { it.query.body.isVar }
+    internal val ruleQueryWithVarBodyCases = ClauseFixtures.ruleQueryCases.filter { it.query.body.isVar }
 
     /** Contains rules queries that only specify the functor and arity of the head, leaving body and head functor arguments variables */
     internal val ruleQueryByFunctorAndArityCases

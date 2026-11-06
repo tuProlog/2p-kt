@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.prolog.fsm
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
@@ -18,7 +19,6 @@ import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.utils.buffered
 import it.unibo.tuprolog.utils.cursor
 
 /**
@@ -224,16 +224,16 @@ data class StateRuleSelection(
                             }
                         }
 
-                        ruleSources.any { currentGoalStruct in it } -> {
+                        else -> {
+                            // one lookup per source: an empty result is the "no matching clause" case
                             val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.cursor()
-                            if (context.isTailRecursive) {
-                                StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
-                            } else {
-                                StateRuleExecution(context.createChildAppendingRulesAndChoicePoints(rules))
+                            when {
+                                rules.isOver -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
+                                context.isTailRecursive ->
+                                    StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
+                                else -> StateRuleExecution(context.createChildAppendingRulesAndChoicePoints(rules))
                             }
                         }
-
-                        else -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
                     }
                 }
             else -> {
@@ -249,13 +249,18 @@ data class StateRuleSelection(
         }
     }
 
-    private fun Theory.selectClauses(term: Struct): Sequence<Rule> =
-        get(term).map { it.freshCopy() }.ensureRules().let {
-            if (isMutable) {
-                it.buffered()
-            } else {
-                it
-            }
+    /**
+     * The rules of this theory whose head unifies with [goal], renamed with fresh variables, each with its mgu (see
+     * [MatchedRule]). Candidates are found through the indexes without unification, then renamed and unified once, so
+     * that only matching rules are yielded (as a solver needs, to avoid useless choice points). Unifying `goal :- B`
+     * with the rule `H :- B` compares whole clauses as `Theory.get` does, but costs no more than unifying heads, since
+     * unifying `B` with itself is immediate. Mutable theories follow the logical update view: no need to copy them.
+     */
+    private fun Theory.selectClauses(goal: Struct): Sequence<Rule> =
+        candidates(Rule.of(goal, Var.anonymous())).mapNotNull { candidate ->
+            val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
+            val mgu = context.unificator.mgu(Rule.of(goal, rule.body), rule)
+            if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
         }
 
     override fun clone(context: PrologExecutionContext): StateRuleSelection = copy(context = context)

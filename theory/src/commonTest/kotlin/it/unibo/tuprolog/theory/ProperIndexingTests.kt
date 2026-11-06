@@ -10,7 +10,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertTermsAreEqual
-import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
     funSpec {
@@ -136,7 +135,7 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
         test("correct-indexing-over-dedicated-theory-for-f1-family") {
             withFreshTheory {
                 val generatedIndexingOverF1Family =
-                    theory.clauses.toList().filter { anonymousF1Clause matches it }
+                    theory[anonymousF1Clause].toList()
 
                 assertClausesHaveSameLengthAndContent(expectedIndexingOverF1, generatedIndexingOverF1Family)
             }
@@ -145,7 +144,7 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
         test("correct-indexing-over-dedicated-theory-for-f2-family") {
             withFreshTheory {
                 val generatedIndexingOverF2Family =
-                    theory.clauses.toList().filter { anonymousF2Clause matches it }
+                    theory[anonymousF2Clause].toList()
 
                 assertClausesHaveSameLengthAndContent(expectedIndexingOverF2, generatedIndexingOverF2Family)
             }
@@ -154,7 +153,7 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
         test("correct-indexing-over-dedicated-theory-g1-family") {
             withFreshTheory {
                 val generatedIndexingOverG1Family =
-                    theory.clauses.toList().filter { anonymousG1Clause matches it }
+                    theory[anonymousG1Clause].toList()
 
                 assertClausesHaveSameLengthAndContent(expectedIndexingOverG1, generatedIndexingOverG1Family)
             }
@@ -163,7 +162,7 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
         test("correct-indexing-over-dedicated-theory-g2-family") {
             withFreshTheory {
                 val generatedIndexingOverG2Family =
-                    theory.clauses.toList().filter { anonymousG2Clause matches it }
+                    theory[anonymousG2Clause].toList()
 
                 assertClausesHaveSameLengthAndContent(expectedIndexingOverG2, generatedIndexingOverG2Family)
             }
@@ -173,7 +172,7 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val doubledDatabase = (theory + theory)
                 val generatedIndexingOverDoubledDatabaseForF1Family =
-                    doubledDatabase.clauses.toList().filter { anonymousF1Clause matches it }
+                    doubledDatabase[anonymousF1Clause].toList()
 
                 assertClausesHaveSameLengthAndContent(
                     expectedIndexingOverF1 + expectedIndexingOverF1,
@@ -185,7 +184,7 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
         test("correct-indexing-after-theories-concatenation-for-f2-family") {
             withFreshTheory {
                 val generatedIndexingOverDoubledDatabaseForF2Family =
-                    (theory + theory).clauses.toList().filter { anonymousF2Clause matches it }
+                    (theory + theory)[anonymousF2Clause].toList()
 
                 assertClausesHaveSameLengthAndContent(
                     expectedIndexingOverF2 + expectedIndexingOverF2,
@@ -197,7 +196,7 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
         test("correct-indexing-after-theories-concatenation-for-g1-family") {
             withFreshTheory {
                 val generatedIndexingOverDoubledDatabaseForG1Family =
-                    (theory + theory).clauses.toList().filter { anonymousG1Clause matches it }
+                    (theory + theory)[anonymousG1Clause].toList()
 
                 assertClausesHaveSameLengthAndContent(
                     expectedIndexingOverG1 + expectedIndexingOverG1,
@@ -209,7 +208,7 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
         test("correct-indexing-after-theories-concatenation-for-g2-family") {
             withFreshTheory {
                 val generatedIndexingOverDoubledDatabaseForG2Family =
-                    (theory + theory).clauses.toList().filter { anonymousG2Clause matches it }
+                    (theory + theory)[anonymousG2Clause].toList()
 
                 assertClausesHaveSameLengthAndContent(
                     expectedIndexingOverG2 + expectedIndexingOverG2,
@@ -222,10 +221,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertA(newF1AtomClause)
-                        .clauses
+                        .assertA(newF1AtomClause)[anonymousF1Clause]
                         .toList()
-                        .filter { anonymousF1Clause matches it }
 
                 assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.first())
                 assertClausesHaveSameLengthAndContent(
@@ -239,10 +236,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertA(newF1VarClause)
-                        .clauses
+                        .assertA(newF1VarClause)[anonymousF1Clause]
                         .toList()
-                        .filter { anonymousF1Clause matches it }
 
                 assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.first())
                 assertClausesHaveSameLengthAndContent(
@@ -256,10 +251,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertA(newF2AtomClause)
-                        .clauses
+                        .assertA(newF2AtomClause)[anonymousF2Clause]
                         .toList()
-                        .filter { anonymousF2Clause matches it }
 
                 assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.first())
                 assertClausesHaveSameLengthAndContent(
@@ -273,10 +266,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertA(newF2VarClause)
-                        .clauses
+                        .assertA(newF2VarClause)[anonymousF2Clause]
                         .toList()
-                        .filter { anonymousF2Clause matches it }
 
                 assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.first())
                 assertClausesHaveSameLengthAndContent(
@@ -290,10 +281,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertA(newF2MixedClause)
-                        .clauses
+                        .assertA(newF2MixedClause)[anonymousF2Clause]
                         .toList()
-                        .filter { anonymousF2Clause matches it }
 
                 assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.first())
                 assertClausesHaveSameLengthAndContent(
@@ -307,10 +296,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertZ(newF1AtomClause)
-                        .clauses
+                        .assertZ(newF1AtomClause)[anonymousF1Clause]
                         .toList()
-                        .filter { anonymousF1Clause matches it }
 
                 assertTermsAreEqual(newF1AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
                 assertClausesHaveSameLengthAndContent(
@@ -324,10 +311,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertZ(newF1VarClause)
-                        .clauses
+                        .assertZ(newF1VarClause)[anonymousF1Clause]
                         .toList()
-                        .filter { anonymousF1Clause matches it }
 
                 assertTermsAreEqual(newF1VarClause, generatedIndexingAfterAssertionA.asReversed().first())
                 assertClausesHaveSameLengthAndContent(
@@ -341,10 +326,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertZ(newF2AtomClause)
-                        .clauses
+                        .assertZ(newF2AtomClause)[anonymousF2Clause]
                         .toList()
-                        .filter { anonymousF2Clause matches it }
 
                 assertTermsAreEqual(newF2AtomClause, generatedIndexingAfterAssertionA.asReversed().first())
                 assertClausesHaveSameLengthAndContent(
@@ -358,10 +341,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertZ(newF2VarClause)
-                        .clauses
+                        .assertZ(newF2VarClause)[anonymousF2Clause]
                         .toList()
-                        .filter { anonymousF2Clause matches it }
 
                 assertTermsAreEqual(newF2VarClause, generatedIndexingAfterAssertionA.asReversed().first())
                 assertClausesHaveSameLengthAndContent(
@@ -375,10 +356,8 @@ fun properIndexingTests(theoryGenerator: (Iterable<Clause>) -> Theory) =
             withFreshTheory {
                 val generatedIndexingAfterAssertionA =
                     theory
-                        .assertZ(newF2MixedClause)
-                        .clauses
+                        .assertZ(newF2MixedClause)[anonymousF2Clause]
                         .toList()
-                        .filter { anonymousF2Clause matches it }
 
                 assertTermsAreEqual(newF2MixedClause, generatedIndexingAfterAssertionA.asReversed().first())
                 assertClausesHaveSameLengthAndContent(

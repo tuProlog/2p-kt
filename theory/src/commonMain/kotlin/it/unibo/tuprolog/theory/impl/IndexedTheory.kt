@@ -1,111 +1,113 @@
 package it.unibo.tuprolog.theory.impl
 
-import it.unibo.tuprolog.collections.ClauseQueue
-import it.unibo.tuprolog.collections.MutableClauseQueue
+import it.unibo.tuprolog.collections.store.FrozenStore
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.theory.AbstractTheory
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
-import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
+import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
+import it.unibo.tuprolog.theory.validated
 import it.unibo.tuprolog.unify.Unificator
-import it.unibo.tuprolog.utils.dequeOf
 
+/**
+ * The immutable, read-optimised [Theory], backed by a [FrozenStore]: clause lookups go through argument
+ * indexes built on demand; updates return new theories sharing every procedure they do not touch.
+ */
 internal class IndexedTheory private constructor(
-    queue: ClauseQueue,
+    private val store: FrozenStore,
     tags: Map<String, Any>,
-) : AbstractIndexedTheory(queue, tags) {
-    /** Construct a Clause database from given clauses */
+) : AbstractTheory(tags) {
+    /** Builds a theory from the given clauses, after checking they are well formed. */
     constructor(
         unificator: Unificator,
         clauses: Iterable<Clause>,
         tags: Map<String, Any> = emptyMap(),
-    ) : this(ClauseQueue.of(unificator, clauses), tags) {
-        checkClausesCorrect(clauses)
-    }
+    ) : this(FrozenStore.of(unificator, clauses.validated()), tags)
 
-    /** Construct a Clause database from given clauses */
+    /** Builds a theory from the given clauses, after checking they are well formed. */
     constructor(
         unificator: Unificator,
         clauses: Sequence<Clause>,
         tags: Map<String, Any> = emptyMap(),
     ) : this(unificator, clauses.asIterable(), tags)
 
+    @Suppress("UNUSED_PARAMETER")
+    override var unificator: Unificator
+        get() = store.unificator
+        set(value) {
+            error("Indexed theories do not support changing the unification without rebuilding")
+        }
+
+    override val clauses: List<Clause> = store.clauses.asList()
+
+    override fun iterator(): Iterator<Clause> = clauses.iterator()
+
+    override val size: Long get() = store.size.toLong()
+
+    override val isEmpty: Boolean get() = store.size == 0
+
+    override val isNonEmpty: Boolean get() = store.size > 0
+
+    override fun get(clause: Clause): Sequence<Clause> = store.matching(clause)
+
+    override fun candidates(query: Clause): Sequence<Clause> = store.candidates(query)
+
     override fun createNewTheory(
         clauses: Sequence<Clause>,
         tags: Map<String, Any>,
         unificator: Unificator,
-    ) = IndexedTheory(unificator, clauses, tags)
+    ): IndexedTheory = IndexedTheory(unificator, clauses, tags)
 
-    override fun retract(clause: Clause): RetractResult<IndexedTheory> {
-        val newTheory = ClauseQueue.of(unificator, clauses)
-        val retracted = newTheory.retrieveFirst(clause)
-        return when {
-            retracted.isFailure -> RetractResult.Failure(this)
-            else ->
-                RetractResult.Success(
-                    IndexedTheory(retracted.collection, tags),
-                    retracted.clauses!!,
-                )
-        }
-    }
+    private fun with(store: FrozenStore): IndexedTheory = if (store === this.store) this else IndexedTheory(store, tags)
 
-    override fun plus(theory: Theory): Theory =
-        when {
-            isEmpty -> theory.toImmutableTheory()
-            theory.isEmpty -> this
-            else -> super.plus(theory)
-        }
+    override fun assertA(clause: Clause): Theory = with(store.plus(listOf(checkClauseCorrect(clause)), atStart = true))
 
-    override fun toMutableTheory(): MutableTheory = MutableTheory.indexedOf(unificator, this)
+    override fun assertA(clauses: Iterable<Clause>): Theory = with(store.plus(clauses.validated(), atStart = true))
+
+    override fun assertA(clauses: Sequence<Clause>): Theory = assertA(clauses.asIterable())
+
+    override fun assertZ(clause: Clause): Theory = with(store.plus(listOf(checkClauseCorrect(clause))))
+
+    override fun assertZ(clauses: Iterable<Clause>): Theory = with(store.plus(clauses.validated()))
+
+    override fun assertZ(clauses: Sequence<Clause>): Theory = assertZ(clauses.asIterable())
+
+    override fun plus(clause: Clause): Theory = assertZ(clause)
+
+    // not `theory` itself when this is empty: the result keeps this theory's unificator and tags
+    override fun plus(theory: Theory): Theory = assertZ(theory.clauses)
+
+    override fun retract(clause: Clause): RetractResult<IndexedTheory> =
+        store.minusFirst(clause)?.let { (store, removed) -> RetractResult.Success(with(store), listOf(removed)) }
+            ?: RetractResult.Failure(this)
 
     override fun retract(clauses: Iterable<Clause>): RetractResult<IndexedTheory> {
-        val newTheory = MutableClauseQueue.of(unificator, this.clauses)
-        val removed = dequeOf<Clause>()
+        var current = store
+        val removed = mutableListOf<Clause>()
         for (clause in clauses) {
-            val result = newTheory.retrieveFirst(clause)
-            if (result.isSuccess) {
-                removed.addAll(result.clauses!!)
+            current.minusFirst(clause)?.let { (store, clause) ->
+                current = store
+                removed.add(clause)
             }
         }
-        return if (removed.isEmpty()) {
-            RetractResult.Failure(this)
-        } else {
-            RetractResult.Success(
-                IndexedTheory(newTheory, tags),
-                removed,
-            )
-        }
+        return if (removed.isEmpty()) RetractResult.Failure(this) else RetractResult.Success(with(current), removed)
     }
 
-    override fun retractAll(clause: Clause): RetractResult<IndexedTheory> {
-        val newTheory = ClauseQueue.of(unificator, clauses)
-        val retracted = newTheory.retrieveAll(clause)
-        return when {
-            retracted.isFailure -> RetractResult.Failure(this)
-            else ->
-                RetractResult.Success(
-                    IndexedTheory(retracted.collection, tags),
-                    retracted.clauses!!,
-                )
-        }
-    }
+    override fun retractAll(clause: Clause): RetractResult<IndexedTheory> =
+        store.minusAll(clause)?.let { (store, removed) -> RetractResult.Success(with(store), removed) }
+            ?: RetractResult.Failure(this)
+
+    override fun firstOrNull(): Clause? = clauses.firstOrNull()
+
+    override fun lastOrNull(): Clause? = clauses.lastOrNull()
+
+    override fun toMutableTheory(): MutableTheory = MutableIndexedTheory(unificator, clauses, tags)
 
     private val hashCodeCache: Int by lazy { super.hashCode() }
 
     override fun hashCode(): Int = hashCodeCache
 
-    private val sizeCache: Long by lazy { super.size }
-
-    override val size: Long
-        get() = sizeCache
-
     override fun replaceTags(tags: Map<String, Any>): IndexedTheory =
-        if (tags === this.tags) {
-            this
-        } else {
-            IndexedTheory(
-                queue,
-                tags,
-            )
-        }
+        if (tags === this.tags) this else IndexedTheory(store, tags)
 }

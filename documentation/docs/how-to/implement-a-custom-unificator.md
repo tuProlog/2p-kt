@@ -80,6 +80,9 @@ val caseInsensitive =
 caseInsensitive.match(Atom.of("Foo"), Atom.of("foo")) // true
 ```
 
+Since this strategy unifies atoms that differ (`Foo` and `foo`), it must also provide coarser index keys, or theories
+using it would miss clauses: see [step 5](#5-keep-indexing-consistent).
+
 `AbstractWorklistUnificator()` (no-arg) starts from an empty context; pass a `Substitution` to the constructor if you
 need a starting context, same as the built-in factories.
 
@@ -117,3 +120,28 @@ val smallerCache = Unificator.cached(caseInsensitive, capacity = 5)
 
 Wrapping an already-cached `Unificator` again just re-wraps the original with the new capacity, instead of
 double-caching.
+
+## 5. Keep indexing consistent
+
+Theories and clause collections built with your unificator (`Theory.of(unificator, clauses)`) select candidate clauses
+through index keys before unifying them. The keys come from `Unificator.indexKey(term)`, and must satisfy: *if two
+terms unify, either their keys are equal, or one of them is not exact* (see
+[Index keys](../reference/unification-api.md#index-keys)).
+
+- If your strategy only **rejects more** pairs than `strict()` does (as `tagAware` above), keep the default keys.
+- If it **accepts** pairs with different principal symbols (different atoms, numbers of different types or values,
+  structures with different functors), override `indexKey` so that such terms share a key. `caseInsensitive` keys
+  atoms by their lower-case value:
+
+```kotlin
+--8<-- "theory/src/commonTest/kotlin/it/unibo/tuprolog/theory/TheoryUsageExamplesSpec.kt:case-insensitive"
+```
+
+- When in doubt, return `IndexKey.Wildcard` for the terms concerned: it disables indexing on them, which is always
+  correct, only slower.
+
+When keys change a clause head's principal symbol, stores scan clauses in order instead of selecting a literal
+functor/arity group. Immutable retractions on this path rebuild the remaining store. Custom keys on arguments alone
+still use the argument indexes.
+
+`Unificator.cached(...)` delegates `indexKey` to the unificator it wraps.

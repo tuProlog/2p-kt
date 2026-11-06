@@ -6,13 +6,13 @@ import it.unibo.tuprolog.theory.impl.MutableIndexedTheory
 import it.unibo.tuprolog.unify.Unificator
 
 /**
- * A [TheoryFactory] that produces [Theory]/[MutableTheory] instances backed by an indexed data structure
- * (see [it.unibo.tuprolog.collections.rete.custom.ReteTree]): clauses are discriminated by directive-vs-rule,
- * functor, arity and first-argument shape, so retrieval only re-checks the (typically small) subset of clauses
- * that could actually unify with a goal, at the cost of extra bookkeeping on every insertion/removal. This is
- * the right choice for knowledge bases that are built once (or rarely changed) and queried many times — e.g. a
- * solver's static knowledge base.
- * @see ListedTheoryFactory
+ * A [TheoryFactory] producing the default [Theory]/[MutableTheory] implementations, the ones [Theory.of] and
+ * [MutableTheory.of] return: clauses are grouped by procedure, and indexed on demand on whichever argument (or
+ * sub-argument) a lookup binds, so retrieval only unifies the (typically few) clauses that could actually unify with a
+ * goal. Immutable theories are optimised for reads, mutable ones for updates. See [Theory] for the indexing scheme
+ * and its references, and [MutableTheory] for the logical update view.
+ *
+ * @param unificator the default [Unificator] of the theories built without an explicit one
  */
 class IndexedTheoryFactory(
     override val unificator: Unificator,

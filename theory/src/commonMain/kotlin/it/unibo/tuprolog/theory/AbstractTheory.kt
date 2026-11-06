@@ -5,10 +5,9 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.theory.TheoryUtils.checkClauseCorrect
-import it.unibo.tuprolog.theory.TheoryUtils.checkClausesCorrect
 import it.unibo.tuprolog.unify.Unificator
 
+/** The behaviour shared by both [Theory] flavours, expressed through lookups ([get]) and [createNewTheory]. */
 internal abstract class AbstractTheory(
     override val tags: Map<String, Any>,
 ) : Theory {
@@ -16,8 +15,6 @@ internal abstract class AbstractTheory(
         protected set
 
     override fun toImmutableTheory(): Theory = this
-
-    override fun plus(clause: Clause): Theory = super.plus(checkClauseCorrect(clause))
 
     override fun contains(clause: Clause): Boolean = get(clause).any()
 
@@ -48,7 +45,7 @@ internal abstract class AbstractTheory(
 
     override fun toString(asPrologText: Boolean): String =
         if (asPrologText) {
-            clauses.joinToString(".\n", "", ".\n")
+            clauses.joinToString("") { "$it.\n" }
         } else {
             toString()
         }
@@ -81,30 +78,12 @@ internal abstract class AbstractTheory(
     }
 
     override fun hashCode(): Int {
-        val base = AbstractTheory::class.simpleName.hashCode()
-        var result = (base xor (base ushr 32))
+        var result = AbstractTheory::class.simpleName.hashCode()
         for (clause in clauses) {
             result = 31 * result + clause.hashCode()
         }
         return result
     }
-
-    override val size: Long
-        get() {
-            var i: Long = 0
-            val iter = iterator()
-            while (iter.hasNext()) {
-                iter.next()
-                i++
-            }
-            return i
-        }
-
-    override val isEmpty: Boolean
-        get() = !isNonEmpty
-
-    override val isNonEmpty: Boolean
-        get() = iterator().hasNext()
 
     override fun setUnificator(unificator: Unificator): Theory =
         if (unificator != this.unificator) {
@@ -112,36 +91,6 @@ internal abstract class AbstractTheory(
         } else {
             this
         }
-
-    override fun plus(theory: Theory): Theory =
-        if (theory.isNonEmpty) {
-            createNewTheory(clauses.asSequence() + checkClausesCorrect(theory.clauses.asSequence()))
-        } else {
-            this
-        }
-
-    override fun assertA(clause: Clause): Theory = createNewTheory(checkClausesCorrect(clause) + clauses.asSequence())
-
-    override fun assertA(clauses: Iterable<Clause>): Theory =
-        createNewTheory(checkClausesCorrect(clauses.asSequence()) + this.clauses.asSequence())
-
-    override fun assertA(clauses: Sequence<Clause>): Theory =
-        createNewTheory(
-            checkClausesCorrect(clauses) + this.clauses.asSequence(),
-        )
-
-    override fun assertZ(clause: Clause): Theory =
-        createNewTheory(
-            clauses.asSequence() + checkClausesCorrect(sequenceOf(clause)),
-        )
-
-    override fun assertZ(clauses: Iterable<Clause>): Theory =
-        createNewTheory(this.clauses.asSequence() + checkClausesCorrect(clauses).asSequence())
-
-    override fun assertZ(clauses: Sequence<Clause>): Theory =
-        createNewTheory(
-            this.clauses.asSequence() + checkClausesCorrect(clauses),
-        )
 
     protected abstract fun createNewTheory(
         clauses: Sequence<Clause>,

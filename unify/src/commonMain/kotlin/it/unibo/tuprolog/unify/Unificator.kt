@@ -142,6 +142,16 @@ interface Unificator {
         substitution2: Substitution,
     ): Substitution = merge(substitution1, substitution2, true)
 
+    /**
+     * The [IndexKey] of [term], which clause collections and theories use to narrow down the clauses worth
+     * unifying with a query. The default implementation suits unificators comparing constants by equality,
+     * possibly rejecting more pairs (e.g. because of tags). A unificator unifying terms with different principal
+     * symbols (e.g. different atoms, or numbers of different types) must return coarser keys, down to
+     * [IndexKey.Wildcard], which disables indexing on that term.
+     */
+    @JsName("indexKey")
+    fun indexKey(term: Term): IndexKey = IndexKey.strict(term)
+
     companion object {
         // --8<-- [start:default]
 
@@ -202,6 +212,8 @@ interface Unificator {
                     }
                     else -> first == second
                 }
+
+                override fun indexKey(term: Term): IndexKey = IndexKey.numbersByValue(term)
             }
         // --8<-- [end:naive]
 

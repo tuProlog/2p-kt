@@ -15,10 +15,11 @@ import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.testutils.ClauseAssertionUtils.assertClausesHaveSameLengthAndContent
-import it.unibo.tuprolog.testutils.ReteNodeUtils
-import it.unibo.tuprolog.testutils.ReteNodeUtils.assertClauseHeadPartialOrderingRespected
+import it.unibo.tuprolog.testutils.ClauseFixtures
+import it.unibo.tuprolog.testutils.ClauseFixtures.assertClauseHeadPartialOrderingRespected
 import it.unibo.tuprolog.testutils.TheoryUtils
 import it.unibo.tuprolog.testutils.TheoryUtils.clauseQueryCases
 import it.unibo.tuprolog.testutils.TheoryUtils.deepClause
@@ -33,6 +34,7 @@ import it.unibo.tuprolog.testutils.TheoryUtils.ruleQueryWithVarBodyCases
 import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedClauseCases
 import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedClauses
 import it.unibo.tuprolog.testutils.TheoryUtils.wellFormedRuleCases
+import it.unibo.tuprolog.utils.setTag
 
 /**
  * Test class for all [Theory] subtypes
@@ -59,9 +61,9 @@ fun theoryTests(
 
     val successfulRetractQueryWithBodyVarCases = ruleQueryWithVarBodyCases.filter { it.expected.isNotEmpty() }
 
-    val successfulRuleQueryCases = ReteNodeUtils.ruleQueryCases.filter { it.expected.isNotEmpty() }
+    val successfulRuleQueryCases = ClauseFixtures.ruleQueryCases.filter { it.expected.isNotEmpty() }
 
-    val failingRuleQueryCases = ReteNodeUtils.ruleQueryCases.filter { it.expected.isEmpty() }
+    val failingRuleQueryCases = ClauseFixtures.ruleQueryCases.filter { it.expected.isEmpty() }
 
     fun FreshTheoriesScope.assertTrueIfMutableFalseOtherwise(boolean: Boolean) {
         if (filledTheory is MutableTheory) {
@@ -415,7 +417,7 @@ fun theoryTests(
         withFreshTheories {
             val toBeTested = filledTheory.retract(anIndependentFact).theory
 
-            toBeTested shouldBeSameInstanceAs filledTheory // TODO take care of mutable theories here
+            toBeTested shouldBeSameInstanceAs filledTheory
         }
     }
 
@@ -434,7 +436,7 @@ fun theoryTests(
         }
     }
     withTests(nameFn = {
-        "retract-all-clause-removes-only-first-matching-clause/${it.id}"
+        "retract-all-clause-removes-every-matching-clause/${it.id}"
     }, successfulRetractQueryCases) { case ->
         withFreshTheories {
             val retractResult = filledTheory.retractAll(case.query) as RetractResult.Success
@@ -457,7 +459,7 @@ fun theoryTests(
         }
     }
     withTests(nameFn = {
-        "retract-all-struct-removes-only-first-matching-clause/${it.id}"
+        "retract-all-struct-removes-every-matching-clause/${it.id}"
     }, successfulRetractQueryWithBodyVarCases) { case ->
         withFreshTheories {
             val retractResult = filledTheory.retractAll(case.query.head) as RetractResult.Success
@@ -550,6 +552,146 @@ fun theoryTests(
             deepClause,
             (theory.retract(case.clause) as RetractResult.Success).clauses,
         )
+    }
+
+    test("is-non-empty") {
+        withFreshTheories {
+            filledTheory.isNonEmpty shouldBe true
+            filledTheory.isEmpty shouldBe false
+            emptyTheory.isNonEmpty shouldBe false
+            emptyTheory.isEmpty shouldBe true
+        }
+    }
+
+    test("to-string-as-prolog-text") {
+        withFreshTheories {
+            filledTheory.toString(asPrologText = true) shouldBe wellFormedClauses.joinToString("") { "$it.\n" }
+            filledTheory.toString(asPrologText = false) shouldBe filledTheory.toString()
+            emptyTheory.toString(asPrologText = true) shouldBe ""
+        }
+    }
+
+    test("equals-using-var-complete-names") {
+        // same clause shape, distinct (equally named) variables
+        val first = theoryGenerator(listOf(Fact.of(Struct.of("f", Var.of("X")))))
+        val second = theoryGenerator(listOf(Fact.of(Struct.of("f", Var.of("X")))))
+        first.equals(second, useVarCompleteName = false) shouldBe true
+        first.equals(second, useVarCompleteName = true) shouldBe false
+        (first == second) shouldBe false
+        first.equals(first, useVarCompleteName = true) shouldBe true
+    }
+
+    test("equals-and-hash-code-ignore-flavour-and-tags") {
+        withFreshTheories {
+            val other = filledTheory.toMutable().setTag("k", "v")
+            (filledTheory == other) shouldBe true
+            filledTheory.hashCode() shouldBe other.hashCode()
+            (filledTheory == other.toImmutableTheory()) shouldBe true
+            (filledTheory == emptyTheory) shouldBe false
+        }
+    }
+
+    test("assert-a-iterable-and-sequence") {
+        val added = listOf(anIndependentFact, aRule)
+        theoryGenerator(wellFormedClauses).assertA(added).clauses.toList() shouldBe added + wellFormedClauses
+        theoryGenerator(wellFormedClauses).assertA(added.asSequence()).clauses.toList() shouldBe
+            added + wellFormedClauses
+    }
+
+    test("assert-z-iterable-and-sequence") {
+        val added = listOf(anIndependentFact, aRule)
+        theoryGenerator(wellFormedClauses).assertZ(added).clauses.toList() shouldBe wellFormedClauses + added
+        theoryGenerator(wellFormedClauses).assertZ(added.asSequence()).clauses.toList() shouldBe
+            wellFormedClauses + added
+    }
+
+    withTests(nameFn = { "assert-many-complains-on-bad-clause/${it.id}" }, notWellFormedClauseCases) { case ->
+        shouldThrow<IllegalArgumentException> { theoryGenerator(wellFormedClauses).assertA(listOf(case.clause)) }
+        shouldThrow<IllegalArgumentException> { theoryGenerator(wellFormedClauses).assertZ(sequenceOf(case.clause)) }
+    }
+
+    test("retract-iterable-succeeds-if-any-pattern-matches") {
+        val first = wellFormedClauses.first()
+        val result = theoryGenerator(wellFormedClauses).retract(listOf(anIndependentFact, first))
+        result.shouldBeInstanceOf<RetractResult.Success<*>>()
+        result.clauses.toList() shouldBe listOf(first)
+        result.theory.clauses.toList() shouldBe wellFormedClauses.drop(1)
+    }
+
+    test("retract-sequence-succeeds-if-any-pattern-matches") {
+        val first = wellFormedClauses.first()
+        val result = theoryGenerator(wellFormedClauses).retract(sequenceOf(first, anIndependentFact))
+        result.shouldBeInstanceOf<RetractResult.Success<*>>()
+        result.clauses.toList() shouldBe listOf(first)
+    }
+
+    test("retract-many-fails-if-no-pattern-matches") {
+        withFreshTheories {
+            val result = filledTheory.retract(sequenceOf(anIndependentFact))
+            result.shouldBeInstanceOf<RetractResult.Failure<*>>()
+            result.theory shouldBeSameInstanceAs filledTheory
+        }
+    }
+
+    test("abolish-removes-one-procedure") {
+        val fa = Fact.of(Struct.of("f", Atom.of("a")))
+        val fb = Rule.of(Struct.of("f", Var.of("X")), Struct.of("g", Var.of("X")))
+        val f2 = Fact.of(Struct.of("f", Atom.of("a"), Atom.of("b")))
+        val ga = Fact.of(Struct.of("g", Atom.of("a")))
+        val theory = theoryGenerator(listOf(fa, f2, fb, ga))
+        theory.abolish(Indicator.of("f", 1)).clauses.toList() shouldBe listOf(f2, ga)
+        theoryGenerator(listOf(fa, ga)).abolish(Indicator.of("h", 1)).clauses.toList() shouldBe listOf(fa, ga)
+        shouldThrow<IllegalArgumentException> { theory.abolish(Indicator.of(Var.of("X"), Var.of("Y"))) }
+    }
+
+    test("to-immutable-theory-is-a-snapshot") {
+        withFreshTheories {
+            val immutable = filledTheory.toImmutableTheory()
+            immutable.isMutable shouldBe false
+            immutable.toImmutable() shouldBeSameInstanceAs immutable.toImmutableTheory()
+            filledTheory.toMutableTheory().assertZ(anIndependentFact)
+            immutable.clauses.toList() shouldBe wellFormedClauses
+            if (filledTheory !is MutableTheory) immutable shouldBeSameInstanceAs filledTheory
+        }
+    }
+
+    test("to-mutable-theory-shares-only-if-already-mutable") {
+        withFreshTheories {
+            val mutable = filledTheory.toMutableTheory()
+            mutable.isMutable shouldBe true
+            mutable.clauses.toList() shouldBe wellFormedClauses
+            if (filledTheory is MutableTheory) {
+                mutable shouldBeSameInstanceAs filledTheory
+            } else {
+                mutable.assertZ(anIndependentFact)
+                filledTheory.clauses.toList() shouldBe wellFormedClauses
+            }
+        }
+    }
+
+    test("to-mutable-always-copies") {
+        withFreshTheories {
+            val copy = filledTheory.setTag("k", "v").toMutable()
+            copy shouldNotBeSameInstanceAs filledTheory
+            copy.getTag<String>("k") shouldBe "v"
+            copy.assertZ(anIndependentFact)
+            filledTheory.clauses.toList() shouldBe wellFormedClauses
+        }
+    }
+
+    test("set-unificator-with-same-unificator-returns-this") {
+        withFreshTheories {
+            filledTheory.setUnificator(filledTheory.unificator) shouldBeSameInstanceAs filledTheory
+        }
+    }
+
+    test("candidates-include-matches-in-order") {
+        withFreshTheories {
+            val query = Rule.of(Struct.of("f", Var.of("X")), Var.of("B"))
+            val matching = filledTheory[query].toList()
+            val candidates = filledTheory.candidates(query).toList()
+            candidates.filter { it in matching } shouldBe matching
+        }
     }
 }
 

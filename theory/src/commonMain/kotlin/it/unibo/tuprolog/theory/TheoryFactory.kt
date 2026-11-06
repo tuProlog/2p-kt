@@ -6,13 +6,11 @@ import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /**
- * A factory of [Theory]/[MutableTheory] instances, all sharing the same backing data structure (e.g. indexed or
- * listed, see [IndexedTheoryFactory] and [ListedTheoryFactory]) and, by default, the same [unificator].
+ * A factory of [Theory]/[MutableTheory] instances, all sharing the same backing data structure (see
+ * [IndexedTheoryFactory]) and, by default, the same [unificator].
  *
  * This exists so that code building many theories (e.g. a solver library loading several source files) can
- * depend on "a way of making theories" without hard-coding which concrete implementation — indexed or listed —
- * gets used; swapping [IndexedTheoryFactory] for [ListedTheoryFactory] (or vice versa) changes every theory the
- * factory produces without touching the calling code.
+ * depend on "a way of making theories" without hard-coding which concrete implementation gets used.
  */
 interface TheoryFactory : UnificationAware {
     /** Returns a factory equivalent to this one, but using the given [unificator] as its default. */

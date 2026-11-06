@@ -84,7 +84,7 @@ multiplatform equivalent yet.
 
 `parser-theory` (`it.unibo.tuprolog.theory.parsing`) is the thinnest of the three: `ClausesParser` builds on
 `parser-core`'s clause parsing to parse a whole source string into a `Theory` (see
-[Clause databases and indexing](clause-db-and-rete.md)) or a lazy `Sequence<Clause>`. It is not a separate
+[Clause storage and indexing](clause-storage-and-indexing.md)) or a lazy `Sequence<Clause>`. It is not a separate
 grammar or a separate parsing pass — the module-boundary reason to split it out from `parser-core` is that
 `ClausesParser` depends on `:theory`, and `parser-core` deliberately does not, keeping single-term parsing usable
 without pulling in the knowledge-base machinery. It also owns one piece of behaviour that only makes sense once

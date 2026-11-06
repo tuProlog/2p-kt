@@ -1,0 +1,773 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = arg0-bound, size = 100000)
+
+# Run progress: 0,00% complete, ETA 00:03:00
+# Fork: 1 of 1
+# Warmup Iteration   1: 573465,238 ops/s
+# Warmup Iteration   2: 878481,757 ops/s
+Iteration   1: 1089461,652 ops/s
+                 gc.alloc.rate:      3557,105 MB/sec
+                 gc.alloc.rate.norm: 3424,006 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            13,000 ms
+
+Iteration   2: 1148201,428 ops/s
+                 gc.alloc.rate:      3748,633 MB/sec
+                 gc.alloc.rate.norm: 3424,006 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            14,000 ms
+
+Iteration   3: 1155589,725 ops/s
+                 gc.alloc.rate:      3772,591 MB/sec
+                 gc.alloc.rate.norm: 3424,006 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            13,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  1131084,268 ±(99.9%) 661062,080 ops/s [Average]
+  (min, avg, max) = (1089461,652, 1131084,268, 1155589,725), stdev = 36235,043
+  CI (99.9%): [470022,188, 1792146,349] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  3692,776 ±(99.9%) 2154,657 MB/sec [Average]
+  (min, avg, max) = (3557,105, 3692,776, 3772,591), stdev = 118,104
+  CI (99.9%): [1538,119, 5847,433] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  3424,006 ±(99.9%) 0,003 B/op [Average]
+  (min, avg, max) = (3424,006, 3424,006, 3424,006), stdev = 0,001
+  CI (99.9%): [3424,003, 3424,009] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  6,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (2,000, 2,000, 2,000), stdev = 0,001
+  CI (99.9%): [6,000, 6,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  40,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (13,000, 13,333, 14,000), stdev = 0,577
+  CI (99.9%): [40,000, 40,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = arg1-bound, size = 100000)
+
+# Run progress: 2,78% complete, ETA 00:03:42
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,009 ops/s
+# Warmup Iteration   2: 0,009 ops/s
+Iteration   1: 0,009 ops/s
+                 gc.alloc.rate:      650,387 MB/sec
+                 gc.alloc.rate.norm: 79888541752,000 B/op
+                 gc.count:           44,000 counts
+                 gc.time:            117,000 ms
+
+Iteration   2: 0,009 ops/s
+                 gc.alloc.rate:      681,844 MB/sec
+                 gc.alloc.rate.norm: 79888541688,000 B/op
+                 gc.count:           45,000 counts
+                 gc.time:            119,000 ms
+
+Iteration   3: 0,009 ops/s
+                 gc.alloc.rate:      683,874 MB/sec
+                 gc.alloc.rate.norm: 79888541752,000 B/op
+                 gc.count:           44,000 counts
+                 gc.time:            112,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  0,009 ±(99.9%) 0,004 ops/s [Average]
+  (min, avg, max) = (0,009, 0,009, 0,009), stdev = 0,001
+  CI (99.9%): [0,004, 0,013] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  672,035 ±(99.9%) 342,524 MB/sec [Average]
+  (min, avg, max) = (650,387, 672,035, 683,874), stdev = 18,775
+  CI (99.9%): [329,511, 1014,559] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  79888541730,667 ±(99.9%) 674,113 B/op [Average]
+  (min, avg, max) = (79888541688,000, 79888541730,667, 79888541752,000), stdev = 36,950
+  CI (99.9%): [79888541056,554, 79888542404,780] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  133,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (44,000, 44,333, 45,000), stdev = 0,577
+  CI (99.9%): [133,000, 133,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  348,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (112,000, 116,000, 119,000), stdev = 3,606
+  CI (99.9%): [348,000, 348,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = last-bound, size = 100000)
+
+# Run progress: 5,56% complete, ETA 02:41:57
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,009 ops/s
+# Warmup Iteration   2: 0,009 ops/s
+Iteration   1: 0,009 ops/s
+                 gc.alloc.rate:      681,224 MB/sec
+                 gc.alloc.rate.norm: 79895503088,000 B/op
+                 gc.count:           44,000 counts
+                 gc.time:            125,000 ms
+
+Iteration   2: 0,009 ops/s
+                 gc.alloc.rate:      657,835 MB/sec
+                 gc.alloc.rate.norm: 79895503024,000 B/op
+                 gc.count:           45,000 counts
+                 gc.time:            120,000 ms
+
+Iteration   3: 0,009 ops/s
+                 gc.alloc.rate:      667,421 MB/sec
+                 gc.alloc.rate.norm: 79895503024,000 B/op
+                 gc.count:           44,000 counts
+                 gc.time:            126,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  0,009 ±(99.9%) 0,003 ops/s [Average]
+  (min, avg, max) = (0,009, 0,009, 0,009), stdev = 0,001
+  CI (99.9%): [0,006, 0,012] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  668,827 ±(99.9%) 214,512 MB/sec [Average]
+  (min, avg, max) = (657,835, 668,827, 681,224), stdev = 11,758
+  CI (99.9%): [454,315, 883,339] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  79895503045,333 ±(99.9%) 674,113 B/op [Average]
+  (min, avg, max) = (79895503024,000, 79895503045,333, 79895503088,000), stdev = 36,950
+  CI (99.9%): [79895502371,220, 79895503719,446] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  133,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (44,000, 44,333, 45,000), stdev = 0,577
+  CI (99.9%): [133,000, 133,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  371,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (120,000, 123,667, 126,000), stdev = 3,215
+  CI (99.9%): [371,000, 371,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = all-vars, size = 100000)
+
+# Run progress: 8,33% complete, ETA 03:28:53
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,009 ops/s
+# Warmup Iteration   2: 0,009 ops/s
+Iteration   1: 0,009 ops/s
+                 gc.alloc.rate:      688,228 MB/sec
+                 gc.alloc.rate.norm: 80041101728,000 B/op
+                 gc.count:           45,000 counts
+                 gc.time:            116,000 ms
+
+Iteration   2: 0,009 ops/s
+                 gc.alloc.rate:      698,776 MB/sec
+                 gc.alloc.rate.norm: 80041101696,000 B/op
+                 gc.count:           44,000 counts
+                 gc.time:            113,000 ms
+
+Iteration   3: 0,009 ops/s
+                 gc.alloc.rate:      673,384 MB/sec
+                 gc.alloc.rate.norm: 80041101728,000 B/op
+                 gc.count:           45,000 counts
+                 gc.time:            113,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  0,009 ±(99.9%) 0,003 ops/s [Average]
+  (min, avg, max) = (0,009, 0,009, 0,009), stdev = 0,001
+  CI (99.9%): [0,006, 0,012] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  686,796 ±(99.9%) 232,722 MB/sec [Average]
+  (min, avg, max) = (673,384, 686,796, 698,776), stdev = 12,756
+  CI (99.9%): [454,074, 919,518] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  80041101717,333 ±(99.9%) 337,057 B/op [Average]
+  (min, avg, max) = (80041101696,000, 80041101717,333, 80041101728,000), stdev = 18,475
+  CI (99.9%): [80041101380,277, 80041102054,390] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  134,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (44,000, 44,667, 45,000), stdev = 0,577
+  CI (99.9%): [134,000, 134,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  342,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (113,000, 114,000, 116,000), stdev = 1,732
+  CI (99.9%): [342,000, 342,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = zero-arity, size = 100000)
+
+# Run progress: 11,11% complete, ETA 03:47:08
+# Fork: 1 of 1
+# Warmup Iteration   1: 38,537 ops/s
+# Warmup Iteration   2: 46,511 ops/s
+Iteration   1: 45,345 ops/s
+                 gc.alloc.rate:      3805,069 MB/sec
+                 gc.alloc.rate.norm: 88000558,261 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            38,000 ms
+
+Iteration   2: 44,379 ops/s
+                 gc.alloc.rate:      3723,331 MB/sec
+                 gc.alloc.rate.norm: 88000561,600 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            39,000 ms
+
+Iteration   3: 42,726 ops/s
+                 gc.alloc.rate:      3585,086 MB/sec
+                 gc.alloc.rate.norm: 88000565,818 B/op
+                 gc.count:           3,000 counts
+                 gc.time:            61,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  44,150 ±(99.9%) 24,162 ops/s [Average]
+  (min, avg, max) = (42,726, 44,150, 45,345), stdev = 1,324
+  CI (99.9%): [19,988, 68,312] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  3704,495 ±(99.9%) 2028,594 MB/sec [Average]
+  (min, avg, max) = (3585,086, 3704,495, 3805,069), stdev = 111,194
+  CI (99.9%): [1675,902, 5733,089] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  88000561,893 ±(99.9%) 69,092 B/op [Average]
+  (min, avg, max) = (88000558,261, 88000561,893, 88000565,818), stdev = 3,787
+  CI (99.9%): [88000492,801, 88000630,985] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  7,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (2,000, 2,333, 3,000), stdev = 0,577
+  CI (99.9%): [7,000, 7,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  138,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (38,000, 46,000, 61,000), stdev = 13,000
+  CI (99.9%): [138,000, 138,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = nested-arg0, size = 100000)
+
+# Run progress: 13,89% complete, ETA 02:56:41
+# Fork: 1 of 1
+# Warmup Iteration   1: 449093,407 ops/s
+# Warmup Iteration   2: 596561,944 ops/s
+Iteration   1: 618547,703 ops/s
+                 gc.alloc.rate:      3940,033 MB/sec
+                 gc.alloc.rate.norm: 6680,011 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            9,000 ms
+
+Iteration   2: 631228,572 ops/s
+                 gc.alloc.rate:      4020,792 MB/sec
+                 gc.alloc.rate.norm: 6680,011 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            8,000 ms
+
+Iteration   3: 625093,942 ops/s
+                 gc.alloc.rate:      3981,512 MB/sec
+                 gc.alloc.rate.norm: 6680,011 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            9,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  624956,739 ±(99.9%) 115693,438 ops/s [Average]
+  (min, avg, max) = (618547,703, 624956,739, 631228,572), stdev = 6341,548
+  CI (99.9%): [509263,301, 740650,177] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  3980,779 ±(99.9%) 736,769 MB/sec [Average]
+  (min, avg, max) = (3940,033, 3980,779, 4020,792), stdev = 40,385
+  CI (99.9%): [3244,010, 4717,547] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  6680,011 ±(99.9%) 0,002 B/op [Average]
+  (min, avg, max) = (6680,011, 6680,011, 6680,011), stdev = 0,001
+  CI (99.9%): [6680,009, 6680,013] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  6,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (2,000, 2,000, 2,000), stdev = 0,001
+  CI (99.9%): [6,000, 6,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  26,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (8,000, 8,667, 9,000), stdev = 0,577
+  CI (99.9%): [26,000, 26,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = nested-arg1, size = 100000)
+
+# Run progress: 16,67% complete, ETA 02:23:00
+# Fork: 1 of 1
+# Warmup Iteration   1: 26,606 ops/s
+# Warmup Iteration   2: 31,842 ops/s
+Iteration   1: 34,015 ops/s
+                 gc.alloc.rate:      2543,143 MB/sec
+                 gc.alloc.rate.norm: 78407309,486 B/op
+                 gc.count:           1,000 counts
+                 gc.time:            4,000 ms
+
+Iteration   2: 33,357 ops/s
+                 gc.alloc.rate:      2493,967 MB/sec
+                 gc.alloc.rate.norm: 78407315,294 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            9,000 ms
+
+Iteration   3: 32,972 ops/s
+                 gc.alloc.rate:      2465,050 MB/sec
+                 gc.alloc.rate.norm: 78407316,235 B/op
+                 gc.count:           1,000 counts
+                 gc.time:            4,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  33,448 ±(99.9%) 9,619 ops/s [Average]
+  (min, avg, max) = (32,972, 33,448, 34,015), stdev = 0,527
+  CI (99.9%): [23,828, 43,067] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  2500,720 ±(99.9%) 720,298 MB/sec [Average]
+  (min, avg, max) = (2465,050, 2500,720, 2543,143), stdev = 39,482
+  CI (99.9%): [1780,422, 3221,018] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  78407313,672 ±(99.9%) 66,692 B/op [Average]
+  (min, avg, max) = (78407309,486, 78407313,672, 78407316,235), stdev = 3,656
+  CI (99.9%): [78407246,980, 78407380,363] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  4,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (1,000, 1,333, 2,000), stdev = 0,577
+  CI (99.9%): [4,000, 4,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  17,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (4,000, 5,667, 9,000), stdev = 2,887
+  CI (99.9%): [17,000, 17,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = joint-args, size = 100000)
+
+# Run progress: 19,44% complete, ETA 01:58:56
+# Fork: 1 of 1
+# Warmup Iteration   1: 16061,719 ops/s
+# Warmup Iteration   2: 19753,454 ops/s
+Iteration   1: 19396,145 ops/s
+                 gc.alloc.rate:      1225,599 MB/sec
+                 gc.alloc.rate.norm: 66264,355 B/op
+                 gc.count:           1,000 counts
+                 gc.time:            20,000 ms
+
+Iteration   2: 20110,359 ops/s
+                 gc.alloc.rate:      1270,674 MB/sec
+                 gc.alloc.rate.norm: 66264,339 B/op
+                 gc.count:           ≈ 0 counts
+
+Iteration   3: 20218,656 ops/s
+                 gc.alloc.rate:      1277,497 MB/sec
+                 gc.alloc.rate.norm: 66264,343 B/op
+                 gc.count:           1,000 counts
+                 gc.time:            19,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  19908,386 ±(99.9%) 8153,242 ops/s [Average]
+  (min, avg, max) = (19396,145, 19908,386, 20218,656), stdev = 446,907
+  CI (99.9%): [11755,144, 28061,629] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  1257,923 ±(99.9%) 514,490 MB/sec [Average]
+  (min, avg, max) = (1225,599, 1257,923, 1277,497), stdev = 28,201
+  CI (99.9%): [743,433, 1772,413] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  66264,346 ±(99.9%) 0,153 B/op [Average]
+  (min, avg, max) = (66264,339, 66264,346, 66264,355), stdev = 0,008
+  CI (99.9%): [66264,193, 66264,499] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  2,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (≈ 0, 0,667, 1,000), stdev = 0,577
+  CI (99.9%): [2,000, 2,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  39,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (≈ 0, 13,000, 20,000), stdev = 11,269
+  CI (99.9%): [39,000, 39,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = immutable, query = no-match, size = 100000)
+
+# Run progress: 22,22% complete, ETA 01:40:50
+# Fork: 1 of 1
+# Warmup Iteration   1: 2804339,213 ops/s
+# Warmup Iteration   2: 2250899,652 ops/s
+Iteration   1: 2738017,826 ops/s
+                 gc.alloc.rate:      3968,128 MB/sec
+                 gc.alloc.rate.norm: 1520,003 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            42,000 ms
+
+Iteration   2: 4047024,028 ops/s
+                 gc.alloc.rate:      5865,531 MB/sec
+                 gc.alloc.rate.norm: 1520,002 B/op
+                 gc.count:           3,000 counts
+                 gc.time:            58,000 ms
+
+Iteration   3: 4317917,610 ops/s
+                 gc.alloc.rate:      6257,898 MB/sec
+                 gc.alloc.rate.norm: 1520,002 B/op
+                 gc.count:           3,000 counts
+                 gc.time:            69,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  3700986,488 ±(99.9%) 15413811,491 ops/s [Average]
+  (min, avg, max) = (2738017,826, 3700986,488, 4317917,610), stdev = 844883,019
+  CI (99.9%): [≈ 0, 19114797,979] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  5363,852 ±(99.9%) 22340,354 MB/sec [Average]
+  (min, avg, max) = (3968,128, 5363,852, 6257,898), stdev = 1224,550
+  CI (99.9%): [≈ 0, 27704,207] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  1520,002 ±(99.9%) 0,009 B/op [Average]
+  (min, avg, max) = (1520,002, 1520,002, 1520,003), stdev = 0,001
+  CI (99.9%): [1519,993, 1520,011] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  8,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (2,000, 2,667, 3,000), stdev = 0,577
+  CI (99.9%): [8,000, 8,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  169,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (42,000, 56,333, 69,000), stdev = 13,577
+  CI (99.9%): [169,000, 169,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = mutable, query = arg0-bound, size = 100000)
+
+# Run progress: 25,00% complete, ETA 01:26:44
+# Fork: 1 of 1
+# Warmup Iteration   1: 856482,205 ops/s
+# Warmup Iteration   2: 1106610,651 ops/s
+Iteration   1: 1165971,379 ops/s
+                 gc.alloc.rate:      3975,862 MB/sec
+                 gc.alloc.rate.norm: 3576,006 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            10,000 ms
+
+Iteration   2: 1149632,187 ops/s
+                 gc.alloc.rate:      3920,136 MB/sec
+                 gc.alloc.rate.norm: 3576,006 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            14,000 ms
+
+Iteration   3: 1131867,269 ops/s
+                 gc.alloc.rate:      3859,376 MB/sec
+                 gc.alloc.rate.norm: 3576,006 B/op
+                 gc.count:           2,000 counts
+                 gc.time:            15,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  1149156,945 ±(99.9%) 311183,572 ops/s [Average]
+  (min, avg, max) = (1131867,269, 1149156,945, 1165971,379), stdev = 17057,022
+  CI (99.9%): [837973,373, 1460340,517] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  3918,458 ±(99.9%) 1062,900 MB/sec [Average]
+  (min, avg, max) = (3859,376, 3918,458, 3975,862), stdev = 58,261
+  CI (99.9%): [2855,559, 4981,358] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  3576,006 ±(99.9%) 0,001 B/op [Average]
+  (min, avg, max) = (3576,006, 3576,006, 3576,006), stdev = 0,001
+  CI (99.9%): [3576,005, 3576,007] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  6,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (2,000, 2,000, 2,000), stdev = 0,001
+  CI (99.9%): [6,000, 6,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  39,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (10,000, 13,000, 15,000), stdev = 2,646
+  CI (99.9%): [39,000, 39,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = mutable, query = arg1-bound, size = 100000)
+
+# Run progress: 27,78% complete, ETA 01:15:27
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,008 ops/s
+# Warmup Iteration   2: 0,008 ops/s
+Iteration   1: 0,009 ops/s
+                 gc.alloc.rate:      672,515 MB/sec
+                 gc.alloc.rate.norm: 79888541720,000 B/op
+                 gc.count:           44,000 counts
+                 gc.time:            120,000 ms
+
+Iteration   2: 0,009 ops/s
+                 gc.alloc.rate:      698,955 MB/sec
+                 gc.alloc.rate.norm: 79888541688,000 B/op
+                 gc.count:           44,000 counts
+                 gc.time:            111,000 ms
+
+Iteration   3: 0,009 ops/s
+                 gc.alloc.rate:      689,377 MB/sec
+                 gc.alloc.rate.norm: 79888541752,000 B/op
+                 gc.count:           44,000 counts
+                 gc.time:            110,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  0,009 ±(99.9%) 0,003 ops/s [Average]
+  (min, avg, max) = (0,009, 0,009, 0,009), stdev = 0,001
+  CI (99.9%): [0,006, 0,012] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  686,949 ±(99.9%) 244,212 MB/sec [Average]
+  (min, avg, max) = (672,515, 686,949, 698,955), stdev = 13,386
+  CI (99.9%): [442,737, 931,161] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  79888541720,000 ±(99.9%) 583,799 B/op [Average]
+  (min, avg, max) = (79888541688,000, 79888541720,000, 79888541752,000), stdev = 32,000
+  CI (99.9%): [79888541136,201, 79888542303,799] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  132,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (44,000, 44,000, 44,000), stdev = 0,001
+  CI (99.9%): [132,000, 132,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  341,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (110,000, 113,667, 120,000), stdev = 5,508
+  CI (99.9%): [341,000, 341,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = mutable, query = last-bound, size = 100000)
+
+# Run progress: 30,56% complete, ETA 01:27:40
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,009 ops/s
+# Warmup Iteration   2: 0,008 ops/s
+Iteration   1: 0,008 ops/s
+                 gc.alloc.rate:      625,042 MB/sec
+                 gc.alloc.rate.norm: 79895503088,000 B/op
+                 gc.count:           39,000 counts
+                 gc.time:            115,000 ms
+
+Iteration   2: 0,008 ops/s
+                 gc.alloc.rate:      633,092 MB/sec
+                 gc.alloc.rate.norm: 79895503088,000 B/op
+                 gc.count:           39,000 counts
+                 gc.time:            114,000 ms
+
+Iteration   3: 0,008 ops/s
+                 gc.alloc.rate:      640,327 MB/sec
+                 gc.alloc.rate.norm: 79895503152,000 B/op
+                 gc.count:           39,000 counts
+                 gc.time:            115,000 ms
+
+
+
+Result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all":
+  0,008 ±(99.9%) 0,002 ops/s [Average]
+  (min, avg, max) = (0,008, 0,008, 0,008), stdev = 0,001
+  CI (99.9%): [0,006, 0,010] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate":
+  632,820 ±(99.9%) 139,495 MB/sec [Average]
+  (min, avg, max) = (625,042, 632,820, 640,327), stdev = 7,646
+  CI (99.9%): [493,325, 772,315] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.alloc.rate.norm":
+  79895503109,333 ±(99.9%) 674,113 B/op [Average]
+  (min, avg, max) = (79895503088,000, 79895503109,333, 79895503152,000), stdev = 36,950
+  CI (99.9%): [79895502435,220, 79895503783,446] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.count":
+  117,000 ±(99.9%) 0,001 counts [Sum]
+  (min, avg, max) = (39,000, 39,000, 39,000), stdev = 0,001
+  CI (99.9%): [117,000, 117,000] (assumes normal distribution)
+
+Secondary result "it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all:gc.time":
+  344,000 ±(99.9%) 0,001 ms [Sum]
+  (min, avg, max) = (114,000, 114,667, 115,000), stdev = 0,577
+  CI (99.9%): [344,000, 344,000] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.12.1, OpenJDK 64-Bit Server VM, 21.0.12.1
+# VM invoker: /opt/homebrew/Cellar/openjdk@21/21.0.12.1/libexec/openjdk.jdk/Contents/Home/bin/java
+# VM options: -Xms512m -Xmx4g
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: it.unibo.tuprolog.examples.benchmarks.theory.TheoryLookupBenchmark.all
+# Parameters: (impl = mutable, query = all-vars, size = 100000)
+
+# Run progress: 33,33% complete, ETA 01:37:03
+# Fork: 1 of 1
+# Warmup Iteration   1: 0,008 ops/s
+# Warmup Iteration   2: 0,008 ops/s
+Iteration   1:

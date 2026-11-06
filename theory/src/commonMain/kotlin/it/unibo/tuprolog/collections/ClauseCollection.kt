@@ -3,167 +3,94 @@ package it.unibo.tuprolog.collections
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.core.isVariantOf
+import it.unibo.tuprolog.unify.UnificationAware
 import kotlin.js.JsName
-import kotlin.jvm.JvmStatic
 
 /**
- * A general-purpose, immutable container of [Clause]s, matched by unification rather than by equality: this is
- * the low-level storage abstraction that a `it.unibo.tuprolog.theory.Theory` builds its Prolog-flavoured API
- * (`assertA`/`assertZ`/`retract`) on top of. Every mutating operation ([add], [addAll], [retrieve],
- * [retrieveAll]) returns a *new* collection, leaving `this` untouched — see [MutableClauseCollection] for the
- * in-place counterpart.
+ * A read-only, unification-aware collection of [Clause]s, the root of the clause-collection family:
+ * [ClauseMultiSet] and [ClauseSet] (unordered), [ClauseQueue], [ClauseDeque] and [ClauseList] (ordered, as Prolog
+ * orders clauses), each with a mutable counterpart, plus [ClauseMap]. `Theory` is a [ClauseDeque].
  *
- * The default implementations returned by this interface's factory methods (and by [ClauseQueue]/
- * [ClauseMultiSet]) are backed by a RETE-style discrimination tree (see
- * `it.unibo.tuprolog.collections.rete.custom.ReteTree`) indexed by directive-vs-rule, functor, arity and
- * first-argument shape, so [get]/[retrieve]-like lookups only re-check clauses that could plausibly unify with
- * the query, rather than scanning the whole collection.
+ * Membership comes in two flavours, both served by the same clause indexes:
+ * - *matching*: [get], [contains], [firstMatching], [countMatching] consider the clauses unifying with a query, according to
+ *   the collection's [unificator];
+ * - *identity*: [containsVariant] and [countVariants] consider the clauses that are variants of a given one (equal up
+ *   to variable renaming, tags ignored), among those matching it.
  *
- * @see ClauseQueue
- * @see ClauseMultiSet
+ * For this reason, clause collections are not `kotlin.collections.Collection`s, whose `contains` and `equals` would
+ * have to commit to one of the two. Clause collections are not taggable either, but they preserve the tags of the
+ * clauses they store, as they always return the very instances they were given.
  */
-interface ClauseCollection : Iterable<Clause> {
-    /** The [Unificator] used to match clauses against each other in this collection. */
-    @JsName("unificator")
-    val unificator: Unificator
+interface ClauseCollection :
+    Iterable<Clause>,
+    UnificationAware {
+    /** The number of clauses in this collection. */
+    @JsName("size")
+    val size: Long
 
-    /** Only the clauses in this collection that are [Directive]s. */
-    @JsName("directive")
-    val directives: Iterable<Directive>
+    /** Whether this collection contains no clause. */
+    @JsName("isEmpty")
+    val isEmpty: Boolean
+        get() = !iterator().hasNext()
 
-    /** Only the clauses in this collection that are [Rule]s. */
+    /** Whether this collection contains at least one clause. */
+    @JsName("isNonEmpty")
+    val isNonEmpty: Boolean
+        get() = !isEmpty
+
+    /** All the clauses in this collection, in iteration order. */
+    @JsName("clauses")
+    val clauses: Iterable<Clause>
+        get() = this
+
+    /** All the [Rule]s in this collection, in iteration order. */
     @JsName("rules")
     val rules: Iterable<Rule>
+        get() = clauses.asSequence().mapNotNull { it.asRule() }.asIterable()
 
-    /** Computes the size of the [ClauseCollection] **/
-    @JsName("size")
-    val size: Int
+    /** All the [Directive]s in this collection, in iteration order. */
+    @JsName("directives")
+    val directives: Iterable<Directive>
+        get() = clauses.asSequence().mapNotNull { it.asDirective() }.asIterable()
 
-    /** Tells if the [ClauseCollection] contains any [Clause] **/
-    @JsName("isEmpty")
-    fun isEmpty(): Boolean
+    /** The clauses unifying with [clause], lazily, in iteration order. */
+    @JsName("get")
+    operator fun get(clause: Clause): Sequence<Clause>
 
-    /** Tells if the [ClauseCollection] contains at least one [Clause]; the negation of [isEmpty]. **/
-    @JsName("isNonEmpty")
-    fun isNonEmpty(): Boolean
-
-    /** Tells if the [ClauseCollection] contains a clause unifying against the given [element] **/
+    /** Whether some clause unifies with [clause]. */
     @JsName("contains")
-    operator fun contains(element: Clause): Boolean
+    operator fun contains(clause: Clause): Boolean = get(clause).any()
 
-    /** Tells if, for each of the given [elements], the [ClauseCollection] contains a unifying clause **/
-    @JsName("containsAll")
-    fun containsAll(elements: Iterable<Clause>): Boolean
+    /** The first clause unifying with [query], or `null` if none does. */
+    @JsName("firstMatching")
+    fun firstMatching(query: Clause): Clause? = get(query).firstOrNull()
 
-    /** Gives a freshly produced [ClauseCollection] including the given [Clause] and the content of this one **/
-    @JsName("add")
-    fun add(clause: Clause): ClauseCollection
+    /** How many clauses unify with [query]. */
+    @JsName("countMatching")
+    fun countMatching(query: Clause): Long = get(query).fold(0L) { count, _ -> count + 1 }
 
-    /** Gives a freshly produced [ClauseCollection] including all the given [Clause] and the content of this one **/
-    @JsName("addAll")
-    fun addAll(clauses: Iterable<Clause>): ClauseCollection
+    /**
+     * The clauses that may unify with [query], lazily, in iteration order: a superset of [get] found by comparing index
+     * keys only, without unifying anything. Meant for callers that unify the candidates themselves anyway, such as a
+     * solver's resolution step, which renames each clause and computes its most general unifier with the goal.
+     */
+    @JsName("candidates")
+    fun candidates(query: Clause): Sequence<Clause> = get(query)
 
-    /** Produces a [RetrieveResult] as a consequence of the attempt at deleting the given [Clause]
-     *  from this [ClauseCollection] **/
-    @JsName("retrieve")
-    fun retrieve(clause: Clause): RetrieveResult<out ClauseCollection>
+    /** Whether some clause is a variant of [clause] (see [isVariantOf]), among those unifying with it. */
+    @JsName("containsVariant")
+    fun containsVariant(clause: Clause): Boolean = get(clause).any { it.isVariantOf(clause) }
 
-    /** Produces a [RetrieveResult] as a consequence of the attempt at deleting all the given [Clause]
-     *  from this [ClauseCollection] **/
-    @JsName("retrieveAll")
-    fun retrieveAll(clause: Clause): RetrieveResult<out ClauseCollection>
+    /** How many clauses are variants of [clause] (see [isVariantOf]), among those unifying with it. */
+    @JsName("countVariants")
+    fun countVariants(clause: Clause): Long = get(clause).fold(0L) { n, it -> if (it.isVariantOf(clause)) n + 1 else n }
 
-    /** Iterates over all the clauses in this collection, in an order that depends on the concrete
-     *  implementation (e.g. insertion order for a [ClauseQueue], unspecified for a [ClauseMultiSet]). */
-    override fun iterator(): Iterator<Clause>
+    /** A new mutable collection with the same clauses (in the same order, if ordered) and [unificator]. */
+    @JsName("toMutable")
+    fun toMutable(): MutableClauseCollection
 
-    companion object {
-        /** Creates an empty [ClauseMultiSet] **/
-        @JvmStatic
-        @JsName("emptyMultiSet")
-        fun emptyMultiSet(unificator: Unificator): ClauseMultiSet = multiSetOf(unificator, emptyList())
-
-        /** Creates a [ClauseMultiSet] with given clauses */
-        @JvmStatic
-        @JsName("multiSetOf")
-        fun multiSetOf(
-            unificator: Unificator,
-            vararg clause: Clause,
-        ): ClauseMultiSet = multiSetOf(unificator, clause.asIterable())
-
-        /** Let developers easily create a [ClauseMultiSet] programmatically while avoiding variables names clashing */
-        @JvmStatic
-        @JsName("multiSetOfScopes")
-        fun multiSetOf(
-            unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): ClauseMultiSet =
-            multiSetOf(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
-
-        /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
-        @JvmStatic
-        @JsName("multiSetOfSequence")
-        fun multiSetOf(
-            unificator: Unificator,
-            clauses: Sequence<Clause>,
-        ): ClauseMultiSet = multiSetOf(unificator, clauses.asIterable())
-
-        /** Creates a [ClauseQueue] from the given [Iterable] of [Clause] */
-        @JvmStatic
-        @JsName("multiSetOfIterable")
-        fun multiSetOf(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): ClauseMultiSet = ClauseMultiSet.of(unificator, clauses)
-
-        /** Creates an empty [ClauseQueue] **/
-        @JvmStatic
-        @JsName("emptyQueue")
-        fun emptyQueue(unificator: Unificator): ClauseQueue = queueOf(unificator, emptyList())
-
-        /** Creates a [ClauseQueue] with given clauses */
-        @JvmStatic
-        @JsName("queueOf")
-        fun queueOf(
-            unificator: Unificator,
-            vararg clause: Clause,
-        ): ClauseQueue = queueOf(unificator, clause.asIterable())
-
-        /** Let developers easily create a [ClauseQueue] programmatically while avoiding variables names clashing */
-        @JvmStatic
-        @JsName("queueOfScopes")
-        fun queueOf(
-            unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): ClauseQueue =
-            queueOf(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
-
-        /** Creates a [ClauseQueue] from the given [Sequence] of [Clause] */
-        @JvmStatic
-        @JsName("queueOfSequence")
-        fun queueOf(
-            unificator: Unificator,
-            clauses: Sequence<Clause>,
-        ): ClauseQueue = queueOf(unificator, clauses.asIterable())
-
-        /** Creates a [ClauseQueue] from the given [Iterable] of [Clause] */
-        @JvmStatic
-        @JsName("queueOfIterable")
-        fun queueOf(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): ClauseQueue = ClauseQueue.of(unificator, clauses)
-    }
+    /** An immutable collection with the same clauses: this very collection, if it is immutable. */
+    @JsName("toImmutable")
+    fun toImmutable(): ClauseCollection
 }

@@ -2,6 +2,11 @@ name: CI/CD Process
 on:
   workflow_call:
     inputs:
+      code:
+        description: "Whether the changes touch anything built or tested: if not, every job but success is skipped."
+        required: false
+        type: boolean
+        default: true
       summary-check-run:
         description: "Id of the run's \"CI summary\" check run, which each job updates as it finishes (see dispatcher.yml)."
         required: false
@@ -15,6 +20,7 @@ on:
 
 jobs:
   lint:
+    if: inputs.code
     runs-on: ubuntu-26.04
     permissions:
       contents: write
@@ -78,6 +84,7 @@ jobs:
           outcome: ${{ job.status }}
           check-run: ${{ inputs.summary-check-run }}
   build:
+    if: inputs.code
     runs-on: ubuntu-26.04
     steps:
       - name: Checkout

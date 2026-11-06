@@ -1,96 +1,53 @@
 package it.unibo.tuprolog.collections
 
-import it.unibo.tuprolog.collections.impl.MutableReteClauseQueue
+import it.unibo.tuprolog.collections.impl.MutableClauseListImpl
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.unify.Unificator
-import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
-/** A [ClauseQueue] that mutates itself in place; see [MutableClauseCollection] for why this trades away
- *  immutability. */
-interface MutableClauseQueue : ClauseQueue {
-    /** Adds the given [Clause] as the first element in this [MutableClauseQueue] **/
-    override fun addFirst(clause: Clause): MutableClauseQueue
+/** A [ClauseQueue] that can be changed in place: clauses are added at the end, and removed from the beginning. */
+interface MutableClauseQueue :
+    ClauseQueue,
+    MutableClauseCollection {
+    /** Adds [clause] at the end (same as [add]). */
+    @JsName("addLast")
+    fun addLast(clause: Clause) {
+        add(clause)
+    }
 
-    /** Adds the given [Clause] as the last element in this [MutableClauseQueue] **/
-    override fun addLast(clause: Clause): MutableClauseQueue
-
-    /** Adds the given [Clause] to this [MutableClauseQueue]. Analogous to [addLast]**/
-    override fun add(clause: Clause): MutableClauseQueue
-
-    /** Adds all the given [Clause] to this [MutableClauseQueue] **/
-    override fun addAll(clauses: Iterable<Clause>): MutableClauseQueue
-
-    /** Retrieves the first [Clause] unifying the given one, searching from the first position **/
-    override fun retrieveFirst(clause: Clause): RetrieveResult<out MutableClauseQueue>
-
-    /** Retrieves the first occurrence of the given [Clause] from this [MutableClauseQueue] as a [RetrieveResult] **/
-    override fun retrieve(clause: Clause): RetrieveResult<out MutableClauseQueue>
-
-    /** Retrieves all the occurrences of the given [Clause] from this [MutableClauseQueue] as a [RetrieveResult] **/
-    override fun retrieveAll(clause: Clause): RetrieveResult<out MutableClauseQueue>
+    /** Removes and returns the first clause, or `null` if empty. */
+    @JsName("removeFirst")
+    fun removeFirst(): Clause?
 
     companion object {
-        /** Creates an empty [MutableClauseQueue] **/
+        /** A new, empty [MutableClauseQueue] matching clauses with [unificator]. */
         @JvmStatic
         @JsName("empty")
-        fun empty(unificator: Unificator): MutableClauseQueue = of(unificator, emptyList())
+        fun empty(unificator: Unificator = Unificator.default): MutableClauseQueue = of(unificator, emptyList())
 
-        /** Creates a [MutableClauseQueue] with given clauses */
+        /** A new [MutableClauseQueue] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("of")
         fun of(
             unificator: Unificator,
-            vararg clause: Clause,
-        ): MutableClauseQueue = of(unificator, clause.asIterable())
+            vararg clauses: Clause,
+        ): MutableClauseQueue = of(unificator, clauses.asIterable())
 
-        /** Let developers easily create a [MutableClauseQueue] programmatically while avoiding variables names clashing */
+        /** A new [MutableClauseQueue] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
-        @JsName("ofScopes")
+        @JsName("ofIterable")
         fun of(
             unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): MutableClauseQueue =
-            of(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
+            clauses: Iterable<Clause>,
+        ): MutableClauseQueue = MutableClauseListImpl.of(unificator, clauses)
 
-        /** Creates a [MutableClauseQueue] from the given [Sequence] of [Clause] */
+        /** A new [MutableClauseQueue] of the given clauses, in order, matching clauses with [unificator]. */
         @JvmStatic
         @JsName("ofSequence")
         fun of(
             unificator: Unificator,
             clauses: Sequence<Clause>,
         ): MutableClauseQueue = of(unificator, clauses.asIterable())
-
-        /** Creates a [MutableClauseQueue] from the given [Iterable] of [Clause] */
-        @JvmStatic
-        @JsName("ofIterable")
-        fun of(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): MutableClauseQueue = MutableReteClauseQueue(unificator, clauses)
-
-        /** Tells whether [queue1] and [queue2] contain the same clauses, in the same order. */
-        @JvmStatic
-        @JsName("areEquals")
-        fun equals(
-            queue1: MutableClauseQueue,
-            queue2: MutableClauseQueue,
-        ): Boolean = ClauseQueue.equals(queue1, queue2)
-
-        /** Computes a hash code for [queue], consistent with [equals]. */
-        @JvmStatic
-        @JsName("computeHashCode")
-        fun hashCode(queue: MutableClauseQueue): Int =
-            itemWiseHashCode(
-                MutableClauseQueue::class,
-                itemWiseHashCode(queue),
-            )
     }
 }
