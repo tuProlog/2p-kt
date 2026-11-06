@@ -14,7 +14,17 @@ import kotlinx.benchmark.State
 /** Average time to solve each [Workload] to exhaustion with `:solve-prolog`, per [TimeoutSetting] and [ChronometerSetting] (#1012). */
 @State(Scope.Benchmark)
 class PrologSolverBenchmark {
-    @Param("tiny", "deep-recursion", "nrev", "backtracking", "failing-search", "nested-solving", "primitives")
+    @Param(
+        "tiny",
+        "deep-recursion",
+        "nrev",
+        "nrev-100",
+        "bind-vars",
+        "backtracking",
+        "failing-search",
+        "nested-solving",
+        "primitives",
+    )
     var workload: String = "tiny"
 
     @Param("none", "large")

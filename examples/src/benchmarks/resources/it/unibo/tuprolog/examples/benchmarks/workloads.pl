@@ -39,5 +39,11 @@ primitives(I, N) :-
     number_codes(I, Cs), atom_codes(A, Cs), atom_length(A, _), atom_concat(A, x, _),
     I1 is I + 1, primitives(I1, N).
 
+% bind-vars: a long list of variables (hence non-ground), bound one per resolution step, so that every step
+% substitutes the (long) remaining suffix of the list
+bind_all([]).
+bind_all([x | T]) :- bind_all(T).
+bind_vars(N) :- length(L, N), bind_all(L).
+
 % overshoot: never terminates, so only the timeout can stop it
 loop :- loop.

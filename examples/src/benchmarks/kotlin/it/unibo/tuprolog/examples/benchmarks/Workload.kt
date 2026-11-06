@@ -20,6 +20,12 @@ enum class Workload(
     /** Naive reverse of a 30-element list: pure unification and clause selection. */
     NREV("nrev", "nrev_list(30, _)"),
 
+    /** Naive reverse of a 300-element list: long non-ground lists flowing through substitutions (#1075). */
+    NREV_LONG("nrev-100", "nrev_list(100, _)"),
+
+    /** Binds a 2000-variable list one variable per step: substitutions over long non-ground lists (#1075). */
+    BIND_VARS("bind-vars", "bind_vars(2000)"),
+
     /** All solutions of 6-queens via generate-and-test: heavy backtracking. */
     BACKTRACKING("backtracking", "queens(6, _)"),
 
