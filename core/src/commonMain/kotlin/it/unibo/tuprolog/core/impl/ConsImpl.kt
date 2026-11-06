@@ -29,11 +29,21 @@ internal class ConsImpl(
         get() = if (knownSize >= 0) knownSize else 1
 
     /**
-     * Applies [unifier] to every item, iteratively, rebuilding the list from its end: the longest suffix left
-     * unchanged by [unifier] is reused as is (as is the whole list, if nothing changes). Ground suffixes are
-     * not even visited, and a lazy suffix, if any, is substituted lazily.
+     * Applies [unifier] to every item: the longest suffix left unchanged by [unifier] is reused as is (as is the
+     * whole list, if nothing changes), ground suffixes are not even visited, and a lazy suffix, if any, is
+     * substituted lazily. Short lists recur on their tail, longer ones (or ones of unknown size) are rebuilt
+     * iteratively from their end.
      */
-    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term {
+    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
+        if (isRecursivelyTransformable(knownSize)) {
+            val newHead = head.apply(unifier)
+            val newTail = tail.apply(unifier)
+            if (newHead === head && newTail === tail) this else ConsImpl(newHead, newTail, tags)
+        } else {
+            applyIteratively(unifier)
+        }
+
+    private fun applyIteratively(unifier: Substitution.Unifier): Term {
         val nodes = mutableListOf<ConsImpl>()
         var current: Term = this
         while (current is ConsImpl && current.knownGround != true) {

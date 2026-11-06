@@ -101,6 +101,15 @@ internal val Term.knownSize: Int
             else -> -1
         }
 
+/**
+ * The largest known size for which recursive terms are transformed recursively, rather than iteratively through a
+ * buffer of their nodes: the native stack depth stays bounded, and short terms (the most common ones) allocate no buffer.
+ */
+internal const val MAX_RECURSIVELY_TRANSFORMED_SIZE = 16
+
+/** Whether a recursive term of [knownSize] is short enough to be transformed recursively. */
+internal fun isRecursivelyTransformable(knownSize: Int): Boolean = knownSize in 0..MAX_RECURSIVELY_TRANSFORMED_SIZE
+
 /** [size] + 1 if [size] is known (i.e. non-negative), or -1 otherwise. */
 internal fun successorOfKnownSize(size: Int): Int = if (size >= 0) size + 1 else -1
 

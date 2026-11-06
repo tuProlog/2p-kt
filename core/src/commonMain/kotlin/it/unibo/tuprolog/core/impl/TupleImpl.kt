@@ -25,11 +25,20 @@ internal class TupleImpl(
         }
 
     /**
-     * Applies [unifier] to every item, iteratively, rebuilding the tuple from its end: the longest suffix
-     * left unchanged by [unifier] is reused as is (as is the whole tuple, if nothing changes). A lazy
-     * suffix, if any, is substituted lazily.
+     * Applies [unifier] to every item: the longest suffix left unchanged by [unifier] is reused as is (as is
+     * the whole tuple, if nothing changes), and a lazy suffix, if any, is substituted lazily. Short tuples recur
+     * on their right, longer ones (or ones of unknown size) are rebuilt iteratively from their end.
      */
-    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term {
+    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
+        if (isRecursivelyTransformable(knownSize)) {
+            val newLeft = left.apply(unifier)
+            val newRight = right.apply(unifier)
+            if (newLeft === left && newRight === right) this else TupleImpl(newLeft, newRight, tags)
+        } else {
+            applyIteratively(unifier)
+        }
+
+    private fun applyIteratively(unifier: Substitution.Unifier): Term {
         val nodes = mutableListOf<TupleImpl>()
         var current: Term = this
         while (current is TupleImpl) {
