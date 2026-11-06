@@ -11,16 +11,28 @@ internal class FrozenStore private constructor(
     override val unificator: Unificator,
     val clauses: Array<Clause>,
     private val procedures: Map<ProcedureKey?, FrozenProcedure>,
+    private val customHeadKeys: Boolean,
 ) : ClauseSource {
     override val size: Int get() = clauses.size
 
     override fun ordered(): Sequence<Clause> = clauses.asSequence()
 
     override fun matching(query: Clause): Sequence<Clause> =
-        procedures[procedureKeyOf(query)]?.matching(query) ?: emptySequence()
+        if (needsScan(query)) {
+            clauses.asSequence().filter { unificator.match(query, it) }
+        } else {
+            procedures[procedureKeyOf(query)]?.matching(query) ?: emptySequence()
+        }
 
     override fun candidates(query: Clause): Sequence<Clause> =
-        procedures[procedureKeyOf(query)]?.keyMatching(query) ?: emptySequence()
+        if (needsScan(query)) {
+            clauses.asSequence()
+        } else {
+            procedures[procedureKeyOf(query)]?.keyMatching(query)
+                ?: emptySequence()
+        }
+
+    private fun needsScan(query: Clause): Boolean = customHeadKeys || unificator.hasCustomHeadKey(query)
 
     /** A store with [added] (already validated) at the beginning or end. */
     fun plus(
@@ -34,11 +46,21 @@ internal class FrozenStore private constructor(
             newProcedures[key] =
                 procedures[key]?.plus(group, atStart) ?: FrozenProcedure(group.toTypedArray(), unificator)
         }
-        return FrozenStore(unificator, newClauses, newProcedures)
+        return FrozenStore(
+            unificator,
+            newClauses,
+            newProcedures,
+            customHeadKeys || added.any { unificator.hasCustomHeadKey(it) },
+        )
     }
 
     /** The store without the first clause matching [query], and that clause; `null` if no clause matches. */
     fun minusFirst(query: Clause): Pair<FrozenStore, Clause>? {
+        if (needsScan(query)) {
+            val position = clauses.indexOfFirst { unificator.match(query, it) }
+            if (position < 0) return null
+            return of(unificator, clauses.filterIndexed { i, _ -> i != position }) to clauses[position]
+        }
         val key = procedureKeyOf(query)
         val procedure = procedures[key] ?: return null
         val matches = procedure.matches(query)
@@ -49,6 +71,10 @@ internal class FrozenStore private constructor(
 
     /** The store without the clauses matching [query], and those clauses; `null` if no clause matches. */
     fun minusAll(query: Clause): Pair<FrozenStore, List<Clause>>? {
+        if (needsScan(query)) {
+            val (removed, kept) = clauses.partition { unificator.match(query, it) }
+            return if (removed.isEmpty()) null else of(unificator, kept) to removed
+        }
         val key = procedureKeyOf(query)
         val procedure = procedures[key] ?: return null
         val positions = mutableListOf<Int>()
@@ -79,11 +105,11 @@ internal class FrozenStore private constructor(
         }
         val newProcedures = HashMap(procedures)
         if (procedure.size == removed.size) newProcedures.remove(key) else newProcedures[key] = procedure.minus(removed)
-        return FrozenStore(unificator, newClauses.toTypedArray(), newProcedures)
+        return FrozenStore(unificator, newClauses.toTypedArray(), newProcedures, customHeadKeys)
     }
 
     companion object {
-        fun empty(unificator: Unificator): FrozenStore = FrozenStore(unificator, emptyArray(), emptyMap())
+        fun empty(unificator: Unificator): FrozenStore = FrozenStore(unificator, emptyArray(), emptyMap(), false)
 
         /** A store of [clauses], which must be already validated. */
         fun of(

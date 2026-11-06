@@ -5,6 +5,7 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.AbstractWorklistUnificator
@@ -50,7 +51,8 @@ class HeadIndexingSpec :
             val upper = Fact.of(Atom.of("Foo"))
             val lower = Fact.of(Atom.of("foo"))
             val other = Fact.of(Atom.of("bar"))
-            var theory = case.build(unificator, listOf(upper, other, lower, upper))
+            val directive = Directive.of(Atom.of("init"))
+            var theory = case.build(unificator, listOf(upper, other, directive, lower, upper))
             unificator.match(lower, upper) shouldBe true
             val snapshot = theory[lower]
             snapshot.toList() shouldBe listOf(upper, lower, upper)
@@ -60,12 +62,15 @@ class HeadIndexingSpec :
             val first = theory.retract(lower)
             first.clauses?.toList() shouldBe listOf(upper)
             theory = first.theory
-            theory.toList() shouldBe listOf(other, lower, upper)
+            theory.toList() shouldBe listOf(other, directive, lower, upper)
             theory = theory.assertA(upper).assertZ(upper)
             snapshot.toList() shouldBe listOf(upper, lower, upper)
             val all = theory.retractAll(lower)
             all.clauses?.toList() shouldBe listOf(upper, lower, upper, upper)
-            all.theory.toList() shouldBe listOf(other)
+            all.theory.toList() shouldBe listOf(other, directive)
             all.theory[lower].toList() shouldBe emptyList()
+            val lowercaseOnly = case.build(unificator, listOf(lower))
+            lowercaseOnly[upper].toList() shouldBe listOf(lower)
+            lowercaseOnly.retract(upper).clauses?.toList() shouldBe listOf(lower)
         }
     })

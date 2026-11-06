@@ -168,7 +168,7 @@ data class StateRuleSelection(
      */
     private fun Theory.selectClauses(goal: Struct): Sequence<Rule> =
         candidates(Rule.of(goal, Var.anonymous())).mapNotNull { candidate ->
-            val rule = candidate.freshCopy().castToRule()
+            val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
             val mgu = context.unificator.mgu(Rule.of(goal, rule.body), rule)
             if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
         }
