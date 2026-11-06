@@ -53,7 +53,10 @@ interface Block : Recursive {
         @JsName("of")
         fun of(vararg terms: Term): Block = of(terms.toList())
 
-        /** Creates a [Block] wrapping the given [terms]. */
+        /**
+         * Creates a [Block] wrapping the given [terms]: an [EmptyBlock] if there are none, the sole term itself if
+         * there is one, or a [Tuple] of them otherwise.
+         */
         @JvmStatic
         @JsName("ofList")
         fun of(terms: KtList<Term>): Block =
@@ -63,7 +66,7 @@ interface Block : Recursive {
                 else -> BlockImpl(Tuple.of(terms))
             }
 
-        /** Creates a [Block] wrapping the given [terms]. */
+        /** Creates a [Block] wrapping the given [terms]: eagerly if [terms] is a [KtList], lazily otherwise. */
         @JvmStatic
         @JsName("ofIterable")
         fun of(terms: Iterable<Term>): Block =
@@ -72,7 +75,11 @@ interface Block : Recursive {
                 else -> of(terms.asSequence())
             }
 
-        /** Creates a [Block] wrapping the given [terms]. */
+        /**
+         * Creates a [Block] wrapping the given [terms], lazily: only as many items as needed to tell 0, 1 and 2+
+         * items apart are pulled out of [terms] upon construction, while the others are pulled (once) as the
+         * block is traversed.
+         */
         @JvmStatic
         @JsName("ofSequence")
         fun of(terms: Sequence<Term>): Block {

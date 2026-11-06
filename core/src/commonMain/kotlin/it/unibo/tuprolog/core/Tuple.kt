@@ -56,7 +56,8 @@ interface Tuple : Recursive {
         /**
          * Wraps [terms] into a single [Term]: returns [ifEmpty]'s result if [terms] is empty, the sole
          * element if [terms] has exactly one, or a [Tuple] otherwise. Used, in particular, to fold a
-         * [Clause]'s body goals into a single [Term].
+         * [Clause]'s body goals into a single [Term]. A [Sequence], or an [Iterable] other than a [KtList], is
+         * consumed lazily: only as many items as needed to tell those cases apart are pulled upon wrapping.
          */
         @JvmStatic
         @JsName("wrapIfNeeded")
@@ -115,7 +116,8 @@ interface Tuple : Recursive {
         ): Tuple = of(listOf(first, second, *others))
 
         /**
-         * Creates a right-nested [Tuple] out of [terms].
+         * Creates a right-nested [Tuple] out of [terms]: eagerly if [terms] is a [KtList], lazily (as [of] does
+         * for a [Sequence]) otherwise.
          * @throws IllegalArgumentException if [terms] has fewer than 2 elements
          */
         @JvmStatic
@@ -128,7 +130,8 @@ interface Tuple : Recursive {
 
         /**
          * Creates a right-nested [Tuple] out of [terms], lazily: only the first 2 items are pulled out of [terms]
-         * upon construction, while the others are pulled as the tuple is traversed.
+         * upon construction, while the others are pulled (once) as the tuple is traversed. Changes to the source
+         * of [terms] after construction may hence be reflected by the tuple.
          * @throws IllegalArgumentException if [terms] has fewer than 2 elements
          */
         @JvmStatic
