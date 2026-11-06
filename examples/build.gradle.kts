@@ -15,6 +15,11 @@ val benchmarks: SourceSet =
         runtimeClasspath += sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
     }
 
+sourceSets.test {
+    compileClasspath += benchmarks.output + benchmarks.compileClasspath
+    runtimeClasspath += benchmarks.output + benchmarks.runtimeClasspath
+}
+
 dependencies {
     api(project(":solve-prolog"))
     api(project(":solve-concurrent"))
