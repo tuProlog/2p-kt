@@ -37,6 +37,9 @@ class RecursiveTermsBenchmark {
     private lateinit var substitution: Substitution
     private lateinit var prebuilt: Recursive
 
+    /** Like [prebuilt], but read in full once, so that lazy kinds are materialized. */
+    private lateinit var read: Recursive
+
     @Setup
     fun setUp() {
         items = (0 until size).map { if (ground) Atom.of("a$it") else Var.of("X$it") }
@@ -44,6 +47,7 @@ class RecursiveTermsBenchmark {
         val target = if (ground) Var.of("Unused") else items.first() as Var
         substitution = Substitution.of(target, Atom.of("a"))
         prebuilt = build(items)
+        read = build(items).also { it.traverse() }
     }
 
     private fun build(items: List<Term>): Recursive =
@@ -88,6 +92,12 @@ class RecursiveTermsBenchmark {
 
     @Benchmark
     fun freshCopy(): Int = prebuilt.freshCopy().traverse()
+
+    @Benchmark
+    fun applySubstitutionAfterRead(): Int = read.apply(substitution).traverse()
+
+    @Benchmark
+    fun freshCopyAfterRead(): Int = read.freshCopy().traverse()
 
     @Benchmark
     fun sizeFirst(): Int = build(items).size
