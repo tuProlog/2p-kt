@@ -32,6 +32,9 @@ internal class LazyTupleImpl(
     override val secondChild: Term
         get() = right
 
+    override val availableSecondChild: Term?
+        get() = cachedRight
+
     override val args: List<Term> = LazyArgs()
 
     override fun copyWithTags(tags: Map<String, Any>): Tuple =
@@ -40,5 +43,6 @@ internal class LazyTupleImpl(
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         LazyTupleImpl(cursor.map { it.apply(unifier) }, tags)
 
-    override fun freshCopy(scope: Scope): Tuple = LazyTupleImpl(cursor.map { it.freshCopy(scope) }).setTags(tags)
+    override fun freshCopy(scope: Scope): Tuple =
+        if (materializedGround() == true) this else LazyTupleImpl(cursor.map { it.freshCopy(scope) }).setTags(tags)
 }

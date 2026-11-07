@@ -41,11 +41,15 @@ internal open class BlockImpl(
 
     override fun copyWithTags(tags: Map<String, Any>): Block = BlockImpl(item, tags)
 
+    // A block has one child, its tuple (if any): its groundness is that of the tuple, as materialized so far.
+    override fun materializedGround(): Boolean? =
+        knownGround ?: (item as? RecursiveImpl)?.materializedGround()?.also { cachedGround = it }
+
     override fun freshCopy(): Block = super.freshCopy().castToBlock()
 
     override fun freshCopy(scope: Scope): Block =
         when {
-            knownGround == true -> this
+            materializedGround() == true -> this
             else -> scope.blockOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
         }
 

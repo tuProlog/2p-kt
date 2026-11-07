@@ -43,6 +43,9 @@ internal class LazyConsWithExplicitLast(
         return current
     }
 
+    override val availableSecondChild: Term?
+        get() = cachedTail
+
     override val args: List<Term> = LazyArgs()
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
@@ -52,5 +55,9 @@ internal class LazyConsWithExplicitLast(
         if (this.tags === tags) this else LazyConsWithExplicitLast(cursor, termination, tags)
 
     override fun freshCopy(scope: Scope): Cons =
-        LazyConsWithExplicitLast(cursor.map { it.freshCopy(scope) }, termination.freshCopy(scope), tags)
+        if (materializedGround() == true) {
+            this
+        } else {
+            LazyConsWithExplicitLast(cursor.map { it.freshCopy(scope) }, termination.freshCopy(scope), tags)
+        }
 }

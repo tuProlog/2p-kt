@@ -47,7 +47,54 @@ internal abstract class RecursiveImpl(
     /** Computes [size] by traversing this term, iteratively. */
     protected open fun computeSize(): Int = unfoldedSequence.count()
 
-    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty() || knownGround == true
+    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean =
+        unifier.isEmpty() || materializedGround() == true
+
+    /**
+     * This term's groundness, as far as it can be told without pulling items out of a lazy source: [knownGround], or
+     * else what an iterative walk along the suffixes materialized so far finds, which is then cached on every node
+     * visited. So a lazy term read in full is substituted and copied as itself when ground, without traversing it.
+     *
+     * ponytail: a ground term materialized only in part is walked again (up to its unread suffix) on every call;
+     * remember where the last walk stopped if that ever shows up in profiles.
+     */
+    internal open fun materializedGround(): Boolean? {
+        knownGround?.let { return it }
+        var node: RecursiveImpl = this
+        var result: Boolean? = null
+        while (true) {
+            val known = node.knownGround
+            if (known != null) {
+                result = known
+                break
+            }
+            val first = node.firstChild.knownGround
+            if (first != true) {
+                result = first
+                break
+            }
+            val second = node.availableSecondChild ?: break
+            if (second is RecursiveImpl && second !is BlockImpl) {
+                node = second
+                continue
+            }
+            result = if (second is RecursiveImpl) second.materializedGround() else second.isGround
+            break
+        }
+        if (result != null) {
+            var marked: RecursiveImpl = this
+            while (marked !== node) {
+                marked.cachedGround = result
+                marked = marked.availableSecondChild as RecursiveImpl
+            }
+            node.cachedGround = result
+        }
+        return result
+    }
+
+    /** [secondChild], if it is available without pulling items out of a lazy source, or `null` otherwise. */
+    protected open val availableSecondChild: Term?
+        get() = secondChild
 
     override val items: Iterable<Term>
         get() = toSequence().asIterable()
