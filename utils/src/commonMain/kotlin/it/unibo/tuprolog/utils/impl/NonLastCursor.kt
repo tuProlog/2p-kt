@@ -5,9 +5,14 @@ internal class NonLastCursor<T>(
 ) : AbstractCursor<T>() {
     private var source: Iterator<T>? = source
 
-    override val next: AbstractCursor<out T> by lazy {
-        AbstractCursor.of(source).also { this.source = null }
-    }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyNext =
+        lazy {
+            AbstractCursor.of(source).also { this.source = null }
+        }
+
+    override val next: AbstractCursor<out T>
+        get() = lazyNext.value
 
     override val current: T = source.next()
 
