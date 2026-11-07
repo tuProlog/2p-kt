@@ -485,6 +485,12 @@ The mutable `all` case is **about 13% slower (0.87×)**, with non-overlapping re
 This control has no argument to index; its point-estimate speedups range from 0.87× to 0.99×.
 The full comparison retains all slower cases and their errors; it does not assume that every decline is noise.
 
+A follow-up cleanup gives unindexed mutable scans a single-view loop and drops the no-op key filter. Three alternating
+rounds on an x86 container against the branch without it (`-wi 3 -i 5 -w 1s -r 1s -f 2`): mutable `all` −4.4% to +1.5%,
+mutable `first` +2.7% to +6.2%, within the 5.9% spread of the untouched immutable cases. So it costs nothing, but is not
+shown to close the 0.87× gap, which was measured on the M1 only (details in
+[REPORTS.md](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/REPORTS.md#zero-arity-fix-check-2026-11-07-1b32e830c-vs-52d49d34b)).
+
 **Scope and provenance.** This compares branches, not the store change in isolation: develop uses `kt-math 2.1.2`,
 while the measured branch uses `0.10.2`. The existing churn benchmark changes predicates; it does not directly time
 distinct-key churn within one live predicate or the custom-head scan fallback added by the review fixes.
@@ -493,15 +499,15 @@ An initial baseline 100k bulk-construction run completed and a lookup run was st
 constraint was applied. The lookup was stopped; both are archived separately and excluded from the table and fits.
 No further baseline `size=100000` cases were run.
 
-- [Full comparison, including per-case errors and allocations](results/2026-11-06-review-comparison.md).
-- Raw JMH JSON: [develop](results/2026-11-06-review-develop-806dab117.json),
-  [branch](results/2026-11-06-review-head-2fac5388f.json).
-- [Extrapolated baseline scores and their two source measurements](results/2026-11-06-review-baseline-estimates.json).
-- Longer zero-arity check: [develop](results/2026-11-06-review-zero-arity-develop.json),
-  [branch](results/2026-11-06-review-zero-arity-head.json).
-- [Manifest: commits, settings, source hashes and durations](results/2026-11-06-review-manifest.json).
-- Excluded initial runs: [bulk construction](results/2026-11-06-review-excluded-develop-100k-construction.json),
-  [aborted lookup log](results/2026-11-06-review-aborted-develop-100k-lookup.log).
+- [Full comparison, including per-case errors and allocations](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-comparison.md).
+- Raw JMH JSON: [develop](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-develop-806dab117.json.xz),
+  [branch](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-head-2fac5388f.json.xz).
+- [Extrapolated baseline scores and their two source measurements](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-baseline-estimates.json.xz).
+- Longer zero-arity check: [develop](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-zero-arity-develop.json.xz),
+  [branch](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-zero-arity-head.json.xz).
+- [Manifest: commits, settings, source hashes and durations](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-manifest.json.xz).
+- Excluded initial runs: [bulk construction](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-excluded-develop-100k-construction.json.xz),
+  [aborted lookup log](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-aborted-develop-100k-lookup.log).
 
 #### Historical implementation comparison
 
