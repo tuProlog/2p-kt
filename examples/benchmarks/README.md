@@ -320,6 +320,57 @@ No further baseline `size=100000` cases were run.
 - Excluded initial runs: [bulk construction](results/2026-11-06-review-excluded-develop-100k-construction.json),
   [aborted lookup log](results/2026-11-06-review-aborted-develop-100k-lookup.log).
 
+#### Zero-arity fix check: `2026-11-07`, `1b32e830c` vs `52d49d34b`
+
+PR head `origin/ccr-0b4a13b3-ejoi9f` versus fix `origin/ccr-0b4a13b3-ejoi9f-zero-arity`, run with
+`zero-arity.sh` for three rounds, in before/after, after/before, before/after order. Proxmox CT, Intel Xeon Gold
+6226R @ 2.90 GHz, 16 available CPUs, 32 GiB RAM, Ubuntu 24.04.5 LTS x86_64, Linux 6.8.12-10-pve;
+Ubuntu OpenJDK 21.0.12.1 (`21.0.12.1+1-1-24.04.4-Ubuntu`), JMH 1.37.
+Settings: `-wi 3 -i 5 -w 1s -r 1s -f 2 -p size=1000 -p query=zero-arity`, throughput in ops/s, GC profiler;
+default JVM heap (the script supplies no heap flags). Gradle console was plain. Host power and other host workloads
+were not controlled from the CT. Each score below includes the JSON's `primaryMetric.scoreError` (JMH 99.9% error).
+
+| Operation | Implementation | Round | PR head ops/s ± error | Fix ops/s ± error | Change |
+|---|---|---:|---:|---:|---:|
+| all | immutable | 1 | 3,214.2 ± 384.0 | 3,359.1 ± 152.3 | +4.51% |
+| all | immutable | 2 | 3,249.2 ± 321.1 | 3,273.1 ± 135.8 | +0.73% |
+| all | immutable | 3 | 3,347.1 ± 136.2 | 3,348.7 ± 127.6 | +0.05% |
+| all | mutable | 1 | 3,189.2 ± 203.2 | 3,132.8 ± 310.4 | -1.77% |
+| all | mutable | 2 | 3,219.7 ± 155.4 | 3,266.9 ± 124.5 | +1.46% |
+| all | mutable | 3 | 3,250.1 ± 173.4 | 3,107.0 ± 327.4 | -4.40% |
+| first | immutable | 1 | 2,760,658.0 ± 254,997.3 | 2,749,918.0 ± 275,283.7 | -0.39% |
+| first | immutable | 2 | 2,748,703.1 ± 224,847.3 | 2,754,586.2 ± 316,018.2 | +0.21% |
+| first | immutable | 3 | 2,866,645.0 ± 146,675.5 | 2,912,369.4 ± 318,056.5 | +1.60% |
+| first | mutable | 1 | 2,776,274.8 ± 194,064.7 | 2,878,440.9 ± 109,177.1 | +3.68% |
+| first | mutable | 2 | 2,744,247.5 ± 237,329.7 | 2,915,622.6 ± 140,730.9 | +6.24% |
+| first | mutable | 3 | 2,747,469.2 ± 129,203.0 | 2,821,140.6 ± 275,578.4 | +2.68% |
+
+| Operation | Implementation | Median change over three rounds |
+|---|---|---:|
+| all | immutable | +0.73% |
+| all | mutable | -1.77% |
+| first | immutable | +0.21% |
+| first | mutable | +3.68% |
+
+Immutable round-to-round spread, defined as `(max score / min score - 1)` within each ref and case, is 4.14%
+(PR-head all), 2.63% (fix all), 4.29% (PR-head first), and 5.91% (fix first). Taking the largest spread as the
+noise floor gives **5.91%**; the largest absolute immutable before/fix change is 4.51%.
+Mutable `all` improves beyond either floor in **0 of 3 rounds**, versus the required 2 of 3: **the fix does not
+demonstrate a real mutable-all improvement on this machine**. Its only positive round is +1.46%, and all three
+mutable-all before/fix 99.9% intervals overlap. This does not establish a regression either.
+
+Fix/develop ratios are omitted because this CT is not the Apple M1/macOS/Homebrew OpenJDK 21 machine that produced
+`2026-11-06-review-zero-arity-develop.json`.
+
+Raw JSON by round (four cases per file):
+
+- Round 1: [PR head](results/2026-11-07-zero-arity-before-1b32e830c-r1.json),
+  [fix](results/2026-11-07-zero-arity-after-52d49d34b-r1.json).
+- Round 2: [PR head](results/2026-11-07-zero-arity-before-1b32e830c-r2.json),
+  [fix](results/2026-11-07-zero-arity-after-52d49d34b-r2.json).
+- Round 3: [PR head](results/2026-11-07-zero-arity-before-1b32e830c-r3.json),
+  [fix](results/2026-11-07-zero-arity-after-52d49d34b-r3.json).
+
 #### Historical implementation comparison
 
 Baseline `2a6b358` (develop's `:theory` plus these benchmarks) against `6e974c2`, except `Churn` (`bb2dd7e`) and
