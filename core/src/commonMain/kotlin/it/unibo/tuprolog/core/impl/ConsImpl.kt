@@ -9,8 +9,17 @@ internal class ConsImpl(
     override val head: Term,
     override val tail: Term,
     tags: Map<String, Any> = emptyMap(),
-) : AbstractCons(listOf(head, tail), tags),
+) : AbstractCons(emptyList(), tags),
     Cons {
+    // a view over head and tail, rather than a list of them, which would cost two more objects per node
+    override val args: List<Term> = LazyArgs()
+
+    override val firstChild: Term
+        get() = head
+
+    override val secondChild: Term
+        get() = tail
+
     // Metadata is propagated from the tail in O(1) when the tail already knows it, and otherwise computed
     // on demand (iteratively), so that consing onto a lazy list never traverses it.
     init {
