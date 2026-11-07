@@ -40,6 +40,10 @@ interface Var : Term {
     override val variables: Sequence<Var>
         get() = sequenceOf(this)
 
+    // a constant, rather than the default `variables.none()`, which allocates a sequence at every call
+    override val isGround: Boolean
+        get() = false
+
     /**
      * Whether this variable is the anonymous variable, i.e. whether its [name] is `"_"`.
      * Anonymous variables are never meant to be shared: each one created via [Var.anonymous] is distinct,

@@ -34,6 +34,17 @@ class TermComparisonSpec :
 
         val unordered = ordered.shuffled()
 
+        test("last-argument-preserves-atom-ordering") {
+            val a = Atom.of("Z")
+            val b = Atom.of("a")
+            val expected = a.compareTo(b).compareTo(0)
+            Struct.of("f", a).compareTo(Struct.of("f", b)).compareTo(0) shouldBe expected
+            Struct
+                .of("f", Atom.of("x"), a)
+                .compareTo(Struct.of("f", Atom.of("x"), b))
+                .compareTo(0) shouldBe expected
+        }
+
         test("compare-to") {
             val reordered = unordered.sortedWith { a, b -> a.compareTo(b) }
             reordered shouldBe ordered

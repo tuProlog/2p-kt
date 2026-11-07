@@ -180,7 +180,7 @@ String, arity: Int)` or the generic `Indicator.of(name: Term, arity: Term)`.
 gives them a uniform way to view their elements:
 
 ```kotlin
---8<-- "core/src/commonMain/kotlin/it/unibo/tuprolog/core/Recursive.kt:6:41"
+--8<-- "core/src/commonMain/kotlin/it/unibo/tuprolog/core/Recursive.kt:6:49"
 ```
 
 ### Lists
@@ -201,22 +201,38 @@ build an explicitly `last`-terminated, possibly non-well-formed list), `Cons.of(
 A `Tuple` is a `Struct` with functor `,` and 2 arguments, `left`/`right`, usually written `(Left, Right)`. When
 `right` is itself a `Tuple`, the whole chain prints as one comma-separated, parenthesized sequence, e.g.
 `(a, 2, c)` for `','(a, ','(2, c))`. Tuples always have 2 or more elements — there is no empty or singleton tuple.
-Build one with `Tuple.of(left, right)`, `Tuple.of(items: Iterable<Term>)` (requires at least 2), or
-`Tuple.wrapIfNeeded(...)`, which collapses to the single element itself (or a caller-supplied fallback) when fewer
-than 2 items are given.
+Build one with `Tuple.of(left, right)`, `Tuple.of(items: Iterable<Term>)` or `Tuple.of(items: Sequence<Term>)`
+(requiring at least 2 items), or `Tuple.wrapIfNeeded(...)`, which collapses to the single element itself (or a
+caller-supplied fallback) when fewer than 2 items are given.
 
 ### Blocks
 
 A `Block` is a `Struct` with functor `{}` and either 0 arguments (`EmptyBlock`, the atom `{}`) or exactly 1
 argument (usually itself a `Tuple`, when the block groups several terms), usually written `{Argument}`. This is
 2P-Kt's representation of Prolog's curly-brace term (`'{}'/1`), e.g. `{a, 2, c}` for `'{}'(','(a, ','(2, c)))`.
-Build one with `Block.of(vararg terms)` / `Block.of(terms: Iterable<Term>)` (collapsing to `EmptyBlock` for zero
-terms, or wrapping 2+ terms in a `Tuple`), or `Block.empty()` / `Empty.block()`.
+Build one with `Block.of(vararg terms)` / `Block.of(terms: Iterable<Term>)` / `Block.of(terms: Sequence<Term>)`
+(collapsing to `EmptyBlock` for zero terms, or wrapping 2+ terms in a `Tuple`), or `Block.empty()` / `Empty.block()`.
 
 !!! note
     Earlier versions of this documentation (and the overview diagram near the top of this page) call this type
     `Set`/`EmptySet`. It is *not* set-semantics (no deduplication) — it is a generic curly-brace grouping term, and
     the current source names it `Block`/`EmptyBlock` (`it.unibo.tuprolog.core.Block`).
+
+### Eager and lazy collections
+
+Every factory taking a `kotlin.collections.List` (or `vararg` items) builds its collection eagerly. Factories taking a
+`Sequence`, or an `Iterable` that isn't a `List` (`List.of`/`List.from`, `Tuple.of`, `Tuple.wrapIfNeeded`,
+`Block.of`, and their `Scope` counterparts), build it **lazily**: they pull only as many items as they need to pick
+the right shape, and the rest as the collection is traversed, once. A lazy collection behaves exactly like the
+equivalent eager one (`==`, `hashCode`, `toString`, ordering). A few things are worth knowing:
+
+- Substitution, fresh copies, and wrapping (e.g. `Cons.of(head, lazyList)`) keep a lazy collection lazy.
+  `size` and `isGround`, instead, need the whole collection: they are computed on first access, then cached.
+- A source that changes after construction may show its changes in the collection, so pass a `List` when that
+  matters.
+- Eager collections know their `size` and groundness upon construction, without any traversal.
+- Collections of any length can be compared, hashed, printed, substituted and copied without overflowing the
+  native stack, and substitution reuses the longest suffix it leaves unchanged.
 
 ## Clauses
 

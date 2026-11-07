@@ -35,7 +35,7 @@ object ClockReadsReport {
                 .setTimeout(timeout)
                 .setChronometerFactory(factory)
         PrologSolverFactory
-            .solverWithDefaultBuiltins(staticKb = BenchmarkTheory.theory)
+            .solverWithDefaultBuiltins(staticKb = workload.theory, flags = workload.flags)
             .solve(workload.goal, options)
             .toList()
         return Counts(counter.leaps, counter.checks, timeline.reads)
