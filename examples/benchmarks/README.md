@@ -304,16 +304,74 @@ within a few percent):
   rebuilds unchanged suffixes. Tuples and blocks with a known size answer `size` in O(1) (`sizeEverySuffix`: 90×).
 - Lazy tuples and blocks (built from a sequence, eagerly before #1075) are built 160–210× faster and only pay for what
   is read. Reading them in full costs 0.55–0.75× (`constructConsumeAll`, `hashFirst`, `equals*`, `sizeFirst`).
-- **Regression: substituting or fresh-copying a *ground* lazy tuple or block** is 5–30× slower than before (e.g.
-  `applySubstitution`, 1000 items: 244 k → 20 k ops/s, 56 B → 184 KB per op). Before #1075, the tuple was eager and
-  known to be ground, so the substitution returned it unchanged. Now `LazyTupleImpl` substitutes and fresh-copies by mapping its
-  cursor, without checking groundness first, so traversing the result rebuilds every item. Non-ground lazy tuples and blocks are not
-  affected (1.1–1.6×), and the solver never builds lazy tuples.
-- `isGroundRepeated` is ~13% slower on everything but lazy lists (1.36 G → 1.19 G ops/s): a cached value read through
-  a nullable field, rather than a `by lazy` holder. That's 0.1 ns per call. Lazy lists, which recomputed it on every
-  call before, are 220× faster.
-- Unification (`UnificationBenchmark`) is unchanged with the worklist engine (geometric mean 1.01×). The equational
-  engine with occurs-check is slower on a few scenarios: `occurs-nowhere` 0.23× (1.56 M → 0.36 M ops/s, same
-  allocation), `repeated-variable` and `variable-chain` 0.73×, `list-early-mismatch` 0.81×. Not explained yet. It is
-  not the default engine, and `UnificatorSolverBenchmark` with it is 1.10–1.30× faster.
+- Substituting or fresh-copying a *ground* lazy tuple or block that was never read is 3–30× slower than before
+  (e.g. `applySubstitution`, 1000 items: 235 k → 20 k ops/s, 56 B → 184 KB per op). This compares a lazy term against an
+  eager one, though: before #1075, `Tuple.of(Iterable)` and `Block.of(Sequence)` copied their items, so the tuple was
+  known to be ground and came back unchanged. Telling a lazy term is ground means reading it, so it is substituted
+  lazily instead. Once read, it is returned unchanged (see the follow-up below). Non-ground lazy tuples and blocks are
+  not affected (1.1–1.6×), and the solver never builds lazy tuples.
+- `isGroundRepeated` was ~13% slower on everything but lazy lists, because the cached groundness was a boxed `Boolean?`.
+  It is now a byte (see the follow-up below).
+- Unification (`UnificationBenchmark`) is unchanged with the worklist engine (geometric mean 1.01×). With the
+  equational engine and occurs-check, this single-fork run showed `occurs-nowhere` at 0.23× and
+  `repeated-variable`/`variable-chain` at 0.73×. These are bimodal JIT outcomes, not regressions (see the follow-up
+  below). `UnificatorSolverBenchmark` with that engine is 1.10–1.30× faster.
 - Timeout overshoot (`TimeoutOvershootBenchmark`) is unchanged.
+
+### Follow-ups: `2026-11-07-targeted-{before-806dab1,after-422f790}`
+
+The [first run](#recursive-terms-2026-11-06-full-before-806dab1after-d7c1d00) led to these changes:
+
+- A lazy term read in full knows its groundness (`materializedGround`): a ground one is substituted and copied as
+  itself.
+- Groundness is cached as a byte, rather than a boxed `Boolean?`.
+- The equational occurs-check skips ground structures.
+- `Var.isGround` is a constant, rather than `variables.none()`, which allocated a sequence at every call.
+- An eager cons views its head and tail as its args, rather than copying them into a list. A list cost two more
+  objects per node.
+
+The benchmarks gained `applySubstitutionAfterRead` and `freshCopyAfterRead`, which act on a term read in full
+beforehand. The affected benchmarks were then re-run at `422f790`, before the last two changes. Unification ran with
+3 forks (3 × 1 s warm-up and measurement per fork); the rest used 1 fork with 1 s (recursive terms) or 2 s (resolution)
+iterations. Same machine as above.
+
+`RecursiveTermsBenchmark`, geometric mean of the speed-up as above:
+
+| Benchmark | list-eager | list-lazy | tuple-eager | tuple-lazy | block-eager | block-lazy |
+|---|---:|---:|---:|---:|---:|---:|
+| `applySubstitution` | 2.32 | 2.28 | 2.13* | 0.26* | 1.85* | 0.35* |
+| `applySubstitutionTwice` | 1.72* | 1.37 | 2.31* | 0.16* | 1.74* | 0.20* |
+| `freshCopy` | 1.19 | 1.84 | 1.52* | 0.28* | 1.20* | 0.30* |
+| `applySubstitutionAfterRead` | 2.31 | 7.25 | 2.21* | 0.93* | 1.98* | 1.04* |
+| `freshCopyAfterRead` | 1.22 | 5.35 | 1.59* | 0.93* | 1.23* | 0.97* |
+| `isGroundFirst` | 2.56 | 2.08 | 1.85 | 9.71 | 1.73 | 9.09 |
+| `isGroundRepeated` | 0.99 | 254.38 | 0.99 | 1.00 | 0.99 | 0.99 |
+
+- Ground lazy tuples and blocks, once read, are substituted and copied as themselves: `applySubstitutionAfterRead`,
+  1000 items, allocates 56 B per op, as before #1075. It runs at 0.78× (191 k → 108 k ops/s) because traversing the
+  result still walks a lazy tuple, as `constructConsumeAll` does. Ground lazy lists, which were lazy before #1075 too,
+  are 18–23× faster. Lazy terms that were never read behave as in the first run, by design.
+- `isGroundRepeated` is back to parity (0.98–1.04×).
+- Unification, worklist engine: unchanged (0.90–1.14×, all within error). Equational engine, with occurs-check:
+  `occurs-nowhere` gives 0.35 M ops/s on some forks and 1.6 M on others, on both sides. The occurs-check now skips ground
+  structures, and all 3 forks give 8.2 M ops/s (23× this run's before figure). `merge-compatible` is 1.31–1.33×
+  faster and allocates 72% less. `list-early-mismatch` is the one consistent loss (0.73–0.85×, same allocation). A
+  stack profile shows the same hot spot on both sides, namely building an `Equation.Identity` per matched item. So the
+  loss is not in occurs-checking. The engine is deprecated, and this was left alone.
+- Resolution, direct chronometer, no timeout. Before is `806dab1`. After is `422f790`, then the last two changes:
+
+  | Workload | Before (ops/s) | `422f790` (ops/s) | + last two (ops/s) | Before B/op | `422f790` B/op | + last two B/op |
+  |---|---:|---:|---:|---:|---:|---:|
+  | bind-vars | 9.469 | 11.250 ± 0.39 | 12.296 ± 0.62 | 197 M | 210 M | 176 M |
+  | nrev-100 | 0.661 | 1.360 ± 0.24 | 1.520 ± 0.65 | 1,435 M | 867 M | 760 M |
+  | nrev | 71.954 | 75.561 ± 1.46 | 74.240 ± 7.62 (3 forks) | 32.3 M | 26.0 M | 24.9 M |
+  | deep-recursion | 44.636 | 46.700 ± 4.15 | 46.397 ± 0.38 | 71.3 M | 65.8 M | 65.2 M |
+  | strips-list | 0.544 | 0.561 ± 0.01 | 0.558 ± 0.01 | 2,224 M | 2,004 M | 1,994 M |
+
+  Other workloads are 1.02–1.07× faster at `422f790` and allocate up to 12% less. A JFR allocation profile of `bind-vars`
+  found the extra allocation. Before #1075, substituting a long list returned a lazy cons over a mapped cursor. Now
+  the list is rebuilt eagerly, which is faster but allocates a node per item. Each `ConsImpl` also held
+  `listOf(head, tail)`, an array and a list wrapper. Dropping that list takes `bind-vars` to 1.30× faster with 11% less
+  allocation than before #1075.
+
+Raw JSON (and, for the last two changes, JMH logs): `results/2026-11-07-targeted-*` in [tuProlog/2p-kt-benchmarks](https://github.com/tuProlog/2p-kt-benchmarks/tree/main/results).
