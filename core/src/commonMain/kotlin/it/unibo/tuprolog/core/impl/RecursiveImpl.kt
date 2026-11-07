@@ -2,14 +2,11 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Recursive
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.utils.dequeOf
-import it.unibo.tuprolog.utils.itemWiseEquals
 import it.unibo.tuprolog.utils.itemWiseHashCode
-import kotlin.collections.Collection as KtCollection
 import kotlin.collections.List as KtList
 
 internal abstract class RecursiveImpl(
@@ -18,13 +15,39 @@ internal abstract class RecursiveImpl(
     tags: Map<String, Any>,
 ) : AbstractStruct(functor, args, tags),
     Recursive {
-    override val unfoldedList: KtList<Term> by lazy { dequeOf(unfoldedSequence) }
+    private var cachedUnfoldedList: KtList<Term>? = null
+
+    override val unfoldedList: KtList<Term>
+        get() = cachedUnfoldedList ?: unfoldedSequence.toList().also { cachedUnfoldedList = it }
 
     override val unfoldedArray: Array<Term>
         get() = unfoldedList.toTypedArray()
 
-    override val isGround: Boolean
-        get() = checkGroundness()
+    /**
+     * This term's size, if already computed or known at construction, or -1 otherwise. Eager nodes set it at
+     * construction when their children already know theirs, so that it propagates in O(1); otherwise, it is
+     * computed on demand, iteratively, by [computeSize].
+     */
+    protected var cachedSize: Int = -1
+
+    override val size: Int
+        get() = if (cachedSize >= 0) cachedSize else computeSize().also { cachedSize = it }
+
+    /**
+     * This term's groundness, if it is already known (i.e. it can be read without traversing any lazy
+     * descendant), or `null` otherwise.
+     */
+    internal val knownGround: Boolean?
+        get() = cachedGround
+
+    /** This term's [size], if it is already known, or -1 otherwise. See [knownGround]. */
+    internal val knownSize: Int
+        get() = cachedSize
+
+    /** Computes [size] by traversing this term, iteratively. */
+    protected open fun computeSize(): Int = unfoldedSequence.count()
+
+    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty() || knownGround == true
 
     override val items: Iterable<Term>
         get() = toSequence().asIterable()
@@ -42,101 +65,65 @@ internal abstract class RecursiveImpl(
 
     override fun freshCopy(scope: Scope): Recursive = super.freshCopy(scope).castToRecursive()
 
-    override fun itemsAreStructurallyEqual(other: Struct): Boolean =
-        other.asRecursive()?.let {
-            itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
-                a.structurallyEquals(b)
-            }
-        } ?: false
-
-    override fun itemsAreEqual(
-        other: Struct,
-        useVarCompleteName: Boolean,
-    ): Boolean =
-        other.asRecursive()?.let {
-            itemWiseEquals(unfoldedSequence, it.unfoldedSequence) { a, b ->
-                a.equals(b, useVarCompleteName)
-            }
-        } ?: false
-
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitCollection(this)
 
-    protected class LazyTwoItemsList<T>(
-        firstGenerator: () -> T,
-        secondGenerator: () -> T,
-    ) : KtList<T> {
-        private val fst: T by lazy(firstGenerator)
+    /** The two children of a lazy node, which computes and memoizes them by itself. See [LazyArgs]. */
+    protected open val firstChild: Term
+        get() = args[0]
 
-        private val snd: T by lazy(secondGenerator)
+    protected open val secondChild: Term
+        get() = args[1]
 
+    /** The args of a lazy node: a view over its [firstChild] and [secondChild], computed on access. */
+    protected inner class LazyArgs : AbstractList<Term>() {
         override val size: Int
             get() = 2
 
-        override fun contains(element: T): Boolean = fst == element || snd == element
-
-        override fun containsAll(elements: KtCollection<T>): Boolean = elements.all { contains(it) }
-
-        override fun get(index: Int): T =
+        override fun get(index: Int): Term =
             when (index) {
-                0 -> fst
-                1 -> snd
+                0 -> firstChild
+                1 -> secondChild
                 else -> throw IndexOutOfBoundsException("Index out of range: $index")
             }
+    }
+}
 
-        override fun indexOf(element: T): Int =
-            when (element) {
-                fst -> 0
-                snd -> 1
-                else -> -1
-            }
+/** The groundness of [this] term, if known without traversing any lazy descendant, or `null` otherwise. */
+internal val Term.knownGround: Boolean?
+    get() = if (this is RecursiveImpl) knownGround else isGround
 
-        override fun isEmpty(): Boolean = false
+/** The size of [this] recursive term, if known without traversing any lazy descendant, or -1 otherwise. */
+internal val Term.knownSize: Int
+    get() =
+        when (this) {
+            is RecursiveImpl -> knownSize
+            is Recursive -> size
+            else -> -1
+        }
 
-        override fun iterator(): Iterator<T> =
-            iterator {
-                yield(fst)
-                yield(snd)
-            }
+/**
+ * The largest known size for which recursive terms are transformed recursively, rather than iteratively through a
+ * buffer of their nodes: the native stack depth stays bounded, and short terms (the most common ones) allocate no buffer.
+ */
+internal const val MAX_RECURSIVELY_TRANSFORMED_SIZE = 16
 
-        override fun lastIndexOf(element: T): Int =
-            when (element) {
-                snd -> 1
-                fst -> 0
-                else -> -1
-            }
+/** Whether a recursive term of [knownSize] is short enough to be transformed recursively. */
+internal fun isRecursivelyTransformable(knownSize: Int): Boolean = knownSize in 0..MAX_RECURSIVELY_TRANSFORMED_SIZE
 
-        override fun listIterator(): ListIterator<T> = listIterator(0)
+/** [size] + 1 if [size] is known (i.e. non-negative), or -1 otherwise. */
+internal fun successorOfKnownSize(size: Int): Int = if (size >= 0) size + 1 else -1
 
-        override fun listIterator(index: Int): ListIterator<T> =
-            object : ListIterator<T> {
-                private var currentIndex = index
-
-                override fun hasNext(): Boolean = currentIndex < size
-
-                override fun hasPrevious(): Boolean = currentIndex > 0
-
-                override fun next(): T =
-                    if (hasNext()) {
-                        get(currentIndex++)
-                    } else {
-                        throw NoSuchElementException()
-                    }
-
-                override fun nextIndex(): Int = currentIndex
-
-                override fun previous(): T =
-                    if (hasPrevious()) {
-                        get(--currentIndex)
-                    } else {
-                        throw NoSuchElementException()
-                    }
-
-                override fun previousIndex(): Int = currentIndex - 1
-            }
-
-        override fun subList(
-            fromIndex: Int,
-            toIndex: Int,
-        ): KtList<T> = (fromIndex until toIndex).map { get(it) }
+/** The groundness of a term whose only children are [first] and [second], if known, or `null` otherwise. */
+internal fun knownGroundOf(
+    first: Term,
+    second: Term,
+): Boolean? {
+    val a = first.knownGround
+    if (a == false) return false
+    val b = second.knownGround
+    return when {
+        b == false -> false
+        a == true && b == true -> true
+        else -> null
     }
 }

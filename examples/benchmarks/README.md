@@ -1,4 +1,4 @@
-# Resolution benchmarks (#1012, #1020)
+# Resolution benchmarks (#1012, #1020, #1075)
 
 JMH benchmarks in `examples/src/benchmarks`. Timing (#1012) measures how timeout handling affects resolution:
 
@@ -39,6 +39,12 @@ worklist-based one (`AbstractWorklistUnificator`), both strict, through the `eng
 ./gradlew :examples:timingBenchmarks -PjmhArgs='-wi 3 -i 5 -w 2s -r 2s -f 1 UnificatorSolverBenchmark'
 python3 examples/benchmarks/engines.py examples/build/reports/benchmarks/jmh.json   # one row per engine pair
 ```
+
+Recursive terms (#1075): `RecursiveTermsBenchmark` measures building, traversing, substituting, copying, comparing and
+hashing lists, tuples and blocks, eager (built from a list) or lazy (from a sequence), per `size` (10, 99, 101, 1000,
+100,000) and `ground`. #1075 also adds solver workloads over long non-ground lists (`nrev-100`, `bind-vars`) and STRIPS
+planning over list, tuple and block states (`strips-*`). Every workload is checked for its expected outcome before it is
+measured.
 
 ## Results
 
@@ -232,3 +238,79 @@ was measured too, with the worklist engine (`2026-11-03-unificators-e0762f3-work
 - Resolution is 1.4–2.2× faster, allocating 27–50% less (`tiny` is dominated by set-up).
 - `merge` brings nothing in the solver's state machines, where the two substitutions never share variables: it
   was 2–8% slower (within error bars, but consistently), so they keep using `Substitution.plus`.
+
+### Recursive terms: `2026-11-06-full-{before-806dab1,after-d7c1d00}`
+
+The whole suite (every benchmark class, default settings: 1 fork, 3 × 2 s warm-up, 5 × 2 s measurement, GC profiler),
+on `develop` before #1075 (`806dab1`, with #1075's benchmark sources copied over) and after it (`d7c1d00`),
+alternating the two per benchmark class. Apple M1 (8 cores), 16 GB, JDK 17.0.21, JMH 1.37. Speed-up is after over
+before throughput (before over after, for `ms/op`).
+
+Resolution (`PrologSolverBenchmark`, direct chronometer, no timeout; the other chronometer/timeout combinations agree
+within a few percent):
+
+| Workload | Before (ops/s) | After (ops/s) | Speed-up | Before B/op | After B/op |
+|---|---:|---:|---:|---:|---:|
+| tiny | 1,733,488 ± 12,816 | 1,742,488 ± 13,534 | 1.01x | 3.5 k | 3.5 k |
+| deep-recursion | 44.251 ± 1.173 | 46.361 ± 1.777 | 1.05x | 71.1 M | 65.8 M |
+| nrev | 70.545 ± 1.386 | 69.352 ± 0.517 | 0.98x | 32.3 M | 26.1 M |
+| nrev-100 | 0.724 ± 0.292 | 1.307 ± 0.306 | 1.81x | 1,434 M | 867 M |
+| bind-vars | 9.563 ± 0.121 | 11.059 ± 0.935 | 1.16x | 197 M | 210 M |
+| strips-list | 0.543 ± 0.004 | 0.563 ± 0.004 | 1.04x | 2,224 M | 2,005 M |
+| strips-tuple | 0.421 ± 0.008 | 0.438 ± 0.011 | 1.04x | 2,690 M | 2,439 M |
+| strips-block | 0.422 ± 0.011 | 0.440 ± 0.006 | 1.04x | 2,702 M | 2,421 M |
+| backtracking | 5.203 ± 0.085 | 5.447 ± 0.030 | 1.05x | 420 M | 379 M |
+| failing-search | 24.442 ± 0.789 | 25.910 ± 0.328 | 1.06x | 121 M | 111 M |
+| nested-solving | 41.414 ± 0.240 | 43.530 ± 0.363 | 1.05x | 68.7 M | 62.7 M |
+| primitives | 109.241 ± 6.205 | 119.721 ± 1.673 | 1.10x | 25.3 M | 22.3 M |
+
+`RecursiveTermsBenchmark`, geometric mean of the speed-up over sizes and groundness, per benchmark and kind
+(`*`: some 100,000-item cases overflow the stack before #1075, and are left out of the mean):
+
+| Benchmark | list-eager | list-lazy | tuple-eager | tuple-lazy | block-eager | block-lazy |
+|---|---:|---:|---:|---:|---:|---:|
+| `construct` | 1.98 | 2.11 | 1.38 | 212.27 | 1.42 | 196.21 |
+| `constructConsumeOne` | 2.02 | 2.02 | 1.46 | 188.45 | 1.45 | 161.81 |
+| `constructConsumeTen` | 1.93 | 2.00 | 1.35 | 21.63 | 1.44 | 22.16 |
+| `constructConsumeAll` | 2.09 | 2.02 | 1.40 | 0.64 | 1.33 | 0.65 |
+| `applySubstitution` | 2.75 | 2.16 | 2.16* | 0.26* | 1.90* | 0.34* |
+| `applySubstitutionTwice` | 2.10* | 1.33 | 2.30* | 0.16* | 1.93* | 0.23* |
+| `freshCopy` | 1.34 | 1.87 | 1.58* | 0.29* | 1.19* | 0.32* |
+| `sizeFirst` | 1.92 | 2.14 | 1.88 | 0.66 | 2.06 | 0.67 |
+| `sizeRepeated` | 1.00 | 5210.50 | 2.52 | 2.50 | 2.52 | 2.51 |
+| `sizeEverySuffix` | 2.22 | 1.48 | 90.89 | 0.65 | 94.04 | 0.73 |
+| `isGroundFirst` | 2.09 | 2.02 | 1.43 | 9.97 | 1.45 | 8.98 |
+| `isGroundRepeated` | 0.88 | 221.71 | 0.86 | 0.87 | 0.86 | 0.88 |
+| `equalsIdentical` | 0.99 | 1.00 | 1.01 | 0.99 | 1.00 | 1.02 |
+| `equalsIndependent` | 1.57 | 1.85 | 1.12 | 0.57 | 1.15 | 0.60 |
+| `equalsLateMismatch` | 1.85 | 1.96 | 1.09 | 0.56 | 1.07 | 0.61 |
+| `structurallyEqualsIndependent` | 1.63 | 1.88 | 1.18 | 0.57 | 1.14 | 0.61 |
+| `compareIndependent` | 1.07* | 1.16* | 1.04* | 0.93* | 1.04* | 0.93* |
+| `hashFirst` | 2.14 | 2.08 | 1.37 | 0.64 | 1.34 | 0.67 |
+| **all** | 1.68 | 3.66 | 1.79 | 1.70 | 1.75 | 1.78 |
+
+**Findings.**
+
+- Resolution on the existing workloads is unchanged to 1.10× faster (`nrev`: 0.98–1.13× across settings) and
+  allocates 7–19% less. Long non-ground lists gain the
+  most: `nrev-100` is 1.8× faster with 40% less allocation. `bind-vars` is 1.16× faster but allocates 6.5% *more*.
+- Before #1075, 25 of the 1,080 recursive-term cases overflow the stack at 100,000 items: `compareIndependent` for
+  every kind, `applySubstitution`/`freshCopy` on tuples and blocks, `applySubstitutionTwice` also on eager lists.
+  After it, all of them run.
+- Eager terms are 1.1–2.8× faster almost everywhere, as metadata no longer needs traversal and substitution no longer
+  rebuilds unchanged suffixes. Tuples and blocks with a known size answer `size` in O(1) (`sizeEverySuffix`: 90×).
+- Lazy tuples and blocks (built from a sequence, eagerly before #1075) are built 160–210× faster and only pay for what
+  is read. Reading them in full costs 0.55–0.75× (`constructConsumeAll`, `hashFirst`, `equals*`, `sizeFirst`).
+- **Regression: substituting or fresh-copying a *ground* lazy tuple or block** is 5–30× slower than before (e.g.
+  `applySubstitution`, 1000 items: 244 k → 20 k ops/s, 56 B → 184 KB per op). Before #1075, the tuple was eager and
+  known to be ground, so the substitution returned it unchanged. Now `LazyTupleImpl` substitutes and fresh-copies by mapping its
+  cursor, without checking groundness first, so traversing the result rebuilds every item. Non-ground lazy tuples and blocks are not
+  affected (1.1–1.6×), and the solver never builds lazy tuples.
+- `isGroundRepeated` is ~13% slower on everything but lazy lists (1.36 G → 1.19 G ops/s): a cached value read through
+  a nullable field, rather than a `by lazy` holder. That's 0.1 ns per call. Lazy lists, which recomputed it on every
+  call before, are 220× faster.
+- Unification (`UnificationBenchmark`) is unchanged with the worklist engine (geometric mean 1.01×). The equational
+  engine with occurs-check is slower on a few scenarios: `occurs-nowhere` 0.23× (1.56 M → 0.36 M ops/s, same
+  allocation), `repeated-variable` and `variable-chain` 0.73×, `list-early-mismatch` 0.81×. Not explained yet. It is
+  not the default engine, and `UnificatorSolverBenchmark` with it is 1.10–1.30× faster.
+- Timeout overshoot (`TimeoutOvershootBenchmark`) is unchanged.

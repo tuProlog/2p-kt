@@ -11,7 +11,5 @@ internal class StructImpl(
     constructor(functor: String, args: Array<Term>, tags: Map<String, Any> = emptyMap()) :
         this(functor, listOf(*args), tags)
 
-    override val isGround: Boolean by lazy { checkGroundness() }
-
     override fun copyWithTags(tags: Map<String, Any>): Struct = StructImpl(functor, args, tags)
 }

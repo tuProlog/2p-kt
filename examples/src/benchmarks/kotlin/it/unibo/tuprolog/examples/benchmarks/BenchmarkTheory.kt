@@ -3,14 +3,17 @@ package it.unibo.tuprolog.examples.benchmarks
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.theory.parsing.ClausesParser
 
-/** The theory every [Workload] is solved against, loaded from the bundled `workloads.pl` resource. */
+/** The theories [Workload]s are solved against, loaded from bundled resources. */
 object BenchmarkTheory {
-    /** The parsed theory. */
-    val theory: Theory by lazy {
-        val text =
-            BenchmarkTheory::class.java
-                .getResource("workloads.pl")!!
-                .readText()
-        ClausesParser.withDefaultOperators().parseTheory(text)
-    }
+    /** The resource most [Workload]s are solved against. */
+    const val WORKLOADS = "workloads.pl"
+
+    /** The theory parsed out of [WORKLOADS]. */
+    val theory: Theory by lazy { load(WORKLOADS) }
+
+    /** The theory parsed out of the concatenation of [resources]. */
+    fun load(vararg resources: String): Theory =
+        ClausesParser.withDefaultOperators().parseTheory(
+            resources.joinToString("\n") { BenchmarkTheory::class.java.getResource(it)!!.readText() },
+        )
 }

@@ -13,18 +13,29 @@ internal open class BlockImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : RecursiveImpl(BLOCK_FUNCTOR, listOfNotNull(item), tags),
     Block {
-    override val isGround: Boolean = checkGroundness()
-
-    override fun checkGroundness(): Boolean = item?.isGround ?: true
+    init {
+        cachedGround = if (item == null) true else item.knownGround
+        cachedSize =
+            when {
+                item == null -> 0
+                item.isTuple -> item.knownSize
+                else -> 1
+            }
+    }
 
     override val functor: String = super<Block>.functor
 
     override val unfoldedSequence: Sequence<Term>
         get() = Iterable { BlockIterator(this) }.asSequence()
 
-    override val size: Int get() = unfoldedList.size
-
     override fun unfold(): Sequence<Term> = Iterable { BlockUnfolder(this) }.asSequence()
+
+    // explicit, as on Kotlin/JS the interface's default implementations are not exposed under their @JsName
+    override fun toList(): List<Term> = unfoldedList
+
+    override fun toArray(): Array<Term> = unfoldedArray
+
+    override fun toSequence(): Sequence<Term> = unfoldedSequence
 
     override fun toString(): String = unfoldedSequence.joinToString(", ", "{", "}")
 
@@ -34,7 +45,7 @@ internal open class BlockImpl(
 
     override fun freshCopy(scope: Scope): Block =
         when {
-            isGround -> this
+            knownGround == true -> this
             else -> scope.blockOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
         }
 
