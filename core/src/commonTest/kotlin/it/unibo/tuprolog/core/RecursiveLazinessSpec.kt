@@ -112,6 +112,20 @@ private val lazyFreshCopyCases =
         LazyFreshCopyCase("cons-variable-prefix") { Cons.of(Var.of("X"), LogicList.of(it)) },
     )
 
+/** A way of building a lazy recursive term out of a sequence of items. */
+internal data class LazyKindCase(
+    val id: String,
+    val build: (Sequence<Term>) -> Recursive,
+)
+
+private val lazyKindCases =
+    listOf(
+        LazyKindCase("list") { LogicList.of(it) },
+        LazyKindCase("list-with-explicit-last") { LogicList.from(it, Atom.of("end")) },
+        LazyKindCase("tuple") { Tuple.of(it) },
+        LazyKindCase("block") { Block.of(it) },
+    )
+
 class RecursiveLazinessSpec :
     FunSpec({
         withTests(nameFn = { "wrap/${it.id}-does-not-traverse-lazy-child" }, wrapCases) { case ->
@@ -318,5 +332,36 @@ class RecursiveLazinessSpec :
         test("construction/tuple/wrap-if-needed-is-lazy") {
             val wrapped = Tuple.wrapIfNeeded(sequenceOf<Term>(Atom.of("a"), Atom.of("b")) + throwingSequence())
             wrapped.castToTuple().left shouldBe Atom.of("a")
+        }
+
+        withTests(
+            nameFn = { "materialized/${it.id}/ground-read-in-full-is-its-own-substitution" },
+            lazyKindCases,
+        ) { case ->
+            val term = case.build(CountedSource(5).sequence)
+            term.unfoldedSequence.count()
+            term.apply(Substitution.of(Var.of("Y"), Atom.of("a"))) shouldBeSameInstanceAs term
+            term.freshCopy() shouldBeSameInstanceAs term
+        }
+
+        withTests(nameFn = { "materialized/${it.id}/ground-read-in-part-stays-lazy" }, lazyKindCases) { case ->
+            val source = CountedSource(10)
+            val term = case.build(source.sequence)
+            term.unfoldedSequence.take(3).count()
+            val produced = source.produced
+            term.apply(Substitution.of(Var.of("Y"), Atom.of("a")))
+            term.freshCopy()
+            source.produced shouldBe produced
+        }
+
+        withTests(nameFn = { "materialized/${it.id}/non-ground-read-in-full-is-substituted" }, lazyKindCases) { case ->
+            val x = Var.of("X")
+            val term = case.build(sequenceOf(Atom.of("a"), x, Atom.of("c")))
+            term.unfoldedSequence.count()
+            val substitution = Substitution.of(x, Atom.of("b"))
+            val expected = case.build(sequenceOf(Atom.of("a"), Atom.of("b"), Atom.of("c")))
+            term.apply(substitution) shouldBe expected
+            term.apply(substitution) shouldBe expected
+            term.isGround shouldBe false
         }
     })
