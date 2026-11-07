@@ -67,7 +67,9 @@ interface Cursor<T> {
     /**
      * Lazily transforms every element yielded by this cursor via [mapper], returning a new cursor of the
      * mapped elements. The returned cursor mirrors the laziness of the original one: [mapper] is invoked
-     * on each element only when it is actually traversed.
+     * on each element only when it is actually traversed, and at most once per element. Mapping a mapped
+     * cursor again composes the mappers, rather than nesting cursors, so any number of composed mappings is
+     * stack safe.
      */
     @JsName("map")
     fun <R> map(mapper: (T) -> R): Cursor<out R>

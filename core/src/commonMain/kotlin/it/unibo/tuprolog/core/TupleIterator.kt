@@ -4,22 +4,33 @@ package it.unibo.tuprolog.core
 class TupleIterator(
     tuple: Tuple,
 ) : Iterator<Term> {
-    private val tupleIteratorVisitor =
-        object : TermVisitor<Term> {
-            override fun visitTuple(term: Tuple): Term {
-                current = term.right
-                return term.left
-            }
-
-            override fun defaultValue(term: Term): Term {
-                current = null
-                return term
-            }
-        }
-
     private var current: Term? = tuple
 
-    override fun hasNext(): Boolean = current != null
+    // The tuple whose left item has been yielded last: its right side is only read if iteration goes on,
+    // so that iterating over the first items of a lazy tuple does not evaluate any further.
+    private var yielded: Tuple? = null
 
-    override fun next(): Term = current?.accept(tupleIteratorVisitor) ?: throw NoSuchElementException()
+    private fun moveOn() {
+        yielded?.let {
+            current = it.right
+            yielded = null
+        }
+    }
+
+    override fun hasNext(): Boolean {
+        moveOn()
+        return current != null
+    }
+
+    override fun next(): Term {
+        moveOn()
+        val term = current ?: throw NoSuchElementException()
+        current = null
+        return if (term is Tuple) {
+            yielded = term
+            term.left
+        } else {
+            term
+        }
+    }
 }

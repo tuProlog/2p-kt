@@ -140,11 +140,11 @@ interface Scope {
     @JsName("tupleOf")
     fun tupleOf(vararg terms: Term): Tuple
 
-    /** Creates a [Tuple] out of [terms]. See [Tuple.of]. */
+    /** Creates a [Tuple] out of [terms], lazily unless [terms] is a [kotlin.collections.List]. See [Tuple.of]. */
     @JsName("tupleOfIterable")
     fun tupleOf(terms: Iterable<Term>): Tuple
 
-    /** Creates a [Tuple] out of [terms]. See [Tuple.of]. */
+    /** Creates a [Tuple] out of [terms], lazily. See [Tuple.of]. */
     @JsName("tupleOfSequence")
     fun tupleOf(terms: Sequence<Term>): Tuple
 
@@ -185,11 +185,11 @@ interface Scope {
     @JsName("blockOf")
     fun blockOf(vararg terms: Term): Block
 
-    /** Creates a [Block] out of [terms]. See [Block.of]. */
+    /** Creates a [Block] out of [terms], lazily unless [terms] is a [kotlin.collections.List]. See [Block.of]. */
     @JsName("blockOfIterable")
     fun blockOf(terms: Iterable<Term>): Block
 
-    /** Creates a [Block] out of [terms]. See [Block.of]. */
+    /** Creates a [Block] out of [terms], lazily. See [Block.of]. */
     @JsName("blockOfSequence")
     fun blockOf(terms: Sequence<Term>): Block
 

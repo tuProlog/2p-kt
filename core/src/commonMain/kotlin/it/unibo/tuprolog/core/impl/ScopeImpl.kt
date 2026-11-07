@@ -104,9 +104,9 @@ internal class ScopeImpl(
         last: Term?,
     ): LogicList = LogicList.from(terms, last)
 
-    override fun tupleOf(terms: Iterable<Term>): Tuple = Tuple.of(terms.toList())
+    override fun tupleOf(terms: Iterable<Term>): Tuple = Tuple.of(terms)
 
-    override fun tupleOf(terms: Sequence<Term>): Tuple = Tuple.of(terms.toList())
+    override fun tupleOf(terms: Sequence<Term>): Tuple = Tuple.of(terms)
 
     override fun tupleOf(vararg terms: Term): Tuple = Tuple.of(terms.toList())
 
