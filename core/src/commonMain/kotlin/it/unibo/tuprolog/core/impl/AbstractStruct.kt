@@ -18,11 +18,33 @@ internal abstract class AbstractStruct(
     // Caches below are plain fields filled on first use (racy single-check idiom, as in String.hashCode): their
     // values are immutable, so a race just computes them twice. Unlike `by lazy`, they cost no extra object.
 
+    // Stored as GROUND/NON_GROUND/UNKNOWN rather than as a `Boolean?`, which on the JVM is a boxed reference to follow.
+    private var groundState: Byte = UNKNOWN
+
     /** This term's groundness, if already computed (or known at construction), or `null` otherwise. */
-    protected var cachedGround: Boolean? = null
+    protected var cachedGround: Boolean?
+        get() =
+            when (groundState) {
+                GROUND -> true
+                NON_GROUND -> false
+                else -> null
+            }
+        set(value) {
+            groundState =
+                when (value) {
+                    true -> GROUND
+                    false -> NON_GROUND
+                    null -> UNKNOWN
+                }
+        }
 
     override val isGround: Boolean
-        get() = cachedGround ?: checkGroundness().also { cachedGround = it }
+        get() =
+            when (groundState) {
+                GROUND -> true
+                NON_GROUND -> false
+                else -> checkGroundness().also { cachedGround = it }
+            }
 
     protected open fun checkGroundness(): Boolean = args.all { it.isGround }
 
@@ -141,3 +163,7 @@ internal abstract class AbstractStruct(
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitStruct(this)
 }
+
+private const val UNKNOWN: Byte = 0
+private const val GROUND: Byte = 1
+private const val NON_GROUND: Byte = 2
