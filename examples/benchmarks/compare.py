@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Compares two JMH JSON result files (#1012): prints, per benchmark and parameters, both scores and the change."""
 import json
+import lzma
 import sys
 
 
@@ -10,12 +11,12 @@ def key(entry):
 
 
 def load(path):
-    return {key(e): e for e in json.load(open(path))}
+    return {key(e): e for e in json.load((lzma.open if path.endswith(".xz") else open)(path, "rt"))}
 
 
 def main(before_path, after_path):
     before = load(before_path)
-    after_entries = json.load(open(after_path))
+    after_entries = json.load((lzma.open if after_path.endswith(".xz") else open)(after_path, "rt"))
     print("| Benchmark | Parameters | Before | After | Change | Unit |")
     print("|---|---|---:|---:|---:|---|")
     for entry in after_entries:

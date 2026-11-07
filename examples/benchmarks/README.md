@@ -48,7 +48,10 @@ measured.
 
 ## Results
 
-Stored in `results/`, named `<date>-<label>-<commit>.json` (raw JMH JSON).
+Raw JMH JSON, compressed with `xz`, lives in a separate repository, so as not to grow this one:
+[tuProlog/2p-kt-benchmarks](https://github.com/tuProlog/2p-kt-benchmarks/tree/main/results), named
+`<date>-<label>-<commit>.json.xz` (the headings below name each run). `compare.py` and `engines.py` read `.xz` files as
+they are.
 
 ### Baseline: `2026-11-03-baseline-52348df`
 
