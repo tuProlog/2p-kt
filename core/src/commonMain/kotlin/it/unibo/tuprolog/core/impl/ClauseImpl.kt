@@ -18,7 +18,11 @@ internal abstract class ClauseImpl(
     tags: Map<String, Any>,
 ) : AbstractStruct(CLAUSE_FUNCTOR, (if (head === null) listOf(body) else listOf(head, body)), tags),
     Clause {
-    override val isWellFormed: Boolean by lazy { body.accept(bodyWellFormedVisitor) }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyIsWellFormed = lazy { body.accept(bodyWellFormedVisitor) }
+
+    override val isWellFormed: Boolean
+        get() = lazyIsWellFormed.value
 
     override val functor: String = super<Clause>.functor
 

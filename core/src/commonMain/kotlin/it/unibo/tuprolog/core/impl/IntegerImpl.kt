@@ -14,7 +14,11 @@ internal class IntegerImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : NumericImpl(tags),
     Integer {
-    override val decimalValue: BigDecimal by lazy { BigDecimal.of(intValue) }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyDecimalValue = lazy { BigDecimal.of(intValue) }
+
+    override val decimalValue: BigDecimal
+        get() = lazyDecimalValue.value
 
     override val intValue: BigInteger = value
 
@@ -35,7 +39,11 @@ internal class IntegerImpl(
         useVarCompleteName: Boolean,
     ): Boolean = other.isInteger && equalsToInteger(other.castToInteger())
 
-    override val hashCodeCache: Int by lazy { value.hashCode() }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyHashCodeCache = lazy { value.hashCode() }
+
+    override val hashCodeCache: Int
+        get() = lazyHashCodeCache.value
 
     override fun compareValueTo(other: Numeric): Int =
         when {

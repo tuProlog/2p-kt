@@ -7,31 +7,25 @@ import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Terms.VAR_NAME_PATTERN
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.utils.setTags
-import it.unibo.tuprolog.utils.synchronizedOn
 
 @Suppress("EqualsOrHashCode")
 internal class VarImpl(
     override val name: String,
-    private val identifier: Long = instanceId(name),
+    private val identifier: VarIdentifier = nextVarIdentifier(),
     tags: Map<String, Any> = emptyMap(),
 ) : TermImpl(tags),
     Var {
-    companion object {
-        private val nameToInstanceCount = mutableMapOf<String, Long>()
+    // Caches are plain fields filled on first use, as in AbstractStruct: `by lazy` costs two objects per variable,
+    // and, on JS, a property reference at every read.
+    private var cachedCompleteName: String? = null
 
-        private fun instanceId(name: String): Long =
-            synchronizedOn(nameToInstanceCount) {
-                val count = nameToInstanceCount[name]?.let { it + 1 } ?: 0
-                nameToInstanceCount[name] = count
-                count
-            }
-    }
-
-    override val completeName: String by lazy { "${name}_$identifier" }
+    override val completeName: String
+        get() = cachedCompleteName ?: "${name}_$identifier".also { cachedCompleteName = it }
 
     override val isAnonymous: Boolean = super.isAnonymous
 
-    override val isNameWellFormed: Boolean by lazy { VAR_NAME_PATTERN.matches(name) }
+    override val isNameWellFormed: Boolean
+        get() = VAR_NAME_PATTERN.matches(name)
 
     override fun structurallyEquals(other: Term): Boolean = other.isVar
 
@@ -73,7 +67,14 @@ internal class VarImpl(
         useVarCompleteName: Boolean,
     ): Boolean = other.isVar && equalsToVar(other.castToVar(), useVarCompleteName)
 
-    override val hashCodeCache: Int by lazy { completeName.hashCode() }
+    // 0 means "not computed yet", as in AbstractStruct
+    private var cachedHashCode: Int = 0
+
+    override val hashCodeCache: Int
+        get() {
+            if (cachedHashCode == 0) cachedHashCode = completeName.hashCode()
+            return cachedHashCode
+        }
 
     override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = this !in unifier
 

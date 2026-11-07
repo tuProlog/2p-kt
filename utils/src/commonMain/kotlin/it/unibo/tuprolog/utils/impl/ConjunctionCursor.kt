@@ -9,13 +9,18 @@ internal class ConjunctionCursor<T>(
     override val isOver: Boolean
         get() = first.isOver && second.isOver
 
-    override val next: AbstractCursor<out T> by lazy {
-        when {
-            first.hasNext -> ConjunctionCursor(first.next, second)
-            second.isLazy -> second.next
-            else -> second
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyNext =
+        lazy {
+            when {
+                first.hasNext -> ConjunctionCursor(first.next, second)
+                second.isLazy -> second.next
+                else -> second
+            }
         }
-    }
+
+    override val next: AbstractCursor<out T>
+        get() = lazyNext.value
 
     override val current: T?
         get() = if (first.hasNext) first.current else second.current

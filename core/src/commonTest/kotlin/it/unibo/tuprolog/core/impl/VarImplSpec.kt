@@ -55,8 +55,9 @@ class VarImplSpec :
             ).shouldBeTrue()
         }
 
-        test("providing-identifier-overrides-progressive-instance-count-naming") {
-            assertEqualities(VarImpl("Var", 0), VarImpl("Var", 0))
+        test("same-identifier-same-variable") {
+            val identifier = nextVarIdentifier()
+            assertEqualities(VarImpl("Var", identifier), VarImpl("Var", identifier))
         }
 
         vars("same-instance-equalities") {

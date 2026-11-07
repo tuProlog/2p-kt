@@ -16,7 +16,11 @@ internal class RealImpl(
     override val decimalValue: BigDecimal
         get() = value
 
-    override val intValue: BigInteger by lazy { value.toBigInteger() }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyIntValue = lazy { value.toBigInteger() }
+
+    override val intValue: BigInteger
+        get() = lazyIntValue.value
 
     override fun toString(): String = Real.toStringEnsuringDecimal(value)
 
@@ -35,7 +39,11 @@ internal class RealImpl(
         useVarCompleteName: Boolean,
     ): Boolean = other.isReal && equalsToReal(other.castToReal())
 
-    override val hashCodeCache: Int by lazy { value.stripTrailingZeros().hashCode() }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyHashCodeCache = lazy { value.stripTrailingZeros().hashCode() }
+
+    override val hashCodeCache: Int
+        get() = lazyHashCodeCache.value
 
     override fun copyWithTags(tags: Map<String, Any>): Real = RealImpl(value, tags)
 

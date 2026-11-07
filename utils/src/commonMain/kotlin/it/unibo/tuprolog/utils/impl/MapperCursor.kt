@@ -71,16 +71,21 @@ internal class MapperCursor<R> private constructor(
     ) {
         private val size: Int = (previous?.size ?: 0) + 1
 
-        /** The mappers, first-applied first; computed once per chain, iteratively. */
-        val mappers: Array<(Any?) -> Any?> by lazy {
-            val result = arrayOfNulls<(Any?) -> Any?>(size)
-            var node: MapperChain? = this
-            var i = size - 1
-            while (node != null) {
-                result[i--] = node.last
-                node = node.previous
+        // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+        private val lazyMappers =
+            lazy {
+                val result = arrayOfNulls<(Any?) -> Any?>(size)
+                var node: MapperChain? = this
+                var i = size - 1
+                while (node != null) {
+                    result[i--] = node.last
+                    node = node.previous
+                }
+                result as Array<(Any?) -> Any?>
             }
-            result as Array<(Any?) -> Any?>
-        }
+
+        /** The mappers, first-applied first; computed once per chain, iteratively. */
+        val mappers: Array<(Any?) -> Any?>
+            get() = lazyMappers.value
     }
 }
