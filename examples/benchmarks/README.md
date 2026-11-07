@@ -375,3 +375,43 @@ iterations. Same machine as above.
   allocation than before #1075.
 
 Raw JSON (and, for the last two changes, JMH logs): `results/2026-11-07-targeted-*` in [tuProlog/2p-kt-benchmarks](https://github.com/tuProlog/2p-kt-benchmarks/tree/main/results).
+
+### Variable creation: `2026-11-07-variables-{before-281d76a,after-3d65566}`
+
+`VariableCreationBenchmark` creates variables (`create`), creates and hashes them (`createAndHash`), and fresh-copies a
+6-variable rule (`freshCopyClause`). Variables either share one name (`same`) or cycle through 10,000 (`distinct`).
+It ran before and after variables got one process-wide counter, rather than one per name, and plain cached fields
+rather than `by lazy` holders. 1 fork, 3 × 1 s warm-up, 5 × 1 s measurement, 1 and 4 threads (`-t`), same machine as
+above. Throughput is aggregated over threads.
+
+| Benchmark | Names | 1 thread (M ops/s) | B/op | 4 threads (M ops/s) |
+|---|---|---:|---:|---:|
+| `create` | same | 39.9 → 135.9 (3.4×) | 192 → 40 | 16.5 → 43.3 (2.6×) |
+| `create` | distinct | 33.6 → 137.2 (4.1×) | 192 → 40 | 14.4 → 40.5 (2.8×) |
+| `createAndHash` | same | 14.4 → 31.6 (2.2×) | 264 → 56 | 6.0 → 29.5 (4.9×) |
+| `createAndHash` | distinct | 15.3 → 27.0 (1.8×) | 264 → 56 | 6.7 → 27.6 (4.1×) |
+| `freshCopyClause` | same | 3.23 → 4.25 (1.3×) | 2,000 → 1,352 | 1.77 → 7.25 (4.1×) |
+| `freshCopyClause` | distinct | 3.13 → 3.55 (1.1×) | 2,000 → 1,352 | 1.87 → 6.24 (3.3×) |
+
+With 4 threads, `create` is still slower in total than with 1, as all threads increment the same counter. Handing out
+blocks of identifiers per thread would avoid that, if it ever shows up in resolution.
+
+The same operations on Node.js (Kotlin/JS test build), timed by a hand-written loop rather than a harness: 1,000,000
+variables or 200,000 clauses, after 3 warm-up rounds, median of 5 rounds. Each step is measured with the previous
+ones applied:
+
+| Operation (ns/op) | Before | One counter | No `by lazy` in `VarImpl` | Lazy values read via `.value` (`15aa89c`) |
+|---|---:|---:|---:|---:|
+| `create`, same name | 920 | 944 | 80 | 80 |
+| `create`, distinct names | 1,026 | 1,004 | 123 | 124 |
+| `createAndHash`, same name | 926 | 941 | 69 | 66 |
+| `createAndHash`, distinct names | 991 | 976 | 106 | 106 |
+| `freshCopyClause` | 14,142 | 16,988 | 10,626 | 5,366 |
+
+The counter makes no difference on JS. The cost was `by lazy`: on Kotlin/JS, reading a delegated property builds a
+property reference every time. A CPU profile put two thirds of the time there, on `completeName` and the hash code.
+Lazy cursors (`utils`) did the same on each step, a quarter of what was left of `freshCopyClause`. They keep their
+synchronised `lazy` but read it through `.value`.
+
+Raw JSON (JVM) and the Node.js timings: `results/2026-11-07-variables-*` in
+[tuProlog/2p-kt-benchmarks](https://github.com/tuProlog/2p-kt-benchmarks/tree/main/results).

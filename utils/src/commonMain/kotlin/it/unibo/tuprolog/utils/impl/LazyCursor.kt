@@ -3,9 +3,14 @@ package it.unibo.tuprolog.utils.impl
 internal data class LazyCursor<T>(
     val delegate: Iterator<T>,
 ) : AbstractCursor<T>() {
-    private val wrapped: AbstractCursor<T> by lazy {
-        NonLastCursor(delegate)
-    }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyWrapped =
+        lazy {
+            NonLastCursor(delegate)
+        }
+
+    private val wrapped: AbstractCursor<T>
+        get() = lazyWrapped.value
 
     override val isLazy: Boolean
         get() = true
