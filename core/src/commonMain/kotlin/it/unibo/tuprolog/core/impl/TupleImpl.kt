@@ -1,43 +1,71 @@
 package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Scope
+import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.TermVisitor
-import it.unibo.tuprolog.core.Terms.TUPLE_FUNCTOR
 import it.unibo.tuprolog.core.Tuple
-import it.unibo.tuprolog.core.TupleIterator
-import it.unibo.tuprolog.utils.setTags
 
 internal class TupleImpl(
     override val left: Term,
     override val right: Term,
     tags: Map<String, Any> = emptyMap(),
-) : RecursiveImpl(TUPLE_FUNCTOR, listOf(left, right), tags),
-    Tuple {
-    override val isGround: Boolean = checkGroundness()
-
-    override fun checkGroundness(): Boolean = left.isGround && right.isGround
-
-    override val unfoldedSequence: Sequence<Term>
-        get() = Iterable { TupleIterator(this) }.asSequence()
-
-    override val size: Int get() = unfoldedList.size
-
-    override fun unfold(): Sequence<Term> = Iterable { TupleUnfolder(this) }.asSequence()
-
-    override val functor: String = TUPLE_FUNCTOR
-
-    override fun toString(): String = unfoldedSequence.joinToString(", ", "(", ")")
+) : AbstractTuple(listOf(left, right), tags) {
+    init {
+        cachedGround = knownGroundOf(left, right)
+        cachedSize = if (right.isTuple) successorOfKnownSize(right.knownSize) else 2
+    }
 
     override fun copyWithTags(tags: Map<String, Any>): Tuple = TupleImpl(left, right, tags)
 
-    override fun freshCopy(): Tuple = super.freshCopy().castToTuple()
+    override fun freshCopy(scope: Scope): Tuple {
+        if (knownGround == true) return this
+        val nodes = mutableListOf<TupleImpl>()
+        var current: Term = this
+        while (current is TupleImpl && current.knownGround != true) {
+            nodes.add(current)
+            current = current.right
+        }
+        var result: Term = current.freshCopy(scope)
+        for (i in nodes.indices.reversed()) {
+            val node = nodes[i]
+            result = TupleImpl(node.left.freshCopy(scope), result, node.tags)
+        }
+        return result.castToTuple()
+    }
 
-    override fun freshCopy(scope: Scope): Tuple =
-        when {
-            isGround -> this
-            else -> scope.tupleOf(argsSequence.map { it.freshCopy(scope) }).setTags(tags)
+    /**
+     * Applies [unifier] to every item: the longest suffix left unchanged by [unifier] is reused as is (as is
+     * the whole tuple, if nothing changes), and a lazy suffix, if any, is substituted lazily. Short tuples recur
+     * on their right, longer ones (or ones of unknown size) are rebuilt iteratively from their end.
+     */
+    override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
+        if (isRecursivelyTransformable(knownSize)) {
+            val newLeft = left.apply(unifier)
+            val newRight = right.apply(unifier)
+            if (newLeft === left && newRight === right) this else TupleImpl(newLeft, newRight, tags)
+        } else {
+            applyIteratively(unifier)
         }
 
-    override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTuple(this)
+    private fun applyIteratively(unifier: Substitution.Unifier): Term {
+        val nodes = mutableListOf<TupleImpl>()
+        var current: Term = this
+        while (current is TupleImpl) {
+            nodes.add(current)
+            current = current.right
+        }
+        var result: Term = current.apply(unifier)
+        var shared = result === current
+        for (i in nodes.indices.reversed()) {
+            val node = nodes[i]
+            val left = node.left.apply(unifier)
+            if (shared && left === node.left) {
+                result = node
+            } else {
+                shared = false
+                result = TupleImpl(left, result, node.tags)
+            }
+        }
+        return result
+    }
 }

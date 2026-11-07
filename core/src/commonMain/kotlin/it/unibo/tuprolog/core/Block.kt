@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.core
 
 import it.unibo.tuprolog.core.impl.BlockImpl
+import it.unibo.tuprolog.core.impl.LazyTupleImpl
+import it.unibo.tuprolog.utils.cursor
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 import kotlin.collections.List as KtList
@@ -51,7 +53,10 @@ interface Block : Recursive {
         @JsName("of")
         fun of(vararg terms: Term): Block = of(terms.toList())
 
-        /** Creates a [Block] wrapping the given [terms]. */
+        /**
+         * Creates a [Block] wrapping the given [terms]: an [EmptyBlock] if there are none, the sole term itself if
+         * there is one, or a [Tuple] of them otherwise.
+         */
         @JvmStatic
         @JsName("ofList")
         fun of(terms: KtList<Term>): Block =
@@ -61,14 +66,29 @@ interface Block : Recursive {
                 else -> BlockImpl(Tuple.of(terms))
             }
 
-        /** Creates a [Block] wrapping the given [terms]. */
+        /** Creates a [Block] wrapping the given [terms]: eagerly if [terms] is a [KtList], lazily otherwise. */
         @JvmStatic
         @JsName("ofIterable")
-        fun of(terms: Iterable<Term>): Block = of(terms.toList())
+        fun of(terms: Iterable<Term>): Block =
+            when (terms) {
+                is KtList<Term> -> of(terms)
+                else -> of(terms.asSequence())
+            }
 
-        /** Creates a [Block] wrapping the given [terms]. */
+        /**
+         * Creates a [Block] wrapping the given [terms], lazily: only as many items as needed to tell 0, 1 and 2+
+         * items apart are pulled out of [terms] upon construction, while the others are pulled (once) as the
+         * block is traversed.
+         */
         @JvmStatic
         @JsName("ofSequence")
-        fun of(terms: Sequence<Term>): Block = of(terms.toList())
+        fun of(terms: Sequence<Term>): Block {
+            val cursor = terms.cursor()
+            return when {
+                cursor.isOver -> empty()
+                cursor.next.isOver -> BlockImpl(cursor.current!!)
+                else -> BlockImpl(LazyTupleImpl(cursor))
+            }
+        }
     }
 }

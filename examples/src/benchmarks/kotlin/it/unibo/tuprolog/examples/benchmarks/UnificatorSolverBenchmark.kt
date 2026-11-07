@@ -25,9 +25,15 @@ class UnificatorSolverBenchmark {
     @Setup
     fun setUp() {
         val unificator = UnificatorSetting.byId(engine).unificator
+        val workload = Workload.byId(workload)
         solver =
-            PrologSolverFactory.solverWithDefaultBuiltins(unificator = unificator, staticKb = BenchmarkTheory.theory)
-        goal = Workload.byId(workload).goal
+            PrologSolverFactory.solverWithDefaultBuiltins(
+                unificator = unificator,
+                staticKb = workload.theory,
+                flags = workload.flags,
+            )
+        goal = workload.goal
+        workload.checkSolution(solver.solveOnce(goal))
     }
 
     @Benchmark

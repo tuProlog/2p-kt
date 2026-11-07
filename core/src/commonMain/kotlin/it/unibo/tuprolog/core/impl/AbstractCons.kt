@@ -14,10 +14,6 @@ internal abstract class AbstractCons(
     tags: Map<String, Any> = emptyMap(),
 ) : RecursiveImpl(CONS_FUNCTOR, args, tags),
     Cons {
-    companion object {
-        const val SWITCH_TO_LAZY_THRESHOLD = 100
-    }
-
     override val estimatedLength: Int
         get() = 1
 
@@ -26,26 +22,46 @@ internal abstract class AbstractCons(
 
     override val functor: String = CONS_FUNCTOR
 
-    override val isWellFormed: Boolean by lazy { last.isEmptyList }
+    /** This list's [last] term, if already computed or known at construction, or `null` otherwise. */
+    protected var cachedLast: Term? = null
+
+    override val isWellFormed: Boolean
+        get() = last.isEmptyList
+
+    /** This list's [last] term, if it is already known without traversing any lazy suffix, or `null`. */
+    internal val knownLast: Term?
+        get() = cachedLast
+
+    /** Computes [last], by traversing this list, iteratively. */
+    protected open fun computeLast(): Term = unfoldedSequence.last()
+
+    override val size: Int
+        get() = super<RecursiveImpl>.size
+
+    override fun computeSize(): Int {
+        var count = 0
+        var last: Term? = null
+        for (item in unfoldedSequence) {
+            count++
+            last = item
+        }
+        return if (last?.isEmptyList == true) count - 1 else count
+    }
 
     override fun unfold(): Sequence<Term> = Iterable { ListUnfolder(this) }.asSequence()
 
-    override fun toArray(): Array<Term> =
-        when {
-            isWellFormed -> unfoldedArray.sliceArray(0 until unfoldedArray.lastIndex)
-            else -> unfoldedArray
-        }
+    override fun toArray(): Array<Term> = toList().toTypedArray()
 
     override fun toList(): List<Term> =
         when {
-            isWellFormed -> unfoldedList.subList(0, unfoldedList.lastIndex)
+            isWellFormed -> toSequence().toList()
             else -> unfoldedList
         }
 
     override fun toSequence(): Sequence<Term> = LogicListIterator.SkippingLast(this).asSequence()
 
     override val last: Term
-        get() = unfoldedSequence.last()
+        get() = cachedLast ?: computeLast().also { cachedLast = it }
 
     override fun toString(): String {
         val (ending, take) =
