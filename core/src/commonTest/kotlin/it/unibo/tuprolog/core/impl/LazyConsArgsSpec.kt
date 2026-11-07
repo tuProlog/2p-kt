@@ -28,6 +28,9 @@ private val operations: List<Pair<String, (List<Term>) -> Any?>> =
         "index-of" to { listOf(it.indexOf(head), it.indexOf(it[1]), it.indexOf(other)) },
         "last-index-of" to { listOf(it.lastIndexOf(head), it.lastIndexOf(it[1]), it.lastIndexOf(other)) },
         "iterator" to { it.iterator().asSequence().toList() },
+        "equals-a-regular-list" to { it == listOf(it[0], it[1]) },
+        "hash-code" to { it.hashCode() },
+        "to-string" to { it.toString() },
         "sub-list" to { listOf(it.subList(0, 1), it.subList(1, 2), it.subList(0, 2)) },
         "list-iterator-forwards" to {
             val iterator = it.listIterator()

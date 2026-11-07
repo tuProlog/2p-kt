@@ -49,9 +49,10 @@ the design leans on:
 - **"Editing" a term always means building a new one.** Applying a substitution, refreshing variables,
   appending an argument to a structure — all of these produce a fresh term rather than editing an existing
   one. The one place this has a real performance cost is deeply nested structures (long lists in
-  particular), where naive copying would be wasteful; the list implementation deliberately defers as much
-  of that copying as it can get away with, precisely because the immutability guarantee itself is
-  non-negotiable.
+  particular), where naive copying would be wasteful. Immutability itself is what makes the cost
+  manageable: a substitution rebuilds only the part of a list, tuple or block it actually changes and
+  shares the untouched suffix as is, and collections built out of a `Sequence` defer even that work until
+  they are traversed.
 
 ## Three notions of equality, on purpose
 

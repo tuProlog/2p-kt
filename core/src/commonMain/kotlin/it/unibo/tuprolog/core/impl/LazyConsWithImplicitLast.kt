@@ -7,28 +7,38 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
-import it.unibo.tuprolog.utils.setTags
 
 internal class LazyConsWithImplicitLast(
     private val cursor: Cursor<out Term>,
     tags: Map<String, Any> = emptyMap(),
 ) : AbstractCons(emptyList(), tags),
     Cons {
-    override val head: Term by lazy { cursor.current!! }
+    override val head: Term
+        get() = cursor.current!!
 
-    override val tail: Term by lazy {
-        cursor.next.let {
-            when {
-                it.isOver -> EmptyList.instance
-                it.next.isOver -> it.current!!
-                else -> LazyConsWithImplicitLast(it)
-            }
-        }
-    }
+    private var cachedTail: Term? = null
 
-    override val last: Term by lazy { super.last }
+    override val tail: Term
+        get() =
+            cachedTail ?: cursor.next
+                .let {
+                    when {
+                        it.isOver -> EmptyList.instance
+                        it.next.isOver -> it.current!!
+                        else -> LazyConsWithImplicitLast(it)
+                    }
+                }.also { cachedTail = it }
 
-    override val args: List<Term> = LazyTwoItemsList({ head }, { tail })
+    override val firstChild: Term
+        get() = head
+
+    override val secondChild: Term
+        get() = tail
+
+    override val availableSecondChild: Term?
+        get() = cachedTail
+
+    override val args: List<Term> = LazyArgs()
 
     override fun applyNonEmptyUnifier(unifier: Substitution.Unifier): Term =
         LazyConsWithImplicitLast(cursor.map { it.apply(unifier) }, tags)
@@ -36,8 +46,6 @@ internal class LazyConsWithImplicitLast(
     override fun copyWithTags(tags: Map<String, Any>): LazyConsWithImplicitLast =
         if (this.tags === tags) this else LazyConsWithImplicitLast(cursor, tags)
 
-    override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = unifier.isEmpty()
-
     override fun freshCopy(scope: Scope): Cons =
-        LazyConsWithImplicitLast(unfoldedSequence.map { it.freshCopy(scope) }.cursor()).setTags(tags).castToCons()
+        if (materializedGround() == true) this else LazyConsWithImplicitLast(cursor.map { it.freshCopy(scope) }, tags)
 }

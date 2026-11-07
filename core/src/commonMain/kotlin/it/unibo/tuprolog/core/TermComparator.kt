@@ -113,21 +113,29 @@ interface TermComparator<T : Term> : Comparator<T> {
             a: Struct,
             b: Struct,
         ): Int {
-            return when (val arityDelta = a.arity - b.arity) {
-                0 ->
-                    when (val functorComparison = a.functor.compareTo(b.functor)) {
-                        0 -> {
-                            for (i in 0 until a.arity) {
-                                val ithArgComparison = DefaultComparator.compare(a[i], b[i])
-                                if (ithArgComparison != 0) {
-                                    return ithArgComparison
-                                }
-                            }
-                            return 0
-                        }
-                        else -> functorComparison
-                    }
-                else -> arityDelta
+            // The last argument is compared by looping rather than by recursion, so that right-nested terms
+            // (lists, tuples, blocks) take O(1) native stack.
+            var x = a
+            var y = b
+            while (true) {
+                if (x === y) return 0
+                val arityDelta = x.arity - y.arity
+                if (arityDelta != 0) return arityDelta
+                val functorComparison = x.functor.compareTo(y.functor)
+                if (functorComparison != 0) return functorComparison
+                val last = x.arity - 1
+                if (last < 0) return 0
+                for (i in 0 until last) {
+                    val ithArgComparison = DefaultComparator.compare(x[i], y[i])
+                    if (ithArgComparison != 0) return ithArgComparison
+                }
+                val lastOfX = x[last]
+                val lastOfY = y[last]
+                if (!lastOfX.isStruct || !lastOfY.isStruct || lastOfX.isAtom || lastOfY.isAtom) {
+                    return DefaultComparator.compare(lastOfX, lastOfY)
+                }
+                x = lastOfX.castToStruct()
+                y = lastOfY.castToStruct()
             }
         }
     }

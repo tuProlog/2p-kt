@@ -91,7 +91,8 @@ abstract class AbstractUnificator(
     ): Boolean =
         when {
             term.isVar -> checkTermsEquality(variable, term)
-            term.isStruct -> term.variables.any { occurrenceCheck(variable, it) }
+            // groundness is cached on structures: ground ones need no walk over their variables
+            term.isStruct -> !term.isGround && term.variables.any { occurrenceCheck(variable, it) }
             else -> false
         }
 

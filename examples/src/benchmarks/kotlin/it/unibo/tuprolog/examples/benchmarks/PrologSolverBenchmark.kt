@@ -14,7 +14,20 @@ import kotlinx.benchmark.State
 /** Average time to solve each [Workload] to exhaustion with `:solve-prolog`, per [TimeoutSetting] and [ChronometerSetting] (#1012). */
 @State(Scope.Benchmark)
 class PrologSolverBenchmark {
-    @Param("tiny", "deep-recursion", "nrev", "backtracking", "failing-search", "nested-solving", "primitives")
+    @Param(
+        "tiny",
+        "deep-recursion",
+        "nrev",
+        "nrev-100",
+        "bind-vars",
+        "strips-list",
+        "strips-tuple",
+        "strips-block",
+        "backtracking",
+        "failing-search",
+        "nested-solving",
+        "primitives",
+    )
     var workload: String = "tiny"
 
     @Param("none", "large")
@@ -29,8 +42,10 @@ class PrologSolverBenchmark {
 
     @Setup
     fun setUp() {
-        solver = PrologSolverFactory.solverWithDefaultBuiltins(staticKb = BenchmarkTheory.theory)
-        goal = Workload.byId(workload).goal
+        val workload = Workload.byId(workload)
+        solver = PrologSolverFactory.solverWithDefaultBuiltins(staticKb = workload.theory, flags = workload.flags)
+        goal = workload.goal
+        workload.checkSolution(solver.solveOnce(goal))
         options =
             TimeoutSetting.byId(timeout).options.setChronometerFactory(ChronometerSetting.byId(chronometer).factory)
     }
