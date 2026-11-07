@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Tabulates a JMH JSON result file (#1020) side by side per `engine` parameter: score, allocations, speed-up."""
-import json
 import sys
+
+from compare import load
 
 
 def allocated(entry):
@@ -11,7 +12,7 @@ def allocated(entry):
 
 def main(path, baseline="equational", candidate="worklist"):
     rows = {}
-    for entry in json.load(open(path)):
+    for entry in load(path):
         params = dict(entry.get("params", {}))
         engine = params.pop("engine")
         key = (entry["benchmark"].rsplit(".", 2)[-2], tuple(sorted(params.items())))

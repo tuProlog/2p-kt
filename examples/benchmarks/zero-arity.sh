@@ -8,8 +8,13 @@ before=${1:-origin/ccr-0b4a13b3-ejoi9f}
 after=${2:-origin/ccr-0b4a13b3-ejoi9f-zero-arity}
 rounds=${3:-1}
 root=$(git rev-parse --show-toplevel)
+out=${BENCHMARK_RESULTS_DIR:-"$(dirname "$root")/2p-kt-benchmarks/results"}
+if [[ ! -d "$out" ]]; then
+  echo "Clone tuProlog/2p-kt-benchmarks alongside this repo, or set BENCHMARK_RESULTS_DIR to an existing directory." >&2
+  exit 1
+fi
+command -v xz >/dev/null
 work=$(mktemp -d)
-out="$root/examples/benchmarks/results"
 args='-wi 3 -i 5 -w 1s -r 1s -f 2 -p size=1000 -p query=zero-arity benchmarks.theory.TheoryLookupBenchmark[.]'
 trap 'for d in "$work"/*/; do git -C "$root" worktree remove --force "$d" 2>/dev/null || true; done; rm -rf "$work"' EXIT
 
@@ -25,13 +30,13 @@ for round in $(seq 1 "$rounds"); do
     dir="$work/$role"
     sha=$(git -C "$dir" rev-parse --short=9 HEAD)
     (cd "$dir" && ./gradlew -q :examples:timingBenchmarks -PjmhArgs="$args")
-    cp "$dir/examples/build/reports/benchmarks/jmh.json" "$out/$(date +%F)-zero-arity-$role-$sha-r$round.json"
+    xz -c "$dir/examples/build/reports/benchmarks/jmh.json" > "$out/$(date +%F)-zero-arity-$role-$sha-r$round.json.xz"
   done
 done
 
 for round in $(seq 1 "$rounds"); do
   echo "## Round $round"
   python3 "$root/examples/benchmarks/compare.py" \
-    "$(ls -t "$out"/*-zero-arity-before-*-r"$round".json | head -1)" \
-    "$(ls -t "$out"/*-zero-arity-after-*-r"$round".json | head -1)"
+    "$(ls -t "$out"/*-zero-arity-before-*-r"$round".json.xz | head -1)" \
+    "$(ls -t "$out"/*-zero-arity-after-*-r"$round".json.xz | head -1)"
 done
