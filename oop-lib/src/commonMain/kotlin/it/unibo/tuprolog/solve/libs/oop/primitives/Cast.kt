@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.allSupertypes
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
+import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.Solve.Request
 import it.unibo.tuprolog.solve.primitive.Solve.Response
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
@@ -30,6 +31,10 @@ import kotlin.reflect.KClass
  * Fails (rather than throwing) if `Term` cannot be converted into an instance of `Type`.
  */
 object Cast : TernaryRelation<ExecutionContext>("cast") {
+    // the types a term converts into are enumerated purely
+    override val alternatives: Alternatives
+        get() = Alternatives.LOOKAHEAD_SAFE
+
     override val help: String =
         """
         `cast(+Term, ?Type, ?ObjectRef)`
