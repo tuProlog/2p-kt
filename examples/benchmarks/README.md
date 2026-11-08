@@ -18,8 +18,8 @@ Stateful engine (#1010): four more workloads (`cut-catch`, `dynamic-churn`, `fir
 `ResolutionCounters` (`SolveOptions.setCounters`): predicate calls, alternatives tried, choice points, deepest
 nesting. These counts don't depend on the engine's internal steps, so they are the denominator to compare engines on.
 The report also times one cold run with `timed()` (`it.unibo.tuprolog.solve.timing`): first answer and active time.
-`PrologSolverBenchmark` measures both engines of `:solve-prolog` through its `engine` parameter (`fsm`, `machine`), e.g.
-`-PjmhArgs='-p engine=machine PrologSolverBenchmark'`.
+Since #1010, `:solve-prolog` has a single engine, the stateful machine; compare it with the former FSM by running
+`PrologSolverBenchmark` on two refs (`scripts/campaign.py` in 2p-kt-benchmarks).
 
 `:solve-concurrent` is not benchmarked: it overflows the stack (or hangs) even on `nrev`, and leaks thread pools across
 resolutions, independently of timing.

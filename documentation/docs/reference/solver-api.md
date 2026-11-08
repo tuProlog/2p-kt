@@ -126,7 +126,7 @@ returns a `Decision`:
 - `Redirect(goal)`: at `CALL`
 - `Retry`: at `EXIT`, `REDO` or `EXCEPTION`: run the call again from its `CALL`, its bindings undone and its choice
   points dropped. The outside world is not restored, and primitives are called anew rather than replayed. At `FAIL`
-  the call's state is gone, so it is rejected there. Only the stateful engine of `:solve-prolog` supports it.
+  the call's state is gone, so it is rejected there. `:solve-prolog` supports it; other solvers may reject it.
 - `Halt`
 
 A decision not allowed at a port throws an `IllegalArgumentException`. `after(transition)` runs once the resolution has
@@ -147,14 +147,13 @@ semantics: they can change termination, errors, cuts and side effects. See
 `SolveOptions.setBranchScheduler` chooses which branch of the search advances next. A `BranchScheduler` picks among
 the suspended branches (`Branch`: an id, a proof depth, and the goals left with the branch's own bindings).
 `BranchScheduler.DEPTH_FIRST` is standard Prolog and the default; `BranchScheduler.BREADTH_FIRST` advances the oldest
-branch. With any scheduler other than depth-first, the stateful engine of `:solve-prolog` keeps every alternative as a
+branch. With any scheduler other than depth-first, `:solve-prolog` keeps every alternative as a
 branch of its own, with a copy of the bindings, and asks the scheduler after each resolution step, so an infinite
 branch can't starve the others (`p :- p. p.` answers `p` breadth-first). It supports a pure fragment only: user
 predicates, conjunctions, `true`, `fail`, and built-ins that neither change the world nor run goals (unification,
 comparison, arithmetic, type checks, `functor/3`, `arg/3`, `=../2`, `copy_term/2`, `between/3`, `succ/2`). Anything
 else (cut, control constructs, meta-calls, database updates, I/O, all-solutions predicates) ends the resolution with a
-`SystemError` naming it. An error also ends the whole search. It can't be combined with an interceptor, and the FSM
-ignores it.
+`SystemError` naming it. An error also ends the whole search. It can't be combined with an interceptor.
 
 ```kotlin
 val tracer = object : TransitionInterceptor {

@@ -20,13 +20,13 @@ import it.unibo.tuprolog.theory.Theory
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * Non-depth-first search on the stateful machine (#1010, section 7.4, items 3 to 5): a [BranchScheduler] other than
+ * Non-depth-first search (#1010, section 7.4, items 3 to 5): a [BranchScheduler] other than
  * depth-first advances real suspended branches, each with its own bindings, one resolution step at a time.
  */
 class BranchSchedulerSpec :
     FunSpec({
         fun solver(vararg clauses: String): Solver =
-            MachinePrologSolverFactory.solverWithDefaultBuiltins(
+            PrologSolverFactory.solverWithDefaultBuiltins(
                 staticKb = Theory.of(clauses.map { it.parseAsClause() }),
             )
 

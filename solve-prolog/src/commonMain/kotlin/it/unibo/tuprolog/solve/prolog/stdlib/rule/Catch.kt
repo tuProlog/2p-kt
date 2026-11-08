@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.prolog.stdlib.rule
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.collections.List as KtList
 
@@ -12,7 +12,7 @@ import kotlin.collections.List as KtList
  * stack looking for a currently-executing goal shaped like this one whose `Catcher` unifies with a raised
  * exception, and if so proves `Recovery` instead.
  */
-object Catch : RuleWrapper<PrologExecutionContext>("catch", 3) {
+object Catch : RuleWrapper<ExecutionContext>("catch", 3) {
     override val help: String =
         """
         `catch(+Goal, ?Catcher, +Recovery)`

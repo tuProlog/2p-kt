@@ -7,7 +7,6 @@ import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.prolog.fsm.State
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
@@ -37,11 +36,6 @@ internal open class PrologSolver : AbstractPrologSolver {
         trustKb: Boolean = false,
     ) : super(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings, trustKb)
 
-    override fun solutionIterator(
-        initialState: State,
-        onStateTransition: (State, State, Long) -> Unit,
-    ) = SolutionIterator.of(initialState, onStateTransition)
-
     override fun copy(
         unificator: Unificator,
         libraries: Runtime,
@@ -52,9 +46,7 @@ internal open class PrologSolver : AbstractPrologSolver {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>,
-    ) = PrologSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings).also {
-        it.engine = engine
-    }
+    ) = PrologSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
 
     override fun clone(): PrologSolver = copy()
 }

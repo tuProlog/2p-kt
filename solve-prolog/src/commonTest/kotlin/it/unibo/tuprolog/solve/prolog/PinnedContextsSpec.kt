@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.prolog
 
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Integer
@@ -19,7 +18,8 @@ import it.unibo.tuprolog.solve.flags.Unknown
  */
 class PinnedContextsSpec :
     FunSpec({
-        withTests(nameFn = { "${it.first}/warning-context-keeps-its-bindings" }, engines) { (_, factory) ->
+        test("warning-context-keeps-its-bindings") {
+            val factory = PrologSolverFactory
             val warnings = mutableListOf<Warning>()
             val solver =
                 factory.solverWithDefaultBuiltins(

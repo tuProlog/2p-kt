@@ -1,11 +1,11 @@
 # ADR 0001: a stateful engine for `:solve-prolog`
 
-- **Status:** accepted, being implemented (issue #1010).
+- **Status:** accepted and implemented (issue #1010): the stateful machine is the only engine of `:solve-prolog`.
 - **Date:** 2026-11-08.
 
 ## Context
 
-`:solve-prolog` runs resolution as a finite-state machine over immutable values (see [the state machine](state-machine.md)):
+Before #1010, `:solve-prolog` ran resolution as a finite-state machine over immutable values (see [the engine](state-machine.md)):
 every transition copies a `PrologExecutionContext`, alternatives live in persistent `Cursor`s, and bindings are
 composed `Substitution`s. This makes every step a snapshot, which was convenient for backtracking and debugging, but
 costs an allocation pattern proportional to the work. Non-tail recursion, redo through deep stacks, and long list

@@ -17,8 +17,8 @@ import it.unibo.tuprolog.solve.intercept.TransitionInterceptor
 import it.unibo.tuprolog.theory.Theory
 
 /**
- * Debugger control on the stateful machine (#1010): [Decision.Retry] runs a call again from its CALL, at the EXIT, REDO
- * and EXCEPTION ports; it is rejected where the call's state is gone (FAIL) and by the FSM; and an interceptor's
+ * Debugger control (#1010): [Decision.Retry] runs a call again from its CALL, at the EXIT, REDO and EXCEPTION ports;
+ * it is rejected where the call's state is gone (FAIL); and an interceptor's
  * callback cannot advance the resolution it is called from.
  */
 class DebuggerSpec :
@@ -70,7 +70,7 @@ class DebuggerSpec :
         test("retry-at-exit-runs-the-call-again") {
             // the outside world is not restored: the retried call asserts again
             val (ports, answers) =
-                MachinePrologSolverFactory.run(
+                PrologSolverFactory.run(
                     "q, findall(x, seen, L), L = [x, x]",
                     "q :- assertz(seen).",
                     decide = retryOnce(Port.EXIT, "q"),
@@ -81,7 +81,7 @@ class DebuggerSpec :
 
         test("retry-at-redo-runs-the-call-again-from-its-first-alternative") {
             val (ports, answers) =
-                MachinePrologSolverFactory.run("p(X), X > 1", "p(1).", "p(2).", decide = retryOnce(Port.REDO, "p"))
+                PrologSolverFactory.run("p(X), X > 1", "p(1).", "p(2).", decide = retryOnce(Port.REDO, "p"))
             answers shouldBe listOf("yes")
             ports.filter { it.endsWith(" p") } shouldBe
                 listOf("call p", "exit p", "redo p", "call p", "exit p", "redo p", "exit p")
@@ -93,23 +93,17 @@ class DebuggerSpec :
                 arrayOf(
                     "r :- assertz(t), findall(x, t, L), (L = [_, _] -> true ; throw(oops)).",
                 )
-            MachinePrologSolverFactory.run("catch(r, _, fail)", *clauses) { Decision.Continue }.second shouldBe
+            PrologSolverFactory.run("catch(r, _, fail)", *clauses) { Decision.Continue }.second shouldBe
                 listOf("no")
             val (ports, answers) =
-                MachinePrologSolverFactory.run("catch(r, _, fail)", *clauses, decide = retryOnce(Port.EXCEPTION, "r"))
+                PrologSolverFactory.run("catch(r, _, fail)", *clauses, decide = retryOnce(Port.EXCEPTION, "r"))
             withClue(ports) { answers shouldBe listOf("yes") }
             ports.filter { it.endsWith(" r") } shouldBe listOf("call r", "exception r", "call r", "exit r")
         }
 
         test("retry-at-fail-is-rejected") {
             shouldThrow<IllegalArgumentException> {
-                MachinePrologSolverFactory.run("p", "p :- fail.", decide = retryOnce(Port.FAIL, "p"))
-            }
-        }
-
-        test("the-fsm-rejects-retry") {
-            shouldThrow<IllegalArgumentException> {
-                PrologSolverFactory.run("p", "p.", decide = retryOnce(Port.EXIT, "p"))
+                PrologSolverFactory.run("p", "p :- fail.", decide = retryOnce(Port.FAIL, "p"))
             }
         }
 
@@ -123,7 +117,7 @@ class DebuggerSpec :
                     }
                 }
             val solver =
-                MachinePrologSolverFactory.solverWithDefaultBuiltins(
+                PrologSolverFactory.solverWithDefaultBuiltins(
                     staticKb = Theory.of("p.".parseAsClause()),
                 )
             solutions = solver.solve(Struct.of("p"), SolveOptions.allLazily().setInterceptor(interceptor)).iterator()

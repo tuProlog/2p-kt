@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.prolog.stdlib.rule
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.collections.List as KtList
 
@@ -12,7 +12,7 @@ import kotlin.collections.List as KtList
  * `transparentToCut` set, so a cut occurring in `A` or `B` still cuts the enclosing clause's choice points, not
  * some choice point local to this rule.
  */
-object Comma : RuleWrapper<PrologExecutionContext>(",", 2) {
+object Comma : RuleWrapper<ExecutionContext>(",", 2) {
     override val help: String =
         """
         `(+First, +Second)`
