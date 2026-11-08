@@ -51,7 +51,7 @@ internal abstract class AbstractPrologSolver(
     // the cancellation of the stream this solver was created in (see PrologExecutionContext.createSolver), if any
     internal var inheritedCancellation: Cancellation? = null
 
-    // the stream being started by solveStream, for solveImpl to hand to its machine
+    // the stream being opened by openStream, for solveImpl to hand to its machine
     private var starting: PrologSolutionStream? = null
 
     constructor(
@@ -129,14 +129,14 @@ internal abstract class AbstractPrologSolver(
     }
 
     // the machine checks the cancellation at every step, and nested resolutions share it
-    final override fun solveStream(
+    final override fun openStream(
         goal: Struct,
-        options: SolveOptions,
+        solutions: () -> Sequence<Solution>,
     ): SolutionStream {
         val stream = PrologSolutionStream(Cancellation(inheritedCancellation))
         starting = stream
         try {
-            stream.solutions = solve(goal, options).iterator()
+            stream.solutions = solutions().iterator()
         } finally {
             starting = null
         }

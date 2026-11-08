@@ -188,7 +188,7 @@ fun concurrentFlagsContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = set_flag(F, "value")
-                val solutions = fromSequence(solver.solveList(query, shortBudget))
+                val solutions = fromSequence(solver.solve(query, shortBudget).toList())
                 val expected =
                     fromSequence(
                         query.halt(
@@ -213,7 +213,7 @@ fun concurrentFlagsContract() =
 
                 LastCallOptimization.admissibleValues.contains(truthOf(true)).shouldBeFalse()
 
-                val solutions = fromSequence(solver.solveList(query, shortBudget))
+                val solutions = fromSequence(solver.solve(query, shortBudget).toList())
                 val expected =
                     fromSequence(
                         query.halt(
@@ -236,7 +236,7 @@ fun concurrentFlagsContract() =
                 val solver = solverWithDefaultBuiltins()
 
                 val query = set_flag(MaxArity.name, 10)
-                val solutions = fromSequence(solver.solveList(query, shortBudget))
+                val solutions = fromSequence(solver.solve(query, shortBudget).toList())
                 val expected =
                     fromSequence(
                         query.halt(
@@ -336,7 +336,7 @@ fun concurrentFlagsContract() =
                 val solver = solverWithDefaultBuiltins()
                 val query = member(X, logicListOf(1, 1, 1))
 
-                (solver.solveList(query, shortBudget).count { it.isYes }) shouldBe 3
+                (solver.solve(query, shortBudget).toList().count { it.isYes }) shouldBe 3
             }
         }
 

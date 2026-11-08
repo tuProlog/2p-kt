@@ -54,12 +54,12 @@ class AliasSpec :
                 val query1 = Alias.FUNCTOR(alias, T)
                 assertSolutionEquals(
                     listOf(query1.yes(T to TypeRef.of(type))),
-                    solver.solveList(query1),
+                    solver.solve(query1).toList(),
                 )
                 val query2 = Alias.FUNCTOR(A, TypeRef.of(type))
                 assertSolutionEquals(
                     aliasesByObject(type).map { query2.yes(A to it) },
-                    solver.solveList(query2),
+                    solver.solve(query2).toList(),
                 )
             }
         }
@@ -73,12 +73,12 @@ class AliasSpec :
                 val query1 = Alias.FUNCTOR(alias, T)
                 assertSolutionEquals(
                     listOf(query1.yes(T to ObjectRef.of(obj))),
-                    solver.solveList(query1),
+                    solver.solve(query1).toList(),
                 )
                 val query2 = Alias.FUNCTOR(A, ObjectRef.of(obj))
                 assertSolutionEquals(
                     aliasesByObject(obj).map { query2.yes(A to it) },
-                    solver.solveList(query2),
+                    solver.solve(query2).toList(),
                 )
             }
         }
@@ -117,7 +117,7 @@ class AliasSpec :
                 val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
 
                 val query = Alias.FUNCTOR(A, T)
-                val solutions = solver.solveList(query)
+                val solutions = solver.solve(query).toList()
                 val expected =
                     listOf(
                         query.yes(A to "string", T to TypeRef.of(String::class)),
@@ -163,7 +163,7 @@ class AliasSpec :
                 val registerQuery1 = Register.functor(bInstanceAlias.ref, bInstanceAlias.alias)
                 assertSolutionEquals(
                     listOf(registerQuery1.yes()),
-                    solver.solveList(registerQuery1),
+                    solver.solve(registerQuery1).toList(),
                 )
                 (bInstanceAlias.implementation in solver.staticKb).shouldBeTrue()
                 solver.dynamicKb.size shouldBe 0L
@@ -171,13 +171,13 @@ class AliasSpec :
                 val aliasQuery1 = bInstanceAlias.implementation.head
                 assertSolutionEquals(
                     listOf(aliasQuery1.yes()),
-                    solver.solveList(aliasQuery1),
+                    solver.solve(aliasQuery1).toList(),
                 )
 
                 val registerQuery2 = Register.functor(bTypeAlias.ref, bTypeAlias.alias)
                 assertSolutionEquals(
                     listOf(registerQuery2.yes()),
-                    solver.solveList(registerQuery2),
+                    solver.solve(registerQuery2).toList(),
                 )
                 (bTypeAlias.implementation in solver.staticKb).shouldBeTrue()
                 solver.dynamicKb.size shouldBe 0L
@@ -185,7 +185,7 @@ class AliasSpec :
                 val aliasQuery2 = bTypeAlias.implementation.head
                 assertSolutionEquals(
                     listOf(aliasQuery2.yes()),
-                    solver.solveList(aliasQuery2),
+                    solver.solve(aliasQuery2).toList(),
                 )
             }
         }

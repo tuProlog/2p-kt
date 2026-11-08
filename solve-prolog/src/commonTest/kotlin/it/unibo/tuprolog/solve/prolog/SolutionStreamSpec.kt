@@ -24,7 +24,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.theory.Theory
 
 /**
- * `solveStream` (#1010): cancelling stops a resolution, even inside a loop or a nested resolution, with a `Halt`;
+ * `solve`'s [SolutionStream] (#1010): cancelling stops a resolution, even inside a loop or a nested resolution, with a `Halt`;
  * closing ends it silently; and a primitive's alternatives that hold resources are released when their choice point
  * goes (cut, exception, close).
  */
@@ -33,35 +33,38 @@ class SolutionStreamSpec :
         test("cancel-inside-a-loop-halts") {
             val fixture = Fixture()
             val stream = fixture.stream("cancel_me, loop")
+            val solutions = stream.iterator()
 
-            stream
+            solutions
                 .next()
                 .shouldBeInstanceOf<Solution.Halt>()
                 .exception
                 .shouldBeInstanceOf<ResolutionCancelledException>()
-            stream.hasNext().shouldBeFalse()
+            solutions.hasNext().shouldBeFalse()
             stream.isCancelled.shouldBeTrue()
         }
 
         test("cancel-between-answers-halts") {
             val fixture = Fixture()
             val stream = fixture.stream("member(X, [1, 2, 3])")
+            val solutions = stream.iterator()
 
-            stream.next().shouldBeInstanceOf<Solution.Yes>()
+            solutions.next().shouldBeInstanceOf<Solution.Yes>()
             stream.cancel()
-            stream
+            solutions
                 .next()
                 .shouldBeInstanceOf<Solution.Halt>()
                 .exception
                 .shouldBeInstanceOf<ResolutionCancelledException>()
-            stream.hasNext().shouldBeFalse()
+            solutions.hasNext().shouldBeFalse()
         }
 
         test("nested-resolutions-share-cancellation") {
             val fixture = Fixture()
             val stream = fixture.stream("nested")
+            val solutions = stream.iterator()
 
-            stream
+            solutions
                 .next()
                 .shouldBeInstanceOf<Solution.Halt>()
                 .exception
@@ -75,17 +78,18 @@ class SolutionStreamSpec :
         test("close-ends-silently-and-releases-producers") {
             val fixture = Fixture()
             val stream = fixture.stream("gen(X)")
+            val solutions = stream.iterator()
 
-            stream.next().shouldBeInstanceOf<Solution.Yes>()
+            solutions.next().shouldBeInstanceOf<Solution.Yes>()
             fixture.released shouldBe 0
             stream.close()
             fixture.released shouldBe 1
-            stream.hasNext().shouldBeFalse()
+            solutions.hasNext().shouldBeFalse()
         }
 
         test("cut-releases-producers") {
             val fixture = Fixture()
-            val solutions = fixture.stream("gen(X), !").asSequence().toList()
+            val solutions = fixture.stream("gen(X), !").toList()
 
             solutions
                 .single()
@@ -97,15 +101,30 @@ class SolutionStreamSpec :
 
         test("single-answer-releases-producers") {
             val fixture = Fixture()
-            val solutions = fixture.stream("gen_once(X)").asSequence().toList()
+            val solutions = fixture.stream("gen_once(X)").toList()
 
             solutions.single().shouldBeInstanceOf<Solution.Yes>()
             fixture.released shouldBe 1
         }
 
+        test("solve-once-releases-producers") {
+            val fixture = Fixture()
+
+            fixture.solver.solveOnce(Struct.parse("gen(X)")).shouldBeInstanceOf<Solution.Yes>()
+            fixture.released shouldBe 1
+        }
+
+        test("use-releases-producers") {
+            val fixture = Fixture()
+            val first = fixture.stream("gen(X)").use { it.first() }
+
+            first.shouldBeInstanceOf<Solution.Yes>()
+            fixture.released shouldBe 1
+        }
+
         test("exception-releases-producers") {
             val fixture = Fixture()
-            val solutions = fixture.stream("catch((gen(X), throw(e)), _, true)").asSequence().toList()
+            val solutions = fixture.stream("catch((gen(X), throw(e)), _, true)").toList()
 
             solutions.single().shouldBeInstanceOf<Solution.Yes>()
             fixture.released shouldBe 1
@@ -167,12 +186,12 @@ private class Fixture {
                 ),
         )
 
-    fun stream(query: String): SolutionStream {
-        val solver =
-            PrologSolverFactory.solverWithDefaultBuiltins(
-                otherLibraries = Runtime.of(library),
-                staticKb = Theory.of(Rule.of(Atom.of("loop"), Atom.of("loop"))),
-            )
-        return solver.solveStream(Struct.parse(query)).also { current = it }
+    val solver by lazy {
+        PrologSolverFactory.solverWithDefaultBuiltins(
+            otherLibraries = Runtime.of(library),
+            staticKb = Theory.of(Rule.of(Atom.of("loop"), Atom.of("loop"))),
+        )
     }
+
+    fun stream(query: String): SolutionStream = solver.solve(Struct.parse(query)).also { current = it }
 }

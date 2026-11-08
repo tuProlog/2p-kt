@@ -33,7 +33,9 @@ import kotlin.time.Duration
  * e.g.:
  * ```kotlin
  * val solver = Solver.prolog.solverWithDefaultBuiltins()
- * val solutions = solver.solve(Struct.of("append", listA, listB, result))
+ * solver.solve(Struct.of("append", listA, listB, result)).use { solutions ->
+ *     for (solution in solutions) println(solution)
+ * }
  * ```
  *
  * @see MutableSolver
@@ -46,57 +48,52 @@ interface Solver : ExecutionContextAware {
     fun solve(
         goal: Struct,
         timeout: Duration,
-    ): Sequence<Solution> = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
+    ): SolutionStream = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
     /** Shorthand for [solve] with [SolveOptions.DEFAULT] (i.e. all solutions, lazily, without a timeout). */
     @JsName("solve")
-    fun solve(goal: Struct): Sequence<Solution> = solve(goal, SolveOptions.DEFAULT)
+    fun solve(goal: Struct): SolutionStream = solve(goal, SolveOptions.DEFAULT)
 
     /**
-     * Solves [goal], returning a (possibly infinite) [Sequence] of [Solution]s, computed according to `options`.
+     * Solves [goal], returning its (possibly infinite) solutions, computed according to `options`, as a
+     * [SolutionStream]: a single-pass [Sequence] that can be cancelled, and that should be closed once no more
+     * solutions are needed, e.g. through `use { }`, to release what the resolution holds (#1010).
      *
-     * Whether solutions are computed as the sequence is consumed, or eagerly ahead of time, depends on
+     * Whether solutions are computed as the stream is consumed, or eagerly ahead of time, depends on
      * [SolveOptions.isLazy]; how many solutions are produced is capped by [SolveOptions.limit], and the overall
-     * resolution process is capped in time by [SolveOptions.timeout].
+     * resolution process is capped in time by [SolveOptions.timeout]. To collect every solution, call `toList()`
+     * on the stream: a resolution that ran to its end holds nothing more.
      */
     @JsName("solveWithOptions")
     fun solve(
         goal: Struct,
         options: SolveOptions,
-    ): Sequence<Solution>
+    ): SolutionStream
 
-    /**
-     * Solves [goal] as [solve] does, returning its solutions as a [SolutionStream]: one that can be cancelled, and
-     * closed to release what the resolution holds (#1010). This default checks cancellation between solutions, and
-     * ends without a [Solution.Halt], having no context to report it in; solvers built on
-     * [it.unibo.tuprolog.solve.impl.AbstractSolver] answer the [Solution.Halt].
-     */
-    @JsName("solveStreamWithOptions")
-    fun solveStream(
-        goal: Struct,
-        options: SolveOptions,
-    ): SolutionStream = IteratorSolutionStream(solve(goal, options).iterator())
-
-    /** Shorthand for [solveStream] with [SolveOptions.DEFAULT]. */
-    @JsName("solveStream")
-    fun solveStream(goal: Struct): SolutionStream = solveStream(goal, SolveOptions.DEFAULT)
-
-    /** Shorthand for [solveList] with `options` set to [SolveOptions.allLazilyWithTimeout] of [timeout]. */
+    /** Every solution of [goal] within [timeout], as a [List]. */
+    @Deprecated(
+        "Call solve(goal, timeout).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, timeout).toList()"),
+    )
     @JsName("solveListWithTimeout")
     fun solveList(
         goal: Struct,
         timeout: Duration,
     ): List<Solution> = solve(goal, timeout).toList()
 
-    /** Shorthand for [solveList] with [SolveOptions.DEFAULT]. */
+    /** Every solution of [goal], as a [List]. */
+    @Deprecated(
+        "Call solve(goal).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal).toList()"),
+    )
     @JsName("solveList")
     fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
 
-    /**
-     * Eagerly solves [goal] and collects every produced [Solution] into a [List]. Unlike [solve], this always
-     * computes solutions eagerly regardless of [SolveOptions.isLazy] -- be mindful of goals with infinite (or very
-     * large) solution sets, which will make this method never return (or exhaust memory).
-     */
+    /** Every solution of [goal] computed according to [options], as a [List]. */
+    @Deprecated(
+        "Call solve(goal, options).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, options).toList()"),
+    )
     @JsName("solveListWithOptions")
     fun solveList(
         goal: Struct,
@@ -108,21 +105,21 @@ interface Solver : ExecutionContextAware {
     fun solveOnce(
         goal: Struct,
         timeout: Duration,
-    ): Solution = solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
+    ): Solution = solveOnce(goal, SolveOptions.someLazilyWithTimeout(1, timeout))
 
     /** Shorthand for [solveOnce] with [SolveOptions.someLazily] of `1`. */
     @JsName("solveOnce")
-    fun solveOnce(goal: Struct): Solution = solve(goal, SolveOptions.someLazily(1)).first()
+    fun solveOnce(goal: Struct): Solution = solveOnce(goal, SolveOptions.someLazily(1))
 
     /**
      * Solves [goal] and eagerly returns its first [Solution] only, regardless of `options`' [SolveOptions.limit]
-     * (which is overridden to `1` via [SolveOptions.setLimit]).
+     * (which is overridden to `1` via [SolveOptions.setLimit]); the [SolutionStream] is closed afterwards.
      */
     @JsName("solveOnceWithOptions")
     fun solveOnce(
         goal: Struct,
         options: SolveOptions,
-    ): Solution = solve(goal, options.setLimit(1)).first()
+    ): Solution = solve(goal, options.setLimit(1)).use { it.first() }
 
     /**
      * Creates a new [Solver], sharing the same resolution strategy as this one, but with every explicitly-provided

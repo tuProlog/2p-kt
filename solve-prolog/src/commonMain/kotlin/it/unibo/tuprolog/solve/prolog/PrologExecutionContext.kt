@@ -36,7 +36,7 @@ import kotlin.collections.List as KtList
  * - [counters]: the resolution's opt-in [ResolutionCounters] (see [it.unibo.tuprolog.solve.SolveOptions.counters]).
  * - [interception], [ruleSelection], [goalSelection]: the resolution's opt-in interceptor and selection policies (see
  *   [it.unibo.tuprolog.solve.SolveOptions]), or `null` for none.
- * - [cancellation]: the [Cancellation] of the `solveStream` this resolution answers or is nested in, or `null`; the
+ * - [cancellation]: the [Cancellation] of the `SolutionStream` this resolution answers or is nested in, or `null`; the
  *   solvers this context creates share it.
  */
 internal data class PrologExecutionContext(

@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolutionStream
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputChannel
@@ -32,7 +33,7 @@ internal open class ProblogSolver(
     private fun solveNonProbabilistically(
         goal: Struct,
         options: SolveOptions,
-    ): Sequence<Solution> {
+    ): SolutionStream {
         val anonVar = Var.anonymous()
         return solver
             .solve(
@@ -44,7 +45,7 @@ internal open class ProblogSolver(
                     Struct.of(Prob.functor, anonVar, goal),
                 ),
                 options,
-            ).map {
+            ).mapSolutions {
                 when (it) {
                     is Solution.Yes ->
                         Solution.yes(
@@ -60,7 +61,7 @@ internal open class ProblogSolver(
     private fun solveProbabilistically(
         goal: Struct,
         options: SolveOptions,
-    ): Sequence<Solution> {
+    ): SolutionStream {
         val probabilityVar = Var.of("Prob")
         val bddVar = Var.of("BDD")
         return solver
@@ -73,7 +74,7 @@ internal open class ProblogSolver(
                     bddVar,
                 ),
                 options,
-            ).map {
+            ).mapSolutions {
                 val probabilityTerm = it.substitution[probabilityVar]
                 val bddTerm = it.substitution[bddVar]
                 var newSolution =
@@ -119,7 +120,7 @@ internal open class ProblogSolver(
     override fun solve(
         goal: Struct,
         options: SolveOptions,
-    ): Sequence<Solution> =
+    ): SolutionStream =
         if (!options.isProbabilistic) {
             solveNonProbabilistically(goal, options)
         } else {
@@ -129,17 +130,30 @@ internal open class ProblogSolver(
     override fun solve(
         goal: Struct,
         timeout: Duration,
-    ): Sequence<Solution> = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
+    ): SolutionStream = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
-    override fun solve(goal: Struct): Sequence<Solution> = solve(goal, SolveOptions.DEFAULT)
+    override fun solve(goal: Struct): SolutionStream = solve(goal, SolveOptions.DEFAULT)
 
+    // overridden so that the delegation to solver does not bypass the probabilistic solve above
+    @Deprecated(
+        "Call solve(goal, timeout).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, timeout).toList()"),
+    )
     override fun solveList(
         goal: Struct,
         timeout: Duration,
     ): List<Solution> = solve(goal, timeout).toList()
 
+    @Deprecated(
+        "Call solve(goal).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal).toList()"),
+    )
     override fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
 
+    @Deprecated(
+        "Call solve(goal, options).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, options).toList()"),
+    )
     override fun solveList(
         goal: Struct,
         options: SolveOptions,
@@ -148,14 +162,14 @@ internal open class ProblogSolver(
     override fun solveOnce(
         goal: Struct,
         timeout: Duration,
-    ): Solution = solve(goal, SolveOptions.someLazilyWithTimeout(1, timeout)).first()
+    ): Solution = solveOnce(goal, SolveOptions.someLazilyWithTimeout(1, timeout))
 
-    override fun solveOnce(goal: Struct): Solution = solve(goal, SolveOptions.someLazily(1)).first()
+    override fun solveOnce(goal: Struct): Solution = solveOnce(goal, SolveOptions.someLazily(1))
 
     override fun solveOnce(
         goal: Struct,
         options: SolveOptions,
-    ): Solution = solve(goal, options.setLimit(1)).first()
+    ): Solution = solve(goal, options.setLimit(1)).use { it.first() }
 
     override fun copy(
         unificator: Unificator,

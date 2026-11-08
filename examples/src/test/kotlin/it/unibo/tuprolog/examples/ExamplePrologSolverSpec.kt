@@ -49,7 +49,7 @@ class ExamplePrologSolverSpec :
 
             val goal = Struct.of("f", Var.of("X"))
 
-            val solutions: List<Solution> = prolog.solveList(goal)
+            val solutions: List<Solution> = prolog.solve(goal).toList()
 
             println(solutions.size) // 3
             println(solutions)

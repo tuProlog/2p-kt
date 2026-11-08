@@ -70,7 +70,7 @@ private fun solve(query: String): Pair<Struct, List<Solution>> {
     val library = Library.of("opaque", primitives = listOf(Wrap, Unwrap).associate { it.descriptionPair })
     val solver = PrologSolverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(library))
     val goal = Struct.parse(query)
-    return goal to solver.solveList(goal)
+    return goal to solver.solve(goal).toList()
 }
 
 class OpaqueTermsSpec :

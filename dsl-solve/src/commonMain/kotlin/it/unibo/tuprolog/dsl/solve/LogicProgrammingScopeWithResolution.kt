@@ -16,7 +16,7 @@ import kotlin.js.JsName
 /**
  * Adds resolution-driving sugar to [LogicProgrammingScopeWithUnificator]: implements [MutableSolver] itself
  * (forwarding to [defaultSolver], e.g. via `MutableSolver by defaultSolver` as [LogicProgrammingScopeImpl] does), so
- * `solve`/`solveOnce`/`solveList` and every knowledge-base-mutating operation
+ * `solve`/`solveOnce` and every knowledge-base-mutating operation
  * ([MutableSolver.assertZ], [MutableSolver.retract], ...) are callable directly on the scope — plus
  * [staticKb]/[dynamicKb] shorthands for loading a whole knowledge base at once, and [solverOf] for building
  * additional, independent solvers sharing this scope's [solverFactory]/[unificator].

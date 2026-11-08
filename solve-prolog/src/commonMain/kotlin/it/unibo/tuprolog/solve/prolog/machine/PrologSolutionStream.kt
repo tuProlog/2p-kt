@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.prolog.machine
 
+import it.unibo.tuprolog.solve.AbstractSolutionStream
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolutionStream
 
@@ -10,7 +11,7 @@ import it.unibo.tuprolog.solve.SolutionStream
  */
 internal class PrologSolutionStream(
     val cancellation: Cancellation,
-) : SolutionStream {
+) : AbstractSolutionStream() {
     lateinit var solutions: Iterator<Solution>
     var machine: PrologMachine? = null
     private var closed = false
@@ -18,9 +19,9 @@ internal class PrologSolutionStream(
     override val isCancelled: Boolean
         get() = cancellation.isCancelled
 
-    override fun hasNext(): Boolean = !closed && solutions.hasNext()
+    override fun hasNextSolution(): Boolean = !closed && solutions.hasNext()
 
-    override fun next(): Solution {
+    override fun nextSolution(): Solution {
         if (closed) throw NoSuchElementException()
         return solutions.next()
     }

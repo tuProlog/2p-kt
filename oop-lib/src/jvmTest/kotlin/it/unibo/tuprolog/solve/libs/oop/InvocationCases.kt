@@ -41,7 +41,7 @@ internal fun invocationCases(
         val ref = refCreator(obj)
         for (case in cases) {
             val query = invoke(ref, "call"(case2Term(case)), R)
-            val solutions = solver.solveList(query)
+            val solutions = solver.solve(query).toList()
             solutions.size shouldBe 1
             when (val solution = solutions.single()) {
                 is Solution.Halt ->

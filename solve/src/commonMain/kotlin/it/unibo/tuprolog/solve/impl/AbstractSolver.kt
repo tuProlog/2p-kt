@@ -189,6 +189,12 @@ abstract class AbstractSolver<E : ExecutionContext>(
     final override fun solve(
         goal: Struct,
         options: SolveOptions,
+    ): SolutionStream = openStream(goal) { solutions(goal, options) }
+
+    /** The solutions of [goal], post-processed according to the flags and [options]. */
+    private fun solutions(
+        goal: Struct,
+        options: SolveOptions,
     ): Sequence<Solution> {
         var solutionSequence =
             solveImpl(goal, options)
@@ -210,12 +216,15 @@ abstract class AbstractSolver<E : ExecutionContext>(
         return solutionSequence
     }
 
-    // cancellation is checked between solutions; solvers that can check during resolution override this
-    override fun solveStream(
+    /**
+     * The [SolutionStream] of [goal], over the [solutions] it computes. This one checks cancellation between
+     * solutions; solvers that can check during resolution override it.
+     */
+    protected open fun openStream(
         goal: Struct,
-        options: SolveOptions,
+        solutions: () -> Sequence<Solution>,
     ): SolutionStream =
-        IteratorSolutionStream(solve(goal, options).iterator()) {
+        IteratorSolutionStream(solutions().iterator()) {
             Solution.halt(goal, ResolutionCancelledException(context = currentContext))
         }
 

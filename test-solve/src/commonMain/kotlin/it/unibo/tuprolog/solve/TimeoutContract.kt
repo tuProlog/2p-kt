@@ -74,7 +74,7 @@ fun timeoutContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
             solver.assertHasPredicateInAPI(Sleep)
             val query = "sleep"(2.seconds.inWholeMilliseconds)
-            assertSolutionEquals(listOf(query.halt(timeOut(1.seconds))), solver.solveList(query, 1.seconds))
+            assertSolutionEquals(listOf(query.halt(timeOut(1.seconds))), solver.solve(query, 1.seconds).toList())
         }
     }
 
@@ -83,7 +83,7 @@ fun timeoutContract(
         logicProgramming {
             val time = SimulatedTime()
             val query = "sleep"(1000)
-            val solutions = solverFactory.solverWithDefaultBuiltins().solveList(query, time.options)
+            val solutions = solverFactory.solverWithDefaultBuiltins().solve(query, time.options).toList()
             assertSolutionEquals(listOf(query.halt(timeOut())), solutions)
             time.timeline.now shouldBe BUDGET + 1.nanoseconds
         }
@@ -94,7 +94,7 @@ fun timeoutContract(
         logicProgramming {
             val time = SimulatedTime()
             val query = "sleep"(15)
-            val solutions = solverFactory.solverWithDefaultBuiltins().solveList(query, time.options)
+            val solutions = solverFactory.solverWithDefaultBuiltins().solve(query, time.options).toList()
             assertSolutionEquals(listOf(query.yes()), solutions)
             time.timeline.now shouldBe 15.milliseconds
         }
@@ -104,7 +104,7 @@ fun timeoutContract(
     scenario("timeout/exact-deadline-is-in-time") {
         logicProgramming {
             val query = "sleep"(BUDGET.inWholeMilliseconds)
-            val solutions = solverFactory.solverWithDefaultBuiltins().solveList(query, SimulatedTime().options)
+            val solutions = solverFactory.solverWithDefaultBuiltins().solve(query, SimulatedTime().options).toList()
             assertSolutionEquals(listOf(query.yes()), solutions)
         }
     }
@@ -113,7 +113,7 @@ fun timeoutContract(
     scenario("timeout/just-past-the-deadline-is-late") {
         logicProgramming {
             val query = "sleep"(BUDGET.inWholeMilliseconds + 1)
-            val solutions = solverFactory.solverWithDefaultBuiltins().solveList(query, SimulatedTime().options)
+            val solutions = solverFactory.solverWithDefaultBuiltins().solve(query, SimulatedTime().options).toList()
             assertSolutionEquals(listOf(query.halt(timeOut())), solutions)
         }
     }
@@ -124,9 +124,12 @@ fun timeoutContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = truthOf(true)
             val instant = SimulatedTime(timeout = Duration.ZERO)
-            assertSolutionEquals(listOf(query.yes()), solver.solveList(query, instant.options))
+            assertSolutionEquals(listOf(query.yes()), solver.solve(query, instant.options).toList())
             val costly = SimulatedTime(timeout = Duration.ZERO, durationPerLeap = LEAP)
-            assertSolutionEquals(listOf(query.halt(timeOut(Duration.ZERO))), solver.solveList(query, costly.options))
+            assertSolutionEquals(
+                listOf(query.halt(timeOut(Duration.ZERO))),
+                solver.solve(query, costly.options).toList(),
+            )
         }
     }
 
@@ -139,7 +142,8 @@ fun timeoutContract(
                 solverFactory
                     .solverWithDefaultBuiltins(
                         staticKb = loopTheory,
-                    ).solveList(query, time.options)
+                    ).solve(query, time.options)
+                    .toList()
             assertSolutionEquals(listOf(query.halt(timeOut())), solutions)
             time.timeline.now shouldBeGreaterThan BUDGET
             time.timeline.now shouldBeLessThanOrEqualTo BUDGET + LEAP
@@ -153,7 +157,8 @@ fun timeoutContract(
             val solutions =
                 solverFactory
                     .solverWithDefaultBuiltins(staticKb = loopTheory)
-                    .solveList(query, SimulatedTime(durationPerLeap = LEAP).options)
+                    .solve(query, SimulatedTime(durationPerLeap = LEAP).options)
+                    .toList()
             assertSolutionEquals(listOf(query.halt(timeOut())), solutions)
         }
     }
@@ -162,7 +167,7 @@ fun timeoutContract(
     scenario("timeout/catch-cannot-intercept-a-sleep-timeout") {
         logicProgramming {
             val query = "catch"("sleep"(1000), `_`, true)
-            val solutions = solverFactory.solverWithDefaultBuiltins().solveList(query, SimulatedTime().options)
+            val solutions = solverFactory.solverWithDefaultBuiltins().solve(query, SimulatedTime().options).toList()
             assertSolutionEquals(listOf(query.halt(timeOut())), solutions)
         }
     }
@@ -172,7 +177,7 @@ fun timeoutContract(
     scenario("timeout/backtracking-does-not-refund-time") {
         logicProgramming {
             val query = "member"(X, listOf(1, 2, 3)) and "sleep"(8) and "=="(X, 3)
-            val solutions = solverFactory.solverWithDefaultBuiltins().solveList(query, SimulatedTime().options)
+            val solutions = solverFactory.solverWithDefaultBuiltins().solve(query, SimulatedTime().options).toList()
             assertSolutionEquals(listOf(query.halt(timeOut())), solutions)
         }
     }
@@ -182,7 +187,7 @@ fun timeoutContract(
     scenario("timeout/each-solution-gets-the-full-budget") {
         logicProgramming {
             val query = "member"(X, listOf(1, 2, 3)) and "sleep"(15)
-            val solutions = solverFactory.solverWithDefaultBuiltins().solveList(query, SimulatedTime().options)
+            val solutions = solverFactory.solverWithDefaultBuiltins().solve(query, SimulatedTime().options).toList()
             assertSolutionEquals((1..3).map { query.yes(X to it) } + query.no(), solutions)
         }
     }
@@ -222,7 +227,7 @@ private fun ContractScope.testInfiniteCollectingGoal(goalProvider: LogicProgramm
         solver.assertHasPredicateInAPI(FindAll)
         val time = SimulatedTime(durationPerLeap = LEAP)
         val query = goalProvider()
-        val solutions = solver.solveList(query, time.options)
+        val solutions = solver.solve(query, time.options).toList()
         assertSolutionEquals(listOf(query.halt(timeOut())), solutions)
         time.timeline.now shouldBeGreaterThan BUDGET
         time.timeline.now shouldBeLessThanOrEqualTo BUDGET + LEAP * 2

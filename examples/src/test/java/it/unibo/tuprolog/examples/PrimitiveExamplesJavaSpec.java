@@ -109,7 +109,7 @@ public class PrimitiveExamplesJavaSpec {
                 libraryOf("prolog.ranges", IntRangePrimitive.INSTANCE)
         );
 
-        List<Solution> sol = solver.solveList(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
+        List<Solution> sol = solver.solve(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X"))).toList();
         assertEquals(5, sol.size());
         for (int i = 1; i <= 5; i++) {
             Solution s = sol.get(i - 1);
@@ -124,7 +124,12 @@ public class PrimitiveExamplesJavaSpec {
                 .runtime(runtimeOf("prolog.ranges", IntRangePrimitive.INSTANCE))
                 .buildMutable();
 
-        List<Solution> sol = solver.solveList(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
+        List<Solution> sol = new ArrayList<>();
+        try (SolutionStream solutions = solver.solve(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")))) {
+            for (Solution solution : solutions.asIterable()) {
+                sol.add(solution);
+            }
+        }
         assertEquals(5, sol.size());
         for (int i = 1; i <= 5; i++) {
             Solution s = sol.get(i - 1);

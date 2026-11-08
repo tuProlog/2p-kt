@@ -35,7 +35,7 @@ class CreationSpec :
                     logicListOf(case2Term(case)),
                     X,
                 )
-            val solutions = solver.solveList(query)
+            val solutions = solver.solve(query).toList()
             solutions.size shouldBe 1
             when (val solution = solutions.single()) {
                 is Solution.Halt ->
