@@ -75,6 +75,7 @@ nav:
       - reference/unification-api.md
       - reference/theory-api.md
       - reference/solver-api.md
+      - reference/solver-test-matrix.md
       - reference/primitives-and-functions.md
       - reference/default-predicates.md
       - reference/libraries.md
