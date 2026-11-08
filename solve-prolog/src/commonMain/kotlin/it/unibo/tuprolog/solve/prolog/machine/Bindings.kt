@@ -134,6 +134,7 @@ internal class Bindings : BindingStore {
     ): Term {
         if (mark >= trail.size || term.isGround) return resolve(term)
         val later = trail.subList(mark, trail.size).toHashSet()
+        if (opaque) return applyToFixpoint(term, values.filterKeys { it !in later })
         val memo = HashMap<Var, Term>()
 
         fun substitute(
@@ -168,10 +169,15 @@ internal class Bindings : BindingStore {
 
     // shortcut: applies every binding until a fixpoint, as the FSM did, at a cost linear in the bindings per call;
     // only solvers with opaque terms pay it, track their hidden variables if that ever matters
-    private fun resolveOpaque(term: Term): Term {
-        val all = Substitution.of(values)
+    private fun resolveOpaque(term: Term): Term = applyToFixpoint(term, values)
+
+    private fun applyToFixpoint(
+        term: Term,
+        bindings: Map<Var, Term>,
+    ): Term {
+        val all = Substitution.of(bindings)
         var current = term
-        repeat(values.size + 1) {
+        repeat(bindings.size + 1) {
             val next = current.apply(all)
             if (next == current) return next
             current = next
@@ -224,15 +230,13 @@ internal val Unificator.incremental: IncrementalUnificator?
             else -> null
         }
 
+// allocation-free, as it runs on every binding; loops on the last argument so that long lists don't overflow the stack
 private fun Term.hasOpaqueSubterm(): Boolean {
-    val pending = ArrayList<Term>().also { it.add(this) }
-    while (pending.isNotEmpty()) {
-        val term = pending.removeAt(pending.lastIndex)
-        when {
-            term.isGround || term is Var -> continue
-            term is Struct && term.arity > 0 -> pending.addAll(term.args)
-            else -> return true
-        }
+    var term = this
+    while (true) {
+        if (term.isGround || term is Var) return false
+        if (term !is Struct || term.arity == 0) return true
+        for (i in 0 until term.arity - 1) if (term[i].hasOpaqueSubterm()) return true
+        term = term[term.arity - 1]
     }
-    return false
 }
