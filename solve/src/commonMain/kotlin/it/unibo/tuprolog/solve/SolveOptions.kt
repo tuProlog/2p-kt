@@ -1,6 +1,9 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.solve.impl.SolveOptionsImpl
+import it.unibo.tuprolog.solve.intercept.TransitionInterceptor
+import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
+import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 import it.unibo.tuprolog.utils.time.Chronometer
 import it.unibo.tuprolog.utils.time.ChronometerFactory
 import kotlin.js.JsName
@@ -54,6 +57,18 @@ interface SolveOptions {
     @JsName("counters")
     val counters: ResolutionCounters?
 
+    /** The interceptor a supporting solver calls at each port of each call (#1010), or `null` (the default) for none. */
+    @JsName("interceptor")
+    val interceptor: TransitionInterceptor?
+
+    /** The policy ordering a call's candidate rules (#1010), or `null` (the default) for source order. */
+    @JsName("ruleSelection")
+    val ruleSelection: RuleSelectionPolicy?
+
+    /** The policy choosing the next goal of a conjunction (#1010), or `null` (the default) for the leftmost one. */
+    @JsName("goalSelection")
+    val goalSelection: GoalSelectionPolicy?
+
     /**
      * The maximum number of solutions to produce, or [ALL_SOLUTIONS] (i.e. `-1`) for no cap.
      * @see isLimited
@@ -85,6 +100,18 @@ interface SolveOptions {
     /** Returns a copy of these options with [counters] set to [value]. */
     @JsName("setCounters")
     fun setCounters(value: ResolutionCounters?): SolveOptions
+
+    /** Returns a copy of these options with [interceptor] set to [value]. */
+    @JsName("setInterceptor")
+    fun setInterceptor(value: TransitionInterceptor?): SolveOptions
+
+    /** Returns a copy of these options with [ruleSelection] set to [value]. */
+    @JsName("setRuleSelection")
+    fun setRuleSelection(value: RuleSelectionPolicy?): SolveOptions
+
+    /** Returns a copy of these options with [goalSelection] set to [value]. */
+    @JsName("setGoalSelection")
+    fun setGoalSelection(value: GoalSelectionPolicy?): SolveOptions
 
     /**
      * Creates the [Chronometer] of a new resolution, started now, from [chronometerFactory] (or

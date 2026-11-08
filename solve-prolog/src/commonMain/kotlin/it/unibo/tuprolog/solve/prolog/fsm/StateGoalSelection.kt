@@ -2,7 +2,10 @@ package it.unibo.tuprolog.solve.prolog.fsm
 
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.flags.TrackVariables
+import it.unibo.tuprolog.solve.intercept.Decision
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
+import it.unibo.tuprolog.utils.cursor
 
 /**
  * "Goal Selection", the entry point of every resolution step: decides what to do with
@@ -29,6 +32,11 @@ data class StateGoalSelection(
                     context.copy(step = nextStep()),
                 )
             } else {
+                when (val decision = context.interception?.exit(context)) {
+                    is Decision.Fail -> return StateBacktracking(context.copy(step = nextStep()))
+                    is Decision.Halt -> return halt(decision)
+                    else -> Unit
+                }
                 StateGoalSelection(
                     context.parent!!.let {
                         it.copy(
@@ -50,22 +58,37 @@ data class StateGoalSelection(
                     },
                 )
             }
-        } else if (context.flags[TrackVariables] == TrackVariables.ON) {
-            StatePrimitiveSelection(
-                context.copy(
-                    step = nextStep(),
-                    relevantVariables =
-                        context.relevantVariables +
-                            context.goals.current!!
-                                .variables
-                                .toSet(),
-                ),
-            )
         } else {
-            StatePrimitiveSelection(
-                context.copy(step = nextStep()),
-            )
+            val selected = context.selectGoal()
+            if (selected.flags[TrackVariables] == TrackVariables.ON) {
+                StatePrimitiveSelection(
+                    selected.copy(
+                        step = nextStep(),
+                        relevantVariables =
+                            selected.relevantVariables +
+                                selected.goals.current!!
+                                    .variables
+                                    .toSet(),
+                    ),
+                )
+            } else {
+                StatePrimitiveSelection(
+                    selected.copy(step = nextStep()),
+                )
+            }
         }
+
+    // moves the goal the policy chooses, if any, to the front of the conjunction
+    private fun PrologExecutionContext.selectGoal(): PrologExecutionContext {
+        val policy = goalSelection
+        if (policy == null || !goals.hasNext) return this
+        val remaining = goals.asSequence().toList()
+        val index = policy.select(remaining.map { it[substitution] }, ReadOnlyExecutionContext(this))
+        require(index in remaining.indices) { "Goal index $index out of ${remaining.indices}" }
+        if (index == 0) return this
+        val reordered = listOf(remaining[index]) + remaining.filterIndexed { i, _ -> i != index }
+        return copy(goals = reordered.cursor())
+    }
 
     override fun clone(context: PrologExecutionContext): StateGoalSelection = copy(context = context)
 }

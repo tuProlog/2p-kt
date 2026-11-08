@@ -13,6 +13,7 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.prolog.fsm.Interception
 import it.unibo.tuprolog.solve.prolog.fsm.State
 import it.unibo.tuprolog.solve.prolog.fsm.StateInit
 import it.unibo.tuprolog.solve.toOperatorSet
@@ -133,15 +134,17 @@ abstract class AbstractPrologSolver(
                 customData = currentContext.customData,
                 chronometer = options.createChronometer(),
                 counters = options.counters,
+                interception = options.interceptor?.let(::Interception),
+                ruleSelection = options.ruleSelection,
+                goalSelection = options.goalSelection,
             )
         return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
     }
 
     /**
      * Hook through which subclasses choose which [SolutionIterator] flavour drives resolution from [initialState]
-     * onwards, invoking [onStateTransition] after every step ([PrologSolver] always returns a plain
-     * [SolutionIterator]; nothing in this module currently returns a [MutableSolutionIterator] here, though the
-     * hook is shaped to allow it).
+     * onwards, invoking [onStateTransition] after every step. To observe or redirect calls, pass a
+     * [it.unibo.tuprolog.solve.intercept.TransitionInterceptor] via [SolveOptions.setInterceptor] instead.
      */
     protected abstract fun solutionIterator(
         initialState: State,

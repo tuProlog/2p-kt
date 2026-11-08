@@ -53,7 +53,10 @@ fun Term.toGoals(): Cursor<out Term> =
         }.cursor()
 
 /** Pushes a new child frame onto the execution-context stack for the current goal, becoming its own [PrologExecutionContext.goals]. */
-fun PrologExecutionContext.createChild(inferProcedureFromGoals: Boolean = true): PrologExecutionContext {
+fun PrologExecutionContext.createChild(
+    inferProcedureFromGoals: Boolean = true,
+    invocation: Long = interception?.nextId() ?: 0,
+): PrologExecutionContext {
     val currentGoal = this.currentGoal!!.castToStruct()
 
     return copy(
@@ -63,6 +66,7 @@ fun PrologExecutionContext.createChild(inferProcedureFromGoals: Boolean = true):
         depth = depth + 1,
         step = step + 1,
         relevantVariables = emptySet(),
+        invocation = invocation,
     )
 }
 
@@ -110,8 +114,9 @@ fun PrologExecutionContext.appendPrimitivesAndChoicePoints(
 fun PrologExecutionContext.createChildAppendingRulesAndChoicePoints(
     rules: Cursor<out Rule>,
     inferProcedureFromGoals: Boolean = true,
+    invocation: Long = interception?.nextId() ?: 0,
 ): PrologExecutionContext {
-    val tempExecutionContext = createChild(inferProcedureFromGoals)
+    val tempExecutionContext = createChild(inferProcedureFromGoals, invocation)
     return tempExecutionContext.appendRulesAndChoicePoints(rules)
 }
 

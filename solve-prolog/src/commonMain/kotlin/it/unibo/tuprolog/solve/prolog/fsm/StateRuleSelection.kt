@@ -16,6 +16,7 @@ import it.unibo.tuprolog.solve.flags.LastCallOptimization.ON
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.prolog.ChoicePointContext
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
@@ -180,6 +181,8 @@ data class StateRuleSelection(
         get() =
             goals.next.isOver &&
                 flags[LastCallOptimization] == ON &&
+                // an interceptor sees every call's EXIT, which a reused frame would merge
+                interception == null &&
                 currentGoal!!.let { currentGoal ->
                     currentGoal.asStruct()?.extractSignature()?.let {
                         it == procedure?.extractSignature() && it != catchSignature
@@ -225,14 +228,32 @@ data class StateRuleSelection(
                         }
 
                         else -> {
-                            countInference(currentGoalStruct)
-                            // one lookup per source: an empty result is the "no matching clause" case
-                            val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.cursor()
-                            when {
-                                rules.isOver -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
-                                context.isTailRecursive ->
-                                    StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
-                                else -> StateRuleExecution(context.createChildAppendingRulesAndChoicePoints(rules))
+                            val invocation = interception?.nextId() ?: 0
+                            interceptCall(currentGoalStruct, invocation) ?: run {
+                                countInference(currentGoalStruct)
+                                // one lookup per source: an empty result is the "no matching clause" case
+                                val candidates = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }
+                                val rules =
+                                    (
+                                        ruleSelection?.order(
+                                            currentGoalStruct,
+                                            candidates,
+                                            ReadOnlyExecutionContext(this),
+                                        )
+                                            ?: candidates
+                                    ).cursor()
+                                when {
+                                    rules.isOver -> missingProcedure(ruleSources, currentGoalStruct.extractSignature())
+                                    context.isTailRecursive ->
+                                        StateRuleExecution(context.replaceWithChildAppendingRulesAndChoicePoints(rules))
+                                    else ->
+                                        StateRuleExecution(
+                                            context.createChildAppendingRulesAndChoicePoints(
+                                                rules,
+                                                invocation = invocation,
+                                            ),
+                                        )
+                                }
                             }
                         }
                     }
