@@ -104,9 +104,18 @@ internal class IndexedTheory private constructor(
 
     override fun toMutableTheory(): MutableTheory = MutableIndexedTheory(unificator, clauses, tags)
 
-    private val hashCodeCache: Int by lazy { super.hashCode() }
+    // cached like java.lang.String's: racy but safe, as each field is either unset or final, with no lazy holder to read
+    private var hash = 0
+    private var hashIsZero = false
 
-    override fun hashCode(): Int = hashCodeCache
+    override fun hashCode(): Int {
+        var h = hash
+        if (h == 0 && !hashIsZero) {
+            h = super.hashCode()
+            if (h == 0) hashIsZero = true else hash = h
+        }
+        return h
+    }
 
     override fun replaceTags(tags: Map<String, Any>): IndexedTheory =
         if (tags === this.tags) this else IndexedTheory(store, tags)
