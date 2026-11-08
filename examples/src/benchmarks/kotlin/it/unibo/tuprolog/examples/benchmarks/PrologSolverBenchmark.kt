@@ -27,6 +27,10 @@ class PrologSolverBenchmark {
         "failing-search",
         "nested-solving",
         "primitives",
+        "cut-catch",
+        "dynamic-churn",
+        "first-of-many",
+        "arithmetic",
     )
     var workload: String = "tiny"
 

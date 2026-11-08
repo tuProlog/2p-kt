@@ -72,9 +72,13 @@ tasks.register<JavaExec>("timingBenchmarks") {
     outputs.file(reportFile)
     outputs.upToDateWhen { false }
     doFirst { reportFile.get().parentFile.mkdirs() }
-    val runParameters =
-        (findProperty("jmhArgs") as String?)?.split(" ")?.filter { it.isNotBlank() }
-            ?: listOf("-wi", "3", "-i", "5", "-w", "2s", "-r", "2s", "-f", "1")
+    // `-PjmhProfile=full` is #1010's reproducible profile: 3 forks, 5 warm-ups and 10 measurements of 1 s each
+    val profile =
+        when (findProperty("jmhProfile")) {
+            "full" -> listOf("-wi", "5", "-i", "10", "-w", "1s", "-r", "1s", "-f", "3")
+            else -> listOf("-wi", "3", "-i", "5", "-w", "2s", "-r", "2s", "-f", "1")
+        }
+    val runParameters = (findProperty("jmhArgs") as String?)?.split(" ")?.filter { it.isNotBlank() } ?: profile
     args(runParameters + listOf("-prof", "gc", "-rf", "json", "-rff", reportFile.get().absolutePath))
 }
 
@@ -84,6 +88,14 @@ tasks.register<JavaExec>("clockReadsReport") {
     description = "Prints how many resolution steps and clock reads each benchmark workload takes."
     classpath = benchmarks.runtimeClasspath + benchmarks.output
     mainClass.set("it.unibo.tuprolog.examples.benchmarks.ClockReadsReport")
+}
+
+// Deterministic counts of logical work per workload (#1010), printed as a Markdown table.
+tasks.register<JavaExec>("resolutionCountersReport") {
+    group = "benchmark"
+    description = "Prints the inferences, alternatives and choice points each benchmark workload takes."
+    classpath = benchmarks.runtimeClasspath + benchmarks.output
+    mainClass.set("it.unibo.tuprolog.examples.benchmarks.ResolutionCountersReport")
 }
 
 // Deterministic `match` counts per theory implementation and lookup (#1019), printed as a Markdown table.

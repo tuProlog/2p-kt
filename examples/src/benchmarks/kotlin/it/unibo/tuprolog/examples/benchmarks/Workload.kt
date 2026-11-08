@@ -60,6 +60,22 @@ enum class Workload(
 
     /** 300 rounds of relatively expensive built-ins. */
     PRIMITIVES("primitives", "primitives(0, 300)"),
+
+    /** 300 rounds of cuts, if-then-else, and exceptions thrown and caught (#1010). */
+    CUT_CATCH("cut-catch", "cut_catch(0, 300)"),
+
+    /** Asserting and retracting 300 clauses of a predicate while enumerating it (#1010). */
+    DYNAMIC_CHURN("dynamic-churn", "churn(300)"),
+
+    /** The first answer out of 100,000 candidates, the others never needed: lazy alternatives (#1010). */
+    FIRST_OF_MANY("first-of-many", "first_of_many(100000)"),
+
+    /**
+     * 100 rounds of integer and floating-point arithmetic (#1010). Needs `TrackVariables` on, as clause-local
+     * bindings are lost otherwise (see `binding-restoration/clause-local-bindings-survive-primitives`, #1073). With
+     * it on, `:solve-prolog`'s cost grows about cubically with the rounds (0.5 s for 100, 530 s for 1000).
+     */
+    ARITHMETIC("arithmetic", "arith(0, 100)", flags = TRACKING),
     ;
 
     /** The query, parsed. */

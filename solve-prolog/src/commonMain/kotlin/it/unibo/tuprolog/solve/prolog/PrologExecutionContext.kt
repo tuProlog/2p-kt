@@ -9,6 +9,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.MutableSolver
+import it.unibo.tuprolog.solve.ResolutionCounters
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
@@ -58,6 +59,9 @@ import kotlin.collections.Set as KtSet
  * - [chronometer]: the resolution's chronometer, shared by every frame of the resolution (see
  *   [it.unibo.tuprolog.solve.Durable.chronometer]); defaults to an unlimited one.
  *
+ * - [counters]: the resolution's opt-in [ResolutionCounters] (see [it.unibo.tuprolog.solve.SolveOptions.counters]),
+ *   shared by every frame, or `null` to count nothing.
+ *
  * @throws IllegalArgumentException if [depth] and [parent] are inconsistent (`depth == 0` iff `parent == null`).
  */
 data class PrologExecutionContext(
@@ -82,6 +86,7 @@ data class PrologExecutionContext(
     val depth: Int = 0,
     val step: Long = 0,
     val relevantVariables: KtSet<Var> = emptySet(),
+    val counters: ResolutionCounters? = null,
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))

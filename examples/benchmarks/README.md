@@ -1,4 +1,4 @@
-# Resolution benchmarks (#1012, #1019, #1020, #1075)
+# Resolution benchmarks (#1010, #1012, #1019, #1020, #1075)
 
 JMH benchmarks in `examples/src/benchmarks`. Timing (#1012) measures how timeout handling affects resolution:
 
@@ -12,6 +12,13 @@ Both take a `chronometer` parameter (`direct`, `adaptive`; see `ChronometerFacto
 `./gradlew :examples:clockReadsReport` prints deterministic counts instead: resolution steps (leaps), forced clock
 checks, and clock reads per workload and chronometer.
 
+Stateful engine (#1010): four more workloads (`cut-catch`, `dynamic-churn`, `first-of-many`, `arithmetic`) and
+`FirstAnswerBenchmark`, the time to the first answer of the workloads where laziness matters.
+`./gradlew :examples:resolutionCountersReport` prints the logical work per workload, as counted by
+`ResolutionCounters` (`SolveOptions.setCounters`): predicate calls, alternatives tried, choice points, deepest
+nesting. These counts don't depend on the engine's internal steps, so they are the denominator to compare engines on.
+The report also times one cold run with `timed()` (`it.unibo.tuprolog.solve.timing`): first answer and active time.
+
 `:solve-concurrent` is not benchmarked: it overflows the stack (or hangs) even on `nrev`, and leaks thread pools across
 resolutions, independently of timing.
 
@@ -21,6 +28,8 @@ resolutions, independently of timing.
 ./gradlew :examples:timingBenchmarks                          # full run, GC profiler on; JSON in examples/build/reports/benchmarks/jmh.json
 ./gradlew :examples:timingBenchmarks -PjmhArgs='-wi 0 -i 1 -r 100ms TimeoutOvershoot'  # quick check of a subset
 ./gradlew :examples:benchmarksSmokeBenchmark                  # kotlinx-benchmark smoke run, no profiler
+./gradlew :examples:timingBenchmarks -PjmhProfile=full       # #1010's profile: 3 forks, 5 warm-ups, 10 x 1 s
+./gradlew :examples:resolutionCountersReport                 # logical work per workload (#1010), deterministic
 ```
 
 Defaults: 1 fork, 3 × 2 s warm-up, 5 × 2 s measurement iterations. To compare two runs, run
@@ -72,7 +81,8 @@ Measure the branch at 100k normally, and label every projected baseline and spee
 Raw JMH JSON, compressed with `xz`, lives in a separate repository, so as not to grow this one:
 [tuProlog/2p-kt-benchmarks](https://github.com/tuProlog/2p-kt-benchmarks/tree/main/results), named
 `<date>-<label>-<commit>.json.xz` (the headings below name each run). `compare.py` and `engines.py` read `.xz` files as
-they are.
+they are. Its
+`scripts/campaign.py` compares two refs of this repository over the JMH suite.
 
 ### Baseline: `2026-11-03-baseline-52348df`
 

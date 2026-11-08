@@ -17,6 +17,7 @@ data class StateRuleExecution(
         get() = StateBacktracking(context.copy(rules = Cursor.empty(), step = nextStep()))
 
     override fun computeNext(): State {
+        context.countAlternative()
         val selected = context.rules.current!!
         val rule = if (selected is MatchedRule) selected.rule else selected
         val substitution =
