@@ -338,8 +338,13 @@ internal class PrologMachine(
     ): Solution? {
         if (!callee.procedure.isControlConstruct) world.counters?.countAlternative()
         val rule = if (alternative is MatchedRule) alternative.rule else alternative
-        val mgu = if (alternative is MatchedRule) alternative.mgu else unificator.mgu(callee.procedure!!, rule.head)
-        if (mgu !is Substitution.Unifier || !bindings.bindAll(mgu, unificator)) {
+        val unified =
+            if (alternative is MatchedRule) {
+                bindings.bindAll(alternative.mgu, unificator)
+            } else {
+                bindings.unify(Rule.of(callee.procedure!!, rule.body), rule, unificator)
+            }
+        if (!unified) {
             location = Location.BACKTRACK
             return null
         }
@@ -489,14 +494,23 @@ internal class PrologMachine(
     private fun view(frame: Frame): ExecutionContext = ReadOnlyExecutionContext(context(frame))
 
     /**
-     * The rules of this theory whose head unifies with [goal], renamed apart, each with its mgu: candidates come from
-     * the indexes, and are renamed and unified one at a time, as they are pulled (as in the FSM).
+     * The rules of this theory whose head unifies with [goal], renamed apart: candidates come from the indexes, and are
+     * renamed and unified one at a time, as they are pulled (as in the FSM), always under the bindings of the call.
+     * With an incremental unificator, each is unified in the bindings, then undone, and unified again by [execute];
+     * otherwise, each comes with its mgu.
      */
     private fun Theory.selectClauses(goal: Struct): Sequence<Rule> =
         candidates(Rule.of(goal, Var.anonymous())).mapNotNull { candidate ->
             val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
-            val mgu = unificator.mgu(Rule.of(goal, rule.body), rule)
-            if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
+            // the whole clause is unified, so that a unificator sees the tags of the clause itself too
+            val clause = Rule.of(goal, rule.body)
+            if (unificator.incremental != null) {
+                val mark = bindings.mark
+                rule.takeIf { bindings.unify(clause, rule, unificator) }.also { bindings.undo(mark) }
+            } else {
+                val mgu = unificator.mgu(clause, rule)
+                if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
+            }
         }
 
     private fun Solution?.orNull(): Solution? = if (this === REFUSED) null else this

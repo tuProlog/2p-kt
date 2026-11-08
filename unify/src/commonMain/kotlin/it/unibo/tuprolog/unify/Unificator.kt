@@ -38,9 +38,9 @@ import kotlin.jvm.JvmStatic
  * unificator.unify(x, Atom.of("a")) // a
  * ```
  *
- * The built-in strategies are [AbstractWorklistUnificator]s. To customize how terms are compared, or to observe/alter
- * the unification process (e.g. to take terms' tags into account), extend [AbstractWorklistUnificator] instead of
- * implementing this interface directly.
+ * The built-in strategies are [AbstractWorklistUnificator]s and [IncrementalUnificator]s. To customize how terms are
+ * compared, or to observe/alter the unification process (e.g. to take terms' tags into account), extend
+ * [AbstractWorklistUnificator] instead of implementing this interface directly.
  */
 interface Unificator {
     // --8<-- [start:operations]
@@ -199,7 +199,14 @@ interface Unificator {
         @JvmStatic
         @JsName("naiveWithContext")
         fun naive(context: Substitution): Unificator =
-            object : AbstractWorklistUnificator(context) {
+            object : AbstractWorklistUnificator(context), IncrementalUnificator {
+                override fun unifyInto(
+                    store: BindingStore,
+                    term1: Term,
+                    term2: Term,
+                    occurCheckEnabled: Boolean,
+                ) = unifyIncrementally(store, term1, term2, occurCheckEnabled)
+
                 override fun checkTermsEquality(
                     first: Term,
                     second: Term,
@@ -229,7 +236,15 @@ interface Unificator {
          */
         @JvmStatic
         @JsName("strictWithContext")
-        fun strict(context: Substitution): Unificator = object : AbstractWorklistUnificator(context) {}
+        fun strict(context: Substitution): Unificator =
+            object : AbstractWorklistUnificator(context), IncrementalUnificator {
+                override fun unifyInto(
+                    store: BindingStore,
+                    term1: Term,
+                    term2: Term,
+                    occurCheckEnabled: Boolean,
+                ) = unifyIncrementally(store, term1, term2, occurCheckEnabled)
+            }
 
         /** Creates a strict unification strategy (see [strict]) with an empty starting context. */
         @JvmStatic

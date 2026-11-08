@@ -3,23 +3,30 @@ package it.unibo.tuprolog.unify.impl
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.unify.BindingStore
 
 /**
  * The variable bindings of one unification run: the bindings established during the run, layered over [base] ones
  * (the context, or the first operand of a merge) which are never copied. Bindings are *triangular*: a bound term may
  * contain bound variables, which are only resolved when needed. The [base] is assumed to be idempotent.
+ *
+ * With a [store], the run's bindings go there instead (#1010): variables are only ever bound, never rebound, so chains
+ * are not compressed, and there are no new bindings to enumerate.
  */
 internal class Bindings(
     val base: Substitution,
+    private val store: BindingStore? = null,
 ) {
     private var local: MutableMap<Var, Term>? = null
 
-    operator fun get(variable: Var): Term? = local?.get(variable) ?: base[variable]
+    operator fun get(variable: Var): Term? =
+        (if (store != null) store[variable] else local?.get(variable)) ?: base[variable]
 
     operator fun set(
         variable: Var,
         term: Term,
     ) {
+        if (store != null) return store.bind(variable, term)
         val map = local ?: LinkedHashMap<Var, Term>().also { local = it }
         map[variable] = term
     }
@@ -43,7 +50,7 @@ internal class Bindings(
             current = next
             hops++
         }
-        if (hops > 1) compress(term, current)
+        if (hops > 1 && store == null) compress(term, current)
         return current
     }
 
