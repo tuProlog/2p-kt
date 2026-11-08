@@ -5,7 +5,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.prepareForExecution
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
@@ -60,6 +59,8 @@ internal class PrologMachine(
         // what runs after the call, i.e. after a catch/3's recovery
         val after: Cont?,
         val invocation: Long,
+        // whether [procedure] was resolved when called (primitives); otherwise its bindings are in [bindings]
+        val resolved: Boolean = true,
     ) {
         val transparent: Boolean = procedure != null && procedure.arity == 2 && procedure.functor in TRANSPARENT
 
@@ -149,7 +150,7 @@ internal class PrologMachine(
         val selected = selectGoal(current)
         cont = selected.next
         selectedGoal = selected.goal
-        return call(bindings.resolve(selected.goal!!), selected.frame, selected.next)
+        return call(bindings.deref(selected.goal!!), selected.frame, selected.next)
     }
 
     private fun answer(): Solution {
@@ -198,7 +199,7 @@ internal class PrologMachine(
         }
         val signature = goal.extractSignature()
         return when {
-            world.libraries.hasPrimitive(signature) -> callPrimitive(goal, signature, frame, rest)
+            world.libraries.hasPrimitive(signature) -> callPrimitive(bound(goal), signature, frame, rest)
             goal.isTruth -> null.also { if (goal.isTrue) cont = rest else location = Location.BACKTRACK }
             goal.isAtom && goal.castToAtom().value == "!" -> {
                 cut(if (goal is MagicCut) frame else generateSequence(frame) { it.parent }.first { !it.transparent })
@@ -222,7 +223,7 @@ internal class PrologMachine(
     ): Solution? {
         val interception = world.interception
         if (interception == null || goal.isControlConstruct) return null
-        return when (val decision = interception.call(invocation, goal, frame.depth + 1) { view(frame) }) {
+        return when (val decision = interception.call(invocation, bound(goal), frame.depth + 1) { view(frame) }) {
             is Decision.Continue -> null
             is Decision.Fail -> REFUSED.also { location = Location.BACKTRACK }
             is Decision.Redirect -> REFUSED.also { cont = Cont(decision.goal, frame, rest) }
@@ -295,21 +296,26 @@ internal class PrologMachine(
         val invocation = world.interception?.nextId() ?: 0
         intercept(goal, invocation, frame, rest)?.let { return it.orNull() }
         if (!goal.isControlConstruct) world.counters?.countInference(frame.depth + 1)
+        // an incremental unificator unifies the goal as is, under the bindings; any other one needs it resolved
+        val incremental = unificator.incremental != null
+        val called = if (incremental) goal else bound(goal)
+        val probe = indexProbe(called)
         val sources = sequenceOf(world.libraries.asTheory(unificator), world.staticKb, world.dynamicKb)
-        val candidates = sources.flatMap { it.selectClauses(goal) }
-        val ordered = world.ruleSelection?.order(goal, candidates, view(frame)) ?: candidates
+        val candidates = sources.flatMap { it.selectClauses(called, probe) }
+        val ordered = world.ruleSelection?.order(bound(goal), candidates, view(frame)) ?: candidates
         val alternatives = ordered.iterator()
         if (!alternatives.hasNext()) return missingProcedure(sources, goal.extractSignature(), frame)
         val tail = isTailCall(goal, frame, rest)
         val callee =
             Frame(
-                goal,
+                called,
                 if (tail) frame.parent else frame,
                 frame.depth + 1,
                 choices.size,
                 bindings.mark,
                 rest,
                 invocation,
+                resolved = !incremental,
             )
         val first = alternatives.next()
         if (alternatives.hasNext()) push(Choice(alternatives, true, callee, rest, bindings.mark))
@@ -348,8 +354,7 @@ internal class PrologMachine(
             location = Location.BACKTRACK
             return null
         }
-        // bound variable goals become their values, unbound ones call/1 (as the FSM does)
-        val body = rule.prepareForExecution(bindings.substitutionOf(rule.body.variables)).castToRule().body
+        val body = prepare(rule.body)
         val next = if (world.interception != null) Cont(null, callee, rest) else rest
         cont = goals(body, callee, next)
         return null
@@ -418,7 +423,7 @@ internal class PrologMachine(
             for (catcher in generateSequence(frame) { it.parent }.filter { it.isCatch }) {
                 bindings.undo(catcher.trailMark)
                 cut(catcher)
-                val catchGoal = catcher.procedure!!
+                val catchGoal = catcher.called!!
                 val mgu = unificator.mgu(catchGoal[1], ball)
                 if (mgu is Substitution.Unifier) {
                     world.interception?.exception(error, catcher.invocation) { view(catcher) }?.let {
@@ -444,6 +449,40 @@ internal class PrologMachine(
             decision.error ?: it.unibo.tuprolog.solve.exception
                 .HaltException(context = context(frame)),
         )
+
+    /**
+     * [body] ready to run, as `prepareForExecution` with the current bindings would make it, without resolving them:
+     * goals that are bound variables become their values, unbound ones call/1 (as the FSM does).
+     */
+    private fun prepare(body: Term): Term =
+        when {
+            body is Var ->
+                when (val value = bindings.deref(body)) {
+                    is Var -> Struct.of("call", value)
+                    else -> prepare(value)
+                }
+            body is Struct && body.arity == 2 && body.functor in TRANSPARENT -> {
+                val first = prepare(body[0])
+                val second = prepare(body[1])
+                if (first === body[0] && second === body[1]) body else Struct.of(body.functor, first, second)
+            }
+            else -> body
+        }
+
+    // [goal] with its arguments dereferenced one level, so that clause indexes see their principal symbols
+    private fun indexProbe(goal: Struct): Rule {
+        val args = goal.args
+        val probe =
+            if (args.none { it is Var && bindings[it] != null }) {
+                goal
+            } else {
+                Struct.of(
+                    goal.functor,
+                    args.map(bindings::deref),
+                )
+            }
+        return Rule.of(probe, Var.anonymous())
+    }
 
     private fun goals(
         body: Term,
@@ -486,10 +525,14 @@ internal class PrologMachine(
         rest: Cont? = null,
     ): ExecutionContext {
         val goal = selectedGoal
-        return CallContext(world, frame.procedure, { substitution(frame, goal, rest) }) {
-            generateSequence(frame) { it.parent }.map { it.procedure ?: Struct.of("?-", query) }.toList()
+        return CallContext(world, frame.called, { substitution(frame, goal, rest) }) {
+            generateSequence(frame) { it.parent }.map { it.called ?: Struct.of("?-", query) }.toList()
         }
     }
+
+    // the frame's procedure, resolved
+    private val Frame.called: Struct?
+        get() = if (resolved) procedure else procedure?.let(::bound)
 
     private fun view(frame: Frame): ExecutionContext = ReadOnlyExecutionContext(context(frame))
 
@@ -499,8 +542,11 @@ internal class PrologMachine(
      * With an incremental unificator, each is unified in the bindings, then undone, and unified again by [execute];
      * otherwise, each comes with its mgu.
      */
-    private fun Theory.selectClauses(goal: Struct): Sequence<Rule> =
-        candidates(Rule.of(goal, Var.anonymous())).mapNotNull { candidate ->
+    private fun Theory.selectClauses(
+        goal: Struct,
+        probe: Rule,
+    ): Sequence<Rule> =
+        candidates(probe).mapNotNull { candidate ->
             val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
             // the whole clause is unified, so that a unificator sees the tags of the clause itself too
             val clause = Rule.of(goal, rule.body)
