@@ -151,7 +151,7 @@ abstract class AbstractPrologSolver(
                 goalSelection = options.goalSelection,
             )
         if (engine == Engine.MACHINE || options.customOptions[ENGINE_OPTION] == "machine") {
-            return PrologMachine(currentContext, goal) { currentContext = it }.asSequence()
+            return PrologMachine(currentContext, goal, options.branchScheduler) { currentContext = it }.asSequence()
         }
         return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
     }

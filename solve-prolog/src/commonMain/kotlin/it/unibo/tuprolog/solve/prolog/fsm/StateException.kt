@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.MessageError
 import it.unibo.tuprolog.solve.exception.error.SystemError
+import it.unibo.tuprolog.solve.intercept.Decision
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
 import it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch
@@ -46,7 +47,10 @@ data class StateException(
     private val finalState: State
         get() {
             val error = exception.toPublicException()
-            context.interception?.exception(error, null) { ReadOnlyExecutionContext(context) }?.let { return halt(it) }
+            context.interception?.exception(error, null) { ReadOnlyExecutionContext(context) }?.let {
+                // the FSM doesn't support Decision.Retry, so Interception rejects it
+                return halt(it as Decision.Halt)
+            }
             return StateHalt(error, context.copy(step = nextStep()))
         }
 
@@ -82,7 +86,7 @@ data class StateException(
                 context.interception
                     ?.let {
                         it.exception(exception, it.unwoundFrom ?: Long.MAX_VALUE) { ReadOnlyExecutionContext(context) }
-                    }?.let { return halt(it) }
+                    }?.let { return halt(it as Decision.Halt) }
                 val newSubstitution =
                     (context.substitution + catcher).filter { (it, _) ->
                         context.isVariableInteresting(it)

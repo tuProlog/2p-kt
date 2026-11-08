@@ -22,12 +22,15 @@ import it.unibo.tuprolog.solve.flags.LastCallOptimization
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.intercept.Decision
 import it.unibo.tuprolog.solve.primitive.Alternatives
+import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
 import it.unibo.tuprolog.solve.prolog.fsm.MatchedRule
 import it.unibo.tuprolog.solve.prolog.fsm.isControlConstruct
 import it.unibo.tuprolog.solve.prolog.fsm.unfoldGoals
+import it.unibo.tuprolog.solve.search.Branch
+import it.unibo.tuprolog.solve.search.BranchScheduler
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
@@ -41,13 +44,18 @@ import it.unibo.tuprolog.unify.Unificator
  * solver's world state (knowledge bases, flags, libraries, channels) is a [PrologExecutionContext] that changes only
  * through side effects, and is reported to the solver through `onWorld`.
  *
- * Semantics follow the FSM exactly, including its lookahead (a call's next alternative is pulled when the call starts
- * or is retried) and its last-call optimisation of self-recursive tail calls, so that both engines give the same
- * answers until PR 7 makes alternatives lazy.
+ * Semantics follow the FSM, including its last-call optimisation of self-recursive tail calls, except that a
+ * primitive's alternatives are pulled as its [Primitive.alternatives] allows (PR 7), and calls can be retried by an
+ * interceptor ([Decision.Retry]).
+ *
+ * With a [scheduler] other than [BranchScheduler.DEPTH_FIRST], the machine runs in *frontier mode* (#1010, PR 8): a
+ * choice point becomes a suspended branch with a copy of the bindings, the scheduler picks the branch to advance after
+ * each step, and only a pure fragment of Prolog is supported (see [rejection]).
  */
 internal class PrologMachine(
     root: PrologExecutionContext,
     private val query: Struct,
+    private val scheduler: BranchScheduler? = null,
     private val onWorld: (PrologExecutionContext) -> Unit,
 ) : Iterator<Solution> {
     private class Frame(
@@ -89,7 +97,7 @@ internal class PrologMachine(
     private enum class Location { SELECT, BACKTRACK }
 
     private var world: PrologExecutionContext = root.copy(customData = root.customData.preservePersistent())
-    private val bindings = Bindings()
+    private var bindings = Bindings()
     private val choices = ArrayList<Choice>()
     private val rootFrame = Frame(null, null, 0, 0, 0, null, 0)
     private var cont: Cont? = goals(query, rootFrame, null)
@@ -105,7 +113,39 @@ internal class PrologMachine(
     private val unificator: Unificator
         get() = world.unificator
 
+    // whether next() is running: interceptors' callbacks must not advance the resolution they are called from
+    private var running = false
+
+    // frontier mode: the suspended branches, the current branch's id and proof depth
+    private val frontierMode = scheduler != null && scheduler !== BranchScheduler.DEPTH_FIRST
+    private val frontier = ArrayList<Suspended>()
+    private var branches = 0L
+    private var branch = 0L
+    private var depth = 0
+
+    // a branch of the frontier: a continuation to go on with, or a pending choice point with its alternatives left
+    private inner class Suspended(
+        override val id: Long,
+        override val depth: Int,
+        val bindings: Bindings,
+        val cont: Cont?,
+        val choice: Choice? = null,
+    ) : Branch {
+        override val goals: List<Struct> by lazy {
+            val start = choice?.let { Cont(it.frame.procedure, it.frame, it.cont) } ?: cont
+            generateSequence(start) { it.next }
+                .mapNotNull { it.goal }
+                .map { bindings.resolve(it) }
+                .filterIsInstance<Struct>()
+                .toList()
+        }
+    }
+
     init {
+        require(!frontierMode || world.interception == null) {
+            "A branch scheduler other than depth-first cannot be combined with an interceptor"
+        }
+        world.interception?.retrySupported = true
         onWorld(world)
     }
 
@@ -115,7 +155,13 @@ internal class PrologMachine(
 
     override fun next(): Solution {
         if (finished) throw NoSuchElementException()
-        return run() ?: throw NoSuchElementException()
+        check(!running) { "A resolution cannot be advanced from one of its own interceptor's callbacks" }
+        running = true
+        try {
+            return run() ?: throw NoSuchElementException()
+        } finally {
+            running = false
+        }
     }
 
     private fun run(): Solution? {
@@ -127,8 +173,8 @@ internal class PrologMachine(
             if (world.chronometer.leap()) return timeOut()
             val solution =
                 when (location) {
-                    Location.SELECT -> select()
-                    Location.BACKTRACK -> backtrack()
+                    Location.SELECT -> select().also { if (it == null && frontierMode) suspend() }
+                    Location.BACKTRACK -> if (frontierMode) schedule() else backtrack()
                 }
             if (solution != null) return solution
         }
@@ -157,7 +203,7 @@ internal class PrologMachine(
 
     private fun answer(): Solution {
         if (world.chronometer.checkNow()) return timeOut()
-        if (choices.isEmpty()) finished = true else location = Location.BACKTRACK
+        if (choices.isEmpty() && frontier.isEmpty()) finished = true else location = Location.BACKTRACK
         resumed = true
         return Solution.yes(query, querySubstitution())
     }
@@ -167,6 +213,7 @@ internal class PrologMachine(
         when (val decision = world.interception?.exit(frame.invocation, ::bound) { view(frame) }) {
             is Decision.Fail -> null.also { location = Location.BACKTRACK }
             is Decision.Halt -> haltOn(decision, frame)
+            is Decision.Retry -> retry(frame)
             else -> null
         }
 
@@ -199,6 +246,7 @@ internal class PrologMachine(
             val procedure = frame.procedure?.extractSignature() ?: QUERY
             return raise(TypeError.forGoal(context(frame), procedure, TypeError.Expected.CALLABLE, goal), frame)
         }
+        rejection(goal)?.let { return unsupported(it, frame) }
         val signature = goal.extractSignature()
         return when {
             world.libraries.hasPrimitive(signature) -> callPrimitive(bound(goal), signature, frame, rest)
@@ -230,6 +278,8 @@ internal class PrologMachine(
             is Decision.Fail -> REFUSED.also { location = Location.BACKTRACK }
             is Decision.Redirect -> REFUSED.also { cont = Cont(decision.goal, frame, rest) }
             is Decision.Halt -> haltOn(decision, frame)
+            // not allowed at CALL ports
+            is Decision.Retry -> error("Decision.Retry at a CALL port")
         }
     }
 
@@ -262,6 +312,7 @@ internal class PrologMachine(
                 }
             if (more) {
                 val lookahead = primitive.alternatives == Alternatives.LOOKAHEAD_SAFE
+                if (frontierMode) return suspendAll(first, responses, false, callee, rest, lookahead)
                 push(Choice(responses, false, callee, rest, bindings.mark, lookahead))
             }
             respond(first, callee, rest)
@@ -300,6 +351,11 @@ internal class PrologMachine(
     }
 
     private fun push(choice: Choice) {
+        if (frontierMode) {
+            // a clause alternative is one more resolution step than the branch it is suspended from
+            frontier.add(Suspended(++branches, depth + if (choice.isRules) 1 else 0, bindings.copy(), null, choice))
+            return
+        }
         choices.add(choice)
         if (!choice.frame.procedure.isControlConstruct) world.counters?.countChoicePoint(open = choices.size)
     }
@@ -334,9 +390,104 @@ internal class PrologMachine(
                 resolved = !incremental,
             )
         val first = alternatives.next()
-        if (alternatives.hasNext()) push(Choice(alternatives, true, callee, rest, bindings.mark))
+        if (alternatives.hasNext()) {
+            if (frontierMode) return suspendAll(first, alternatives, true, callee, rest)
+            push(Choice(alternatives, true, callee, rest, bindings.mark))
+        }
+        depth++
         return execute(first, callee, rest)
     }
+
+    // frontier mode: all the alternatives of a call, the first one included, are left to the scheduler
+    private fun suspendAll(
+        first: Any,
+        others: Iterator<Any>,
+        isRules: Boolean,
+        callee: Frame,
+        rest: Cont?,
+        lookahead: Boolean = true,
+    ): Solution? {
+        val all =
+            iterator {
+                yield(first)
+                yieldAll(others)
+            }
+        push(Choice(all, isRules, callee, rest, bindings.mark, lookahead))
+        location = Location.BACKTRACK
+        return null
+    }
+
+    // frontier mode: the current branch, still going, joins the frontier, so that the scheduler picks what goes on
+    private fun suspend() {
+        if (location != Location.SELECT) return
+        frontier.add(Suspended(branch, depth, bindings, cont))
+        location = Location.BACKTRACK
+    }
+
+    // frontier mode: advances the branch the scheduler picks, or ends the search if none is left
+    private fun schedule(): Solution? {
+        if (frontier.isEmpty()) {
+            finished = true
+            return Solution.no(query)
+        }
+        val index = scheduler!!.select(frontier)
+        require(index in frontier.indices) { "Branch index $index out of ${frontier.indices}" }
+        val next = frontier.removeAt(index)
+        bindings = next.bindings
+        depth = next.depth
+        location = Location.SELECT
+        val choice = next.choice
+        if (choice == null) {
+            branch = next.id
+            cont = next.cont
+            return null
+        }
+        branch = ++branches
+        return try {
+            if (!choice.alternatives.hasNext()) return null.also { location = Location.BACKTRACK }
+            val alternative = choice.alternatives.next()
+            // the alternatives left stay suspended, with the bindings of the choice point
+            if (!choice.lookahead || choice.alternatives.hasNext()) {
+                frontier.add(Suspended(next.id, next.depth, bindings.copy(), null, choice))
+            }
+            if (choice.isRules) {
+                execute(alternative as Rule, choice.frame, choice.cont)
+            } else {
+                respond(alternative as Solve.Response, choice.frame, choice.cont)
+            }
+        } catch (error: ResolutionException) {
+            raise(error.updateLastContext(context(choice.frame.skipThrow())), choice.frame)
+        }
+    }
+
+    /**
+     * Frontier mode only supports a pure fragment of Prolog: user predicates, conjunctions, `true`, `fail`, and the
+     * primitives in [PURE_PRIMITIVES]. Why [goal] is out of it, if it is; `null` otherwise.
+     */
+    private fun rejection(goal: Struct): String? {
+        if (!frontierMode) return null
+        val signature = goal.extractSignature()
+        return when {
+            goal.isTruth -> null
+            goal.isAtom && goal.castToAtom().value == "!" -> "cut"
+            world.libraries.hasPrimitive(signature) ->
+                if (signature in PURE_PRIMITIVES) null else "the built-in ${signature.toIndicator()}"
+            signature.toIndicator() in world.libraries.asTheory(unificator) ->
+                "the control construct or library predicate ${signature.toIndicator()}"
+            else -> null
+        }
+    }
+
+    private fun unsupported(
+        reason: String,
+        frame: Frame,
+    ): Solution =
+        halt(
+            SystemError(
+                message = "Unsupported with a branch scheduler other than depth-first: $reason",
+                context = context(frame),
+            ),
+        )
 
     // the FSM's last-call optimisation: a self-recursive call that ends its caller's body drops the caller's frame
     private fun isTailCall(
@@ -408,6 +559,7 @@ internal class PrologMachine(
                     continue
                 }
                 is Decision.Halt -> return haltOn(decision, choice.frame)
+                is Decision.Retry -> return retry(choice.frame)
                 else -> Unit
             }
             bindings.undo(choice.trailMark)
@@ -441,25 +593,49 @@ internal class PrologMachine(
     ): Solution? {
         if (error is LogicError) {
             val ball = if (error is MessageError) error.content else error.errorStruct
-            for (catcher in generateSequence(frame) { it.parent }.filter { it.isCatch }) {
+            // the catcher is found without undoing anything, so that an EXCEPTION port can still retry its call
+            val catcher = generateSequence(frame) { it.parent }.filter { it.isCatch }.firstOrNull { it.catches(ball) }
+            if (catcher != null) {
+                world.interception?.exception(error, catcher.invocation) { view(catcher) }?.let {
+                    return onException(it, frame)
+                }
                 bindings.undo(catcher.trailMark)
                 cut(catcher)
                 val catchGoal = catcher.called!!
-                val mgu = unificator.mgu(catchGoal[1], ball)
-                if (mgu is Substitution.Unifier) {
-                    world.interception?.exception(error, catcher.invocation) { view(catcher) }?.let {
-                        return haltOn(it, catcher)
-                    }
-                    bindings.bindAll(mgu, unificator)
-                    cont = goals(bindings.resolve(catchGoal[2]), catcher.parent!!, catcher.after)
-                    location = Location.SELECT
-                    return null
-                }
+                bindings.bindAll(unificator.mgu(catchGoal[1], ball).castToUnifier(), unificator)
+                cont = goals(bindings.resolve(catchGoal[2]), catcher.parent!!, catcher.after)
+                location = Location.SELECT
+                return null
             }
         }
         val public = if (error is MessageError) SystemError.forUncaughtError(error) else error
-        world.interception?.exception(public, null) { view(frame) }?.let { return haltOn(it, frame) }
+        world.interception?.exception(public, null) { view(frame) }?.let { return onException(it, frame) }
         return halt(public)
+    }
+
+    // whether this catch/3 frame's catcher, as it was when catch/3 was called, unifies with [ball]
+    private fun Frame.catches(ball: Term): Boolean =
+        unificator.mgu(bindings.resolveAt(procedure!![1], trailMark), ball) is Substitution.Unifier
+
+    private fun onException(
+        decision: Decision,
+        frame: Frame,
+    ): Solution? =
+        when (decision) {
+            is Decision.Retry -> {
+                val id = world.interception!!.retried
+                retry(generateSequence(frame) { it.parent }.first { it.invocation == id })
+            }
+            else -> haltOn(decision as Decision.Halt, frame)
+        }
+
+    // runs [frame]'s call again from its CALL: its bindings undone, its choice points dropped (Decision.Retry)
+    private fun retry(frame: Frame): Solution? {
+        bindings.undo(frame.trailMark)
+        cut(frame)
+        cont = Cont(frame.procedure, frame.parent!!, frame.after)
+        location = Location.SELECT
+        return null
     }
 
     private fun haltOn(
@@ -596,5 +772,42 @@ internal class PrologMachine(
 
         // a CALL decision that replaced the call without producing a solution
         val REFUSED: Solution = Solution.no(Struct.of("refused"))
+
+        // the built-ins frontier mode supports: they neither change the world nor run goals
+        val PURE_PRIMITIVES: Set<Signature> =
+            listOf(
+                "=" to 2,
+                "\\=" to 2,
+                "==" to 2,
+                "\\==" to 2,
+                "@<" to 2,
+                "@>" to 2,
+                "@=<" to 2,
+                "@>=" to 2,
+                "is" to 2,
+                "<" to 2,
+                ">" to 2,
+                "=<" to 2,
+                ">=" to 2,
+                "=:=" to 2,
+                "=\\=" to 2,
+                "var" to 1,
+                "nonvar" to 1,
+                "atom" to 1,
+                "number" to 1,
+                "integer" to 1,
+                "float" to 1,
+                "atomic" to 1,
+                "compound" to 1,
+                "callable" to 1,
+                "ground" to 1,
+                "is_list" to 1,
+                "functor" to 3,
+                "arg" to 3,
+                "=.." to 2,
+                "copy_term" to 2,
+                "between" to 3,
+                "succ" to 2,
+            ).map { (name, arity) -> Signature(name, arity) }.toSet()
     }
 }

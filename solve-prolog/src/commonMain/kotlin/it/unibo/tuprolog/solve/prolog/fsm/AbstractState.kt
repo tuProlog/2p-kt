@@ -84,6 +84,8 @@ abstract class AbstractState(
                     ),
                 )
             is Decision.Halt -> halt(decision)
+            // not allowed at CALL ports
+            is Decision.Retry -> error("Decision.Retry at a CALL port")
         }
     }
 
