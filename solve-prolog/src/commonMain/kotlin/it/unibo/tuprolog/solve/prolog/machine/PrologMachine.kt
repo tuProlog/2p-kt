@@ -176,7 +176,7 @@ internal class PrologMachine(
         val frame = current.frame
         val run = generateSequence(current) { it.next }.takeWhile { it.frame === frame && it.goal != null }.toList()
         if (run.size < 2) return current
-        val index = policy.select(run.map { bindings.resolve(it.goal!!) }, view(frame))
+        val index = policy.select(run.map { bindings.resolve(it.goal!!) }, view(frame, pinned = false))
         require(index in run.indices) { "Goal index $index out of ${run.indices}" }
         if (index == 0) return current
         var rest = run.last().next
@@ -243,7 +243,12 @@ internal class PrologMachine(
         val callee = Frame(goal, frame, frame.depth + 1, choices.size, bindings.mark, rest, invocation)
         val primitive = world.libraries.primitives[signature] ?: error("Inconsistent primitive lookup for $signature")
         return try {
-            val request = Solve.Request(signature, goal.args, ReadOnlyExecutionContext(context(callee, rest)))
+            val request =
+                Solve.Request(
+                    signature,
+                    goal.args,
+                    ReadOnlyExecutionContext(context(callee, rest, pinned = false)),
+                )
             val responses = primitive.solve(request).iterator()
             if (!responses.hasNext()) return null.also { location = Location.BACKTRACK }
             val first = responses.next()
@@ -302,7 +307,7 @@ internal class PrologMachine(
         val probe = indexProbe(called)
         val sources = sequenceOf(world.libraries.asTheory(unificator), world.staticKb, world.dynamicKb)
         val candidates = sources.flatMap { it.selectClauses(called, probe) }
-        val ordered = world.ruleSelection?.order(bound(goal), candidates, view(frame)) ?: candidates
+        val ordered = world.ruleSelection?.order(bound(goal), candidates, view(frame, pinned = false)) ?: candidates
         val alternatives = ordered.iterator()
         if (!alternatives.hasNext()) return missingProcedure(sources, goal.extractSignature(), frame)
         val tail = isTailCall(goal, frame, rest)
@@ -520,21 +525,28 @@ internal class PrologMachine(
                 generateSequence(rest) { it.next }.flatMap { it.goal?.variables ?: emptySequence() },
         )
 
+    // pinned unless read right away: the bindings it shows may change before it is read
     private fun context(
         frame: Frame,
         rest: Cont? = null,
+        pinned: Boolean = true,
     ): ExecutionContext {
         val goal = selectedGoal
-        return CallContext(world, frame.called, { substitution(frame, goal, rest) }) {
-            generateSequence(frame) { it.parent }.map { it.called ?: Struct.of("?-", query) }.toList()
-        }
+        val context =
+            CallContext(world, frame.called, { substitution(frame, goal, rest) }) {
+                generateSequence(frame) { it.parent }.map { it.called ?: Struct.of("?-", query) }.toList()
+            }
+        return if (pinned) context.pin() else context
     }
 
     // the frame's procedure, resolved
     private val Frame.called: Struct?
         get() = if (resolved) procedure else procedure?.let(::bound)
 
-    private fun view(frame: Frame): ExecutionContext = ReadOnlyExecutionContext(context(frame))
+    private fun view(
+        frame: Frame,
+        pinned: Boolean = true,
+    ): ExecutionContext = ReadOnlyExecutionContext(context(frame, pinned = pinned))
 
     /**
      * The rules of this theory whose head unifies with [goal], renamed apart: candidates come from the indexes, and are
