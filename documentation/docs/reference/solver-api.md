@@ -44,6 +44,28 @@ val solver = Solver.prolog.solverWithDefaultBuiltins()
 val solutions = solver.solve(Struct.of("append", listA, listB, result))
 ```
 
+### Cancelling and closing a resolution
+
+`solve` returns a plain `Sequence`: stopping iteration (e.g. `take(1)`) just leaves the resolution to the garbage
+collector, and nothing tells it to release what it holds. `solveStream` returns the same solutions as a
+`SolutionStream`, an `Iterator<Solution>` that is also `AutoCloseable` (#1010):
+
+- `cancel()` asks the resolution to stop. It can be called from any thread, or from an interceptor or a primitive of
+  the same resolution. The solution being computed, or the next one asked for, is a `Solution.Halt` with a
+  `ResolutionCancelledException`; then the stream ends. `:solve-prolog` checks at every inference step, so it also
+  stops a never-ending search, and the nested resolutions started from it (`Request.subSolver()`) stop as well;
+  solvers built on `AbstractSolver` check between solutions; other solvers end without the `Halt`. Cancellation cannot
+  interrupt a primitive that blocks.
+- `close()` stops the resolution without a further solution, and releases what it holds right away (see
+  [releasing a primitive's resources](primitives-and-functions.md#alternatives-how-solvers-pull-a-primitives-answers)).
+  Call it from the consuming thread, typically through `use`.
+
+```kotlin
+solver.solveStream(Struct.of("member", x, listOfTerms)).use { stream ->
+    val first = stream.next() // the stream is closed when the block ends
+}
+```
+
 ## `SolveOptions`
 
 ```kotlin

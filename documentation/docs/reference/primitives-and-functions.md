@@ -91,6 +91,12 @@ val gen = Primitive.of(Alternatives.LOOKAHEAD_SAFE) { request ->
 
 `:solve-prolog` follows `alternatives` (#1010).
 
+An `ON_DEMAND` primitive's answers may hold a resource, e.g. a file read one line per answer. If the iterator of the
+`Sequence` it returns implements `AutoCloseable`, `:solve-prolog` closes it once it needs no more answers from it:
+when they run out (or, for `AT_MOST_ONE`, after the first), or earlier on a cut, an exception unwinding past its choice
+point, a cancellation, or `SolutionStream.close()` (#1010). An abandoned plain `solve` sequence closes nothing. Only the primitive's own iterator is closed: the relation base classes (`BinaryRelation`, ...) map
+their answers into a new sequence, so a primitive that needs this returns its responses directly.
+
 ### `PrimitiveWrapper`
 
 Concrete primitives extend `PrimitiveWrapper<C>`, implementing `uncheckedImplementation(request): Sequence<Solve.Response>`;

@@ -4,7 +4,9 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.IteratorSolutionStream
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolutionStream
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.InputChannel
@@ -15,6 +17,7 @@ import it.unibo.tuprolog.solve.directives.ClausePartition
 import it.unibo.tuprolog.solve.directives.partition
 import it.unibo.tuprolog.solve.directives.plus
 import it.unibo.tuprolog.solve.distinctSolutions
+import it.unibo.tuprolog.solve.exception.ResolutionCancelledException
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.exception.warning.InitializationIssue
 import it.unibo.tuprolog.solve.flags.FlagStore
@@ -206,6 +209,15 @@ abstract class AbstractSolver<E : ExecutionContext>(
         }
         return solutionSequence
     }
+
+    // cancellation is checked between solutions; solvers that can check during resolution override this
+    override fun solveStream(
+        goal: Struct,
+        options: SolveOptions,
+    ): SolutionStream =
+        IteratorSolutionStream(solve(goal, options).iterator()) {
+            Solution.halt(goal, ResolutionCancelledException(context = currentContext))
+        }
 
     protected abstract fun solveImpl(
         goal: Struct,

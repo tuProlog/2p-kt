@@ -65,6 +65,22 @@ interface Solver : ExecutionContextAware {
         options: SolveOptions,
     ): Sequence<Solution>
 
+    /**
+     * Solves [goal] as [solve] does, returning its solutions as a [SolutionStream]: one that can be cancelled, and
+     * closed to release what the resolution holds (#1010). This default checks cancellation between solutions, and
+     * ends without a [Solution.Halt], having no context to report it in; solvers built on
+     * [it.unibo.tuprolog.solve.impl.AbstractSolver] answer the [Solution.Halt].
+     */
+    @JsName("solveStreamWithOptions")
+    fun solveStream(
+        goal: Struct,
+        options: SolveOptions,
+    ): SolutionStream = IteratorSolutionStream(solve(goal, options).iterator())
+
+    /** Shorthand for [solveStream] with [SolveOptions.DEFAULT]. */
+    @JsName("solveStream")
+    fun solveStream(goal: Struct): SolutionStream = solveStream(goal, SolveOptions.DEFAULT)
+
     /** Shorthand for [solveList] with `options` set to [SolveOptions.allLazilyWithTimeout] of [timeout]. */
     @JsName("solveListWithTimeout")
     fun solveList(
