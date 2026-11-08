@@ -1,3 +1,23 @@
+## [3.0.8](https://github.com/tuProlog/2p-kt/compare/3.0.7...3.0.8) (2026-11-08)
+
+### Dependency updates
+
+* **deps:** update dependency com.google.devtools.ksp to v2.3.13 ([#1065](https://github.com/tuProlog/2p-kt/issues/1065)) ([c3dedfd](https://github.com/tuProlog/2p-kt/commit/c3dedfd82b3066ba642ad84c6eac7b04a20b969e))
+* **deps:** update gradle to v9.9.0 ([#1079](https://github.com/tuProlog/2p-kt/issues/1079)) ([246c637](https://github.com/tuProlog/2p-kt/commit/246c63748382c25cec06b18417b817c247a81475))
+* **deps:** update ktmpp to v6.1.2 ([#1077](https://github.com/tuProlog/2p-kt/issues/1077)) ([d54fdb8](https://github.com/tuProlog/2p-kt/commit/d54fdb84ff18ed35b1ddd90fd1ec8b92866a8440))
+* **deps:** update ktmpp to v6.1.3 ([#1080](https://github.com/tuProlog/2p-kt/issues/1080)) ([8bef104](https://github.com/tuProlog/2p-kt/commit/8bef104ac31c01375059e9bd6fdb82e3203ddb23))
+* **deps:** update plugin gitsemver to v7.3.3 ([#1066](https://github.com/tuProlog/2p-kt/issues/1066)) ([8eb9254](https://github.com/tuProlog/2p-kt/commit/8eb9254d84a8f44dcbca4c5c908317d3c09447fd))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.29 ([#1081](https://github.com/tuProlog/2p-kt/issues/1081)) ([ae9e926](https://github.com/tuProlog/2p-kt/commit/ae9e9269aa17a99e57d4596acf9389e6a1bda4be))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.30 ([#1084](https://github.com/tuProlog/2p-kt/issues/1084)) ([6e6cab1](https://github.com/tuProlog/2p-kt/commit/6e6cab13cd6da491aa7c09d0d3b308475381499f))
+
+### Bug Fixes
+
+* **deps:** update jackson monorepo to v2.23.0 ([#1083](https://github.com/tuProlog/2p-kt/issues/1083)) ([9cf6826](https://github.com/tuProlog/2p-kt/commit/9cf68266bb25d9db00bda70161ccccebc2d4d28e))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.51 ([#1072](https://github.com/tuProlog/2p-kt/issues/1072)) ([672d6cf](https://github.com/tuProlog/2p-kt/commit/672d6cf676e5afa2819497667d9cd491f469a587))
+
 ## [3.0.7](https://github.com/tuProlog/2p-kt/compare/3.0.6...3.0.7) (2026-11-04)
 
 ### Dependency updates
