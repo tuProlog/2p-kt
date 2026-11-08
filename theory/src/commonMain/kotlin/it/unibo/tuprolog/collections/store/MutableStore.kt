@@ -67,6 +67,10 @@ internal class MutableStore(
         val (first, second) = procedure.candidates(query)
         if (first.size == 0 && second.size == 0) return emptySequence()
         val generation = generation
+        // no head argument to filter on (zero arity): see FrozenProcedure.matching
+        if (query.indexableHead() == null) {
+            return Sequence { first.visibleAt(generation) { it } }.filter { accept(it.clause) }
+        }
         return Sequence {
             // MutableProcedure.candidates gives EMPTY_VIEW as second view only when it scans the whole procedure
             val keys = KeyFilter.of(unificator, query, indexed = second !== EMPTY_VIEW)

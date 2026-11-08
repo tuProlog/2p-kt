@@ -77,7 +77,14 @@ internal class FrozenProcedure(
             PositionsToClauses(if (keys == null) candidates else MatchingPositions(candidates, clauses, keys), clauses)
         }
 
-    fun matching(query: Clause): Sequence<Clause> = Sequence { PositionsToClauses(matches(query), clauses) }
+    // No head argument to filter on (zero arity): a plain Sequence.filter, as before #1019. Its predicate call site is
+    // shared and megamorphic, so C2 compiles the unification on its own; inlined into a loop of ours, it ran ~15% slower.
+    fun matching(query: Clause): Sequence<Clause> =
+        if (query.indexableHead() == null) {
+            clauses.asSequence().filter { unificator.match(query, it) }
+        } else {
+            Sequence { PositionsToClauses(matches(query), clauses) }
+        }
 
     /** A copy of this procedure with [added] at its beginning or end. */
     fun plus(
