@@ -120,8 +120,9 @@ data class PrologExecutionContext(
         if (goals.isOver) null else goals.current?.apply(substitution)
     }
 
+    // every goal still to run, not just the current one: a binding made now may be needed by a later goal (#1078)
     private val locallyInterestingVariables: Sequence<Var>
-        get() = relevantVariables.asSequence() + (goals.current?.variables ?: emptySequence())
+        get() = relevantVariables.asSequence() + goals.asSequence().flatMap { it.variables }
 
     private val interestingVariables: Sequence<Var> by lazy {
         (locallyInterestingVariables + query.variables + pathToRoot.flatMap { it.locallyInterestingVariables })
@@ -131,7 +132,7 @@ data class PrologExecutionContext(
 
     /**
      * Whether [variable] is still relevant to this frame or any of its ancestors (i.e. is in [relevantVariables],
-     * or occurs in this frame's [currentGoal] or [query], or in an ancestor's). Used when popping a finished
+     * or occurs in this frame's remaining [goals] or [query], or in an ancestor's). Used when popping a finished
      * frame back to its [parent] (in [it.unibo.tuprolog.solve.prolog.fsm.StateGoalSelection]) to filter the
      * [substitution] handed up, discarding bindings for variables local to the finished sub-goal.
      */

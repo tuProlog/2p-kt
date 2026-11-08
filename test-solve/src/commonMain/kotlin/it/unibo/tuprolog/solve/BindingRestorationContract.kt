@@ -68,6 +68,29 @@ fun bindingRestorationContract(
         solverFactory.answers("t(0)", "t(_) :- B = 6, C = 7.5, C > B.") shouldBe listOf("yes")
     }
 
+    scenario("binding-restoration/clause-local-bindings-reach-the-caller") {
+        // P and Q are bound before A and B are bound to them (#1078)
+        solverFactory.answers("t(A, B)", "t(A, B) :- P = p, Q = q, A = P, B = Q.") shouldBe listOf("yes: A = p, B = q")
+    }
+
+    scenario("binding-restoration/clause-local-bindings-through-user-predicates") {
+        solverFactory.answers(
+            "t(A, B)",
+            "id(L, L).",
+            "d([1], [2]).",
+            "t(A, B) :- d(P, Q), id(P, A), id(Q, B).",
+        ) shouldBe
+            listOf("yes: A = [1], B = [2]")
+    }
+
+    scenario("binding-restoration/clause-local-bindings-reach-inequality") {
+        // X and Y are bound by the parent/2 calls before \= and \== run (#1073)
+        val family = arrayOf("parent(alice, bob).", "parent(alice, charlie).")
+        val distinct = listOf("yes: X = bob, Y = charlie", "yes: X = charlie, Y = bob", "no")
+        solverFactory.answers("s(X, Y)", *family, "s(X, Y) :- parent(Z, X), parent(Z, Y), X \\= Y.") shouldBe distinct
+        solverFactory.answers("s(X, Y)", *family, "s(X, Y) :- parent(Z, X), parent(Z, Y), X \\== Y.") shouldBe distinct
+    }
+
     scenario("binding-restoration/shared-variable-across-clauses") {
         solverFactory.answers("r(A, B), (var(A) -> A = free ; true)", "r(X, X) :- X = 1.", "r(X, Y) :- Y = 2.") shouldBe
             listOf("yes: A = 1, B = 1", "yes: A = free, B = 2")

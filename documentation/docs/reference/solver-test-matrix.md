@@ -33,11 +33,6 @@ of the 256 MB used by `jvmTest`, so that accidental recursion in the engine show
   (`fsm/Utils.kt`, `appendPrimitivesAndChoicePoints`). A generator therefore runs one step ahead, cut and `once/1`
   still pull one extra alternative, and an alternative that should never run (because it throws or diverges) does.
   The seven `laziness/*` cases are disabled for this reason.
-- **Clause-local bindings lost.** With `TrackVariables` off (the default), a binding of a variable that occurs only in
-  a clause body is dropped by the next primitive: `t(_) :- B = 6, C = 7.5, C > B.` raises an instantiation error on
-  `B`. This is already on `develop`, and is likely the same root cause as #1073. The
-  `binding-restoration/clause-local-bindings-survive-primitives` case is disabled for this reason. Benchmark workloads
-  hitting it (`strips-*`, `arithmetic`) turn `TrackVariables` on, which makes long deterministic loops roughly cubic.
 - **Superlinear deep execution.** Non-tail recursion, redo through deep stacks and long list processing cost far more
   than linear time. At depth 2000 they take 100–240 s on the JVM, and 20,000-deep non-tail recursion runs out of a
   512 MB heap. Those `DeepExecutionSpec` cases therefore run at depth 300; tail recursion runs at 20,000.

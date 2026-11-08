@@ -243,10 +243,7 @@ class PrologSolverSpec :
         // With TrackVariables off (the default), bindings of clause-local variables are dropped by the next primitive:
         // likely the same root cause as #1073
         include(
-            bindingRestorationContract(
-                PrologSolverFactory,
-                disabled = setOf("binding-restoration/clause-local-bindings-survive-primitives"),
-            ),
+            bindingRestorationContract(PrologSolverFactory),
         )
         include(catchRestorationContract(PrologSolverFactory))
         include(controlScopeContract(PrologSolverFactory))
