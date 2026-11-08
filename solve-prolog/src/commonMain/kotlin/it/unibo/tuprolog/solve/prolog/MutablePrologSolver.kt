@@ -239,7 +239,9 @@ internal class MutablePrologSolver :
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>,
-    ) = MutablePrologSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = MutablePrologSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings).also {
+        it.engine = engine
+    }
 
     override fun clone(): MutablePrologSolver = copy()
 }

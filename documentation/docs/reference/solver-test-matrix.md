@@ -29,12 +29,19 @@ These pin down behaviour that a stateful, trail-based engine could break without
 `:solve-prolog`'s `DeepExecutionSpec` also runs, through the JVM task `jvmTestSmallStack`, with a 1 MB stack instead
 of the 256 MB used by `jvmTest`, so that accidental recursion in the engine shows up. It is part of `check`.
 
-### Known gaps of the current `:solve-prolog` engine
+`:solve-prolog` has two engines while #1010 is in progress: the reference FSM (`PrologSolverSpec`) and the stateful
+machine (`MachineSolverSpec`, through the internal `MachinePrologSolverFactory`). Both run every contract above and the
+module's own specs, and `DifferentialSpec` checks that they give the same answers on programs mixing recursion,
+backtracking, cut, exceptions, meta-calls, all-solutions predicates and database updates.
+
+### Known gaps of the current `:solve-prolog` engines
 
 - **Primitive lookahead.** A primitive's next alternative is pulled before its current answer is used
-  (`fsm/Utils.kt`, `appendPrimitivesAndChoicePoints`). A generator therefore runs one step ahead, cut and `once/1`
+  (`fsm/Utils.kt`, `appendPrimitivesAndChoicePoints`; the machine does the same, to give the same answers). A generator therefore runs one step ahead, cut and `once/1`
   still pull one extra alternative, and an alternative that should never run (because it throws or diverges) does.
   The seven `laziness/*` cases are disabled for this reason.
 - **Superlinear deep execution.** Non-tail recursion, redo through deep stacks and long list processing cost far more
   than linear time. At depth 2000 they take 100–240 s on the JVM, and 20,000-deep non-tail recursion runs out of a
-  512 MB heap. Those `DeepExecutionSpec` cases therefore run at depth 300; tail recursion runs at 20,000.
+  512 MB heap. Those `DeepExecutionSpec` cases therefore run at depth 300 on the FSM; tail recursion runs at 20,000. The
+  machine runs them at 2,000 (all of them pass at 20,000 with a 1 MB stack, but resolving goals still copies their
+  arguments: 14 s and 306 s for the non-tail and copy cases).

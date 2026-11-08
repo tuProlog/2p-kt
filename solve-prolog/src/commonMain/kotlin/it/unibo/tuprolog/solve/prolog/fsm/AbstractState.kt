@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.intercept.Decision
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
 import it.unibo.tuprolog.solve.prolog.stdlib.primitive.Throw
 import it.unibo.tuprolog.utils.cursor
 
@@ -67,7 +68,12 @@ abstract class AbstractState(
     ): State? {
         val interception = context.interception
         if (interception == null || goal.isControlConstruct) return null
-        return when (val decision = interception.call(invocation, goal, context)) {
+        return when (
+            val decision =
+                interception.call(invocation, goal, context.depth + 1) {
+                    ReadOnlyExecutionContext(context)
+                }
+        ) {
             is Decision.Continue -> null
             is Decision.Fail -> StateBacktracking(context.copy(step = nextStep()))
             is Decision.Redirect ->

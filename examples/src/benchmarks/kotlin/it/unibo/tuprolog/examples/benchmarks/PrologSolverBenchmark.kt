@@ -11,7 +11,10 @@ import kotlinx.benchmark.Scope
 import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
 
-/** Average time to solve each [Workload] to exhaustion with `:solve-prolog`, per [TimeoutSetting] and [ChronometerSetting] (#1012). */
+/**
+ * Average time to solve each [Workload] to exhaustion with `:solve-prolog`, per [TimeoutSetting] and [ChronometerSetting]
+ * (#1012), and per engine (#1010).
+ */
 @State(Scope.Benchmark)
 class PrologSolverBenchmark {
     @Param(
@@ -40,6 +43,10 @@ class PrologSolverBenchmark {
     @Param("direct", "adaptive")
     var chronometer: String = "direct"
 
+    /** `:solve-prolog`'s engine: the reference FSM, or the stateful machine of #1010. */
+    @Param("fsm", "machine")
+    var engine: String = "fsm"
+
     private lateinit var solver: Solver
     private lateinit var goal: Struct
     private lateinit var options: SolveOptions
@@ -49,9 +56,13 @@ class PrologSolverBenchmark {
         val workload = Workload.byId(workload)
         solver = PrologSolverFactory.solverWithDefaultBuiltins(staticKb = workload.theory, flags = workload.flags)
         goal = workload.goal
-        workload.checkSolution(solver.solveOnce(goal))
         options =
-            TimeoutSetting.byId(timeout).options.setChronometerFactory(ChronometerSetting.byId(chronometer).factory)
+            TimeoutSetting
+                .byId(timeout)
+                .options
+                .setChronometerFactory(ChronometerSetting.byId(chronometer).factory)
+                .setOptions(mapOf("solve-prolog.engine" to engine))
+        workload.checkSolution(solver.solve(goal, options).first())
     }
 
     @Benchmark

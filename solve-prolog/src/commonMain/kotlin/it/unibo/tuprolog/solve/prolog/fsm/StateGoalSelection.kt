@@ -32,7 +32,13 @@ data class StateGoalSelection(
                     context.copy(step = nextStep()),
                 )
             } else {
-                when (val decision = context.interception?.exit(context)) {
+                when (
+                    val decision =
+                        context.interception?.exit(
+                            context.invocation,
+                            { it[context.substitution].castToStruct() },
+                        ) { ReadOnlyExecutionContext(context) }
+                ) {
                     is Decision.Fail -> return StateBacktracking(context.copy(step = nextStep()))
                     is Decision.Halt -> return halt(decision)
                     else -> Unit
