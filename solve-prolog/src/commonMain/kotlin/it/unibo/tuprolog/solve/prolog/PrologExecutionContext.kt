@@ -86,7 +86,7 @@ data class PrologExecutionContext(
     val depth: Int = 0,
     val step: Long = 0,
     val relevantVariables: KtSet<Var> = emptySet(),
-    val counters: ResolutionCounters? = null,
+    override val counters: ResolutionCounters? = null,
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))

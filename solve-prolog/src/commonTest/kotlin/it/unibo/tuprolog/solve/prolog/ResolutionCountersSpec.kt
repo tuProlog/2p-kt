@@ -35,6 +35,8 @@ class ResolutionCountersSpec :
                 CountsCase("control-constructs", "(p(X) -> true ; fail), call(p(Y))", facts, 2, 4, 2),
                 // the cut prunes p/1's remaining alternatives before they are tried
                 CountsCase("cut", "p(X), !", facts, inferences = 1, alternatives = 1, choicePoints = 1),
+                // findall/3 is one deterministic primitive call, and its nested resolution counts p/1 as above
+                CountsCase("nested-resolution", "findall(X, p(X), L)", facts, 2, 4, 1),
                 // a deterministic call creates no choice point
                 CountsCase(
                     "deterministic",

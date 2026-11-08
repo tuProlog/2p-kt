@@ -208,7 +208,7 @@ sealed class Solve {
         /**
          * Solves [goal] in a nested resolution (via [subSolver]), timed by a child scope of this request's
          * [chronometer] (see [Chronometer.childScope]): on the same timeline, and never outliving this resolution's
-         * deadline, nor `now + limit`.
+         * deadline, nor `now + limit`. It counts into this resolution's [ExecutionContext.counters], if any.
          */
         @JsName("solve")
         fun solve(
@@ -221,7 +221,8 @@ sealed class Solve {
                     .allLazily()
                     .setTimeout(
                         limit,
-                    ).setChronometerFactory(ChronometerFactory.childrenOf(chronometer)),
+                    ).setChronometerFactory(ChronometerFactory.childrenOf(chronometer))
+                    .setCounters(context.counters),
             )
     }
 

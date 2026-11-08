@@ -8,8 +8,8 @@ import kotlin.js.JsName
  * a particular engine, so engines can be compared on the same work. A solver that does not support counting leaves
  * them at zero; one that does not have a notion (e.g. no trail) leaves that count at zero.
  *
- * shortcut: nested resolutions (`findall/3`, `bagof/3`, ...) are not counted, as their options don't carry these
- * counters; add an `ExecutionContext` accessor if benchmarks need them.
+ * Nested resolutions (`findall/3`, `bagof/3`, ...) started via [it.unibo.tuprolog.solve.primitive.Solve.Request.solve]
+ * count into the same instance, through [ExecutionContext.counters].
  *
  * Not thread-safe: use one instance per resolution, or per sequence of resolutions run one after the other.
  */

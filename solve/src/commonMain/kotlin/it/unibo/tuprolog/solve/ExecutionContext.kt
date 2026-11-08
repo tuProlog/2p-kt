@@ -56,6 +56,14 @@ interface ExecutionContext :
     val customData: CustomDataStore
 
     /**
+     * The resolution's opt-in [ResolutionCounters] (see [SolveOptions.counters]), or `null` if nothing is counted.
+     * Nested resolutions started via [it.unibo.tuprolog.solve.primitive.Solve.Request.solve] count into it too.
+     */
+    @JsName("counters")
+    val counters: ResolutionCounters?
+        get() = null
+
+    /**
      * Creates a new, independent [Solver] sharing this context's state (unless overridden by the arguments), to be
      * used e.g. by primitives that need to recursively solve a sub-goal (see
      * [it.unibo.tuprolog.solve.primitive.Solve.Request.subSolver]).
