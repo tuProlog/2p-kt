@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSideEffectManager
 import it.unibo.tuprolog.solve.testutils.SolveUtils.aSolution
+import it.unibo.tuprolog.solve.testutils.SolveUtils.anExecutionContext
 import it.unibo.tuprolog.solve.testutils.SolveUtils.someSideEffects
 
 /**
@@ -16,16 +17,17 @@ import it.unibo.tuprolog.solve.testutils.SolveUtils.someSideEffects
 class SolveResponseSpec :
     FunSpec({
         val aResponse =
-            Solve.Response(aSolution, aSideEffectManager, someSideEffects)
+            Solve.Response(aSolution, anExecutionContext, aSideEffectManager, someSideEffects)
 
         test("response-inserted-data-correct") {
             aResponse.solution shouldBe aSolution
+            aResponse.context shouldBe anExecutionContext
             aResponse.sideEffectManager shouldBe aSideEffectManager
             aResponse.sideEffects shouldBe someSideEffects
         }
 
         test("response-default-values-correct") {
-            val toBeTested = Solve.Response(aSolution)
+            val toBeTested = Solve.Response(aSolution, anExecutionContext)
 
             toBeTested.sideEffectManager.shouldBeNull()
         }

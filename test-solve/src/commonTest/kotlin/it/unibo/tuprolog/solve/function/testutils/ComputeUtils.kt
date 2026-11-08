@@ -40,7 +40,7 @@ internal object ComputeUtils {
     internal val aResult = Empty.list()
 
     /** The response with [aResult] */
-    internal val defaultResponse by lazy { Compute.Response(aResult) }
+    internal val defaultResponse by lazy { Compute.Response(aResult, anExecutionContext) }
 
     /** Utility function to create a request with some default values */
     internal fun createRequest(
