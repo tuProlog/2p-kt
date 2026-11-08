@@ -13,7 +13,9 @@ import it.unibo.tuprolog.theory.Theory
 /**
  * Alternatives are produced on demand (#1010, step 0). `gen/1` is a primitive yielding 1, 2, 3 that logs each
  * alternative as it is pulled, `note/1` logs its argument, and `boom/1` yields 1 and fails the test if its second
- * alternative is ever pulled. The log shows exactly which user code the solver ran, and when.
+ * alternative is ever pulled. The log shows exactly which user code the solver ran, and when. `gen/1` declares no
+ * [it.unibo.tuprolog.solve.primitive.Alternatives], so after its last answer the solver only finds out that there are
+ * no more when asked for another: the query ends with a further `no`.
  */
 fun lazinessContract(
     solverFactory: SolverFactory,
@@ -21,7 +23,7 @@ fun lazinessContract(
 ) = contract(solverFactory, disabled) {
     scenario("laziness/alternatives-interleave-with-continuation") {
         val probe = LazinessProbe(solverFactory)
-        probe.answers("gen(X), note(X)") shouldBe listOf("yes: X = 1", "yes: X = 2", "yes: X = 3")
+        probe.answers("gen(X), note(X)") shouldBe listOf("yes: X = 1", "yes: X = 2", "yes: X = 3", "no")
         probe.log shouldBe listOf("gen(1)", "note(1)", "gen(2)", "note(2)", "gen(3)", "note(3)")
     }
 
@@ -72,7 +74,7 @@ fun lazinessContract(
 
     scenario("laziness/effect-order-across-backtracking") {
         val probe = LazinessProbe(solverFactory, "c(X) :- gen(X), note(X).")
-        probe.answers("c(X), X >= 2, note(done)") shouldBe listOf("yes: X = 2", "yes: X = 3")
+        probe.answers("c(X), X >= 2, note(done)") shouldBe listOf("yes: X = 2", "yes: X = 3", "no")
         probe.log shouldBe
             listOf("gen(1)", "note(1)", "gen(2)", "note(2)", "note(done)", "gen(3)", "note(3)", "note(done)")
     }

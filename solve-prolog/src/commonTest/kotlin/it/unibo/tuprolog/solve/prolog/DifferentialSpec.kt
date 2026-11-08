@@ -9,7 +9,8 @@ import it.unibo.tuprolog.solve.answers
 /**
  * The machine gives the same answers as the FSM (#1010): same order, same bindings, same errors, on programs mixing
  * recursion, backtracking, cut, exceptions, meta-calls, all-solutions predicates and database updates. Variable names
- * made up by renaming differ between engines, so they are normalised.
+ * made up by renaming differ between engines, so they are normalised. The machine pulls primitives' alternatives on
+ * demand, so it may end with a further `no` where the FSM looked ahead: a final `no` is ignored.
  */
 class DifferentialSpec :
     FunSpec({
@@ -90,7 +91,10 @@ class DifferentialSpec :
         val normalised = Regex("""\b_?[A-Z][A-Za-z0-9]*_[0-9]+\b|\b_[0-9]+\b|\b_G[0-9]+\b""")
 
         fun Program.answersOn(factory: SolverFactory): List<String> =
-            factory.answers(query, *clauses.toTypedArray()).map { normalised.replace(it, "_") }
+            factory
+                .answers(query, *clauses.toTypedArray())
+                .map { normalised.replace(it, "_") }
+                .let { if (it.size > 1 && it.last() == "no") it.dropLast(1) else it }
 
         withTests(nameFn = { "same-answers/${it.id}" }, programs) { program ->
             program.answersOn(MachinePrologSolverFactory) shouldBe program.answersOn(PrologSolverFactory)

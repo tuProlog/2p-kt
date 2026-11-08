@@ -21,6 +21,7 @@ import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.flags.LastCallOptimization
 import it.unibo.tuprolog.solve.flags.Unknown
 import it.unibo.tuprolog.solve.intercept.Decision
+import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
@@ -80,6 +81,9 @@ internal class PrologMachine(
         val frame: Frame,
         val cont: Cont?,
         val trailMark: Int,
+        // whether the alternatives may be pulled ahead, to drop the choice with the last one; otherwise the choice is
+        // found exhausted when resumed
+        val lookahead: Boolean = true,
     )
 
     private enum class Location { SELECT, BACKTRACK }
@@ -91,7 +95,6 @@ internal class PrologMachine(
     private var cont: Cont? = goals(query, rootFrame, null)
     private var location = Location.SELECT
     private var finished = false
-    private var pending: Solution? = null
 
     // each answer gets the whole time budget, as in the FSM: the clock restarts when the search resumes
     private var resumed = false
@@ -106,14 +109,13 @@ internal class PrologMachine(
         onWorld(world)
     }
 
-    override fun hasNext(): Boolean {
-        if (pending == null && !finished) pending = run()
-        return pending != null
-    }
+    // there is another solution until the search is over: with choices left, it may be the final `no`; computing it
+    // waits for next(), as finding it out could run a primitive's alternatives nobody asked for yet
+    override fun hasNext(): Boolean = !finished
 
     override fun next(): Solution {
-        if (!hasNext()) throw NoSuchElementException()
-        return pending!!.also { pending = null }
+        if (finished) throw NoSuchElementException()
+        return run() ?: throw NoSuchElementException()
     }
 
     private fun run(): Solution? {
@@ -252,7 +254,16 @@ internal class PrologMachine(
             val responses = primitive.solve(request).iterator()
             if (!responses.hasNext()) return null.also { location = Location.BACKTRACK }
             val first = responses.next()
-            if (responses.hasNext()) push(Choice(responses, false, callee, rest, bindings.mark))
+            val more =
+                when (primitive.alternatives) {
+                    Alternatives.AT_MOST_ONE -> false
+                    Alternatives.LOOKAHEAD_SAFE -> responses.hasNext()
+                    Alternatives.ON_DEMAND -> true
+                }
+            if (more) {
+                val lookahead = primitive.alternatives == Alternatives.LOOKAHEAD_SAFE
+                push(Choice(responses, false, callee, rest, bindings.mark, lookahead))
+            }
             respond(first, callee, rest)
         } catch (error: ResolutionException) {
             raise(error.updateLastContext(context(callee.skipThrow())), callee)
@@ -405,8 +416,13 @@ internal class PrologMachine(
             }
             location = Location.SELECT
             return try {
+                if (!choice.lookahead && !choice.alternatives.hasNext()) {
+                    choices.removeAt(choices.lastIndex)
+                    location = Location.BACKTRACK
+                    continue
+                }
                 val alternative = choice.alternatives.next()
-                if (!choice.alternatives.hasNext()) choices.removeAt(choices.lastIndex)
+                if (choice.lookahead && !choice.alternatives.hasNext()) choices.removeAt(choices.lastIndex)
                 if (choice.isRules) {
                     execute(alternative as Rule, choice.frame, choice.cont)
                 } else {
