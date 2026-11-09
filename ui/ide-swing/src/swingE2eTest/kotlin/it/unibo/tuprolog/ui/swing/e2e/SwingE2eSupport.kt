@@ -98,7 +98,10 @@ private fun FrameFixture.stateSnapshot(): String =
     }.getOrElse { "unavailable: $it" }
 
 /** The text of every currently visible row, top to bottom; robust against exactly how many rows are expanded. */
-fun JTreeFixture.rowTexts(): List<String> = (0 until target().rowCount).map(::valueAt)
+fun JTreeFixture.rowTexts(): List<String> =
+    GuiActionRunner.execute<List<String>> {
+        (0 until target().rowCount).map { target().getPathForRow(it).lastPathComponent.toString() }
+    }
 
 /**
  * Best-effort nudge, on a real (non-Xvfb) desktop, for OS-level window activation: without it, another
