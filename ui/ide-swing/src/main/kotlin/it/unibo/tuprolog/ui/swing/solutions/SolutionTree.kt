@@ -1,8 +1,10 @@
 package it.unibo.tuprolog.ui.swing.solutions
 
+import it.unibo.tuprolog.solve.timing.formatTime
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
-import it.unibo.tuprolog.ui.gui.presentation.timeAnnotation
-import it.unibo.tuprolog.ui.gui.presentation.totalTimeAnnotation
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
@@ -72,7 +74,12 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
             .firstOrNull()
 
     private fun queryNode(entry: SolutionQueryEntry): DefaultMutableTreeNode =
-        DefaultMutableTreeNode(SolutionNodeData.QueryNode(entry.query, entry.solutions.totalTimeAnnotation)).apply {
+        DefaultMutableTreeNode(
+            SolutionNodeData.QueryNode(
+                entry.query,
+                entry.submittedAt?.let { TIMESTAMP_FORMAT.format(Instant.ofEpochMilli(it)) },
+            ),
+        ).apply {
             entry.solutions.forEachIndexed { index, solution -> add(solutionNode(index + 1, solution)) }
             if (entry.hasUnexploredPaths) add(DefaultMutableTreeNode(SolutionNodeData.EllipsisNode))
         }
@@ -85,10 +92,9 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
             is SolutionPresentation.Yes ->
                 DefaultMutableTreeNode(
                     SolutionNodeData.ResultNode(
-                        "$number. " +
+                        "$number. ${solution.timePrefix}" +
                             (solution.solvedQuery?.let { "yes: $it" } ?: "yes.") +
-                            probabilityAnnotation(solution) +
-                            solution.timeAnnotation,
+                            probabilityAnnotation(solution),
                         ResultKind.YES,
                     ),
                 ).apply {
@@ -98,13 +104,13 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
                 }
             is SolutionPresentation.No ->
                 DefaultMutableTreeNode(
-                    SolutionNodeData.ResultNode("$number. no${solution.timeAnnotation}", ResultKind.NO),
+                    SolutionNodeData.ResultNode("$number. ${solution.timePrefix}no", ResultKind.NO),
                 )
             is SolutionPresentation.Halt ->
                 DefaultMutableTreeNode(
                     SolutionNodeData.ResultNode(
-                        "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}" +
-                            solution.timeAnnotation,
+                        "$number. ${solution.timePrefix}" +
+                            "${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}",
                         ResultKind.HALT,
                     ),
                 ).apply {
@@ -129,7 +135,12 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
             ?.let { " (p=%.1f%%)".format(it * PERCENT) }
             .orEmpty()
 
+    private val SolutionPresentation.timePrefix: String
+        get() = time?.let { "[${it.formatTime()}] " }.orEmpty()
+
     private companion object {
+        val TIMESTAMP_FORMAT: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault())
         const val PERCENT = 100.0
     }
 }
