@@ -43,10 +43,6 @@ class PrologSolverBenchmark {
     @Param("direct", "adaptive")
     var chronometer: String = "direct"
 
-    /** `:solve-prolog`'s engine: the reference FSM, or the stateful machine of #1010. */
-    @Param("fsm", "machine")
-    var engine: String = "fsm"
-
     private lateinit var solver: Solver
     private lateinit var goal: Struct
     private lateinit var options: SolveOptions
@@ -61,7 +57,6 @@ class PrologSolverBenchmark {
                 .byId(timeout)
                 .options
                 .setChronometerFactory(ChronometerSetting.byId(chronometer).factory)
-                .setOptions(mapOf("solve-prolog.engine" to engine))
         workload.checkSolution(solver.solve(goal, options).first())
     }
 

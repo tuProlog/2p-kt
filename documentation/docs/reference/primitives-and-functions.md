@@ -89,7 +89,7 @@ val gen = Primitive.of(Alternatives.LOOKAHEAD_SAFE) { request ->
 }
 ```
 
-The stateful engine of `:solve-prolog` (#1010) follows `alternatives`; the FSM engine always looks ahead.
+`:solve-prolog` follows `alternatives` (#1010).
 
 ### `PrimitiveWrapper`
 

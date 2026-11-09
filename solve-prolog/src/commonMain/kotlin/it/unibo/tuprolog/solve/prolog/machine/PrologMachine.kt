@@ -26,9 +26,6 @@ import it.unibo.tuprolog.solve.primitive.Primitive
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
-import it.unibo.tuprolog.solve.prolog.fsm.MatchedRule
-import it.unibo.tuprolog.solve.prolog.fsm.isControlConstruct
-import it.unibo.tuprolog.solve.prolog.fsm.unfoldGoals
 import it.unibo.tuprolog.solve.search.Branch
 import it.unibo.tuprolog.solve.search.BranchScheduler
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
@@ -36,7 +33,7 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
 /**
- * The stateful resolution engine of #1010 (step 3): one per resolution, driven as an [Iterator] of [Solution]s.
+ * The resolution engine of `:solve-prolog` (#1010): one per resolution, driven as an [Iterator] of [Solution]s.
  *
  * Control state is mutable and owned by the machine: a continuation of goals still to run (an immutable linked list
  * shared by choice points, so backtracking restores it by pointer), a stack of choice points, and [Bindings] with a
@@ -44,9 +41,9 @@ import it.unibo.tuprolog.unify.Unificator
  * solver's world state (knowledge bases, flags, libraries, channels) is a [PrologExecutionContext] that changes only
  * through side effects, and is reported to the solver through `onWorld`.
  *
- * Semantics follow the FSM, including its last-call optimisation of self-recursive tail calls, except that a
- * primitive's alternatives are pulled as its [Primitive.alternatives] allows (PR 7), and calls can be retried by an
- * interceptor ([Decision.Retry]).
+ * Self-recursive tail calls drop their caller's frame (last-call optimisation, unless an interceptor is set); a
+ * primitive's alternatives are pulled as its [Primitive.alternatives] allows; an interceptor can retry calls
+ * ([Decision.Retry]).
  *
  * With a [scheduler] other than [BranchScheduler.DEPTH_FIRST], the machine runs in *frontier mode* (#1010, PR 8): a
  * choice point becomes a suspended branch with a copy of the bindings, the scheduler picks the branch to advance after
@@ -104,7 +101,7 @@ internal class PrologMachine(
     private var location = Location.SELECT
     private var finished = false
 
-    // each answer gets the whole time budget, as in the FSM: the clock restarts when the search resumes
+    // each answer gets the whole time budget: the clock restarts when the search resumes
     private var resumed = false
 
     // the goal being called, as written (before resolving its bindings)
@@ -145,7 +142,6 @@ internal class PrologMachine(
         require(!frontierMode || world.interception == null) {
             "A branch scheduler other than depth-first cannot be combined with an interceptor"
         }
-        world.interception?.retrySupported = true
         onWorld(world)
     }
 
@@ -489,7 +485,7 @@ internal class PrologMachine(
             ),
         )
 
-    // the FSM's last-call optimisation: a self-recursive call that ends its caller's body drops the caller's frame
+    // last-call optimisation: a self-recursive call that ends its caller's body drops the caller's frame
     private fun isTailCall(
         goal: Struct,
         frame: Frame,
@@ -649,7 +645,7 @@ internal class PrologMachine(
 
     /**
      * [body] ready to run, as `prepareForExecution` with the current bindings would make it, without resolving them:
-     * goals that are bound variables become their values, unbound ones call/1 (as the FSM does).
+     * goals that are bound variables become their values, unbound ones call/1.
      */
     private fun prepare(body: Term): Term =
         when {
@@ -703,7 +699,7 @@ internal class PrologMachine(
                 .filter { (k, v) -> k != v },
         )
 
-    // the bindings of the variables of the query, of the calls in progress, and of the goals left, as the FSM shows
+    // the bindings of the variables of the query, of the calls in progress, and of the goals left, as the old engine showed
     // them; computed only if a primitive reads them
     private fun substitution(
         frame: Frame,
@@ -742,7 +738,7 @@ internal class PrologMachine(
 
     /**
      * The rules of this theory whose head unifies with [goal], renamed apart: candidates come from the indexes, and are
-     * renamed and unified one at a time, as they are pulled (as in the FSM), always under the bindings of the call.
+     * renamed and unified one at a time, as they are pulled, always under the bindings of the call.
      * With an incremental unificator, each is unified in the bindings, then undone, and unified again by [execute];
      * otherwise, each comes with its mgu.
      */

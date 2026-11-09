@@ -9,10 +9,10 @@ import it.unibo.tuprolog.solve.intercept.Transition
 import it.unibo.tuprolog.solve.intercept.TransitionInterceptor
 
 /**
- * A resolution's [TransitionInterceptor] and the calls it has seen (#1010), shared by both engines of this module.
+ * A resolution's [TransitionInterceptor] and the calls it has seen (#1010).
  *
  * Every frame gets an invocation id, in creation order; a traced call (one with ports, i.e. not a control construct)
- * stays open from its CALL to its FAIL or EXCEPTION. Both engines jump straight to the newest choice point on failure,
+ * stays open from its CALL to its FAIL or EXCEPTION. The machine jumps straight to the newest choice point on failure,
  * so the ports of the calls they jump over are derived from the ids: on backtracking to a choice point, every open call
  * younger than the choice point's frame has failed, and the choice point's own call is redone if it had exited.
  * Exceptions leave the open calls younger than the catching `catch/3` the same way.
@@ -35,15 +35,9 @@ class Interception internal constructor(
     // in id order, i.e. call order
     private val open = LinkedHashMap<Long, Call>()
 
-    /** Whether the engine can retry calls ([Decision.Retry]): only the stateful machine can. */
-    internal var retrySupported = false
-
     /** The call a [Decision.Retry] at an EXCEPTION port is about. */
     internal var retried: Long? = null
         private set
-
-    /** The frame an exception is being propagated from, while the FSM unwinds towards a `catch/3`. */
-    internal var unwoundFrom: Long? = null
 
     internal fun nextId(): Long = ++issued
 
@@ -70,8 +64,7 @@ class Interception internal constructor(
                 is Decision.Continue, is Decision.Halt -> true
                 is Decision.Fail -> transition.port in allowed && transition.port != Port.FAIL
                 is Decision.Redirect -> transition.port == Port.CALL
-                is Decision.Retry ->
-                    retrySupported && transition.port in setOf(Port.EXIT, Port.REDO, Port.EXCEPTION)
+                is Decision.Retry -> transition.port in setOf(Port.EXIT, Port.REDO, Port.EXCEPTION)
             }
         require(ok) { "$decision is not allowed at ${transition.port}" }
         return decision
@@ -159,7 +152,6 @@ class Interception internal constructor(
         context: () -> ExecutionContext,
     ): Decision? {
         val threshold = catcher ?: Long.MIN_VALUE
-        unwoundFrom = null
         retried = null
         for (id in open.keys.filter { it >= threshold }.asReversed()) {
             val call = open[id]!!

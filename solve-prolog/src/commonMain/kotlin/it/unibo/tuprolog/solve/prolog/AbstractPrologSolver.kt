@@ -13,8 +13,6 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.prolog.fsm.State
-import it.unibo.tuprolog.solve.prolog.fsm.StateInit
 import it.unibo.tuprolog.solve.prolog.machine.PrologMachine
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
@@ -22,31 +20,11 @@ import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
 /**
- * Base implementation of every `:solve-prolog` [it.unibo.tuprolog.solve.Solver]/[it.unibo.tuprolog.solve.MutableSolver]
- * ([PrologSolver] and [MutablePrologSolver], both `internal`, are the only two concrete subclasses; instances
- * are normally obtained through [PrologSolverFactory], which is what the `Solver.prolog` property resolves to).
- *
- * What this class actually contributes over [AbstractSolver] is [solveImpl]: turning a goal into a
- * [Sequence] of [Solution]s by driving the [it.unibo.tuprolog.solve.prolog.fsm.State] finite-state machine
- * described by the `:solve-prolog` state-machine explanation page. Concretely, it builds the root
- * [PrologExecutionContext] for the query, wraps a fresh [it.unibo.tuprolog.solve.prolog.fsm.StateInit] into a
- * [SolutionIterator] (via the abstract [solutionIterator] hook, which lets subclasses choose a plain or
- * hijackable iterator), and exposes that iterator as a lazy [Sequence] -- so pulling the next [Solution] from the
- * sequence is exactly what drives the state machine one step further, rather than eagerly computing every
- * solution up front. [currentContext] is kept in sync with the state machine's progress via
- * [updateCurrentContextAfterStateTransition], which every [SolutionIterator] created here is wired to call after
- * each transition.
- *
- * Running resolution as an explicit loop over [it.unibo.tuprolog.solve.prolog.fsm.State] values, instead of
- * host-language recursion, is what lets a resolution step be paused, resumed, or inspected without unwinding a
- * JVM/JS call stack, and sidesteps host stack-depth limits for deeply recursive Prolog programs (the "call
- * stack" here is the [PrologExecutionContext] parent chain -- ordinary heap data).
- *
- * @see PrologSolverFactory
- * @see PrologExecutionContext
- * @see SolutionIterator
+ * The base of `:solve-prolog`'s solvers: it keeps the solver's [PrologExecutionContext] (its world state between
+ * queries), and answers each query with a fresh stateful machine ([PrologMachine], #1010), which reports every change
+ * of the world back to [currentContext].
  */
-abstract class AbstractPrologSolver(
+internal abstract class AbstractPrologSolver(
     unificator: Unificator = Unificator.default,
     libraries: Runtime = Runtime.empty(),
     flags: FlagStore = FlagStore.empty(),
@@ -66,18 +44,6 @@ abstract class AbstractPrologSolver(
         trustKb,
     ) {
     override lateinit var currentContext: PrologExecutionContext
-
-    /**
-     * The engine resolving queries: the FSM unless a solver was made by [MachinePrologSolverFactory] (#1010), or a
-     * resolution's [SolveOptions.customOptions] map [ENGINE_OPTION] to `"machine"` (for benchmarks, until the switch).
-     * Nullable, meaning the FSM, as `initialization` directives run in the constructor before it is set (on JS it
-     * would be `undefined` there).
-     */
-    internal var engine: Engine? = null
-
-    internal companion object {
-        const val ENGINE_OPTION = "solve-prolog.engine"
-    }
 
     constructor(
         unificator: Unificator = Unificator.default,
@@ -123,10 +89,8 @@ abstract class AbstractPrologSolver(
     )
 
     /**
-     * Builds the root [PrologExecutionContext] for [goal] (carrying over this solver's current [Theory] knowledge
-     * bases, [Runtime] libraries, [FlagStore], channels, and a fresh chronometer from [options]) and returns the lazy
-     * [Sequence] of [Solution]s obtained by driving a fresh [it.unibo.tuprolog.solve.prolog.fsm.StateInit]
-     * through the state machine via [solutionIterator].
+     * Builds the [PrologExecutionContext] of a resolution of [goal], from this solver's knowledge bases, libraries,
+     * flags and channels and from [options], and answers it with a fresh [PrologMachine].
      */
     final override fun solveImpl(
         goal: Struct,
@@ -135,7 +99,6 @@ abstract class AbstractPrologSolver(
         currentContext =
             PrologExecutionContext(
                 unificator = unificator,
-                query = goal,
                 libraries = libraries,
                 flags = flags,
                 staticKb = staticKb.toImmutableTheory(),
@@ -150,30 +113,7 @@ abstract class AbstractPrologSolver(
                 ruleSelection = options.ruleSelection,
                 goalSelection = options.goalSelection,
             )
-        if (engine == Engine.MACHINE || options.customOptions[ENGINE_OPTION] == "machine") {
-            return PrologMachine(currentContext, goal, options.branchScheduler) { currentContext = it }.asSequence()
-        }
-        return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
-    }
-
-    /**
-     * Hook through which subclasses choose which [SolutionIterator] flavour drives resolution from [initialState]
-     * onwards, invoking [onStateTransition] after every step. To observe or redirect calls, pass a
-     * [it.unibo.tuprolog.solve.intercept.TransitionInterceptor] via [SolveOptions.setInterceptor] instead.
-     */
-    protected abstract fun solutionIterator(
-        initialState: State,
-        onStateTransition: (State, State, Long) -> Unit,
-    ): SolutionIterator
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun updateCurrentContextAfterStateTransition(
-        source: State,
-        destination: State,
-        index: Long,
-    ) {
-        require(destination.context.step == index)
-        currentContext = destination.context
+        return PrologMachine(currentContext, goal, options.branchScheduler) { currentContext = it }.asSequence()
     }
 
     abstract override fun copy(

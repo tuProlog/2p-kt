@@ -2,7 +2,7 @@ package it.unibo.tuprolog.solve.prolog.stdlib.rule
 
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import kotlin.collections.List as KtList
@@ -12,7 +12,7 @@ import kotlin.collections.List as KtList
  * before proving `G` as a fresh, opaque-to-cut goal (a cut inside `G` only cuts choice points created while
  * proving `G` itself, since `call/1` becomes its own frame on the execution-context stack).
  */
-object Call : RuleWrapper<PrologExecutionContext>("call", 1) {
+object Call : RuleWrapper<ExecutionContext>("call", 1) {
     override val help: String =
         """
         `call(+Goal)`

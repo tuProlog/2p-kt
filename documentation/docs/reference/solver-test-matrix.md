@@ -6,7 +6,7 @@ ids it does not support. This page records the reasons for those lists.
 
 | Solver | Spec | Shared contracts | Disabled cases |
 |---|---|---|---|
-| `:solve-prolog` | `PrologSolverSpec` (FSM), `MachineSolverSpec` (stateful machine) | all | the FSM: the 7 `laziness/*` cases about pulling primitive alternatives (see below); the machine: none |
+| `:solve-prolog` | `PrologSolverSpec` | all | none |
 | `:solve-problog` | `ProblogSolverSpec` | ISO built-ins and solver contracts; not yet the #1010 semantic contracts | ~36 cases: ProbLog rewrites user clauses, so goals built at run time cannot reach user predicates |
 | `:solve-concurrent` | `ConcurrentSolverSpec` | construction, static factory, mutable solver | behaviour is tested by its own JVM-only suite. It will get its own async suite (coroutine-based solving) rather than the sequential contracts |
 | `:solve-plp` | `ProbabilitySpec` | none | probabilistic semantics, not a Prolog solver |
@@ -29,21 +29,10 @@ These pin down behaviour that a stateful, trail-based engine could break without
 `:solve-prolog`'s `DeepExecutionSpec` also runs, through the JVM task `jvmTestSmallStack`, with a 1 MB stack instead
 of the 256 MB used by `jvmTest`, so that accidental recursion in the engine shows up. It is part of `check`.
 
-`:solve-prolog` has two engines while #1010 is in progress: the reference FSM (`PrologSolverSpec`) and the stateful
-machine (`MachineSolverSpec`, through the internal `MachinePrologSolverFactory`). Both run every contract above and the
-module's own specs, and `DifferentialSpec` checks that they give the same answers on programs mixing recursion,
-backtracking, cut, exceptions, meta-calls, all-solutions predicates and database updates.
+### Notes on `:solve-prolog`
 
-### Known gaps of the current `:solve-prolog` engines
-
-- **Primitive lookahead (FSM only).** The FSM pulls a primitive's next alternative before its current answer is used
-  (`fsm/Utils.kt`, `appendPrimitivesAndChoicePoints`). A generator therefore runs one step ahead, cut and `once/1`
-  still pull one extra alternative, and an alternative that should never run (because it throws or diverges) does.
-  The seven `laziness/*` cases are disabled for it. The machine follows `Primitive.alternatives` instead (see
-  [Primitives and functions](primitives-and-functions.md)), so a query whose last answer comes from an on-demand
-  primitive ends with a further `no`; `DifferentialSpec` ignores that final `no`.
-- **Superlinear deep execution.** Non-tail recursion, redo through deep stacks and long list processing cost far more
-  than linear time. At depth 2000 they take 100–240 s on the JVM, and 20,000-deep non-tail recursion runs out of a
-  512 MB heap. Those `DeepExecutionSpec` cases therefore run at depth 300 on the FSM; tail recursion runs at 20,000. The
-  machine runs them at 2,000 (all of them pass at 20,000 with a 1 MB stack, but resolving goals still copies their
-  arguments: 14 s and 306 s for the non-tail and copy cases).
+- **On-demand primitives.** The engine pulls a primitive's next answer only when the search backtracks into it, unless
+  the primitive declares otherwise (`Primitive.alternatives`, see [Primitives and functions](primitives-and-functions.md)).
+  A query whose last answer comes from an on-demand primitive therefore ends with a further `no`.
+- **Deep execution.** `DeepExecutionSpec` runs tail and non-tail recursion, redo through a deep stack and long list
+  processing at depth 20,000 (the FSM engine before #1010 was superlinear on the last three, 100–240 s at depth 2000).

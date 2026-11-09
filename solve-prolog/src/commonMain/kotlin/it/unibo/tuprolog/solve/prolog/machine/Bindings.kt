@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.prolog.machine
 
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -23,11 +24,16 @@ internal class Bindings : BindingStore {
     private val values = HashMap<Var, Term>()
     private val trail = ArrayList<Var>()
 
+    // whether some value holds an opaque term: one that is not ground but shows no variables (e.g. ProbLog's
+    // explanations), which only Term.apply can resolve
+    private var opaque = false
+
     /** An independent copy of these bindings and their trail, for a branch of the search of its own (frontier mode). */
     fun copy(): Bindings =
         Bindings().also {
             it.values.putAll(values)
             it.trail.addAll(trail)
+            it.opaque = opaque
         }
 
     /** The current position of the trail, to [undo] to. */
@@ -46,6 +52,7 @@ internal class Bindings : BindingStore {
     ) {
         values[variable] = term
         trail.add(variable)
+        if (!opaque && !term.isGround) opaque = term.hasOpaqueSubterm()
     }
 
     /**
@@ -105,6 +112,13 @@ internal class Bindings : BindingStore {
     /** The bindings of [variables], with their values resolved. */
     fun substitutionOf(variables: Sequence<Var>): Substitution.Unifier {
         if (values.isEmpty()) return Substitution.empty()
+        if (opaque) {
+            return Substitution.of(
+                variables.distinct().associateWith { resolveOpaque(it) }.filter { (variable, value) ->
+                    variable != value
+                },
+            )
+        }
         val resolved = HashMap<Var, Term>()
         for (variable in variables) if (variable !in resolved) resolveVar(variable, resolved)
         return Substitution.of(resolved.filter { (variable, value) -> variable != value })
@@ -120,6 +134,7 @@ internal class Bindings : BindingStore {
     ): Term {
         if (mark >= trail.size || term.isGround) return resolve(term)
         val later = trail.subList(mark, trail.size).toHashSet()
+        if (opaque) return applyToFixpoint(term, values.filterKeys { it !in later })
         val memo = HashMap<Var, Term>()
 
         fun substitute(
@@ -147,8 +162,27 @@ internal class Bindings : BindingStore {
     /** [term] with every bound variable replaced by its value, recursively. */
     fun resolve(term: Term): Term {
         if (values.isEmpty() || term.isGround) return term
+        if (opaque) return resolveOpaque(term)
         val replacements = substitutionOf(term.variables)
         return if (replacements.isEmpty()) term else term.apply(replacements)
+    }
+
+    // shortcut: applies every binding until a fixpoint, as the FSM did, at a cost linear in the bindings per call;
+    // only solvers with opaque terms pay it, track their hidden variables if that ever matters
+    private fun resolveOpaque(term: Term): Term = applyToFixpoint(term, values)
+
+    private fun applyToFixpoint(
+        term: Term,
+        bindings: Map<Var, Term>,
+    ): Term {
+        val all = Substitution.of(bindings)
+        var current = term
+        repeat(bindings.size + 1) {
+            val next = current.apply(all)
+            if (next == current) return next
+            current = next
+        }
+        return current
     }
 
     // post-order without recursion, so that long chains of bindings (e.g. a list built one cell at a time) don't
@@ -195,3 +229,14 @@ internal val Unificator.incremental: IncrementalUnificator?
             is CachedUnificator -> decorated.incremental
             else -> null
         }
+
+// allocation-free, as it runs on every binding; loops on the last argument so that long lists don't overflow the stack
+private fun Term.hasOpaqueSubterm(): Boolean {
+    var term = this
+    while (true) {
+        if (term.isGround || term is Var) return false
+        if (term !is Struct || term.arity == 0) return true
+        for (i in 0 until term.arity - 1) if (term[i].hasOpaqueSubterm()) return true
+        term = term[term.arity - 1]
+    }
+}

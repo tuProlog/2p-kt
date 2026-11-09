@@ -9,8 +9,6 @@ import it.unibo.tuprolog.solve.channel.InputStore
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.prolog.AbstractPrologSolver
-import it.unibo.tuprolog.solve.prolog.Engine
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
@@ -46,7 +44,6 @@ internal class CallContext(
     ): Solver =
         world
             .createSolver(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels)
-            .also { (it as AbstractPrologSolver).engine = Engine.MACHINE }
 
     override fun createMutableSolver(
         unificator: Unificator,
@@ -59,7 +56,6 @@ internal class CallContext(
     ): MutableSolver =
         world
             .createMutableSolver(unificator, libraries, flags, staticKb, dynamicKb, inputChannels, outputChannels)
-            .also { (it as AbstractPrologSolver).engine = Engine.MACHINE }
 
     override fun toString(): String = "CallContext(procedure=$procedure)"
 }

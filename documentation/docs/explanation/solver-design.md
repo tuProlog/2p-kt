@@ -22,8 +22,8 @@ not hardwired into `Solver` itself.
 An `ExecutionContext` is the solver's entire mutable state, reified as a value: the current substitution, the
 call stack trace, custom data, and (via `createSolver`/`update`) the unificator, libraries, flags, both
 knowledge bases, and channels. Every resolution strategy is free to extend this with whatever bookkeeping it
-personally needs (`:solve-prolog`'s `PrologExecutionContext` adds the goal/rule/primitive cursors and the
-choice-point stack described in [state-machine.md](state-machine.md)) — but any code written against the
+personally needs (`:solve-prolog`'s machine keeps its continuation, choice points and bindings apart from it, as
+described in [the engine page](state-machine.md)) — but any code written against the
 *generic* `ExecutionContext` interface keeps working regardless of which concrete strategy produced it.
 
 ## The "mutable aspects" of a solver
