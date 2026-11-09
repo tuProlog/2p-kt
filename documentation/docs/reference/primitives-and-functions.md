@@ -24,8 +24,9 @@ responses as integers in the range, `repeat/0` returns an infinite sequence, and
 ```
 
 - `signature` / `arguments` — what is being called and with what; validated at construction against arity/vararg;
-- `context: C` — the `ExecutionContext` (an immutable snapshot of the solver's state — see
-  [Solver API](solver-api.md#executioncontextaware)) current when the request was made;
+- `context: C` — the `ExecutionContext` (a read-only view of the solver's state — see
+  [Solver API](solver-api.md#executioncontextaware)) current when the request was made. Its knowledge bases can't be
+  changed in place: writing to them returns a copy;
 - `chronometer` (from `Durable`, i.e. the context's) — the resolution's timing: `maxDuration`, `elapsedTime` and
   `remainingTime` derive from it, and `solve(goal, limit)` times nested resolutions by a child scope of it (see
   [Resolution time](solver-api.md#resolution-time));
@@ -42,11 +43,13 @@ A primitive replies by building a `Solve.Response` out of its `Request`, via one
 `replyFail`/`replyException` helpers:
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/Solve.kt:222:234"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/primitive/Solve.kt:235:252"
 ```
 
 - `solution: Solution` — the `Yes`/`No`/`Halt` produced for this response (see
   [Solver API](solver-api.md#solution));
+- `context: ExecutionContext` — the context the response was produced in, i.e. its request's (every `reply*` helper
+  sets it);
 - `sideEffectManager: SideEffectManager?` — an optional low-level hook into the engine's control flow (used
   internally, e.g. by cut);
 - `sideEffects: List<SideEffect>` — a description of state changes the engine should apply to the *next* context

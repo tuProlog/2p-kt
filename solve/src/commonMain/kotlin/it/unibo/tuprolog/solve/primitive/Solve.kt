@@ -139,6 +139,7 @@ sealed class Solve {
             vararg sideEffects: SideEffect,
         ) = Response(
             Solution.yes(query, substitution),
+            context,
             sideEffectManager,
             *sideEffects,
         )
@@ -151,6 +152,7 @@ sealed class Solve {
             buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = Response(
             Solution.yes(query, substitution),
+            context,
             sideEffectManager,
             SideEffectsBuilder.empty().also { it.buildSideEffects() }.build(),
         )
@@ -162,6 +164,7 @@ sealed class Solve {
             vararg sideEffects: SideEffect,
         ) = Response(
             Solution.no(query),
+            context,
             sideEffectManager,
             *sideEffects,
         )
@@ -173,6 +176,7 @@ sealed class Solve {
             buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = Response(
             Solution.no(query),
+            context,
             sideEffectManager,
             SideEffectsBuilder.empty().also { it.buildSideEffects() }.build(),
         )
@@ -185,6 +189,7 @@ sealed class Solve {
             vararg sideEffects: SideEffect,
         ) = Response(
             Solution.halt(query, exception),
+            context,
             sideEffectManager,
             *sideEffects,
         )
@@ -197,6 +202,7 @@ sealed class Solve {
             buildSideEffects: SideEffectsBuilder.() -> Unit,
         ) = Response(
             Solution.halt(query, exception),
+            context,
             sideEffectManager,
             SideEffectsBuilder.empty().also { it.buildSideEffects() }.build(),
         )
@@ -231,6 +237,12 @@ sealed class Solve {
         /** The solution attached to the response */
         @JsName("solution")
         val solution: Solution,
+        /**
+         * The context the response was produced in, i.e. its request's: a read-only view, valid as long as the
+         * response is (see [ExecutionContext]).
+         */
+        @JsName("context")
+        val context: ExecutionContext,
         /** The Prolog flow modification manager after request execution (use `null` in case nothing changed) */
         @JsName("sideEffectManager")
         val sideEffectManager: SideEffectManager? = null,
@@ -241,20 +253,23 @@ sealed class Solve {
     ) : Solve() {
         constructor(
             solution: Solution,
+            context: ExecutionContext,
             sideEffectManager: SideEffectManager? = null,
             sideEffects: Iterable<SideEffect>,
-        ) : this(solution, sideEffectManager, sideEffects as? List<SideEffect> ?: sideEffects.toList())
+        ) : this(solution, context, sideEffectManager, sideEffects as? List<SideEffect> ?: sideEffects.toList())
 
         constructor(
             solution: Solution,
+            context: ExecutionContext,
             sideEffectManager: SideEffectManager? = null,
             sideEffects: Sequence<SideEffect>,
-        ) : this(solution, sideEffectManager, sideEffects.asIterable())
+        ) : this(solution, context, sideEffectManager, sideEffects.asIterable())
 
         constructor(
             solution: Solution,
+            context: ExecutionContext,
             sideEffectManager: SideEffectManager? = null,
             vararg sideEffects: SideEffect,
-        ) : this(solution, sideEffectManager, listOf(*sideEffects))
+        ) : this(solution, context, sideEffectManager, listOf(*sideEffects))
     }
 }

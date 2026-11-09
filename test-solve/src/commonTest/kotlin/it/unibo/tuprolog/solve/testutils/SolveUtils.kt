@@ -67,6 +67,7 @@ internal object SolveUtils {
     internal val defaultRequestSuccessResponse by lazy {
         Solve.Response(
             Solution.yes(aSignature, anArgumentList, solutionSubstitution),
+            anExecutionContext,
             aSideEffectManager,
             SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
@@ -79,6 +80,7 @@ internal object SolveUtils {
     internal val defaultRequestFailedResponse by lazy {
         Solve.Response(
             Solution.no(aSignature, anArgumentList),
+            anExecutionContext,
             aSideEffectManager,
             SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),
@@ -91,6 +93,7 @@ internal object SolveUtils {
     internal val defaultRequestHaltedResponse by lazy {
         Solve.Response(
             Solution.halt(aSignature, anArgumentList, solutionException),
+            anExecutionContext,
             aSideEffectManager,
             SideEffect.ResetRuntime(differentLibraries),
             SideEffect.ResetFlags(differentFlags),

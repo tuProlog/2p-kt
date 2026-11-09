@@ -29,6 +29,12 @@ import kotlin.js.JsName
  * always means producing a new instance (e.g. [update] or [apply]) rather than changing this one in place -- which
  * keeps every intermediate state snapshot-able, a property resolution strategies rely on for backtracking.
  *
+ * Lifetime (#1010): the context a [it.unibo.tuprolog.solve.primitive.Solve.Request] or
+ * [it.unibo.tuprolog.solve.primitive.Solve.Response] carries is a read-only view. It may compute its values lazily,
+ * and it keeps reading the same values for as long as anyone holds it, whatever the resolution does afterwards. Its
+ * knowledge bases can't be changed in place; change them through side effects. (`:solve-prolog`'s current engine
+ * doesn't snapshot its knowledge bases yet: their view shows later changes.)
+ *
  * Resolution strategies (e.g. `:solve-prolog`'s state-machine solver) are free to extend this interface with
  * whatever extra bookkeeping they personally need; code written against the generic [ExecutionContext] keeps
  * working regardless of which concrete strategy produced the instance.

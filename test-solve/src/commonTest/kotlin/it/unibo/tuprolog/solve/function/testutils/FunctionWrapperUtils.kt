@@ -16,7 +16,7 @@ import it.unibo.tuprolog.solve.function.LogicFunction
  */
 internal object FunctionWrapperUtils {
     /** A default function result to be used in tests */
-    internal val defaultFunctionResult = Compute.Response(Truth.TRUE)
+    internal val defaultFunctionResult = Compute.Response(Truth.TRUE, DummyInstances.executionContext)
 
     /** A test function */
     internal val function: LogicFunction = LogicFunction { defaultFunctionResult }

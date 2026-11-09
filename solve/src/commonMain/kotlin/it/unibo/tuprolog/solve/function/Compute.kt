@@ -41,7 +41,7 @@ sealed class Compute {
 
         /** Creates a new [Response] to this Request */
         @JsName("replyWith")
-        fun replyWith(result: Term) = Response(result)
+        fun replyWith(result: Term) = Response(result, context)
     }
 
     /** Class representing a Response, from the Expression evaluator, to a [Request] */
@@ -49,5 +49,11 @@ sealed class Compute {
         /** The result of evaluation process */
         @JsName("result")
         val result: Term,
+        /**
+         * The context the response was produced in, i.e. its request's: a read-only view, valid as long as the
+         * response is (see [ExecutionContext]).
+         */
+        @JsName("context")
+        val context: ExecutionContext,
     ) : Compute()
 }
