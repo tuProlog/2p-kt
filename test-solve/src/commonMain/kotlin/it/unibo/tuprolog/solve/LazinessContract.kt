@@ -13,9 +13,9 @@ import it.unibo.tuprolog.theory.Theory
 /**
  * Alternatives are produced on demand (#1010, step 0). `gen/1` is a primitive yielding 1, 2, 3 that logs each
  * alternative as it is pulled, `note/1` logs its argument, and `boom/1` yields 1 and fails the test if its second
- * alternative is ever pulled. The log shows exactly which user code the solver ran, and when. `gen/1` declares no
- * [it.unibo.tuprolog.solve.primitive.Alternatives], so after its last answer the solver only finds out that there are
- * no more when asked for another: the query ends with a further `no`.
+ * alternative is ever pulled. The log shows exactly which user code the solver ran, and when. `gen/1` keeps the
+ * default [it.unibo.tuprolog.solve.primitive.Alternatives.ON_DEMAND], so after its last answer the solver only finds
+ * out that there are no more when asked for another: the query ends with a further `no`.
  */
 fun lazinessContract(
     solverFactory: SolverFactory,

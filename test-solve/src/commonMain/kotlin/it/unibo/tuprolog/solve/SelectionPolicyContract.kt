@@ -4,7 +4,10 @@ import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
 import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 
-/** Rule and goal selection policies (#1010, section 7.4, cases 1 and 2). */
+/**
+ * A [RuleSelectionPolicy] or [GoalSelectionPolicy] in the [SolveOptions] changes the resolution order (#1010, section
+ * 7.4).
+ */
 fun selectionPolicyContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),

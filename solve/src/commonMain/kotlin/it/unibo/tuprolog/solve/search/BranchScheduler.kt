@@ -1,23 +1,7 @@
 package it.unibo.tuprolog.solve.search
 
-import it.unibo.tuprolog.core.Struct
 import kotlin.js.JsName
 import kotlin.jvm.JvmField
-
-/** A suspended branch of the search, as a [BranchScheduler] sees it (#1010). Valid only during [BranchScheduler.select]. */
-interface Branch {
-    /** The branch's id, the same as long as the branch lives. */
-    @JsName("id")
-    val id: Long
-
-    /** The branch's proof depth: the clauses resolved from the query, regardless of last-call optimisation. */
-    @JsName("depth")
-    val depth: Int
-
-    /** The goals the branch has left, with its own bindings applied. */
-    @JsName("goals")
-    val goals: List<Struct>
-}
 
 /**
  * Chooses which suspended branch the search advances next (#1010), when passed via
@@ -26,8 +10,8 @@ interface Branch {
  * With any other scheduler, a supporting solver keeps every alternative as a branch of its own, with its own bindings
  * (copied when the branch is created), and asks the scheduler after each resolution step, so that an infinite branch
  * doesn't starve the others; the query has no more answers once no branch is left. Answers may come in another order,
- * or terminate where depth-first search doesn't. Solvers may only support a pure fragment of Prolog this way: the
- * stateful engine of `:solve-prolog` rejects cut, control constructs, meta-calls and impure built-ins.
+ * or terminate where depth-first search doesn't. Solvers may only support a pure fragment of Prolog this way:
+ * `:solve-prolog`'s engine rejects cut, control constructs, meta-calls and impure built-ins.
  */
 fun interface BranchScheduler {
     /** The index, in [frontier], of the branch to advance next. */

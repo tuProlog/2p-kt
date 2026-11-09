@@ -18,8 +18,8 @@ import kotlin.time.Duration
  * according to some logic, implementing one or more inference rule, via some resolution strategy.
  *
  * A [Solver] is deliberately strategy-agnostic: this module defines no resolution algorithm at all, only the
- * contract that every implementation (`:solve-prolog`'s SLD-NF resolution, `:solve-concurrent`'s side-effect-free
- * strategy, `:solve-concurrent`, `:solve-problog`) must honour. Everything a resolution strategy needs to read
+ * contract that every implementation (`:solve-prolog`'s SLD-NF resolution, `:solve-concurrent`, `:solve-problog`)
+ * must honour. Everything a resolution strategy needs to read
  * while solving a goal -- loaded `it.unibo.tuprolog.solve.library.Library`/`Runtime`, [FlagStore], the two
  * [Theory] knowledge bases, I/O [it.unibo.tuprolog.solve.channel.Channel]s -- is exposed through
  * [ExecutionContextAware], which this interface extends.

@@ -28,7 +28,7 @@ import kotlin.time.Duration
  */
 interface SolveOptions {
     /**
-     * Whether [Solver.solve] should stream solutions on demand as the returned [Sequence] is consumed (`true`), or
+     * Whether [Solver.solve] should stream solutions on demand as the returned [SolutionStream] is consumed (`true`), or
      * compute the whole (bounded) solution set eagerly before returning (`false`, see [isEager]).
      */
     @JsName("isLazy")

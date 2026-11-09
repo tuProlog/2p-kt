@@ -167,7 +167,7 @@ internal class Bindings : BindingStore {
         return if (replacements.isEmpty()) term else term.apply(replacements)
     }
 
-    // shortcut: applies every binding until a fixpoint, as the FSM did, at a cost linear in the bindings per call;
+    // shortcut: applies every binding until a fixpoint, at a cost linear in the bindings per call;
     // only solvers with opaque terms pay it, track their hidden variables if that ever matters
     private fun resolveOpaque(term: Term): Term = applyToFixpoint(term, values)
 

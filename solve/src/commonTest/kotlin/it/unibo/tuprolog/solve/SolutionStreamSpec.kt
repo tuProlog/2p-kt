@@ -37,6 +37,21 @@ class SolutionStreamSpec :
             solutions.hasNext().shouldBeFalse()
         }
 
+        test("cancel-builds-the-halt-once") {
+            var built = 0
+            val stream =
+                IteratorSolutionStream(generateSequence { Solution.yes(query) }.iterator()) {
+                    built++
+                    Solution.halt(query, ResolutionCancelledException(context = Dummy.Context))
+                }
+
+            val solutions = stream.iterator()
+            stream.cancel()
+            solutions.hasNext() shouldBe true
+            solutions.next().shouldBeInstanceOf<Solution.Halt>()
+            built shouldBe 1
+        }
+
         test("close-closes-the-solutions") {
             var closed = 0
             val solutions =

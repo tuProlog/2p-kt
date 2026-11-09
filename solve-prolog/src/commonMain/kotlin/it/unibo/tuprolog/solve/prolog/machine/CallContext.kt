@@ -15,10 +15,10 @@ import it.unibo.tuprolog.unify.Unificator
 
 /**
  * The context of a call made by a [PrologMachine]: the solver's [world] state, plus the call's [procedure], the
- * resolution's bindings as a [substitution], and the [logicStackTrace]. Both are computed on first access and kept, so
- * they read the same afterwards. The machine [pin]s a context that may be read after its bindings change (errors,
- * warnings, interceptors); a primitive's request context is read while they still hold, or after backtracking has
- * restored them.
+ * resolution's bindings as a [substitution], and the [logicStackTrace]. The last two are computed on first access
+ * and kept, so they read the same afterwards. The machine [pin]s a context that may be read after its bindings change
+ * (errors, warnings, interceptors); a primitive's request context is read while they still hold, or after backtracking
+ * has restored them.
  */
 internal class CallContext(
     private val world: PrologExecutionContext,
