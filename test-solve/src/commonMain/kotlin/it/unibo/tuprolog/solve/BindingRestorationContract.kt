@@ -63,6 +63,11 @@ fun bindingRestorationContract(
             listOf("yes: X = 1, Y = one", "yes: X = 2")
     }
 
+    scenario("binding-restoration/clause-local-bindings-survive-primitives") {
+        // B and C appear in no query, only in the clause: their bindings must still reach C > B
+        solverFactory.answers("t(0)", "t(_) :- B = 6, C = 7.5, C > B.") shouldBe listOf("yes")
+    }
+
     scenario("binding-restoration/shared-variable-across-clauses") {
         solverFactory.answers("r(A, B), (var(A) -> A = free ; true)", "r(X, X) :- X = 1.", "r(X, Y) :- Y = 2.") shouldBe
             listOf("yes: A = 1, B = 1", "yes: A = free, B = 2")

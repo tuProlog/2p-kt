@@ -11,6 +11,7 @@ import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.appendPrimitives
 import it.unibo.tuprolog.solve.prolog.appendRules
+import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
@@ -85,13 +86,9 @@ fun PrologExecutionContext.replaceWithChild(inferProcedureFromGoals: Boolean = t
  * remaining candidates (if any) can be retried later on backtracking.
  */
 fun PrologExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>): PrologExecutionContext {
-    val newChoicePointContext =
-        if (rules.hasNext) {
-            choicePoints.appendRules(rules.next, this)
-        } else {
-            choicePoints.appendRules(Cursor.empty(), this)
-        }
-
+    val alternatives = if (rules.hasNext) rules.next else Cursor.empty()
+    val newChoicePointContext = choicePoints.appendRules(alternatives, this)
+    if (alternatives.hasNext && !procedure.isControlConstruct) counters?.countChoicePoint(open = 0)
     return copy(rules = rules, choicePoints = newChoicePointContext)
 }
 
@@ -99,13 +96,11 @@ fun PrologExecutionContext.appendRulesAndChoicePoints(rules: Cursor<out Rule>): 
 fun PrologExecutionContext.appendPrimitivesAndChoicePoints(
     primitiveExecutions: Cursor<out Solve.Response>,
 ): PrologExecutionContext {
-    val newChoicePointContext =
-        if (primitiveExecutions.hasNext) {
-            choicePoints.appendPrimitives(primitiveExecutions.next, this)
-        } else {
-            choicePoints.appendPrimitives(Cursor.empty(), this)
-        }
-
+    val alternatives = if (primitiveExecutions.hasNext) primitiveExecutions.next else Cursor.empty()
+    val newChoicePointContext = choicePoints.appendPrimitives(alternatives, this)
+    // reading hasNext of an already computed cursor pulls nothing more; open = 0: the chain also holds exhausted
+    // entries (one per call), so counting the open ones would walk all of it
+    if (alternatives.hasNext && !procedure.isControlConstruct) counters?.countChoicePoint(open = 0)
     return copy(primitives = primitiveExecutions, choicePoints = newChoicePointContext)
 }
 
@@ -141,3 +136,30 @@ fun PrologExecutionContext.toRequest(
     goal: Struct,
     signature: Signature,
 ) = Solve.Request(signature, goal.args, this)
+
+/**
+ * Whether this goal is an ISO control construct (`,`/2, `;`/2, `->`/2, `call/N`, `catch/3`, `throw/1`), or the
+ * callable check `call/1` runs first ([EnsureExecutable]), which [it.unibo.tuprolog.solve.ResolutionCounters] don't
+ * count: this engine runs them as library predicates, other engines natively, and the counts must not depend on that.
+ */
+internal val Struct?.isControlConstruct: Boolean
+    get() =
+        this != null &&
+            when (functor) {
+                "call" -> true
+                ",", ";", "->" -> arity == 2
+                "catch" -> arity == 3
+                "throw" -> arity == 1
+                EnsureExecutable.functor -> arity == 1
+                else -> false
+            }
+
+/** Records a predicate call to [goal] at [depth] in [counters], unless it is a control construct. */
+internal fun PrologExecutionContext.countInference(goal: Struct) {
+    if (counters != null && !goal.isControlConstruct) counters.countInference(depth + 1)
+}
+
+/** Records an alternative of the call to [procedure] in [counters], unless it is a control construct. */
+internal fun PrologExecutionContext.countAlternative() {
+    if (counters != null && !procedure.isControlConstruct) counters.countAlternative()
+}

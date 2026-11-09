@@ -50,6 +50,10 @@ interface SolveOptions {
     @JsName("chronometerFactory")
     val chronometerFactory: ChronometerFactory?
 
+    /** The counters a supporting solver fills while resolving (#1010), or `null` (the default) to count nothing. */
+    @JsName("counters")
+    val counters: ResolutionCounters?
+
     /**
      * The maximum number of solutions to produce, or [ALL_SOLUTIONS] (i.e. `-1`) for no cap.
      * @see isLimited
@@ -77,6 +81,10 @@ interface SolveOptions {
     /** Returns a copy of these options with [chronometerFactory] set to [value]. */
     @JsName("setChronometerFactory")
     fun setChronometerFactory(value: ChronometerFactory?): SolveOptions
+
+    /** Returns a copy of these options with [counters] set to [value]. */
+    @JsName("setCounters")
+    fun setCounters(value: ResolutionCounters?): SolveOptions
 
     /**
      * Creates the [Chronometer] of a new resolution, started now, from [chronometerFactory] (or

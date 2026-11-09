@@ -94,6 +94,26 @@ val options = SolveOptions.allLazilyWithTimeout(20.milliseconds)
 solver.solve(Struct.parse("sleep(1000)"), options) // halts with a TimeOutException, without waiting 1 s
 ```
 
+### Measuring a resolution
+
+Chronometers enforce timeouts. To *measure* a resolution, wrap its solutions with `timed()`
+(`it.unibo.tuprolog.solve.timing`): `TimedSolutions.timing` reports the time to the first answer, the active time
+spent producing each answer, the total active time, and the elapsed time. Elapsed time also counts the pauses between
+the consumer's calls. It doesn't change how timeouts behave. The time source is a parameter, so a `TestTimeSource`
+makes it deterministic.
+
+For counts that don't depend on the machine, pass `ResolutionCounters` with `SolveOptions.setCounters`. `:solve-prolog`
+then counts predicate calls, alternatives tried and choice points. ISO control constructs (`,`, `;`, `->`, `call/N`,
+`catch/3`, `throw/1`) are not counted, so the counts measure logical work and not an engine's own steps. Nested
+resolutions (`findall/3`, ...) are not counted yet.
+
+```kotlin
+val counters = ResolutionCounters()
+val solutions = solver.solve(goal, SolveOptions.allLazily().setCounters(counters)).timed()
+solutions.forEach { /* ... */ }
+println("${solutions.timing.firstAnswer}, ${solutions.timing.active}, ${counters.inferences} inferences")
+```
+
 ## `Solution`
 
 Every solution is one of three sealed subtypes of `Solution`:
