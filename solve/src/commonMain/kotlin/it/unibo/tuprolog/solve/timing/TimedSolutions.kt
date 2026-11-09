@@ -5,11 +5,15 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmOverloads
 import kotlin.time.ComparableTimeMark
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.microseconds
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
 /**
  * [solutions], timed on [timeSource] as they are consumed: see [timing]. Setting up the solver and the query happens
- * before, so it is up to the caller to time it. It can be iterated once, by one consumer at a time.
+ * before, so it is up to the caller to time it. It can be iterated once, by one consumer at a time. Each solution it
+ * yields is tagged with the active time spent producing it (see [Solution.time]).
  */
 class TimedSolutions internal constructor(
     private val solutions: Sequence<Solution>,
@@ -68,11 +72,26 @@ class TimedSolutions internal constructor(
                 sinceLastAnswer = Duration.ZERO
                 if (firstAnswer == null) firstAnswer = lastExit!! - start!!
                 halted = solution is Solution.Halt
-                return solution
+                return solution.replaceTags(solution.tags + (TIME_TAG to advances.last()))
             }
         }
     }
 }
+
+/** The tag [TimedSolutions] attaches to each solution: the active time spent producing it, as a [Duration]. */
+const val TIME_TAG = "it.unibo.tuprolog.solve.timing.time"
+
+/** The active time spent producing this solution, if it came from a [TimedSolutions], or `null` otherwise. */
+val Solution.time: Duration?
+    get() = getTag<Duration>(TIME_TAG)
+
+/**
+ * This duration, rounded for display: to microseconds below one second (e.g. `1.234ms`), to milliseconds above
+ * (e.g. `2.345s`).
+ */
+@JsName("formatTime")
+fun Duration.formatTime(): String =
+    (if (this < 1.seconds) inWholeMicroseconds.microseconds else inWholeMilliseconds.milliseconds).toString()
 
 /**
  * Times these solutions on [timeSource] as they are consumed (#1010): see [TimedSolutions.timing]. The result does not
