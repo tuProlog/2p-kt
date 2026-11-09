@@ -94,6 +94,7 @@ nav:
       - explanation/clause-storage-and-indexing.md
       - explanation/solver-design.md
       - explanation/state-machine.md
+      - explanation/adr-0001-stateful-engine.md
       - explanation/parsing-architecture.md
       - explanation/io-lib-design.md
       - explanation/web-ide-architecture.md

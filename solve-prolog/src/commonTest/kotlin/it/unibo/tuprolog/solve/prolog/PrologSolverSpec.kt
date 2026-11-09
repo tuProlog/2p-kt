@@ -58,6 +58,7 @@ import it.unibo.tuprolog.solve.functorContract
 import it.unibo.tuprolog.solve.ifThenContract
 import it.unibo.tuprolog.solve.ifThenElseContract
 import it.unibo.tuprolog.solve.integerContract
+import it.unibo.tuprolog.solve.interceptionContract
 import it.unibo.tuprolog.solve.isContract
 import it.unibo.tuprolog.solve.lazinessContract
 import it.unibo.tuprolog.solve.library.toRuntime
@@ -80,6 +81,7 @@ import it.unibo.tuprolog.solve.prolog.stdlib.DefaultBuiltins
 import it.unibo.tuprolog.solve.recursionContract
 import it.unibo.tuprolog.solve.repeatContract
 import it.unibo.tuprolog.solve.retractContract
+import it.unibo.tuprolog.solve.selectionPolicyContract
 import it.unibo.tuprolog.solve.setOfContract
 import it.unibo.tuprolog.solve.solutionPresentationContract
 import it.unibo.tuprolog.solve.solverConstructionContract
@@ -246,6 +248,8 @@ class PrologSolverSpec :
             bindingRestorationContract(PrologSolverFactory),
         )
         include(catchRestorationContract(PrologSolverFactory))
+        include(interceptionContract(PrologSolverFactory))
+        include(selectionPolicyContract(PrologSolverFactory))
         include(controlScopeContract(PrologSolverFactory))
         // This FSM pulls a primitive's next alternative before its current answer is used (#1010, section 4.6)
         include(
