@@ -67,10 +67,6 @@ internal class MutableStore(
         val (first, second) = procedure.candidates(query)
         if (first.size == 0 && second.size == 0) return emptySequence()
         val generation = generation
-        // no head argument to filter on (zero arity): see FrozenProcedure.matching
-        if (query.indexableHead() == null) {
-            return Sequence { first.visibleAt(generation) { it } }.filter { accept(it.clause) }
-        }
         return Sequence {
             // MutableProcedure.candidates gives EMPTY_VIEW as second view only when it scans the whole procedure
             val keys = KeyFilter.of(unificator, query, indexed = second !== EMPTY_VIEW)
@@ -84,7 +80,15 @@ internal class MutableStore(
     private fun matchingEntries(query: Clause): Sequence<Entry> = entries(query) { unificator.match(query, it) }
 
     /** The clauses matching [query] as of this call (logical update view), lazily. */
-    override fun matching(query: Clause): Sequence<Clause> = matchingEntries(query).map { it.clause }
+    override fun matching(query: Clause): Sequence<Clause> {
+        // no head argument to filter on (zero arity): the same scan as FrozenProcedure.matching, with no Entry layer
+        if (query.indexableHead() == null && customHeadKeys == 0 && !unificator.hasCustomHeadKey(query)) {
+            val view = procedures[procedureKeyOf(query)]?.entries?.view() ?: return emptySequence()
+            val generation = generation
+            return Sequence { view.visibleAt(generation) { it.clause } }.filter { unificator.match(query, it) }
+        }
+        return matchingEntries(query).map { it.clause }
+    }
 
     override fun candidates(query: Clause): Sequence<Clause> = entries(query) { true }.map { it.clause }
 
