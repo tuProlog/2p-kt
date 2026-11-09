@@ -499,46 +499,84 @@ const SCENARIOS = [
     },
   },
   {
-    name: "each solution and its query show the time spent on them",
+    name: "queries show timestamps and solutions have prefixed durations",
     async run({ evalJs }) {
-      // a trailing " (1.234ms)"-style annotation, as Duration.toString renders it
-      const timed = /\(\d+(\.\d+)?[a-z]+\)$/;
-      const solveAndRead = async () => {
-        await evalJs(`
-          (function() {
-            const queryInput = document.getElementById('query-input');
-            queryInput.focus();
-            queryInput.value = 'member(X, [1, 2])';
-            queryInput.dispatchEvent(new Event('input', { bubbles: true }));
-          })()
-        `);
-        await evalJs(`document.getElementById('solve-all-button').click()`);
-        await pollUntil(
-          () => evalJs(`document.getElementById('status-label').textContent`),
-          (v) => /COMPLETED|FAILED|CANCELLED/.test(v),
-          5000,
-        );
-        // the last query's entry: its header, then one line per solution
-        return evalJs(`
-          (function() {
-            const entries = document.querySelectorAll('ul.solutions > li');
-            const last = entries[entries.length - 1];
-            if (!last) return null;
-            return Array.from(last.children).map(e => e.textContent.split('\\n')[0]);
-          })()
-        `);
-      };
-      // same race as in the multiple-facts scenario: retrying the whole thing until the query lands
-      const lines = await pollUntil(
-        solveAndRead,
-        (v) => v?.[0]?.startsWith("?- member(X, [1, 2])") && v.length >= 3,
-        8000,
-        250,
-      );
+      await evalJs(`(() => {
+        const input = document.getElementById('query-input');
+        input.value = 'member(X, [1, 2]).';
+        input.dispatchEvent(new Event('input', {bubbles:true}));
+      })()`);
+      await evalJs(`document.getElementById('solve-all-button').click()`);
+      const lines = await pollUntil(() => evalJs(`(() => {
+        const entry = [...document.querySelectorAll('ul.solutions > li')].at(-1);
+        return entry ? [...entry.querySelectorAll('.query, .result')].map(e => e.textContent) : [];
+      })()`), rows => rows.length >= 3 && rows[0].includes('member(X, [1, 2])'), 8000);
       const failures = [];
-      // the header, both answers, and possibly a final "no"
-      if (!lines || lines.length < 3) return [`expected a query header and two solutions, got ${JSON.stringify(lines)}`];
-      for (const line of lines) if (!timed.test(line)) failures.push(`no time shown on: ${JSON.stringify(line)}`);
+      const keywords = await evalJs(`[...document.querySelectorAll('ul.solutions strong.outcome')].map(e=>e.textContent)`);
+      if (!keywords.includes('?-') || !keywords.includes('yes')) failures.push('query or result keyword is not bold');
+      if (!/^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}] \?- member\(X, \[1, 2]\)\.$/.test(lines[0])) failures.push(`bad query header: ${lines[0]}`);
+      for (const line of lines.slice(1)) if (!/^\d+\. \[\S+] (yes|no|halt|timeout)/.test(line)) failures.push(`bad duration prefix: ${line}`);
+      return failures;
+    },
+  },
+  {
+    name: "solution context menus copy, load queries, expand, collapse and delete",
+    async run({ evalJs, send }) {
+      await send('Browser.grantPermissions', {permissions:['clipboardReadWrite','clipboardSanitizedWrite']});
+      await evalJs(`[...document.querySelectorAll('.side-tab')].find(e=>e.textContent.startsWith('Solutions')).click()`);
+      await pollUntil(()=>evalJs(`!!document.querySelector('ul.solutions')?.offsetParent`), visible=>visible,3000);
+      const failures = [];
+      await evalJs(`(() => {
+        const input = document.getElementById('query-input');
+        input.value = 'member(MenuX, [menu_value]).';
+        input.dispatchEvent(new Event('input', {bubbles:true}));
+      })()`);
+      await evalJs(`document.getElementById('solve-all-button').click()`);
+      await pollUntil(() => evalJs(`document.querySelector('ul.solutions')?.textContent || ''`), text => text.includes('MenuX = menu_value'), 8000);
+      // Retain the chosen branch across re-renders by finding its unique query text each time.
+      const root = `[...document.querySelectorAll('ul.solutions > li')].find(e => e.querySelector('.query')?.textContent.includes('member(MenuX,'))`;
+      const open = async selector => evalJs(`(() => {
+        const entry = ${root};
+        const line = entry.querySelector(${JSON.stringify(selector)});
+        line.dispatchEvent(new MouseEvent('contextmenu', {bubbles:true,cancelable:true,button:2,clientX:100,clientY:100}));
+      })()`);
+      const action = async name => evalJs(`document.querySelector('.solution-menu [data-action="${name}"]').click()`);
+      const readCopy = () => evalJs(`navigator.clipboard.readText()`);
+      await open('.query');
+      await action('copy-full');
+      const full = await readCopy();
+      if (!full.includes('?- member(MenuX, [menu_value]).') || !full.includes('MenuX = menu_value')) failures.push(`incomplete subtree copy: ${full}`);
+      await open('.query'); await action('copy-logic');
+      if (await readCopy() !== 'member(MenuX, [menu_value]).') failures.push('query logic copy includes decorations');
+      await open('.result');
+      const resultActions = await evalJs(`[...document.querySelectorAll('.solution-menu [data-action]')].map(e=>e.dataset.action)`);
+      if (resultActions.includes('delete') || resultActions.includes('solve-this')) failures.push('query-only actions offered for a result');
+      await action('copy-logic');
+      if (await readCopy() !== 'member(menu_value, [menu_value])') failures.push('wrong solved query copied');
+      await open('.detail'); await action('copy-logic');
+      if (await readCopy() !== 'MenuX = menu_value') failures.push('wrong binding copied');
+      await open('.query'); await action('toggle');
+      if (await evalJs(`(${root}).querySelector('details').open`)) failures.push('collapse did not close query');
+      await open('.query'); await action('toggle');
+      if (!await evalJs(`(${root}).querySelector('details').open`)) failures.push('expand did not open query');
+      await evalJs(`(() => {
+        const input = document.getElementById('query-input');
+        input.value = 'other.';
+        input.dispatchEvent(new Event('input', {bubbles:true}));
+      })()`);
+      await open('.query'); await action('solve-this');
+      const loaded = await pollUntil(()=>evalJs(`document.getElementById('query-input').value`), value=>value==='member(MenuX, [menu_value]).',3000);
+      if (loaded !== 'member(MenuX, [menu_value]).') failures.push('Solve this did not load query');
+      // Keyboard entry point and dismissal restore focus to the same row.
+      await evalJs(`(${root}).querySelector('.query').dispatchEvent(new KeyboardEvent('keydown',{key:'F10',shiftKey:true,bubbles:true,cancelable:true}))`);
+      if (!await evalJs(`!!document.querySelector('.solution-menu')`)) failures.push('keyboard menu did not open');
+      await evalJs(`document.activeElement.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`);
+      if (await evalJs(`!!document.querySelector('.solution-menu')`)) failures.push('Escape did not dismiss menu');
+      const before = await evalJs(`document.querySelectorAll('ul.solutions > li').length`);
+      await open('.query'); await action('delete');
+      const after = await pollUntil(()=>evalJs(`document.querySelectorAll('ul.solutions > li').length`),count=>count===before-1,3000);
+      if (after!==before-1) failures.push('delete did not remove exactly one query');
+      if (!await evalJs(`getComputedStyle(document.getElementById('clear-solutions-button')).writingMode.includes('vertical')`)) failures.push('clear button is not in the vertical strip');
       return failures;
     },
   },
