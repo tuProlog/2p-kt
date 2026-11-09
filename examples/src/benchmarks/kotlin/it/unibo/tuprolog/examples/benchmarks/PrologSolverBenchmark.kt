@@ -57,7 +57,7 @@ class PrologSolverBenchmark {
                 .byId(timeout)
                 .options
                 .setChronometerFactory(ChronometerSetting.byId(chronometer).factory)
-        workload.checkSolution(solver.solve(goal, options).first())
+        workload.checkSolution(solver.solve(goal, options).use { it.first() })
     }
 
     @Benchmark
