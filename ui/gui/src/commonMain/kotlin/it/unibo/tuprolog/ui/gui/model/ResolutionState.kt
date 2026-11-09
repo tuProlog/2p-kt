@@ -13,6 +13,8 @@ data class ResolutionState(
     val error: String? = null,
     val revision: Long = 0,
     val seenRevision: Long = 0,
+    /** Submission time as milliseconds since the Unix epoch; null for older saved history. */
+    val submittedAt: Long? = null,
 ) {
     init {
         require(revision >= 0) { "revision must be non-negative" }
