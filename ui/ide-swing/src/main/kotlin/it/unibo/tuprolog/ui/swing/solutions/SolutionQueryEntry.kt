@@ -7,4 +7,5 @@ internal data class SolutionQueryEntry(
     val query: String,
     val solutions: List<SolutionPresentation>,
     val hasUnexploredPaths: Boolean,
+    val submittedAt: Long? = null,
 )

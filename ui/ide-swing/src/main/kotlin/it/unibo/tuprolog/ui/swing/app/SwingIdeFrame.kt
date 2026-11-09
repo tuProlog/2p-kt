@@ -872,7 +872,7 @@ class SwingIdeFrame(
     private fun solutionEntries(page: PageState): List<SolutionQueryEntry> {
         val history =
             page.history.resolutions.map {
-                SolutionQueryEntry(it.query, it.solutions, hasUnexploredPaths = false)
+                SolutionQueryEntry(it.query, it.solutions, hasUnexploredPaths = false, submittedAt = it.submittedAt)
             }
         val current = page.resolution
         val currentQuery = current.query
@@ -880,7 +880,14 @@ class SwingIdeFrame(
             if (currentQuery != null &&
                 current.status in setOf(ResolutionStatus.RUNNING, ResolutionStatus.AWAITING_CONTINUATION)
             ) {
-                listOf(SolutionQueryEntry(currentQuery, current.solutions, hasUnexploredPaths = true))
+                listOf(
+                    SolutionQueryEntry(
+                        currentQuery,
+                        current.solutions,
+                        hasUnexploredPaths = true,
+                        submittedAt = current.submittedAt,
+                    ),
+                )
             } else {
                 emptyList()
             }
