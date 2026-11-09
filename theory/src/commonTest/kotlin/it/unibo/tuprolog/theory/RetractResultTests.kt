@@ -2,6 +2,7 @@ package it.unibo.tuprolog.theory
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.funSpec
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
@@ -49,5 +50,17 @@ fun retractResultTests(
 
     test("fail-theory-correct") {
         toTestFailure.theory shouldBe theory
+    }
+
+    test("success-and-failure-flags") {
+        toTestSuccess.isSuccess shouldBe true
+        toTestSuccess.isFailure shouldBe false
+        toTestFailure.isSuccess shouldBe false
+        toTestFailure.isFailure shouldBe true
+    }
+
+    test("failure-has-no-clauses") {
+        toTestFailure.clauses.shouldBeNull()
+        toTestFailure.firstClause.shouldBeNull()
     }
 }

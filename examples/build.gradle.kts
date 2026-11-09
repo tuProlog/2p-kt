@@ -85,3 +85,11 @@ tasks.register<JavaExec>("clockReadsReport") {
     classpath = benchmarks.runtimeClasspath + benchmarks.output
     mainClass.set("it.unibo.tuprolog.examples.benchmarks.ClockReadsReport")
 }
+
+// Deterministic `match` counts per theory implementation and lookup (#1019), printed as a Markdown table.
+tasks.register<JavaExec>("theoryMatchReport") {
+    group = "benchmark"
+    description = "Prints how many unifications each theory implementation attempts per lookup."
+    classpath = benchmarks.runtimeClasspath + benchmarks.output
+    mainClass.set("it.unibo.tuprolog.examples.benchmarks.theory.TheoryMatchReport")
+}

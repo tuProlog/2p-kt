@@ -1,14 +1,13 @@
 package it.unibo.tuprolog.theory
 
+import it.unibo.tuprolog.collections.ClauseDeque
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.unify.UnificationAware
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Taggable
 import kotlin.js.JsName
@@ -19,98 +18,93 @@ import kotlin.jvm.JvmStatic
  * queried by unification against a goal, and grown or shrunk with the usual ISO-inspired vocabulary
  * (`assertA`/`assertZ`/`retract`/`abolish`).
  *
- * `Theory` is deliberately a thin, Prolog-flavoured façade: how clauses are actually stored, searched and
- * mutated is delegated to a `ClauseCollection` (see the `it.unibo.tuprolog.collections` package) chosen at
- * construction time. Two independent axes of variation exist, both hidden behind this same interface:
- * - **mutable vs. immutable**: a plain `Theory` is a persistent data structure — every `assertA`/`assertZ`/
- *   `retract` returns a *new* `Theory`, leaving `this` untouched; a [MutableTheory] (obtained via
- *   [toMutableTheory]) edits itself in place instead, which is cheaper when a program asserts/retracts
- *   clauses very frequently (e.g. a Prolog `dynamic` predicate).
- * - **indexed vs. listed**: an *indexed* theory (the default, see [indexedOf]) keeps clauses in a
- *   discrimination-tree-like structure (see `it.unibo.tuprolog.collections.rete.custom.ReteTree`) indexed by
- *   directive-vs-rule, functor, arity and first-argument shape, trading memory and update cost for fast
- *   lookup; a *listed* theory (see [listedOf]) is a thin wrapper around an ordered clause list, cheap to
- *   build and to keep in insertion order, but linear to query (each `get` scans and unifies against every
- *   clause). A knowledge base that is queried far more often than it is changed (a typical static, "library"
- *   theory) benefits from indexing; one that is asserted/retracted on nearly every resolution step, or kept
- *   small, may not be worth indexing at all — which is exactly why solvers (see `:solve`) build their static
- *   knowledge base with [of] (indexed) and their dynamic one with [listedOf].
+ * A `Theory` is a [ClauseDeque] (see the `it.unibo.tuprolog.collections` package), taggable, and comes in two
+ * flavours:
+ * - a plain `Theory` is **immutable** and optimised for **reads** (static knowledge bases). Every
+ *   `assertA`/`assertZ`/`retract` returns a new `Theory` sharing with `this` every procedure it does not touch, or
+ *   `this` itself when nothing changes (e.g. a failed `retract`);
+ * - a [MutableTheory] (obtained via [toMutableTheory]) is optimised for **writes** (dynamic knowledge bases): it
+ *   edits itself in place, in amortised constant time after lookup, and its lookups follow the logical update view.
+ *
+ * Both flavours group clauses by procedure (functor and arity of the head) and, within a procedure of at least 4
+ * clauses, build argument indexes *on demand*: the first lookup binding an argument builds an index on it, and every
+ * lookup then uses, among the arguments it binds, the index yielding the fewest candidates (demand-driven, or
+ * just-in-time, multi-argument indexing, as in YAP and SWI-Prolog). Where an argument's index cannot tell clauses
+ * apart, lookups also index the arguments of compound terms, down to depth 4 (SWI-Prolog's *deep indexing*).
+ * Index keys come from the [Unificator] (see [Unificator.indexKey]), so indexing is consistent with the unificator's
+ * notion of equality.
  *
  * Example — building a small theory and querying it:
  * ```kotlin
  * val theory =
- *     Theory.indexedOf(
- *         Unificator.default,
+ *     Theory.of(
  *         Fact.of(Struct.of("parent", Atom.of("alice"), Atom.of("bob"))),
  *         Fact.of(Struct.of("parent", Atom.of("bob"), Atom.of("carol"))),
  *     )
  * val goal = Struct.of("parent", Var.of("Who"), Atom.of("bob"))
- * theory[goal].toList() // rules/facts whose head *might* unify with `parent(Who, bob)`
+ * theory[goal].toList() // [parent(alice, bob)]: the rules whose head unifies with `parent(Who, bob)`
  * ```
+ *
+ * References:
+ * - V. Santos Costa, K. Sagonas, R. Lopes. *Demand-Driven Indexing of Prolog Clauses*. ICLP 2007, LNCS 4670.
+ * - J. Wielemaker, T. Schrijvers, M. Triska, T. Lager. *SWI-Prolog*. Theory and Practice of Logic Programming
+ *   12(1-2), 2012; and the SWI-Prolog manual, section "Just-in-time clause indexing".
+ * - D. H. D. Warren. *An Abstract Prolog Instruction Set*. SRI Technical Note 309, 1983 (first-argument indexing,
+ *   which this scheme generalises to any argument).
  *
  * @see MutableTheory
  * @see it.unibo.tuprolog.collections.ClauseCollection
  */
 interface Theory :
-    Iterable<Clause>,
-    Taggable<Theory>,
-    UnificationAware {
+    ClauseDeque,
+    Taggable<Theory> {
     /** Whether this [Theory] supports in-place mutation; `true` for [MutableTheory], `false` otherwise. */
     @JsName("isMutable")
     val isMutable: Boolean
         get() = false
 
-    /** Returns a [Theory] with the same clauses as this one, but using the given [unificator] to match them. */
+    /**
+     * Returns a [Theory] with the same clauses and tags as this one, but using the given [unificator] to match (and
+     * index) them: `this`, if [unificator] equals the current one, a new theory otherwise (also for a [MutableTheory]).
+     */
     @JsName("setUnificator")
     fun setUnificator(unificator: Unificator): Theory
 
-    /** Returns a [MutableTheory] with the same clauses (and [Unificator]) as this one; `this`, if it already is one. */
+    /**
+     * Returns a [MutableTheory] with the same clauses, [Unificator] and tags as this one: `this`, if it already is one,
+     * a copy otherwise.
+     */
     @JsName("toMutableTheory")
     fun toMutableTheory(): MutableTheory
 
-    /** Returns an immutable [Theory] with the same clauses (and [Unificator]) as this one; `this`, if it already is one. */
+    /**
+     * Returns an immutable [Theory] with the same clauses, [Unificator] and tags as this one: `this`, if it already is
+     * one, a copy otherwise (so later changes to a [MutableTheory] do not affect the result).
+     */
     @JsName("toImmutableTheory")
     fun toImmutableTheory(): Theory
 
-    /** All [Clause]s in this theory */
-    @JsName("clauses")
-    val clauses: Iterable<Clause>
+    /** A new [MutableTheory] with the same clauses, [Unificator] and tags: unlike [toMutableTheory], always a copy. */
+    override fun toMutable(): MutableTheory = toMutableTheory().let { if (it === this) it.clone() else it }
 
-    /** Only [clauses] that are [Rule]s */
-    @JsName("rules")
-    val rules: Iterable<Rule>
-        get() =
-            clauses
-                .asSequence()
-                .map { it.asRule() }
-                .filterNotNull()
-                .asIterable()
+    /** Same as [toImmutableTheory]. */
+    override fun toImmutable(): Theory = toImmutableTheory()
 
-    /** Only [clauses] that are [Directive]s */
-    @JsName("directives")
-    val directives: Iterable<Directive>
-        get() =
-            clauses
-                .asSequence()
-                .map { it.asDirective() }
-                .filterNotNull()
-                .asIterable()
+    /** All the [Clause]s in this theory, in order. */
+    override val clauses: Iterable<Clause>
 
-    /** The amount of clauses in this [Theory] */
-    @JsName("size")
-    val size: Long
+    /** The number of clauses in this [Theory]. */
+    override val size: Long
 
-    /** Whether this [Theory] is empty or not */
-    @JsName("isEmpty")
-    val isEmpty: Boolean
+    /** Whether this [Theory] contains no clause. */
+    override val isEmpty: Boolean
 
-    /** Whether this [Theory] is full or not */
-    @JsName("isNonEmpty")
-    val isNonEmpty: Boolean
+    /** Whether this [Theory] contains at least one clause. */
+    override val isNonEmpty: Boolean
 
     /**
-     * Adds all the clauses of the given [theory] after all the clauses of this one, returning the resulting
-     * [Theory] (as a *new* instance, unless [theory] [is empty][Theory.isEmpty]).
+     * Adds all the clauses of the given [theory] after all the clauses of this one, keeping this theory's
+     * [Unificator] and tags; equivalent to `assertZ(theory.clauses)`. Returns `this` if [theory] is empty.
      * @throws IllegalArgumentException if any clause of [theory] is not [well-formed][Clause.isWellFormed]
      */
     @JsName("plusTheory")
@@ -123,11 +117,13 @@ interface Theory :
     @JsName("plus")
     operator fun plus(clause: Clause): Theory = assertZ(clause)
 
-    /** Checks if given clause is contained in this theory */
-    @JsName("contains")
-    operator fun contains(clause: Clause): Boolean
+    /**
+     * Whether some clause of this theory *unifies* with [clause], according to the [unificator]. This is not
+     * membership: use [containsVariant] to check whether a clause is stored, up to variable renaming.
+     */
+    override operator fun contains(clause: Clause): Boolean
 
-    /** Checks if given clause is present in this theory */
+    /** Whether some rule of this theory has a head unifying with [head]; equivalent to `contains(Rule.of(head, _))`. */
     @JsName("containsHead")
     operator fun contains(head: Struct): Boolean
 
@@ -138,11 +134,10 @@ interface Theory :
     @JsName("containsIndicator")
     operator fun contains(indicator: Indicator): Boolean
 
-    /** Retrieves the [Sequence] of clauses in this theory that could unify against the given [clause] */
-    @JsName("get")
-    operator fun get(clause: Clause): Sequence<Clause>
+    /** The clauses of this theory unifying with [clause], lazily, in order. */
+    override operator fun get(clause: Clause): Sequence<Clause>
 
-    /** Retrieves the [Sequence] of [Rule]s in this theory whose head could unify against the given [head] */
+    /** The [Rule]s of this theory whose head unifies with [head] (whatever their body), lazily, in order. */
     @JsName("getByHead")
     operator fun get(head: Struct): Sequence<Rule>
 
@@ -212,14 +207,18 @@ interface Theory :
     fun retract(clause: Clause): RetractResult<Theory>
 
     /**
-     * Tries to delete, from this theory, one clause unifying against each of the given [clauses] patterns.
+     * Tries to delete, from this theory, the first clause unifying with each of the given [clauses] patterns, in
+     * order. Succeeds if at least one pattern matched, with [RetractResult.clauses] listing the removed clauses;
+     * fails if none did.
      * @see retract
      */
     @JsName("retractIterable")
     fun retract(clauses: Iterable<Clause>): RetractResult<Theory>
 
     /**
-     * Tries to delete, from this theory, one clause unifying against each of the given [clauses] patterns.
+     * Tries to delete, from this theory, the first clause unifying with each of the given [clauses] patterns, in
+     * order. Succeeds if at least one pattern matched, with [RetractResult.clauses] listing the removed clauses;
+     * fails if none did.
      * @see retract
      */
     @JsName("retractSequence")
@@ -229,7 +228,11 @@ interface Theory :
     @JsName("retractByHead")
     fun retract(head: Struct): RetractResult<Theory> = retract(Rule.of(head, Var.anonymous()))
 
-    /** Tries to delete all the clauses in this theory unifying against the given [clause] */
+    /**
+     * Tries to delete all the clauses in this theory unifying with the given [clause], returning a
+     * [RetractResult.Success] wrapping the resulting [Theory] and the removed clauses (in order), or a
+     * [RetractResult.Failure] wrapping this same theory if no clause matched.
+     */
     @JsName("retractAll")
     fun retractAll(clause: Clause): RetractResult<Theory>
 
@@ -245,7 +248,10 @@ interface Theory :
     @JsName("abolish")
     fun abolish(indicator: Indicator): Theory
 
-    /** An enhanced toString that prints the theory in a Prolog program format, if [asPrologText] is `true` */
+    /**
+     * If [asPrologText] is `true`, the clauses of this theory as Prolog source text, one per line, each terminated by
+     * a full stop (`"f(a).\nf(b).\n"`; empty for an empty theory); otherwise, the same as [toString].
+     */
     @JsName("toStringAsProlog")
     fun toString(asPrologText: Boolean): String
 
@@ -260,12 +266,21 @@ interface Theory :
         useVarCompleteName: Boolean,
     ): Boolean
 
-    /** Returns a copy of this [Theory]; for an immutable theory this may return `this` unchanged. */
+    /**
+     * Theories are equal when they are both [Theory]s (either flavour) holding equal clauses, in the same order:
+     * the same as `equals(other, useVarCompleteName = true)`. Unifiers and tags are ignored.
+     */
+    override fun equals(other: Any?): Boolean
+
+    /** Consistent with [equals]. */
+    override fun hashCode(): Int
+
+    /** Returns a copy of this [Theory], with the same tags: `this`, for an immutable theory. */
     @JsName("clone")
     fun clone(): Theory
 
     companion object {
-        /** Creates an empty [Theory] */
+        /** Creates an empty [Theory] using the given [unificator]. */
         @JvmStatic
         @JsName("empty")
         fun empty(unificator: Unificator): Theory = indexedOf(unificator, emptySequence())
@@ -275,7 +290,10 @@ interface Theory :
         @JsName("emptyWithDefaultUnificator")
         fun empty(): Theory = empty(Unificator.default)
 
-        /** Creates a [Theory], containing the given clauses */
+        /**
+         * Creates a [Theory] containing the given clauses, in order, using the given [unificator].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("of")
         fun of(
@@ -283,12 +301,18 @@ interface Theory :
             vararg clause: Clause,
         ): Theory = indexedOf(unificator, *clause)
 
-        /** Creates a [Theory], containing the given clauses, using the [default unificator][Unificator.default] */
+        /**
+         * Creates a [Theory] containing the given clauses, in order, using the [default unificator][Unificator.default].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("ofWithDefaultUnificator")
         fun of(vararg clause: Clause): Theory = indexedOf(Unificator.default, *clause)
 
-        /** Creates a [Theory], containing the given clauses */
+        /**
+         * Creates a [Theory] containing the given clauses, in order, using the given [unificator].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("ofIterable")
         fun of(
@@ -296,12 +320,18 @@ interface Theory :
             clauses: Iterable<Clause>,
         ): Theory = indexedOf(unificator, clauses)
 
-        /** Creates a [Theory], containing the given clauses, using the [default unificator][Unificator.default] */
+        /**
+         * Creates a [Theory] containing the given clauses, in order, using the [default unificator][Unificator.default].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("ofIterableWithDefaultUnificator")
         fun of(clauses: Iterable<Clause>): Theory = indexedOf(Unificator.default, clauses)
 
-        /** Creates a [Theory], containing the given clauses */
+        /**
+         * Creates a [Theory] containing the given clauses, in order, using the given [unificator].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("ofSequence")
         fun of(
@@ -309,13 +339,18 @@ interface Theory :
             clauses: Sequence<Clause>,
         ): Theory = indexedOf(unificator, clauses)
 
-        /** Creates a [Theory], containing the given clauses, using the [default unificator][Unificator.default] */
+        /**
+         * Creates a [Theory] containing the given clauses, in order, using the [default unificator][Unificator.default].
+         * @throws IllegalArgumentException if any clause is not [well-formed][Clause.isWellFormed]
+         */
         @JvmStatic
         @JsName("ofSequenceWithDefaultUnificator")
         fun of(clauses: Sequence<Clause>): Theory = indexedOf(Unificator.default, clauses)
 
-        /** Let developers easily create a [Theory], while avoiding variables names clashing by using a
-         * different [Scope] for each [Clause] */
+        /**
+         * Creates a [Theory] from clause factories, each run in a fresh [Scope], so that variables with the same name
+         * in different clauses are different variables.
+         */
         @JvmStatic
         @JsName("ofScopes")
         fun of(
@@ -323,18 +358,20 @@ interface Theory :
             vararg clauses: Scope.() -> Clause,
         ): Theory = indexedOf(unificator, *clauses)
 
-        /** Let developers easily create a [Theory] using the [default unificator][Unificator.default], while
-         * avoiding variables names clashing by using a different [Scope] for each [Clause] */
+        /**
+         * Creates a [Theory] using the [default unificator][Unificator.default] from clause factories, each run in a
+         * fresh [Scope], so that variables with the same name in different clauses are different variables.
+         */
         @JvmStatic
         @JsName("ofScopesWithDefaultUnificator")
         fun of(vararg clauses: Scope.() -> Clause): Theory = indexedOf(Unificator.default, *clauses)
 
-        /** Creates an empty [Theory] backed by an indexed data structure */
+        /** Same as [empty]: every [Theory] is indexed. */
         @JvmStatic
         @JsName("emptyIndexed")
         fun emptyIndexed(unificator: Unificator): Theory = indexedOf(unificator, emptyList())
 
-        /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
+        /** Same as [of]: every [Theory] is indexed. */
         @JvmStatic
         @JsName("indexedOf")
         fun indexedOf(
@@ -342,8 +379,7 @@ interface Theory :
             vararg clause: Clause,
         ): Theory = indexedOf(unificator, clause.asIterable())
 
-        /** Let developers easily create a [Theory] backed by an indexed data structure, while avoiding variables names
-         * clashing by using a different [Scope] for each [Clause] */
+        /** Same as [of]: every [Theory] is indexed. */
         @JvmStatic
         @JsName("indexedOfScopes")
         fun indexedOf(
@@ -357,7 +393,7 @@ interface Theory :
                 },
             )
 
-        /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
+        /** Same as [of]: every [Theory] is indexed. */
         @JvmStatic
         @JsName("indexedOfSequence")
         fun indexedOf(
@@ -365,56 +401,12 @@ interface Theory :
             clauses: Sequence<Clause>,
         ): Theory = indexedOf(unificator, clauses.asIterable())
 
-        /** Creates a [Theory] backed by an indexed data structure, containing the given clauses */
+        /** Same as [of]: every [Theory] is indexed. */
         @JvmStatic
         @JsName("indexedOfIterable")
         fun indexedOf(
             unificator: Unificator,
             clauses: Iterable<Clause>,
         ): Theory = IndexedTheoryFactory.Default.theoryOf(clauses, unificator)
-
-        /** Creates an empty [Theory] backed by a list */
-        @JvmStatic
-        @JsName("emptyListed")
-        fun emptyListed(unificator: Unificator): Theory = listedOf(unificator, emptySequence())
-
-        /** Creates a [Theory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOf")
-        fun listedOf(
-            unificator: Unificator,
-            vararg clause: Clause,
-        ): Theory = listedOf(unificator, clause.asIterable())
-
-        /** Let developers easily create a [Theory] backed by a list, while avoiding variables names
-         * clashing by using a different [Scope] for each [Clause] */
-        @JvmStatic
-        @JsName("listedOfScopes")
-        fun listedOf(
-            unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): Theory =
-            listedOf(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
-
-        /** Creates a [Theory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOfSequence")
-        fun listedOf(
-            unificator: Unificator,
-            clauses: Sequence<Clause>,
-        ): Theory = listedOf(unificator, clauses.asIterable())
-
-        /** Creates a [Theory] backed by a list, containing the given clauses */
-        @JvmStatic
-        @JsName("listedOfIterable")
-        fun listedOf(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): Theory = ListedTheoryFactory.Default.theoryOf(clauses, unificator)
     }
 }

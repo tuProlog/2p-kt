@@ -1,4 +1,4 @@
-# Resolution benchmarks (#1012, #1020, #1075)
+# Resolution benchmarks (#1012, #1019, #1020, #1075)
 
 JMH benchmarks in `examples/src/benchmarks`. Timing (#1012) measures how timeout handling affects resolution:
 
@@ -45,6 +45,27 @@ hashing lists, tuples and blocks, eager (built from a list) or lazy (from a sequ
 100,000) and `ground`. #1075 also adds solver workloads over long non-ground lists (`nrev-100`, `bind-vars`) and STRIPS
 planning over list, tuple and block states (`strips-*`). Every workload is checked for its expected outcome before it is
 measured.
+
+Clause storage (#1019) is benchmarked in `src/benchmarks/kotlin/.../theory`, each over an `impl` parameter
+(`immutable` for `Theory`, `mutable` for `MutableTheory`) and a theory size:
+
+- `TheoryConstructionBenchmark`, `TheoryIncrementalConstructionBenchmark`: building a theory in one go, or by
+  repeated `assertZ`.
+- `TheoryLookupBenchmark`: first and all clauses matching queries bound on different arguments (see `TheoryQuery`).
+- `TheoryMutationBenchmark`: `assertA`, `assertZ`, `retract` of the first and last clause, `retractAll`, `abolish`
+  (on mutable theories, each followed by its inverse).
+- `TheoryChurnBenchmark`: lookups, iteration and `size` after a history of asserts and retracts.
+- `TheoryIterationBenchmark`: iteration, `size`, `hashCode` and `equals` over 1 or 1000 predicates.
+- `TheorySolverBenchmark`: `:solve-prolog` on fact tables and dynamic predicates (`theory-workloads.pl`).
+
+```
+./gradlew :examples:timingBenchmarks -PjmhArgs='-wi 2 -i 3 -w 1s -r 1s -f 1 -p size=1000 benchmarks.theory.TheoryLookupBenchmark[.]'
+./gradlew :examples:theoryMatchReport   # unifications attempted per lookup, deterministic
+```
+
+For the `develop` baseline, **do not run `size=100000`**: several operations are roughly quadratic and take hours.
+Run one class and size at a time up to `size=10000`, then extrapolate the 100k baseline per case as described below.
+Measure the branch at 100k normally, and label every projected baseline and speedup as estimated.
 
 ## Results
 
@@ -415,3 +436,230 @@ synchronised `lazy` but read it through `.value`.
 
 Raw JSON (JVM) and the Node.js timings: `results/2026-11-07-variables-*` in
 [tuProlog/2p-kt-benchmarks](https://github.com/tuProlog/2p-kt-benchmarks/tree/main/results).
+
+### Clause storage (#1019)
+
+#### Review rerun: `2026-11-06`, `2fac5388f` vs develop `806dab117`
+
+The measured branch includes the review fixes. The baseline is the fetched `develop` commit, with the identical
+`theory` benchmark sources and resource copied in; its production code is unchanged. Apple M1 (8 cores, 16 GB),
+macOS 27.0.1 arm64, Homebrew OpenJDK 21.0.12.1, JMH 1.37. Sequential runs, branch order alternating per class and size;
+`-wi 2 -i 3 -w 1s -r 1s -f 1 -bm thrpt -tu s -prof gc`, fork JVM `-Xms512m -Xmx4g`.
+
+All declared theory cases were run on the branch, plus `size=10000` lookup, mutation and iteration cases for
+calibration. General solver workloads use `chronometer=direct, timeout=none`. There are **293 measured branch cases,
+223 measured baseline cases and 70 extrapolated baseline cases**. The churn `history=100000` cases still hold only
+1000 live clauses; they are measured on both branches.
+
+Baseline `size=100000` scores are **extrapolated**, not measured: for each identical benchmark and other
+parameters, `S(100k) = S(10k)² / S(1k)`, where `S` is throughput. This is a power law through the nearest two
+measured sizes, assuming that scaling continues for one more decade. These projections have no JMH confidence
+interval and can miss cache, GC or algorithmic transitions. They are kept out of the measured geometric means.
+
+Speedup is branch/develop throughput. Each cell reports geometric mean and range. Estimated and measured results
+are separate:
+
+| Benchmark | Measured cases | Measured speedup (geomean; range) | Estimated 100k cases | Estimated speedup (geomean; range) |
+|---|---:|---|---:|---|
+| Bulk construction | 8 | 9.86×; 4.93–14.4× | 2 | ≈ 3.70×; 3.32–4.13× |
+| Incremental construction | 6 | 91.87×; 15.27–2.79e+03× | 0 | —; — |
+| Lookup (first + all) | 108 | 21.48×; 0.76–1.24e+06× | 36 | ≈ 388.98×; 0.90–1.34e+08× |
+| Mutation | 36 | 26.90×; 0.81–1.14e+04× | 12 | ≈ 66.86×; 0.80–2.93e+04× |
+| Churn | 12 | 46.90×; 1.44–2.83e+06× | 0 | —; — |
+| Iteration / size / hash / equality | 40 | 58.40×; 0.75–5.13e+04× | 20 | ≈ 116.38×; 0.23–6.52e+05× |
+| Theory solver workloads | 6 | 11.46×; 1.64–6.98e+04× | 0 | —; — |
+| General solver workloads | 7 | 1.41×; 1.02–1.79× | 0 | —; — |
+
+**Zero-arity check.** The short campaign showed lower zero-arity point estimates, so the four `size=1000` cases were
+rerun on both branches with `-wi 3 -i 5 -w 1s -r 1s -f 2`, the same heap and GC profiler. Scores below include JMH's
+99.9% error; these follow-ups are separate from the campaign aggregates above:
+
+| Operation | Implementation | Develop ops/s | Branch ops/s | Speedup |
+|---|---|---:|---:|---:|
+| all | immutable | 6,194 ± 876 | 6,052 ± 101 | 0.98× |
+| all | mutable | 6,769 ± 79 | 5,917 ± 172 | 0.87× |
+| first | immutable | 4,715,375 ± 79,366 | 4,646,022 ± 115,081 | 0.99× |
+| first | mutable | 4,660,000 ± 113,012 | 4,507,524 ± 172,642 | 0.97× |
+
+The mutable `all` case is **about 13% slower (0.87×)**, with non-overlapping reported 99.9% intervals.
+This control has no argument to index; its point-estimate speedups range from 0.87× to 0.99×.
+The full comparison retains all slower cases and their errors; it does not assume that every decline is noise.
+
+A follow-up cleanup gives unindexed mutable scans a single-view loop and drops the no-op key filter. Three alternating
+rounds on an x86 container against the branch without it (`-wi 3 -i 5 -w 1s -r 1s -f 2`): mutable `all` −4.4% to +1.5%,
+mutable `first` +2.7% to +6.2%, within the 5.9% spread of the untouched immutable cases. So it costs nothing, but is not
+shown to close the 0.87× gap, which was measured on the M1 only (details in
+[REPORTS.md](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/REPORTS.md#zero-arity-fix-check-2026-11-07-1b32e830c-vs-52d49d34b)). The size-ladder run below
+locates and fixes it.
+
+**Scope and provenance.** This compares branches, not the store change in isolation: develop uses `kt-math 2.1.2`,
+while the measured branch uses `0.10.2`. The existing churn benchmark changes predicates; it does not directly time
+distinct-key churn within one live predicate or the custom-head scan fallback added by the review fixes.
+
+An initial baseline 100k bulk-construction run completed and a lookup run was started before the no-100k-baseline
+constraint was applied. The lookup was stopped; both are archived separately and excluded from the table and fits.
+No further baseline `size=100000` cases were run.
+
+- [Full comparison, including per-case errors and allocations](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-comparison.md).
+- Raw JMH JSON: [develop](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-develop-806dab117.json.xz),
+  [branch](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-head-2fac5388f.json.xz).
+- [Extrapolated baseline scores and their two source measurements](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-baseline-estimates.json.xz).
+- Longer zero-arity check: [develop](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-zero-arity-develop.json.xz),
+  [branch](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-zero-arity-head.json.xz).
+- [Manifest: commits, settings, source hashes and durations](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-manifest.json.xz).
+- Excluded initial runs: [bulk construction](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-excluded-develop-100k-construction.json.xz),
+  [aborted lookup log](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-aborted-develop-100k-lookup.log).
+
+#### Size ladder: `2026-11-07-pr1071-ladder`, `06a152c6e` vs develop `da7edf64e`
+
+The whole suite after the rebase on develop `da7edf64e` (with #1075 and #1082), run with 2p-kt-benchmarks'
+`scripts/campaign.py`: theory sizes 10, 20, … 100, 200, … 1000, … 10,000, … 100,000, one JMH fork per measurement
+(`-wi 3 -i 5 -w 1s -r 1s`), repeated up to 5 times until the after/before ratio's 95% interval is within ±5%; about
+7,800 measurements on an Intel Xeon Gold 6248R (shared host), JDK 21. Geometric-mean speedups:
+
+| Class | Measured sizes | Sizes develop did not reach (≈) |
+|---|---|---|
+| Resolution (`PrologSolverBenchmark`, `UnificatorSolverBenchmark`) | 1.36×, 1.52× | — |
+| `TheorySolverBenchmark` | 1.93× | — |
+| Lookup, mutation, iteration | 15.3×, 34.7×, 51.2× | ≈ 52.6×, 62.1×, 26.0× |
+| Construction, incremental construction, churn | 14.7×, 72.5×, 45.0× | ≈ 11.4×, 174×, — |
+| Unification, recursive terms, variable creation | 1.00× | — |
+
+Develop exceeds the 180 s per-measurement budget on 16 of 72 theory ladders (between 20,000 and 90,000 clauses, and at
+700 for immutable incremental construction); this branch reaches 100,000 on all but immutable incremental construction,
+still superlinear, which stops at 20,000.
+
+That run found three small regressions, now fixed on this branch and re-measured on the same host over the whole ladder:
+immutable `hashCode` iteration (0.89–0.97×, now 1.08–1.57×), and zero-arity `all` lookups, immutable (0.91–0.93×, now
+1.00–1.20×) and mutable (0.86–0.94×, now 0.97–1.17×, no interval below 1). Zero-arity scans go through a plain
+`Sequence.filter` again, which C2 compiles better on that host than the inlined matching loop.
+
+Details, per-case tables and raw JSONL: [REPORTS.md](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/REPORTS.md#size-ladder-2026-11-07-pr1071-ladder-06a152c6e-vs-develop-da7edf64e)
+and the [regression fixes](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/REPORTS.md#regression-fixes-2026-11-09-pr1071-regressions-b63616ccb-vs-develop-da7edf64e).
+
+#### Historical implementation comparison
+
+Baseline `2a6b358` (develop's `:theory` plus these benchmarks) against `6e974c2`, except `Churn` (`bb2dd7e`) and
+`Mutation` (`9ef849a`): those two commits only change the mutable store's removal path. Apple M1, 16 GB, JDK 17.0.21,
+`-wi 2 -i 3 -w 1s -r 1s -f 1`, one class and size per run, baseline and after alternating. Full tables, including the
+archived intermediate runs, are in [the PR comment](https://github.com/tuProlog/2p-kt/pull/1071#issuecomment-6642318812);
+the raw JSON was not committed.
+
+Speedup of after over baseline (ops/s ratio), geometric mean over each benchmark's cases, with the worst case:
+
+| Benchmark | 10 | 1k | 10k | 100k¹ | Worst case anywhere |
+|---|---:|---:|---:|---:|---|
+| Construction (bulk) | 15.4× | 16.7× | 10.4× | 5.9× | 4.65× (mutable, 100k) |
+| Construction (incremental)² | 53.0× | 269× | – | – | 19.7× (mutable, 1k) |
+| Lookup, first match | 3.5× | 27.3× | 99.7× | 536× | 1.10× (zero-arity) |
+| Lookup, all matches | 3.4× | 24.7× | 89.3× | 441× | 1.00× (zero-arity) |
+| Mutation | 10.1× | 28.3× | 64.2× | 903× | 0.85× (mutable `assertZ`, 1k)³ |
+| Churn (history 0, 1k, 10k, 100k) | 24.4× | 34.2× | 63.0× | 104× | 1.38× (mutable lookup) |
+| Iteration | 4.9× | 36.9× | 92.5× | 309× | 0.91× (immutable `hashCode`)⁴ |
+| Solver (fixed workloads) | | | | | 9.85× mean, 1.48× (`fact-table-arg0`) to 57,518× (`fact-table-arg1`) |
+
+¹ Against the numbers the stopped baseline run reached at 100k. ² Sizes 10 to 1k. ³ Between 1.20× at 100 and 1.13× at
+3k, so within noise at 3 iterations. ⁴ Reads a cached hash in both versions: 0.91–0.99× is measurement noise on a
+nanosecond operation.
+
+Gains grow with size because lookups go through argument indexes instead of scanning the predicate. Zero-arity and
+`hashCode` cases have nothing to index, and stay at about 1×.
+
+Intermediate runs found three scaling regressions, all fixed:
+
+- `a410491`: lookups on a nested first argument (`q(f(g(c)))`) unified with every clause; `6e974c2` indexes the chain
+  of first arguments up to depth 4.
+- `6e974c2`: mutable `assertZ`/`retract-last` left retracted entries in hot index buckets, making each lookup linear
+  (0.09× at 10k); `bb2dd7e` compacts each bucket on its own.
+- `bb2dd7e`: rebuilding all indexes after compacting a procedure made mutable inserts 0.69× at 10k; `9ef849a` keeps
+  them. Mutable insert-then-retract is now 1.07–1.34× the baseline from 10 to 10k (but for the noisy 1k point above), and 1.7–1.8M ops/s at 100k.
+
+#### Step 6: gated experiments
+
+Baseline `6cbce03` (the results above) against `theory-perf-step6`'s head, both with the Step 6 benchmark additions
+(`nested-arg1` and `joint-args` lookups, solver counts in `theoryMatchReport`). Same machine and JDK,
+`-wi 2..3 -i 3..5 -w 1s -r 1s -f 2`, baseline and after alternating per class; the noisiest classes were run twice and
+the run with error bars below 10% is reported. The verdict for each experiment is in `theory/docs/PERFORMANCE-PLAN.md`
+("Implementation status").
+
+**(a) One unification per selected clause.** Solver workloads (ops/s, bytes allocated per solution set):
+
+| Workload | Before | After | Speedup | B/op before | B/op after |
+|---|---:|---:|---:|---:|---:|
+| fact-table-arg0 | 138.9 ± 1.7 | 167.5 ± 4.5 | 1.21× | 21.7M | 20.0M |
+| fact-table-arg1 | 139.4 ± 2.4 | 167.4 ± 2.1 | 1.20× | 21.7M | 19.9M |
+| dynamic-table-arg0 | 137.7 ± 4.2 | 168.1 ± 2.7 | 1.22× | 21.7M | 20.0M |
+| dynamic-counter | 84.6 ± 1.2 | 97.5 ± 1.7 | 1.15× | 36.7M | 34.8M |
+| dynamic-churn | 129.9 ± 2.0 | 152.1 ± 3.1 | 1.17× | 24.6M | 23.3M |
+| determinism | 108.6 ± 1.8 | 138.5 ± 2.6 | 1.27× | 28.4M | 25.0M |
+| tiny | 1.71M ± 0.04M | 1.69M ± 0.02M | 0.99× | | |
+| deep-recursion | 62.9 ± 1.4 | 74.4 ± 1.2 | 1.18× | 54.1M | 51.6M |
+| nrev | 90.8 ± 1.8 | 105.5 ± 3.6 | 1.16× | 26.4M | 25.2M |
+| backtracking | 6.92 ± 0.12 | 9.00 ± 0.41 | 1.30× | 326M | 299M |
+| failing-search | 26.8 ± 3.9 | 36.6 ± 1.0 | 1.37× | 106M | 94M |
+| nested-solving | 48.3 ± 0.6 | 62.9 ± 0.5 | 1.30× | 59.7M | 52.8M |
+| primitives | 142.1 ± 3.1 | 168.3 ± 3.4 | 1.18× | 22.0M | 21.0M |
+
+Unifications per workload (`theoryMatchReport`; `match` calls are the theory's, `mgu` calls the solver's):
+
+| Workload | Before (match + mgu) | After (match + mgu) |
+|---|---:|---:|
+| fact-table-arg0, fact-table-arg1, dynamic-table-arg0 | 1502 + 1501 = 3003 | 0 + 2002 = 2002 |
+| dynamic-counter | 3004 + 2003 = 5007 | 1000 + 2004 = 3004 |
+| dynamic-churn | 2002 + 1501 = 3503 | 500 + 2002 = 2502 |
+| determinism | 3003 + 2002 = 5005 | 1 + 2002 = 2003 |
+| nrev | 1053 + 556 = 1609 | 0 + 586 = 586 |
+| deep-recursion | 4002 + 4001 = 8003 | 0 + 6002 = 6002 |
+| backtracking | 22738 + 13409 = 36147 | 1957 + 13415 = 15372 |
+
+`retract/1` and `clause/2` use `candidates` as well. The remaining `match` calls come from outside clause selection:
+removing each retracted clause from the dynamic KB, and other solver code (`backtracking` retracts nothing). 
+
+**(b), (c) Deep positions and key pre-check.** Lookups (ops/s, `all` / `first`, immutable; mutable is within 10%):
+
+| Query | Size | Before | After | Speedup |
+|---|---:|---:|---:|---:|
+| nested-arg1, all | 1k | 3,489 | 1,417,000 | 406× |
+| nested-arg1, all | 10k | 349 | 1,469,000 | 4,207× |
+| nested-arg1, first | 10k | 741 | 1,455,000 | 1,965× |
+| joint-args, all | 1k | 157,100 | 832,000 | 5.3× |
+| joint-args, all | 10k | 45,820 | 307,300 | 6.7× |
+| joint-args, first | 10k | 88,620 | 511,800 | 5.8× |
+
+Every other lookup at 10, 1k and 10k is within noise or 0.92–0.97× (the cost of the position search), the worst
+being mutable `last-bound` `all` at 1k (0.92×). `joint-args` stays ~2× (1k) to ~5× (10k) slower than a lookup
+served by one selective argument: joint indexes were not implemented (see the plan).
+
+**(d) `INDEX_THRESHOLD` from 8 to 4.** Lookups into procedures of 4 to 64 clauses, thresholds 4 to 64 (a
+throwaway benchmark): indexing is 1.3–2.2× faster than scanning from 8 clauses on, and from 4 on 1.4–1.5× for
+selective lookups (7–8× without a match), 0.8× for `joint-args`.
+
+**Costs.** Mutable insert-then-retract at 1k clauses is 0.88× (`assertZ`) and 0.90× (`retract-last`): index updates
+now go through path-based keys. Immutable mutations, churn and iteration are unchanged (0.95–1.08×).
+
+**Historical final Step 6 run (before the review fixes, `retract/1`/`clause/2` on `candidates`, index paths decoded once).** A single overnight
+campaign on an idle machine, `-wi 3 -i 5 -w 1s -r 1s -f 2`, baseline and after alternating per class
+(the mutable size-10 `first` lookups rerun, see below). Speedups, as geometric mean (range):
+
+| Class | Benchmarks | Speedup |
+|---|---:|---|
+| `TheorySolverBenchmark` | 6 | 1.23× (1.15–1.28×) |
+| `PrologSolverBenchmark` | 7 | 1.22× (0.96× `tiny` – 1.41× `backtracking`) |
+| `TheoryLookupBenchmark` | 144 | 2.24× (0.88–48,000×) |
+| `TheoryMutationBenchmark` | 36 | 0.99× (0.84–1.17×) |
+| `TheoryChurnBenchmark` | 12 | 0.96× (0.88–1.01×) |
+| `TheoryConstructionBenchmark` | 10 | 0.99× (0.76–1.13×) |
+| `TheoryIncrementalConstructionBenchmark` | 6 | 1.03× (0.98–1.09×) |
+| `TheoryIterationBenchmark` | 40 | 1.01× (0.95–1.17×) |
+
+`nested-arg1` reaches 23,000× (`first`) to 48,000× (`all`) at 100k clauses, since it no longer scans the procedure,
+and `joint-args` 6.9–8.0×. Nothing degrades with size. The worst cases are mutable:
+
+- `assertZ` at 1k (0.84×), `retract-first` at 1k (0.90×) and the churn cycle (0.88× at every history length) pay for
+  index maintenance on writes; at 10 and 100k clauses the same operations are 0.93–1.07×.
+- `first` on `all-vars` (0.88–0.96×) and on `joint-args` at 10 clauses (0.89–0.91×) pays for the position search
+  and the key pre-check.
+- `bulk` construction of 10 clauses (0.76×) is a single sub-microsecond row; the other sizes are 0.98–1.07×.
+
+The first run of the mutable size-10 `first` lookups read 0.38–0.44×, with scores swinging 4× within a fork; two
+alternated reruns put them back at 0.89–1.04×, which is what the table reports.

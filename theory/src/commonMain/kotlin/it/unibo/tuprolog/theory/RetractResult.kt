@@ -25,7 +25,10 @@ sealed class RetractResult<out T : Theory> {
     open val isFailure: Boolean
         get() = false
 
-    /** The result always present value, is the clause database resulting from the operation execution */
+    /**
+     * The theory resulting from the operation: for an immutable [Theory], a new theory on [Success] and the unchanged
+     * one on [Failure]; for a [MutableTheory], always the very theory the operation was invoked on.
+     */
     @JsName("theory")
     abstract val theory: T
 
@@ -33,7 +36,7 @@ sealed class RetractResult<out T : Theory> {
     @JsName("clauses")
     abstract val clauses: Iterable<Clause>?
 
-    /** Gets the first successfully retracted clause */
+    /** The first removed clause; `null` if the operation [isFailure]. */
     @JsName("firstClause")
     abstract val firstClause: Clause?
 

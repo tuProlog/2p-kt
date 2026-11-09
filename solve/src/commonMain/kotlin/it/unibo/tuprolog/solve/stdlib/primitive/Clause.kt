@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.PermissionError
 import it.unibo.tuprolog.solve.exception.error.PermissionError.Operation.ACCESS
@@ -10,7 +11,6 @@ import it.unibo.tuprolog.solve.exception.error.PermissionError.Permission.PRIVAT
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.utils.buffered
 
 object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
     override val help: String =
@@ -51,7 +51,9 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
             throw PermissionError.of(context, signature, ACCESS, PRIVATE_PROCEDURE, headSignature.toIndicator())
         }
         val template = Rule.of(head, second)
-        return (context.staticKb[head] + context.dynamicKb[head].buffered())
+        // unifying each fresh copy with the template filters clauses too: index candidates are enough (#1019)
+        val query = Rule.of(head, Var.anonymous())
+        return (context.staticKb.candidates(query) + context.dynamicKb.candidates(query))
             .map {
                 // a fresh copy each time: variables of an earlier answer must not clash with this one's
                 mgu(it.freshCopy(), template)

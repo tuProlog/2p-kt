@@ -11,9 +11,7 @@ import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.theory.impl.IndexedTheory
-import it.unibo.tuprolog.theory.impl.ListedTheory
 import it.unibo.tuprolog.theory.impl.MutableIndexedTheory
-import it.unibo.tuprolog.theory.impl.MutableListedTheory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.reflect.KClass
 
@@ -31,7 +29,6 @@ private class FactoryKind(
 
 private val kinds =
     listOf(
-        FactoryKind("listed", ListedTheoryFactory.Default, ListedTheory::class, MutableListedTheory::class),
         FactoryKind("indexed", IndexedTheoryFactory.Default, IndexedTheory::class, MutableIndexedTheory::class),
     )
 

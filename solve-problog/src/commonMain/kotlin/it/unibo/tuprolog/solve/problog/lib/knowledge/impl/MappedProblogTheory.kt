@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.problog.lib.knowledge.MutableProblogTheory
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
+import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
@@ -26,6 +27,10 @@ internal class MappedProblogTheory(
     ProblogTheory {
     override val isMutable: Boolean
         get() = false
+
+    override fun toMutable(): MutableTheory = super<ProblogTheory>.toMutable()
+
+    override fun toImmutable(): Theory = super<ProblogTheory>.toImmutable()
 
     override fun toMutableTheory(): MutableProblogTheory = MutableProblogTheory.of(unificator, this)
 

@@ -1,105 +1,57 @@
 package it.unibo.tuprolog.collections
 
-import it.unibo.tuprolog.collections.impl.ReteClauseMultiSet
+import it.unibo.tuprolog.collections.impl.FrozenClauseMultiSet
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.TermComparator
 import it.unibo.tuprolog.unify.Unificator
-import it.unibo.tuprolog.utils.itemWiseEquals
-import it.unibo.tuprolog.utils.itemWiseHashCode
 import kotlin.js.JsName
 import kotlin.jvm.JvmStatic
 
 /**
- * A [ClauseCollection] that drops ordering guarantees in exchange for a slightly cheaper [count]/[get] when many
- * clauses can match a single query shape and their relative order does not matter. Used internally as the
- * storage for index buckets of the RETE tree that also backs [ClauseQueue]; `Theory` itself always uses
- * [ClauseQueue], since Prolog's SLD resolution needs clause order preserved.
- * @see ClauseQueue
+ * A read-only [ClauseCollection] promising no particular order, where the same clause may occur more than once.
+ * Two multisets are equal when they contain equal clauses with the same multiplicities.
  */
 interface ClauseMultiSet : ClauseCollection {
-    /** Gives the number of [Clause] that would unify over the given clause. **/
-    @JsName("count")
-    fun count(clause: Clause): Long
+    override fun toMutable(): MutableClauseMultiSet
 
-    /** Produces a [Sequence] of the clauses that would unify over the given [Clause]. **/
-    operator fun get(clause: Clause): Sequence<Clause>
-
-    /** Gives a freshly produced [ClauseMultiSet] including the given [Clause] and the content of this one **/
-    override fun add(clause: Clause): ClauseMultiSet
-
-    /** Gives a freshly produced [ClauseMultiSet] including all the given [Clause] and the content of this one **/
-    override fun addAll(clauses: Iterable<Clause>): ClauseMultiSet
-
-    /** Produces a [RetrieveResult] as a consequence of the attempt at deleting the given [Clause]
-     *  from this [ClauseMultiSet] **/
-    override fun retrieve(clause: Clause): RetrieveResult<out ClauseMultiSet>
-
-    /** Produces a [RetrieveResult] as a consequence of the attempt at deleting all the given [Clause]
-     *  from this [ClauseMultiSet] **/
-    override fun retrieveAll(clause: Clause): RetrieveResult<out ClauseMultiSet>
+    override fun toImmutable(): ClauseMultiSet
 
     companion object {
-        /** Creates an empty [ClauseMultiSet] **/
+        /** An empty [ClauseMultiSet] matching clauses with [unificator]. */
         @JvmStatic
         @JsName("empty")
-        fun empty(unificator: Unificator): ClauseMultiSet = of(unificator, emptyList())
+        fun empty(unificator: Unificator = Unificator.default): ClauseMultiSet = of(unificator, emptyList())
 
-        /** Creates a [ClauseMultiSet] with given clauses */
+        /**
+         * A [ClauseMultiSet] of the given clauses, matching clauses with [unificator], skipping those that are
+         * variants of a clause already added.
+         */
         @JvmStatic
         @JsName("of")
         fun of(
             unificator: Unificator,
-            vararg clause: Clause,
-        ): ClauseMultiSet = of(unificator, clause.asIterable())
+            vararg clauses: Clause,
+        ): ClauseMultiSet = of(unificator, clauses.asIterable())
 
-        /** Let developers easily create a [ClauseMultiSet] programmatically while avoiding variables names clashing */
+        /**
+         * A [ClauseMultiSet] of the given clauses, matching clauses with [unificator], skipping those that are
+         * variants of a clause already added.
+         */
         @JvmStatic
-        @JsName("ofScopes")
+        @JsName("ofIterable")
         fun of(
             unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): ClauseMultiSet =
-            of(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
+            clauses: Iterable<Clause>,
+        ): ClauseMultiSet = FrozenClauseMultiSet.of(unificator, clauses)
 
-        /** Creates a [ClauseMultiSet] from the given [Sequence] of [Clause] */
+        /**
+         * A [ClauseMultiSet] of the given clauses, matching clauses with [unificator], skipping those that are
+         * variants of a clause already added.
+         */
         @JvmStatic
         @JsName("ofSequence")
         fun of(
             unificator: Unificator,
             clauses: Sequence<Clause>,
         ): ClauseMultiSet = of(unificator, clauses.asIterable())
-
-        /** Creates a [ClauseMultiSet] from the given [Iterable] of [Clause] */
-        @JvmStatic
-        @JsName("ofIterable")
-        fun of(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): ClauseMultiSet = ReteClauseMultiSet(unificator, clauses)
-
-        @JvmStatic
-        @JsName("areEquals")
-        fun equals(
-            multiSet1: ClauseMultiSet,
-            multiSet2: ClauseMultiSet,
-        ): Boolean =
-            itemWiseEquals(
-                multiSet1.sortedWith(TermComparator.DefaultComparator),
-                multiSet2.sortedWith(TermComparator.DefaultComparator),
-            )
-
-        @JvmStatic
-        @JsName("computeHashCode")
-        fun hashCode(multiSet: ClauseMultiSet): Int =
-            itemWiseHashCode(
-                ClauseMultiSet::class,
-                multiSet.sortedWith(TermComparator.DefaultComparator),
-            )
     }
 }
