@@ -209,7 +209,7 @@ class SwingIdeComponentsSpec :
             }
         }
 
-        test("solution-tree-shows-each-solution-time-and-the-query-total") {
+        test("solution-tree-shows-submission-timestamp-and-prefixed-solution-times") {
             SwingUtilities.invokeAndWait {
                 val tree = SolutionTree()
                 tree.render(
@@ -224,16 +224,31 @@ class SwingIdeComponentsSpec :
                                         time = 1.milliseconds,
                                     ),
                                     SolutionPresentation.No("member(X, [a]).", time = 234.microseconds),
+                                    SolutionPresentation.Halt("member(X, [a]).", "boom", time = 2.milliseconds),
+                                    SolutionPresentation.Halt(
+                                        "member(X, [a]).",
+                                        "expired",
+                                        isTimeout = true,
+                                        time = 3.milliseconds,
+                                    ),
                                 ),
                             hasUnexploredPaths = false,
+                            submittedAt =
+                                java.time.LocalDateTime
+                                    .of(2026, 11, 9, 20, 58, 7)
+                                    .atZone(java.time.ZoneId.systemDefault())
+                                    .toInstant()
+                                    .toEpochMilli(),
                         ),
                     ),
                 )
 
                 val queryNode = (tree.model.root as DefaultMutableTreeNode).getChildAt(0) as DefaultMutableTreeNode
-                queryNode.toString() shouldBe "?- member(X, [a]). (1.234ms)"
-                queryNode.getChildAt(0).toString() shouldBe "1. yes: member(a, [a]) (1ms)"
-                queryNode.getChildAt(1).toString() shouldBe "2. no (234us)"
+                queryNode.toString() shouldBe "[2026-11-09 20:58:07] ?- member(X, [a])."
+                queryNode.getChildAt(0).toString() shouldBe "1. [1ms] yes: member(a, [a])"
+                queryNode.getChildAt(1).toString() shouldBe "2. [234us] no"
+                queryNode.getChildAt(2).toString() shouldBe "3. [2ms] halt: boom"
+                queryNode.getChildAt(3).toString() shouldBe "4. [3ms] timeout: expired"
             }
         }
 

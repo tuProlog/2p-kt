@@ -67,6 +67,7 @@ class DefaultGuiControllerSpec :
                 controller.dispatch(PageAction.Solve(pageA))
                 val suspendedA = controller.awaitResolution(pageA, ResolutionStatus.AWAITING_CONTINUATION)
                 suspendedA.resolution.solutions.size shouldBe 1
+                val submittedAt = suspendedA.resolution.submittedAt.shouldNotBeNull()
                 (
                     controller.state.value.workspace
                         .page(pageB)
@@ -88,6 +89,10 @@ class DefaultGuiControllerSpec :
                 controller.dispatch(PageAction.Next(pageA, ConsumptionMode.ALL))
                 val completedA = controller.awaitResolution(pageA, ResolutionStatus.COMPLETED)
                 completedA.resolution.solutions.size shouldBe 2
+                completedA.resolution.submittedAt shouldBe submittedAt
+                completedA.history.resolutions
+                    .single()
+                    .submittedAt shouldBe submittedAt
                 controller.state.value.workspace.selectedPageId shouldBe pageB
             } finally {
                 controller.shutdown()
