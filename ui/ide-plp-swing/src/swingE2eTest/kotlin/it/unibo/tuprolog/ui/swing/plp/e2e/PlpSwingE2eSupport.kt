@@ -131,7 +131,16 @@ fun FrameFixture.selectLowerTab(baseTitle: String) {
     // finished re-rendering a moment later); retrying the click self-heals that race instead of failing outright.
     awaitCondition("the '$baseTitle' lower tab to become selected") {
         if (pane.target().selectedIndex != index) runCatching { pane.selectTab(index) }
-        pane.target().selectedIndex == index
+        // the click can keep missing when the tab headers re-layout under it (e.g. a title gaining its "*"
+        // unread marker); an enabled tab is reachable all the same, so select it directly
+        GuiActionRunner.execute(
+            Callable {
+                pane.target().run {
+                    if (selectedIndex != index && isEnabledAt(index)) selectedIndex = index
+                    selectedIndex == index
+                }
+            },
+        )
     }
 }
 
