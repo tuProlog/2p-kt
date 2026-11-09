@@ -20,7 +20,7 @@ fun Struct.extractSignature(): Signature = Signature.fromIndicator(indicator)!!
 fun Solver.solve(
     maxDuration: Duration = Duration.INFINITE,
     scopedContext: Scope.() -> Struct,
-): Sequence<Solution> = solve(scopedContext(Scope.empty()), maxDuration)
+): SolutionStream = solve(scopedContext(Scope.empty()), maxDuration)
 
 /**
  * Returns a [Sequence] equivalent to this one, but with every [Solution.Yes] whose [Solution.Yes.solvedQuery]

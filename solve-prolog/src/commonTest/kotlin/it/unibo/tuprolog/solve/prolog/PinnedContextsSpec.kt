@@ -29,7 +29,11 @@ class PinnedContextsSpec :
             val query = Struct.parse("(X = 1, missing(X) ; X = 2)")
             val x = query.variables.first { it.name == "X" }
 
-            solver.solveList(query).single().substitution[x] shouldBe Integer.of(2)
+            solver
+                .solve(query)
+                .toList()
+                .single()
+                .substitution[x] shouldBe Integer.of(2)
             val warning = warnings.single().shouldBeInstanceOf<MissingPredicate>()
             warning.context.substitution[x] shouldBe Integer.of(1)
         }

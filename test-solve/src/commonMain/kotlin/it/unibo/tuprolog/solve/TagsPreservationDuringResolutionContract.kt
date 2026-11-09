@@ -117,7 +117,7 @@ fun tagsPreservationDuringResolutionContract(
         for (engine in TagsUnificationEngine.entries) {
             val flow = TagFlow()
             val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = engine.tagFlow(flow))
-            val solutions = solver.solveList(goal).filter { it.isYes }
+            val solutions = solver.solve(goal).toList().filter { it.isYes }
 
             withClue("engine=$engine") {
                 solutions.size shouldBe 1
@@ -146,7 +146,7 @@ fun tagsPreservationDuringResolutionContract(
                 )
             }
         val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = TagResultUnificator())
-        val answers = solver.solveList(logicProgramming { "q"(X) }).filter { it.isYes }
+        val answers = solver.solve(logicProgramming { "q"(X) }).toList().filter { it.isYes }
 
         answers.map {
             it.substitution.values
@@ -224,4 +224,4 @@ private fun ContractScope.solverFor(
 private fun countSolutions(
     solver: Solver,
     goal: Struct,
-): Int = solver.solveList(goal).count { it.isYes }
+): Int = solver.solve(goal).toList().count { it.isYes }

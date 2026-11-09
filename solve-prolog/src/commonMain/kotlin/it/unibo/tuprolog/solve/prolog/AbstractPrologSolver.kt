@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.prolog
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolutionStream
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.InputStore
@@ -13,7 +14,9 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.prolog.machine.Cancellation
 import it.unibo.tuprolog.solve.prolog.machine.PrologMachine
+import it.unibo.tuprolog.solve.prolog.machine.PrologSolutionStream
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
@@ -44,6 +47,12 @@ internal abstract class AbstractPrologSolver(
         trustKb,
     ) {
     override lateinit var currentContext: PrologExecutionContext
+
+    // the cancellation of the stream this solver was created in (see PrologExecutionContext.createSolver), if any
+    internal var inheritedCancellation: Cancellation? = null
+
+    // the stream being opened by openStream, for solveImpl to hand to its machine
+    private var starting: PrologSolutionStream? = null
 
     constructor(
         unificator: Unificator = Unificator.default,
@@ -112,8 +121,26 @@ internal abstract class AbstractPrologSolver(
                 interception = options.interceptor?.let(::Interception),
                 ruleSelection = options.ruleSelection,
                 goalSelection = options.goalSelection,
+                cancellation = starting?.cancellation ?: inheritedCancellation,
             )
-        return PrologMachine(currentContext, goal, options.branchScheduler) { currentContext = it }.asSequence()
+        val machine = PrologMachine(currentContext, goal, options.branchScheduler) { currentContext = it }
+        starting?.machine = machine
+        return machine.asSequence()
+    }
+
+    // the machine checks the cancellation at every step, and nested resolutions share it
+    final override fun openStream(
+        goal: Struct,
+        solutions: () -> Sequence<Solution>,
+    ): SolutionStream {
+        val stream = PrologSolutionStream(Cancellation(inheritedCancellation))
+        starting = stream
+        try {
+            stream.solutions = solutions().iterator()
+        } finally {
+            starting = null
+        }
+        return stream
     }
 
     abstract override fun copy(

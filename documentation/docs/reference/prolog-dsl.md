@@ -63,7 +63,7 @@ solver's static knowledge base without touching `Theory`'s own API (see [Solver 
 
 `LogicProgrammingScopeWithResolution` wraps a `Solver` (a `defaultSolver`, built from the `SolverFactory` passed to
 `logicProgramming(solverFactory) { }`/`prolog { }`), exposing `staticKb(vararg clauses)` /
-`staticKb(theory)` to load facts/rules, and `solve(goal, options = ...)` /`solveOnce`/`solveList` mirroring
+`staticKb(theory)` to load facts/rules, and `solve(goal, options = ...)` /`solveOnce` mirroring
 [`Solver`](solver-api.md#solver)'s own methods. `prolog { }` specifically defaults to `Solver.prolog` (the Prolog
 SLD solver).
 

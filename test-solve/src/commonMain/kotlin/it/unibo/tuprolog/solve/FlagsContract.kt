@@ -200,7 +200,7 @@ fun flagsContract(
                         ),
                     ),
                 ),
-                solver.solveList(query, shortBudget),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -231,7 +231,7 @@ fun flagsContract(
                         ),
                     ),
                 ),
-                solver.solveList(query, shortBudget),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -259,7 +259,7 @@ fun flagsContract(
                         ),
                     ),
                 ),
-                solver.solveList(query, shortBudget),
+                solver.solve(query, shortBudget).toList(),
             )
         }
     }
@@ -398,7 +398,7 @@ fun flagsContract(
             val solver = solverFactory.solverWithDefaultBuiltins()
             val query = member(X, logicListOf(1, 1, 1))
 
-            (solver.solveList(query, shortBudget).count { it.isYes }) shouldBe 3
+            (solver.solve(query, shortBudget).toList().count { it.isYes }) shouldBe 3
         }
     }
 
@@ -412,7 +412,7 @@ fun flagsContract(
                 )
             val query = member(X, logicListOf(1, 1, 1))
 
-            (solver.solveList(query, shortBudget).count { it.isYes }) shouldBe 1
+            (solver.solve(query, shortBudget).toList().count { it.isYes }) shouldBe 1
         }
     }
 

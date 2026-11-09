@@ -83,15 +83,15 @@ Struct query = Struct.of("ancestor", Atom.of("abraham"), Var.of("X"));
 
 ## 5. Run it and read the solutions
 
-`solveList(goal)` eagerly collects every solution into a `java.util.List<Solution>`, which is the easiest thing
-to consume from Java:
+`solver.solve(goal)` returns a `SolutionStream`. Its `toList()` collects every solution into a
+`java.util.List<Solution>`, which is the easiest thing to consume from Java:
 
 ```java
 import it.unibo.tuprolog.solve.Solution;
 
 import java.util.List;
 
-List<Solution> solutions = solver.solveList(query);
+List<Solution> solutions = solver.solve(query).toList();
 for (Solution solution : solutions) {
     if (solution.isYes()) {
         System.out.println(solution.getSubstitution().getByName("X"));
@@ -105,13 +105,16 @@ Running this prints `isaac`, `jacob` and `joseph` — one line per way `ancestor
 `instanceof` chain, and `getSubstitution().getByName("X")` looks a binding up by variable name without needing to
 reconstruct the exact `Var` you queried with.
 
-If you don't want every solution materialized at once, `solver.solve(goal)` returns a Kotlin `Sequence<Solution>`
-instead of a `List` — but `Sequence` isn't a `java.lang.Iterable`, so Java can't use it in a for-each loop
-directly; call `.iterator()` and drive it with a `while` loop instead:
+If you don't want every solution materialized at once, iterate the stream in a try-with-resources, so that it is
+closed even if you stop early or an exception is thrown. A `SolutionStream` is not a `java.lang.Iterable`; use
+`asIterable()` in the for-each loop, or `stream()` for a `java.util.stream.Stream`:
 
 ```java
 --8<-- "examples/src/test/java/it/unibo/tuprolog/examples/ReadEditSolveJavaSpec.java:iterate-solutions"
 ```
+
+Leaving a stream open is harmless with the built-in predicates, but leaks the files, cursors or connections that
+library primitives may hold; see [Consuming solutions](../reference/solver-api.md#consuming-solutions-solutionstream).
 
 (That snippet is from a different, real example in 2P-Kt's own test suite — same pattern, different query.)
 

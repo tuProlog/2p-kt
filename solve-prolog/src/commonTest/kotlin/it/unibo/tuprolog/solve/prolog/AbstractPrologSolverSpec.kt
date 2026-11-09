@@ -19,7 +19,7 @@ class AbstractPrologSolverSpec :
                 )
             solver.unificator shouldBeSameInstanceAs CustomUnificator
             val goal = Struct.of("count", Integer.of(4))
-            solver.solveList(goal) shouldBe listOf(goal.yes())
+            solver.solve(goal).toList() shouldBe listOf(goal.yes())
             // the machine reports each new world to the solver: the unificator must survive the resolution
             solver.unificator shouldBeSameInstanceAs CustomUnificator
         }
