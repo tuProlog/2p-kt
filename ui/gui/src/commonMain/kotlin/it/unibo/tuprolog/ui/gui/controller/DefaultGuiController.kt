@@ -59,6 +59,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.yield
+import kotlin.time.Clock
 
 /**
  * Default presentation-independent application controller.
@@ -964,6 +965,7 @@ class DefaultGuiController(
                             ResolutionState(
                                 status = ResolutionStatus.RUNNING,
                                 id = resolutionId,
+                                submittedAt = Clock.System.now().toEpochMilliseconds(),
                                 query = query,
                             ),
                         diagnostics = current.diagnostics.replaceSource(DiagnosticSources.SOLVER, emptyList()),
@@ -1641,6 +1643,7 @@ class DefaultGuiController(
                         solutions = current.solutions,
                         terminalStatus = status,
                         error = current.error,
+                        submittedAt = current.submittedAt,
                     ),
                 )
             }
