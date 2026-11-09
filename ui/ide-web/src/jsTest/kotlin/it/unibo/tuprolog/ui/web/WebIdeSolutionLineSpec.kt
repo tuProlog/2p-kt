@@ -35,7 +35,7 @@ class WebIdeSolutionLineSpec :
             solutionLineText(2, SolutionPresentation.No("fail.")) shouldBe "2. no"
         }
 
-        test("a timed solution shows its time after the outcome") {
+        test("a timed solution shows its time before the outcome") {
             val solution =
                 SolutionPresentation.Yes(
                     query = "member(X, [a]).",
@@ -44,6 +44,6 @@ class WebIdeSolutionLineSpec :
                     time = 1234.microseconds,
                 )
 
-            solutionLineText(1, solution) shouldBe "1. yes: member(a, [a]) (1.234ms)\n  X = a"
+            solutionLineText(1, solution) shouldBe "1. [1.234ms] yes: member(a, [a])\n  X = a"
         }
     })
