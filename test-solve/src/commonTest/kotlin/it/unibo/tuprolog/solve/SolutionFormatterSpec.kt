@@ -6,6 +6,8 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
+import it.unibo.tuprolog.solve.timing.timed
+import kotlin.time.TestTimeSource
 
 /** Test class for [SolutionFormatter], focused on the `GroundQueriesHaveBooleanSolution` presentation flag. */
 class SolutionFormatterSpec :
@@ -46,5 +48,11 @@ class SolutionFormatterSpec :
             val formatter = SolutionFormatter.of(groundQueriesHaveBooleanSolution = true)
 
             formatter.format(Solution.no(groundQuery)) shouldBe "no."
+        }
+
+        test("a timed solution shows its time on a trailing line") {
+            val solution = sequenceOf(Solution.no(groundQuery)).timed(TestTimeSource()).single()
+
+            SolutionFormatter.of().format(solution) shouldBe "no.\n    % time: 0s"
         }
     })

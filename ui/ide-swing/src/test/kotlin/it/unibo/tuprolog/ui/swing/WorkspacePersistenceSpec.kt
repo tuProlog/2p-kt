@@ -16,8 +16,11 @@ import it.unibo.tuprolog.ui.gui.model.GuiState
 import it.unibo.tuprolog.ui.gui.model.PageContent
 import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
+import it.unibo.tuprolog.ui.gui.persistence.PersistedResolution
 import it.unibo.tuprolog.ui.gui.persistence.PersistedWorkspace
 import it.unibo.tuprolog.ui.gui.persistence.restoreWorkspace
+import it.unibo.tuprolog.ui.gui.persistence.toPersisted
+import it.unibo.tuprolog.ui.gui.persistence.toResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.prolog.solverFactoryProfile
 import it.unibo.tuprolog.ui.swing.app.WorkspacePersistence
@@ -26,7 +29,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import kotlin.io.path.createTempDirectory
+import kotlin.time.Duration.Companion.milliseconds
 
 // Dispatchers.Default drives a throwaway CoroutineScope local to each test case; there is nothing downstream
 // to inject a dispatcher into here, unlike the production code this test exercises.
@@ -166,5 +171,21 @@ class WorkspacePersistenceSpec :
             persistence.load() shouldBe null
             // Deleting again (nothing left to delete) is reported, not thrown, so callers don't need to guard it.
             persistence.delete() shouldBe false
+        }
+
+        test("solution-times-survive-the-json-round-trip") {
+            val entry =
+                ResolutionHistoryEntry(
+                    query = "p(X).",
+                    solutions =
+                        listOf(
+                            SolutionPresentation.Yes(query = "p(X).", solvedQuery = "p(1).", time = 3.milliseconds),
+                            SolutionPresentation.No(query = "p(X).", time = 1.milliseconds),
+                        ),
+                    terminalStatus = ResolutionStatus.COMPLETED,
+                )
+            val json = Json.encodeToString(PersistedResolution.serializer(), entry.toPersisted())
+
+            Json.decodeFromString(PersistedResolution.serializer(), json).toResolutionHistoryEntry() shouldBe entry
         }
     })
