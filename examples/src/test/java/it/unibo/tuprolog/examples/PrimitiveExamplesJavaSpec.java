@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static it.unibo.tuprolog.solve.Utils.libraryOf;
 import static it.unibo.tuprolog.solve.Utils.runtimeOf;
@@ -136,5 +138,25 @@ public class PrimitiveExamplesJavaSpec {
             assertTrue(s.isYes());
             assertEquals(Integer.of(i), s.getSubstitution().getByName("X"));
         }
+    }
+
+    @Test
+    public void intRangePrimitiveAsJavaStream() {
+        MutableSolver solver = Solver.prolog().newBuilder()
+                .runtime(runtimeOf("prolog.ranges", IntRangePrimitive.INSTANCE))
+                .buildMutable();
+
+        SolutionStream solutions = solver.solve(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
+        List<Term> firstTwo;
+        try (Stream<Solution> stream = solutions.stream()) {
+            firstTwo = stream
+                    .filter(Solution::isYes)
+                    .limit(2)
+                    .map(s -> s.getSubstitution().getByName("X"))
+                    .collect(Collectors.toList());
+        }
+        assertEquals(List.of(Integer.of(1), Integer.of(2)), firstTwo);
+        // closing the java.util.stream.Stream closed the SolutionStream too
+        assertTrue(solutions.isCancelled());
     }
 }
