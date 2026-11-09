@@ -40,7 +40,7 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
         val data = (value as? DefaultMutableTreeNode)?.userObject
         val label =
             when (data) {
-                is SolutionNodeData.QueryNode -> "?- ${data.query}"
+                is SolutionNodeData.QueryNode -> data.toString()
                 is SolutionNodeData.ResultNode -> data.label
                 is SolutionNodeData.DetailNode -> data.text
                 SolutionNodeData.EllipsisNode -> "…"

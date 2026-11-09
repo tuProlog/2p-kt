@@ -21,6 +21,7 @@ import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.libs.oop.OOPLib
+import it.unibo.tuprolog.solve.timing.timed
 import it.unibo.tuprolog.theory.Theory
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -120,7 +121,7 @@ class TuPrologCmd(
             while (query != null) {
                 try {
                     val goal = Struct.parse(query, solver.operators)
-                    val solutions = solver.solve(goal, this.getTimeout()).iterator()
+                    val solutions = solver.solve(goal, this.getTimeout()).timed()
                     printSolutions(
                         solutions,
                         solver.operators,

@@ -22,6 +22,8 @@ import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.presentation.documentationPreview
 import it.unibo.tuprolog.ui.gui.presentation.formatDurationInput
 import it.unibo.tuprolog.ui.gui.presentation.parseDurationInput
+import it.unibo.tuprolog.ui.gui.presentation.timeAnnotation
+import it.unibo.tuprolog.ui.gui.presentation.totalTimeAnnotation
 import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
@@ -506,7 +508,7 @@ internal class WebIdeView(
                     alt = ""
                 },
             )
-            header.appendChild(document.createTextNode("?- ${entry.first}"))
+            header.appendChild(document.createTextNode("?- ${entry.first}${entry.second.totalTimeAnnotation}"))
             header.addEventListener("click", { _: Event -> dispatch(PageAction.ChangeQuery(page.id, entry.first)) })
             item.appendChild(header)
             entry.second.forEachIndexed { index, solution -> item.appendChild(solutionLine(index + 1, solution)) }
@@ -906,9 +908,9 @@ internal fun solutionLineText(
 ): String =
     when (solution) {
         is SolutionPresentation.Yes ->
-            "$number. " + (solution.solvedQuery?.let { "yes: $it" } ?: "yes.") +
+            "$number. " + (solution.solvedQuery?.let { "yes: $it" } ?: "yes.") + solution.timeAnnotation +
                 solution.bindings.joinToString("") { "\n  ${it.variable} = ${it.value}" }
-        is SolutionPresentation.No -> "$number. no"
+        is SolutionPresentation.No -> "$number. no${solution.timeAnnotation}"
         is SolutionPresentation.Halt ->
-            "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}"
+            "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}${solution.timeAnnotation}"
     }
