@@ -10,8 +10,6 @@ import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
 import it.unibo.tuprolog.solve.flags.ShowWildCardVariablesInSolutions
-import it.unibo.tuprolog.solve.flags.TrackVariables
-import it.unibo.tuprolog.solve.flags.TrackVariables.ON
 import it.unibo.tuprolog.solve.flags.UniqueSolutions
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
@@ -107,7 +105,6 @@ open class SolverFactorySession(
             factory
                 .newBuilder()
                 .runtime(Runtime.of(runtimeLibraries))
-                .flag(TrackVariables) { ON }
                 .flag(ShowWildCardVariablesInSolutions) { OFF }
                 .flag(UniqueSolutions) { ON }
                 .flag(GroundQueriesHaveBooleanSolution) { ON }

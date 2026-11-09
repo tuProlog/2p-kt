@@ -5,29 +5,31 @@ import it.unibo.tuprolog.core.Term
 import kotlin.jvm.JvmField
 
 /**
- * An implementation-specific flag controlling whether the solver keeps track of variable names/bindings beyond what
- * is strictly needed to compute a [it.unibo.tuprolog.solve.Solution] (e.g. for richer debugging/inspection).
- * Defaults to [OFF].
+ * A deprecated, implementation-specific flag that no longer has any effect: the solver always keeps every binding a
+ * resolution still needs, whatever this flag says (#1078). It is not part of [FlagStore.DEFAULT] anymore, and it is
+ * retained only for backward compatibility, so that programs and code setting it keep working. Do not use it.
  */
+@Deprecated(
+    "track_variables has no effect: the solver always keeps the bindings it needs. It is retained only for " +
+        "backward compatibility, so stop setting it.",
+)
 @Suppress("MemberVisibilityCanBePrivate")
 object TrackVariables : NotableFlag {
     override val help: String =
         """
         `flag(track_variables)`
         
-        Controls whether the solver keeps additional variable-name/binding information for inspection and debugging.
-        
-        - `on`: enable variable tracking.
-        - `off`: disable the additional tracking.
-        - Default: `off`
+        **Deprecated, and useless: do not use it.** It has no effect on resolution: the solver always keeps every
+        variable binding it still needs, whether this flag is `on` or `off`. It is retained only for backward
+        compatibility, so that programs setting it keep working, and it is no longer among the default flags.
+
+        - `on`, `off`: both accepted, neither changes anything.
+        - Default: not set (its nominal default is `off`)
         - Editable: yes
 
         **Examples**
 
         ```prolog
-        ?- current_prolog_flag(track_variables, V).
-        V = off.
-
         ?- set_prolog_flag(track_variables, on), current_prolog_flag(track_variables, V).
         V = on.
         ```
