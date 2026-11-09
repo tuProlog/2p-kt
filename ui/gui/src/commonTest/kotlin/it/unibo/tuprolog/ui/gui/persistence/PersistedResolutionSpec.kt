@@ -6,10 +6,11 @@ import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.model.ResolutionStatus
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
+import kotlin.time.Duration.Companion.milliseconds
 
 class PersistedResolutionSpec :
     FunSpec({
-        test("a Yes resolution round-trips through JSON-ready DTOs, including bindings and metadata") {
+        test("a Yes resolution round-trips through JSON-ready DTOs, including bindings, metadata and time") {
             val original =
                 ResolutionHistoryEntry(
                     query = "p(X).",
@@ -20,6 +21,7 @@ class PersistedResolutionSpec :
                                 bindings = listOf(BindingPresentation("X", "1")),
                                 solvedQuery = "p(1).",
                                 metadata = mapOf("probability" to "0.5"),
+                                time = 3.milliseconds,
                             ),
                         ),
                     terminalStatus = ResolutionStatus.COMPLETED,
@@ -29,7 +31,12 @@ class PersistedResolutionSpec :
         }
 
         test("No and Halt resolutions round-trip too") {
-            val no = ResolutionHistoryEntry("q.", listOf(SolutionPresentation.No("q.")), ResolutionStatus.COMPLETED)
+            val no =
+                ResolutionHistoryEntry(
+                    "q.",
+                    listOf(SolutionPresentation.No("q.", 1.milliseconds)),
+                    ResolutionStatus.COMPLETED,
+                )
             no.toPersisted().toResolutionHistoryEntry() shouldBe no
 
             val halt =
@@ -42,6 +49,7 @@ class PersistedResolutionSpec :
                                 message = "boom",
                                 logicStackTrace = listOf("at r/0"),
                                 isTimeout = true,
+                                time = 2.milliseconds,
                             ),
                         ),
                     terminalStatus = ResolutionStatus.FAILED,

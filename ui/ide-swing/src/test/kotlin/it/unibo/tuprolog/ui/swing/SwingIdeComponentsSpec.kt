@@ -44,6 +44,7 @@ import java.awt.GraphicsEnvironment
 import java.awt.Window
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
+import java.awt.event.MouseWheelEvent
 import javax.swing.JDialog
 import javax.swing.JLabel
 import javax.swing.KeyStroke
@@ -52,6 +53,7 @@ import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeCellRenderer
 import javax.swing.tree.TreePath
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.microseconds
 import kotlin.time.Duration.Companion.milliseconds
 
 class SwingIdeComponentsSpec :
@@ -76,6 +78,32 @@ class SwingIdeComponentsSpec :
                 editor.highlight(emptyList())
                 editor.diagnostics.isNotEmpty().shouldBeTrue()
                 editor.parserNotices.isNotEmpty().shouldBeTrue()
+            }
+        }
+
+        test("editor-scrolls-on-plain-wheel-events-despite-its-zoom-listener") {
+            SwingUtilities.invokeAndWait {
+                val editor = PrologEditor()
+                editor.text = (1..200).joinToString("\n") { "fact($it)." }
+                val scrollPane = RTextScrollPane(editor, true).apply { setSize(400, 200) }
+                scrollPane.doLayout()
+                scrollPane.viewport.doLayout()
+                editor.dispatchEvent(
+                    MouseWheelEvent(
+                        editor,
+                        MouseWheelEvent.MOUSE_WHEEL,
+                        0L,
+                        0,
+                        10,
+                        10,
+                        0,
+                        false,
+                        MouseWheelEvent.WHEEL_UNIT_SCROLL,
+                        3,
+                        3,
+                    ),
+                )
+                scrollPane.viewport.viewPosition.y shouldNotBe 0
             }
         }
 
@@ -178,6 +206,34 @@ class SwingIdeComponentsSpec :
                 val solution = queryNode.getChildAt(0) as DefaultMutableTreeNode
 
                 solution.toString() shouldBe "1. yes."
+            }
+        }
+
+        test("solution-tree-shows-each-solution-time-and-the-query-total") {
+            SwingUtilities.invokeAndWait {
+                val tree = SolutionTree()
+                tree.render(
+                    listOf(
+                        SolutionQueryEntry(
+                            query = "member(X, [a]).",
+                            solutions =
+                                listOf(
+                                    SolutionPresentation.Yes(
+                                        query = "member(X, [a]).",
+                                        solvedQuery = "member(a, [a])",
+                                        time = 1.milliseconds,
+                                    ),
+                                    SolutionPresentation.No("member(X, [a]).", time = 234.microseconds),
+                                ),
+                            hasUnexploredPaths = false,
+                        ),
+                    ),
+                )
+
+                val queryNode = (tree.model.root as DefaultMutableTreeNode).getChildAt(0) as DefaultMutableTreeNode
+                queryNode.toString() shouldBe "?- member(X, [a]). (1.234ms)"
+                queryNode.getChildAt(0).toString() shouldBe "1. yes: member(a, [a]) (1ms)"
+                queryNode.getChildAt(1).toString() shouldBe "2. no (234us)"
             }
         }
 

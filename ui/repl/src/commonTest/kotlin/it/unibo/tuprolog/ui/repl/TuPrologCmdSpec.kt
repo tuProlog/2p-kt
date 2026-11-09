@@ -100,6 +100,27 @@ private val loopCases =
         ),
     )
 
+/** A run whose output must show [solutions] per-solution times and [resolutions] resolution times. */
+private data class TimingCase(
+    val id: String,
+    val argv: List<String>,
+    val stdin: String,
+    val solutions: Int,
+    val resolutions: Int,
+)
+
+private val timingCases =
+    listOf(
+        TimingCase("solve-each-solution-then-the-resolution", listOf("solve", "member(X, [1, 2])."), ";\n", 2, 1),
+        TimingCase("solve-a-no", listOf("solve", "fail."), "", 1, 1),
+        TimingCase("loop-each-query-its-own-resolution", emptyList(), "X = 1.\nfail.\n", 2, 2),
+    )
+
+private val solutionTime = Regex("^ {4}% time: \\S+$", RegexOption.MULTILINE)
+
+// the prompt for the next solution (": ") may precede it on the same line
+private val resolutionTime = Regex("^(: )?% resolution time: \\S+$", RegexOption.MULTILINE)
+
 internal fun repl(vararg libraries: Library) = TuPrologCmd(*libraries).subcommands(TuPrologSolveQuery())
 
 internal fun CliktCommandTestResult.shouldShow(
@@ -124,6 +145,12 @@ class TuPrologCmdSpec :
             result.shouldShow(case.stdout, case.stderr)
             case.notInStdout.forEach { result.stdout shouldNotContain it }
             result.statusCode shouldBe case.status
+        }
+
+        withTests(nameFn = { "timing/${it.id}" }, timingCases) { case ->
+            val stdout = repl().test(case.argv, stdin = case.stdin).stdout
+            solutionTime.findAll(stdout).count() shouldBe case.solutions
+            resolutionTime.findAll(stdout).count() shouldBe case.resolutions
         }
 
         test("banner/names-the-version-and-every-library-once") {
