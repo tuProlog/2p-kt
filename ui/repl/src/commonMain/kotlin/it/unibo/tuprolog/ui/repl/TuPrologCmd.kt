@@ -16,7 +16,6 @@ import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
-import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.libs.io.IOLib
@@ -152,8 +151,7 @@ class TuPrologCmd(
      * [it.unibo.tuprolog.core.parsing.ParseException] for any that fails to parse) into the static knowledge
      * base, always loads `:io-lib`'s [it.unibo.tuprolog.solve.libs.io.IOLib] plus this command's
      * [additionalLibraries], additionally loads `:oop-lib`'s [it.unibo.tuprolog.solve.libs.oop.OOPLib] when
-     * `--oop` was given, enables the [it.unibo.tuprolog.solve.flags.TrackVariables] flag, and routes solve
-     * warnings to the terminal (with their logic stack trace). As a side effect, it echoes the 2P-Kt version
+     * `--oop` was given, and routes solve warnings to the terminal (with their logic stack trace). As a side effect, it echoes the 2P-Kt version
      * and the alias of each loaded library to standard output.
      *
      * Exposed so [TuPrologSolveQuery] can obtain the same, fully-configured solver its parent command builds.
@@ -179,7 +177,6 @@ class TuPrologCmd(
             .newBuilder()
             .runtime(libraries)
             .staticKb(theory)
-            .flag(TrackVariables) { ON }
             .warnings(outputChannel)
             .build()
             .also {

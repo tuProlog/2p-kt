@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
-import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import it.unibo.tuprolog.theory.parsing.ClausesParser
@@ -80,9 +79,8 @@ class ThermostatAgentKt(
 
     /**
      * Parses the templated `thermostat.pl` program, builds a `it.unibo.tuprolog.solve.Solver`
-     * registering `get_temp/1` and `push/1` under the `libs.agency.thermostat` library alias
-     * (with `it.unibo.tuprolog.solve.flags.TrackVariables` turned on so bound variables remain
-     * visible in the solution), and runs the `start/0` goal once to completion, printing the
+     * registering `get_temp/1` and `push/1` under the `libs.agency.thermostat` library alias,
+     * and runs the `start/0` goal once to completion, printing the
      * outcome (reached target temperature, logic failure, or an exception with its Prolog stack
      * trace) to standard output.
      */
@@ -93,7 +91,6 @@ class ThermostatAgentKt(
             Solver.prolog
                 .newBuilder()
                 .staticKb(theory)
-                .flag(TrackVariables) { ON }
                 .library("libs.agency.thermostat", getTemp, push)
                 .build()
         when (val solution = solver.solveOnce(Atom.of("start"))) {

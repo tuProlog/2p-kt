@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.*;
 import it.unibo.tuprolog.core.Integer;
 import it.unibo.tuprolog.solve.Solution;
 import it.unibo.tuprolog.solve.Solver;
-import it.unibo.tuprolog.solve.flags.TrackVariables;
 import it.unibo.tuprolog.solve.primitive.Solve;
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate;
 import it.unibo.tuprolog.theory.Theory;
@@ -101,7 +100,6 @@ public class ThermostatAgent extends Thread {
             System.out.println(theory);
             Solver solver = Solver.prolog().newBuilder()
                     .staticKb(theory)
-                    .flag(TrackVariables.INSTANCE, TrackVariables.ON)
                     .library("libs.agency.thermostat", getTemp, push)
                     .build();
             Solution solution = solver.solveOnce(Atom.of("start"));
