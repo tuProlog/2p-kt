@@ -10,8 +10,8 @@ import javax.swing.SwingUtilities
 private const val THEORY_LINES = 300
 private const val WHEEL_NOTCHES = 5
 
-// a trailing " (1.234ms)"-style annotation, as Duration.toString renders it
-private val timeAnnotation = Regex("""\(\d+(\.\d+)?[a-z]+\)$""")
+private val timestamp = Regex("""^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}] \?- member\(X, \[1, 2]\)\.$""")
+private val timedSolution = Regex("""^[12]\. \[\d+(\.\d+)?[a-z]+] yes: member\([12], \[1, 2]\)$""")
 
 /** Covers solution timing, the STRIPS template, and scrolling the theory editor, through the real Swing UI. */
 class TimingTemplatesScrollingE2eSpec :
@@ -22,15 +22,13 @@ class TimingTemplatesScrollingE2eSpec :
 
         afterTest { window.cleanUp() }
 
-        test("timing/each-solution-and-its-query-show-their-time") {
+        test("timing/query-shows-timestamp-and-solutions-show-prefixed-times") {
             window.textBox("queryField").setText("member(X, [1, 2]).")
             window.button("solveAllButton").click()
 
-            window.awaitCondition("both solutions and the query to show their time", timeoutSeconds = 15) {
+            window.awaitCondition("both timed solutions and the query timestamp to appear", timeoutSeconds = 15) {
                 val rows = tree("solutionsTree").rowTexts()
-                listOf("?- member(X, [1, 2])", "1. yes: member(1, [1, 2])", "2. yes: member(2, [1, 2])").all { prefix ->
-                    rows.any { it.startsWith(prefix) && timeAnnotation.containsMatchIn(it) }
-                }
+                rows.any { timestamp.matches(it) } && rows.count { timedSolution.matches(it) } == 2
             }
         }
 
