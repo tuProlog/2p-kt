@@ -47,7 +47,7 @@ tasks.register("run", JavaExec::class.java) {
                 .jvm()
                 .compilations
                 .getByName("main")
-                .compileDependencyFiles,
+                .runtimeDependencyFiles,
         )
     standardInput = System.`in`
     mainClass.set(multiPlatformHelper.fatJarEntryPoint)
