@@ -6,9 +6,11 @@ import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
+import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
 import it.unibo.tuprolog.solve.prolog.appendPrimitives
 import it.unibo.tuprolog.solve.prolog.appendRules
 import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
@@ -131,11 +133,14 @@ fun PrologExecutionContext.createChildAppendingPrimitivesAndChoicePoints(
     return tempExecutionContext.appendPrimitivesAndChoicePoints(primitiveExecutions)
 }
 
-/** Builds the [Solve.Request] passed to a `Primitive`'s `solve` from this context, [goal] and [signature]. */
+/**
+ * Builds the [Solve.Request] passed to a `Primitive`'s `solve` from this context, [goal] and [signature], carrying a
+ * read-only view of this context.
+ */
 fun PrologExecutionContext.toRequest(
     goal: Struct,
     signature: Signature,
-) = Solve.Request(signature, goal.args, this)
+): Solve.Request<ExecutionContext> = Solve.Request(signature, goal.args, ReadOnlyExecutionContext(this))
 
 /**
  * Whether this goal is an ISO control construct (`,`/2, `;`/2, `->`/2, `call/N`, `catch/3`, `throw/1`), or the

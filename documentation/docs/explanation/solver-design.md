@@ -16,7 +16,7 @@ resolution strategy needs to *read and mutate* while solving a goal is factored 
 not hardwired into `Solver` itself.
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContext.kt:17:44"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/ExecutionContext.kt:17:50"
 ```
 
 An `ExecutionContext` is the solver's entire mutable state, reified as a value: the current substitution, the
