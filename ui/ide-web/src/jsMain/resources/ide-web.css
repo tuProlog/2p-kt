@@ -205,10 +205,20 @@ ul.solutions {
 ul.solutions li {
     margin-bottom: 4px;
 }
-ul.solutions .query {
-    font-weight: bold;
-    cursor: pointer;
+ul.solutions .query { cursor: pointer; }
+.solution-layout { display: flex; align-items: flex-start; gap: 4px; }
+.clear-solutions { position: sticky; top: 0; flex: none; writing-mode: vertical-rl; }
+.solution-layout > .solutions { flex: 1; min-width: 0; }
+ul.solutions ul { list-style: none; padding-left: 20px; }
+.solution-row { white-space: pre-wrap; overflow-wrap: anywhere; }
+.solution-row:focus-visible { outline: 2px solid var(--accent); }
+.solution-menu {
+    position: fixed; z-index: 1000; padding: 4px; min-width: 150px;
+    background: var(--bg-surface); color: var(--fg); border: 1px solid var(--border);
+    border-radius: 4px; box-shadow: 0 3px 10px #0004; white-space: normal;
 }
+.solution-menu button { display: block; width: 100%; text-align: left; border: 0; }
+.solution-menu button:focus, .solution-menu button:hover { background: var(--accent); color: white; }
 .diagnostic.ERROR { color: var(--error); }
 .diagnostic.WARNING { color: var(--warning); }
 .diagnostic.INFO { color: var(--info); }

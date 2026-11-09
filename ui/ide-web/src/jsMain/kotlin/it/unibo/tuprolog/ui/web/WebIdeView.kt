@@ -19,11 +19,11 @@ import it.unibo.tuprolog.ui.gui.presentation.FlagPresentation
 import it.unibo.tuprolog.ui.gui.presentation.LibraryPresentation
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
+import it.unibo.tuprolog.ui.gui.presentation.detailLines
 import it.unibo.tuprolog.ui.gui.presentation.documentationPreview
 import it.unibo.tuprolog.ui.gui.presentation.formatDurationInput
 import it.unibo.tuprolog.ui.gui.presentation.parseDurationInput
-import it.unibo.tuprolog.ui.gui.presentation.timeAnnotation
-import it.unibo.tuprolog.ui.gui.presentation.totalTimeAnnotation
+import it.unibo.tuprolog.ui.gui.presentation.resultLabel
 import it.unibo.tuprolog.ui.gui.template.TheoryTemplate
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
@@ -79,19 +79,14 @@ internal class WebIdeView(
     private val solveAllButtonLabel = byId<HTMLElement>("solve-all-button-label")
     private val stopButton = byId<HTMLButtonElement>("stop-button")
     private val resetButton = byId<HTMLButtonElement>("reset-button")
-    private val clearSolutionsButton =
-        (element("button", null) as HTMLButtonElement).apply {
-            appendChild(
-                (element("img", "btn-icon") as HTMLImageElement).apply {
-                    src = "icons/clear.png"
-                    alt = ""
-                },
-            )
-            appendChild(document.createTextNode("Clear solutions"))
-        }
     private val sideContainer = byId<HTMLElement>("side")
     private val sideTabBar = byId<HTMLElement>("side-tab-bar")
     private val panelContents = PanelId.entries.associateWith { element("div", "side-content") }
+    private val solutions =
+        WebSolutionsView(panelContents.getValue(PanelId.SOLUTIONS), ::dispatch) {
+            statusLabel.textContent =
+                it
+        }
     private val panelTabs = mutableMapOf<PanelId, HTMLElement>()
 
     private var renderedState: GuiState? = null
@@ -224,7 +219,6 @@ internal class WebIdeView(
         }
         PanelId.entries.forEach { panel ->
             val content = panelContents.getValue(panel)
-            if (panel == PanelId.SOLUTIONS) content.appendChild(clearSolutionsButton)
             if (panel == PanelId.STDIN) {
                 content.textContent = ""
                 content.appendChild(stdinArea)
@@ -377,10 +371,6 @@ internal class WebIdeView(
         solveAllButton.addEventListener("click", { _: Event -> solveOrNext(ConsumptionMode.ALL) })
         stopButton.addEventListener("click", { _: Event -> selectedPage()?.let { dispatch(PageAction.Stop(it.id)) } })
         resetButton.addEventListener("click", { _: Event -> selectedPage()?.let { dispatch(PageAction.Reset(it.id)) } })
-        clearSolutionsButton.addEventListener(
-            "click",
-            { _: Event -> selectedPage()?.let { dispatch(PageAction.ClearHistory(it.id)) } },
-        )
     }
 
     private fun solveOrNext(mode: ConsumptionMode) {
@@ -493,65 +483,7 @@ internal class WebIdeView(
         badge(PanelId.DYNAMIC_KB, false)
     }
 
-    private fun renderSolutions(page: PageState) {
-        val container = panelContents.getValue(PanelId.SOLUTIONS)
-        container.innerHTML = ""
-        container.appendChild(clearSolutionsButton)
-        val list = element("ul", "solutions")
-        val entries = solutionEntries(page)
-        entries.forEach { entry ->
-            val item = element("li", null)
-            val header = element("div", "query")
-            header.appendChild(
-                (element("img", "tab-icon") as HTMLImageElement).apply {
-                    src = "icons/query.png"
-                    alt = ""
-                },
-            )
-            header.appendChild(document.createTextNode("?- ${entry.first}${entry.second.totalTimeAnnotation}"))
-            header.addEventListener("click", { _: Event -> dispatch(PageAction.ChangeQuery(page.id, entry.first)) })
-            item.appendChild(header)
-            entry.second.forEachIndexed { index, solution -> item.appendChild(solutionLine(index + 1, solution)) }
-            list.appendChild(item)
-        }
-        container.appendChild(list)
-    }
-
-    private fun solutionEntries(page: PageState): List<Pair<String, List<SolutionPresentation>>> {
-        val history = page.history.resolutions.map { it.query to it.solutions }
-        val current = page.resolution
-        val live =
-            if (current.query != null &&
-                current.status in setOf(ResolutionStatus.RUNNING, ResolutionStatus.AWAITING_CONTINUATION)
-            ) {
-                listOf(current.query!! to current.solutions)
-            } else {
-                emptyList()
-            }
-        return history + live
-    }
-
-    private fun solutionLine(
-        number: Int,
-        solution: SolutionPresentation,
-    ): HTMLElement {
-        val line = element("div", null)
-        val icon =
-            when (solution) {
-                is SolutionPresentation.Yes -> "yes-solution"
-                is SolutionPresentation.No -> "no-solution"
-                is SolutionPresentation.Halt -> "halt-solution"
-            }
-        val text = solutionLineText(number, solution)
-        line.appendChild(
-            (element("img", "tab-icon") as HTMLImageElement).apply {
-                src = "icons/$icon.png"
-                alt = ""
-            },
-        )
-        line.appendChild(document.createTextNode(text))
-        return line
-    }
+    private fun renderSolutions(page: PageState) = solutions.render(page)
 
     private fun renderConsole(page: PageState) {
         panelContents.getValue(PanelId.STDOUT).textContent = page.console.stdout.text
@@ -899,18 +831,8 @@ internal fun isValidIntRangeInput(
             false
         }
 
-/** Builds the one-line text shown for [solution] in the solutions panel, numbered as [number]. A `null`
- * [SolutionPresentation.Yes.solvedQuery] (set when `GroundQueriesHaveBooleanSolution` is on and the query is
- * ground) is rendered as a bare `yes.`, rather than repeating the (identical) query. */
+/** Plain text export of a result and its details. */
 internal fun solutionLineText(
     number: Int,
     solution: SolutionPresentation,
-): String =
-    when (solution) {
-        is SolutionPresentation.Yes ->
-            "$number. " + (solution.solvedQuery?.let { "yes: $it" } ?: "yes.") + solution.timeAnnotation +
-                solution.bindings.joinToString("") { "\n  ${it.variable} = ${it.value}" }
-        is SolutionPresentation.No -> "$number. no${solution.timeAnnotation}"
-        is SolutionPresentation.Halt ->
-            "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}${solution.timeAnnotation}"
-    }
+): String = solution.resultLabel(number) + solution.detailLines.joinToString("") { "\n  $it" }
