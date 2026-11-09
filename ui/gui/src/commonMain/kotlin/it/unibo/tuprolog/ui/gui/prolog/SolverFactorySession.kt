@@ -15,6 +15,7 @@ import it.unibo.tuprolog.solve.flags.TrackVariables.ON
 import it.unibo.tuprolog.solve.flags.UniqueSolutions
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
+import it.unibo.tuprolog.solve.timing.timed
 import it.unibo.tuprolog.theory.parsing.parseAsTheory
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.identity.SolverSessionId
@@ -66,7 +67,7 @@ open class SolverFactorySession(
                 SolveOptions.allLazilyWithTimeout(request.timeout)
             }
         val options = configureSolveOptions(plainOptions)
-        val solutions = solver.solve(query, options).iterator()
+        val solutions = solver.solve(query, options).timed().iterator()
         return object : ResolutionCursor {
             override suspend fun next(): ResolutionStep {
                 yield()

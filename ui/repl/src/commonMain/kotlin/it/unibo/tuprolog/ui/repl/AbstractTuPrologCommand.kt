@@ -11,6 +11,8 @@ import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolutionFormatter
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.timing.TimedSolutions
+import it.unibo.tuprolog.solve.timing.formatTime
 
 /**
  * Base class for the [clikt](https://ajalt.github.io/clikt/) commands that make up the 2P-Kt REPL CLI
@@ -91,8 +93,8 @@ abstract class AbstractTuPrologCommand(
         echo("# ${e.message?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }}", err = true)
     }
 
-    private fun printEndOfSolutions() {
-        // do nothing
+    private fun printEndOfSolutions(solutions: TimedSolutions) {
+        echo("% resolution time: ${solutions.timing.active.formatTime()}")
     }
 
     /**
@@ -140,16 +142,18 @@ abstract class AbstractTuPrologCommand(
     /**
      * Prints solutions from [solutions] one at a time, formatting each with [operatorSet]'s operators, in the
      * conventional Prolog top-level style: after the first solution, the user is prompted (with an empty prompt)
-     * to type `;` to request the next solution, or anything else to stop.
+     * to type `;` to request the next solution, or anything else to stop. Each solution shows the time spent
+     * finding it, and the whole resolution's time is printed at the end.
      *
      * Used by both [TuPrologCmd]'s interactive REPL loop and [TuPrologSolveQuery]'s `solve` subcommand when no
      * `-n`/`--numberOfSolutions` limit was given.
      */
     protected fun printSolutions(
-        solutions: Iterator<Solution>,
+        timedSolutions: TimedSolutions,
         operatorSet: OperatorSet,
         groundQueriesHaveBooleanSolution: Boolean = false,
     ) {
+        val solutions = timedSolutions.iterator()
         var first = true
         while (solutions.hasNext()) {
             if (!first) {
@@ -160,7 +164,7 @@ abstract class AbstractTuPrologCommand(
             }
             printSolution(solutions.next(), operatorSet, groundQueriesHaveBooleanSolution)
         }
-        printEndOfSolutions()
+        printEndOfSolutions(timedSolutions)
     }
 
     /**
@@ -171,16 +175,17 @@ abstract class AbstractTuPrologCommand(
      * Used by [TuPrologSolveQuery]'s `solve` subcommand when a positive `-n`/`--numberOfSolutions` was given.
      */
     protected fun printNumSolutions(
-        solutions: Iterator<Solution>,
+        timedSolutions: TimedSolutions,
         maxSolutions: Int,
         operatorSet: OperatorSet,
         groundQueriesHaveBooleanSolution: Boolean = false,
     ) {
+        val solutions = timedSolutions.iterator()
         var i = 0
         while (i < maxSolutions && solutions.hasNext()) {
             i++
             printSolution(solutions.next(), operatorSet, groundQueriesHaveBooleanSolution)
         }
-        printEndOfSolutions()
+        printEndOfSolutions(timedSolutions)
     }
 }

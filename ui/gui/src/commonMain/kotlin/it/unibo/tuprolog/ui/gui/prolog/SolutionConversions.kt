@@ -8,6 +8,7 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.flags.NotableFlag
+import it.unibo.tuprolog.solve.timing.time
 import it.unibo.tuprolog.ui.gui.identity.FeatureId
 import it.unibo.tuprolog.ui.gui.model.FeatureValue
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
@@ -62,6 +63,7 @@ internal fun Solution.toStep(
                             formatter.format(solvedQuery)
                         },
                     metadata = features.toSolutionMetadata(),
+                    time = time,
                 ),
                 hasMorePotentially = true,
                 signals = signals,
@@ -70,7 +72,7 @@ internal fun Solution.toStep(
         }
         is Solution.No ->
             ResolutionStep.Yield(
-                SolutionPresentation.No(queryText),
+                SolutionPresentation.No(queryText, time),
                 hasMorePotentially = false,
                 signals = signals,
                 featureStateReplacements = features,
@@ -84,6 +86,7 @@ internal fun Solution.toStep(
                         it.toString()
                     },
                     isTimeout = exception is TimeOutException,
+                    time = time,
                 ),
                 hasMorePotentially = false,
                 signals = signals,

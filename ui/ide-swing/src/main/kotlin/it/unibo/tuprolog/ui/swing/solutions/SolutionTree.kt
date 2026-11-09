@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.ui.swing.solutions
 
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
+import it.unibo.tuprolog.ui.gui.presentation.timeAnnotation
+import it.unibo.tuprolog.ui.gui.presentation.totalTimeAnnotation
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
@@ -70,7 +72,7 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
             .firstOrNull()
 
     private fun queryNode(entry: SolutionQueryEntry): DefaultMutableTreeNode =
-        DefaultMutableTreeNode(SolutionNodeData.QueryNode(entry.query)).apply {
+        DefaultMutableTreeNode(SolutionNodeData.QueryNode(entry.query, entry.solutions.totalTimeAnnotation)).apply {
             entry.solutions.forEachIndexed { index, solution -> add(solutionNode(index + 1, solution)) }
             if (entry.hasUnexploredPaths) add(DefaultMutableTreeNode(SolutionNodeData.EllipsisNode))
         }
@@ -85,7 +87,8 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
                     SolutionNodeData.ResultNode(
                         "$number. " +
                             (solution.solvedQuery?.let { "yes: $it" } ?: "yes.") +
-                            probabilityAnnotation(solution),
+                            probabilityAnnotation(solution) +
+                            solution.timeAnnotation,
                         ResultKind.YES,
                     ),
                 ).apply {
@@ -94,11 +97,14 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
                     }
                 }
             is SolutionPresentation.No ->
-                DefaultMutableTreeNode(SolutionNodeData.ResultNode("$number. no", ResultKind.NO))
+                DefaultMutableTreeNode(
+                    SolutionNodeData.ResultNode("$number. no${solution.timeAnnotation}", ResultKind.NO),
+                )
             is SolutionPresentation.Halt ->
                 DefaultMutableTreeNode(
                     SolutionNodeData.ResultNode(
-                        "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}",
+                        "$number. ${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}" +
+                            solution.timeAnnotation,
                         ResultKind.HALT,
                     ),
                 ).apply {
