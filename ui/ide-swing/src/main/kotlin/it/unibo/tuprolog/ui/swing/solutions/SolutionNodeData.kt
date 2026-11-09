@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.ui.swing.solutions
 
+import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
+import it.unibo.tuprolog.ui.gui.presentation.queryLabel
+
 /** The payload a [SolutionTree] node's `userObject` carries, read by [SolutionCellRenderer] to pick its label/icon. */
 internal sealed interface SolutionNodeData {
     /**
@@ -7,15 +10,17 @@ internal sealed interface SolutionNodeData {
      */
     data class QueryNode(
         val query: String,
-        val timestamp: String? = null,
+        val submittedAt: Long? = null,
+        val historyEntry: ResolutionHistoryEntry? = null,
     ) : SolutionNodeData {
-        override fun toString() = "${timestamp?.let { "[$it] " }.orEmpty()}?- ${query.trimEnd().removeSuffix(".")}."
+        override fun toString() = queryLabel(query, submittedAt)
     }
 
     /** One resolved solution (yes/no/halt) of the enclosing [QueryNode]'s query. */
     data class ResultNode(
         val label: String,
         val kind: ResultKind,
+        val logicText: String = label,
     ) : SolutionNodeData {
         override fun toString() = label
     }
