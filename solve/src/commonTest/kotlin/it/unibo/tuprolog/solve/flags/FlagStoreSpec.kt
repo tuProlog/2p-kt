@@ -10,20 +10,19 @@ import org.gciatto.kt.math.RoundingMode
 class FlagStoreSpec :
     FunSpec({
         test("of(vararg NotableFlag) keeps every distinct flag, not just the last one") {
-            val store = FlagStore.of(Unknown, MaxArity, DoubleQuotes, LastCallOptimization, TrackVariables)
-            store.size shouldBe 5
+            val store = FlagStore.of(Unknown, MaxArity, DoubleQuotes, LastCallOptimization)
+            store.size shouldBe 4
             store[Unknown.name] shouldBe Unknown.defaultValue
             store[MaxArity.name] shouldBe MaxArity.defaultValue
             store[DoubleQuotes.name] shouldBe DoubleQuotes.defaultValue
             store[LastCallOptimization.name] shouldBe LastCallOptimization.defaultValue
-            store[TrackVariables.name] shouldBe TrackVariables.defaultValue
         }
 
-        test("DEFAULT contains every notable flag at its own default value") {
-            FlagStore.DEFAULT.size shouldBe 12
+        test("DEFAULT contains every notable flag at its own default value, but the deprecated track_variables") {
+            FlagStore.DEFAULT.size shouldBe 11
             FlagStore.DEFAULT[Unknown.name] shouldBe Unknown.defaultValue
             FlagStore.DEFAULT[Bounded.name] shouldBe Bounded.defaultValue
-            FlagStore.DEFAULT[TrackVariables.name] shouldBe TrackVariables.defaultValue
+            FlagStore.DEFAULT["track_variables"] shouldBe null
             FlagStore.DEFAULT[ShowWildCardVariablesInSolutions.name] shouldBe
                 ShowWildCardVariablesInSolutions.defaultValue
             FlagStore.DEFAULT[UniqueSolutions.name] shouldBe UniqueSolutions.defaultValue
