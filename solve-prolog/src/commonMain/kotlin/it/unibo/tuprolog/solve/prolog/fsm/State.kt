@@ -17,7 +17,7 @@ import kotlin.js.JsName
  * drives this loop and turns every visit to an [EndState] ([isEndState]) into a [it.unibo.tuprolog.solve.Solution].
  *
  * Modelling a resolution step as a value (rather than as a stack frame of host-language recursion) is what
- * allows a step to be paused, resumed, inspected or hijacked (see [it.unibo.tuprolog.solve.prolog.MutableSolutionIterator])
+ * allows a step to be paused, resumed or inspected
  * without unwinding or rebuilding a JVM/JS call stack, and sidesteps host stack-depth limits for deeply
  * recursive Prolog programs, since the "call stack" here is the [PrologExecutionContext] parent chain --
  * ordinary heap data, not native stack frames.

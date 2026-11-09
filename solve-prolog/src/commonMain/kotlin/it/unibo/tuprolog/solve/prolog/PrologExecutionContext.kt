@@ -18,6 +18,9 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.prolog.fsm.Interception
+import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
+import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
@@ -62,6 +65,10 @@ import kotlin.collections.Set as KtSet
  * - [counters]: the resolution's opt-in [ResolutionCounters] (see [it.unibo.tuprolog.solve.SolveOptions.counters]),
  *   shared by every frame, or `null` to count nothing.
  *
+ * - [interception], [ruleSelection], [goalSelection]: the resolution's opt-in interceptor and selection policies (see
+ *   [it.unibo.tuprolog.solve.SolveOptions]), shared by every frame, or `null` for none.
+ * - [invocation]: this frame's id, in creation order, while [interception] is set (see [Interception]); `0` otherwise.
+ *
  * @throws IllegalArgumentException if [depth] and [parent] are inconsistent (`depth == 0` iff `parent == null`).
  */
 data class PrologExecutionContext(
@@ -87,6 +94,10 @@ data class PrologExecutionContext(
     val step: Long = 0,
     val relevantVariables: KtSet<Var> = emptySet(),
     override val counters: ResolutionCounters? = null,
+    val interception: Interception? = null,
+    val ruleSelection: RuleSelectionPolicy? = null,
+    val goalSelection: GoalSelectionPolicy? = null,
+    val invocation: Long = 0,
 ) : ExecutionContext {
     init {
         require((depth == 0 && parent == null) || (depth > 0 && parent != null))

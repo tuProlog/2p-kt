@@ -1,9 +1,14 @@
 package it.unibo.tuprolog.solve.prolog.fsm
 
+import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.intercept.Decision
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 import it.unibo.tuprolog.solve.prolog.stdlib.primitive.Throw
+import it.unibo.tuprolog.utils.cursor
 
 /**
  * Common base of every `:solve-prolog` [State]: wraps [computeNext] with a shared timeout check, so no
@@ -47,6 +52,34 @@ abstract class AbstractState(
     protected fun nextDepth(): Int = context.depth + 1
 
     protected fun previousDepth(): Int = context.depth - 1
+
+    /** The halt [decision] of a [it.unibo.tuprolog.solve.intercept.TransitionInterceptor] ends the resolution. */
+    protected fun halt(decision: Decision.Halt): State =
+        StateHalt(decision.error ?: HaltException(context = context), context.copy(step = nextStep()))
+
+    /**
+     * The CALL port of [goal], whose frame will have [invocation] as id: `null` to go on with the call, or the state
+     * the interceptor's decision leads to instead. Control constructs have no ports.
+     */
+    protected fun interceptCall(
+        goal: Struct,
+        invocation: Long,
+    ): State? {
+        val interception = context.interception
+        if (interception == null || goal.isControlConstruct) return null
+        return when (val decision = interception.call(invocation, goal, context)) {
+            is Decision.Continue -> null
+            is Decision.Fail -> StateBacktracking(context.copy(step = nextStep()))
+            is Decision.Redirect ->
+                StatePrimitiveSelection(
+                    context.copy(
+                        goals = (sequenceOf<Term>(decision.goal) + context.goals.next.asSequence()).cursor(),
+                        step = nextStep(),
+                    ),
+                )
+            is Decision.Halt -> halt(decision)
+        }
+    }
 
     protected fun PrologExecutionContext.skipThrow(): ExecutionContext =
         pathToRoot.first {

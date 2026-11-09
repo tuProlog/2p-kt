@@ -43,8 +43,10 @@ data class StatePrimitiveSelection(
                     val signature = goalStruct.extractSignature()
 
                     if (libraries.hasPrimitive(signature)) {
+                        val invocation = interception?.nextId() ?: 0
+                        interceptCall(goalStruct, invocation)?.let { return it }
                         countInference(goalStruct)
-                        val childContext = createChild()
+                        val childContext = createChild(invocation = invocation)
                         try {
                             val request = childContext.toRequest(goalStruct, signature)
                             val primitive =

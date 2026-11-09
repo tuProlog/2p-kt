@@ -38,11 +38,12 @@ Every `State` shares the same tiny contract:
 ```
 
 `next()` computes the successor state (a pure function of the current state's `context`), and a
-`SolutionIterator` (with a `MutableSolutionIterator` variant supporting *hijacking* — overriding which state
-comes next, e.g. for debugging or tracing) drives this `next()` loop and turns every visit to an end-state
-(`isEndState`) into a `Solution` handed back to the caller. Running Prolog resolution as an explicit loop over
-data, rather than as host-language recursion, means a resolution step is a value: it can be paused, resumed,
-inspected, or hijacked without unwinding or rebuilding a JVM/JS call stack. It also sidesteps host stack-depth
+`SolutionIterator` drives this `next()` loop and turns every visit to an end-state (`isEndState`) into a `Solution`
+handed back to the caller. Debuggers and tracers don't hook into states: they pass a `TransitionInterceptor` via
+`SolveOptions.setInterceptor`, which sees the ports of each call (see
+[ADR 0001](adr-0001-stateful-engine.md#transition-interception)). Running Prolog resolution as an explicit loop over
+data, rather than as host-language recursion, means a resolution step is a value: it can be paused, resumed, or
+inspected without unwinding or rebuilding a JVM/JS call stack. It also sidesteps host stack-depth
 limits for deeply recursive Prolog programs, since the "call stack" here is the execution-context stack
 described below — ordinary heap data, not native stack frames.
 

@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.prolog.fsm
 
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.intercept.Decision
 import it.unibo.tuprolog.solve.prolog.PrologExecutionContext
 
 /**
@@ -16,12 +17,20 @@ data class StateBacktracking(
     override fun computeNext(): State {
         val choicePoints = context.choicePoints
         return if (choicePoints.let { it === null || !it.hasOpenAlternatives }) {
+            (context.interception?.backtrack(null, context) as? Decision.Halt)?.let { return halt(it) }
             StateEnd(
                 solution = Solution.no(context.query),
                 context = context.copy(step = nextStep()),
             )
         } else {
             val choicePointContext = choicePoints!!.pathToRoot.first { it.alternatives.hasNext }
+            when (val decision = context.interception?.backtrack(choicePointContext.executionContext, context)) {
+                // the REDO was refused: skip this choice point
+                is Decision.Fail ->
+                    return StateBacktracking(context.copy(choicePoints = choicePointContext.parent, step = nextStep()))
+                is Decision.Halt -> return halt(decision)
+                else -> Unit
+            }
             val nextContext = choicePointContext.backtrack(context)
             if (nextContext.primitives.hasNext) {
                 StatePrimitiveExecution(nextContext)

@@ -42,19 +42,21 @@ data class StateException(
             else -> this
         }
 
-    private val finalState: EndState
-        get() =
-            StateHalt(
-                exception.toPublicException(),
-                context.copy(step = nextStep()),
-            )
+    private val finalState: State
+        get() {
+            val error = exception.toPublicException()
+            context.interception?.exception(error, context, caught = false)?.let { return halt(it) }
+            return StateHalt(error, context.copy(step = nextStep()))
+        }
 
     private val handleExceptionInParentContext: StateException
-        get() =
-            StateException(
+        get() {
+            context.interception?.unwind(context)
+            return StateException(
                 exception,
                 context.parent!!.copy(step = nextStep()),
             )
+        }
 
     private fun handleStruct(
         unificator: Unificator,
@@ -73,28 +75,30 @@ data class StateException(
     private fun handleCatch(
         catchGoal: Struct,
         catcher: Substitution,
-    ) = when {
-        catcher.isSuccess -> {
-            val newSubstitution =
-                (context.substitution + catcher).filter { (it, _) ->
-                    context.isVariableInteresting(it)
-                }
-            val subGoals = catchGoal[2][newSubstitution]
-            val newGoals = subGoals.toGoals() + context.goals.next
+    ): State =
+        when {
+            catcher.isSuccess -> {
+                context.interception?.exception(exception, context, caught = true)?.let { return halt(it) }
+                val newSubstitution =
+                    (context.substitution + catcher).filter { (it, _) ->
+                        context.isVariableInteresting(it)
+                    }
+                val subGoals = catchGoal[2][newSubstitution]
+                val newGoals = subGoals.toGoals() + context.goals.next
 
-            StateGoalSelection(
-                context.copy(
-                    goals = newGoals,
-                    rules = Cursor.empty(),
-                    primitives = Cursor.empty(),
-                    substitution = newSubstitution.castToUnifier(),
-                    step = nextStep(),
-                ),
-            )
+                StateGoalSelection(
+                    context.copy(
+                        goals = newGoals,
+                        rules = Cursor.empty(),
+                        primitives = Cursor.empty(),
+                        substitution = newSubstitution.castToUnifier(),
+                        step = nextStep(),
+                    ),
+                )
+            }
+            context.isRoot -> finalState
+            else -> handleExceptionInParentContext
         }
-        context.isRoot -> finalState
-        else -> handleExceptionInParentContext
-    }
 
     override fun computeNext(): State =
         when (exception) {

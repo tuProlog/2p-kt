@@ -23,6 +23,8 @@ These pin down behaviour that a stateful, trail-based engine could break without
 | `logicalUpdateViewContract` | a running call sees the clauses that existed when it started (ISO 7.5.4) |
 | `lazinessContract` | alternatives are pulled on demand: `take(1)`, cut and `once/1` don't pull more, repeated `hasNext()` doesn't advance |
 | `lifetimeContract` | solutions, primitive requests and errors read the same after the solver moves on |
+| `interceptionContract` | the ports a `TransitionInterceptor` sees (call, exit, redo, fail, exception), and its decisions |
+| `selectionPolicyContract` | reversed clause order, and a non-leftmost goal selection that keeps the answers |
 
 `:solve-prolog`'s `DeepExecutionSpec` also runs, through the JVM task `jvmTestSmallStack`, with a 1 MB stack instead
 of the 256 MB used by `jvmTest`, so that accidental recursion in the engine shows up. It is part of `check`.

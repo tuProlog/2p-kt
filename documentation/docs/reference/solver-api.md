@@ -105,13 +105,45 @@ makes it deterministic.
 For counts that don't depend on the machine, pass `ResolutionCounters` with `SolveOptions.setCounters`. `:solve-prolog`
 then counts predicate calls, alternatives tried and choice points. ISO control constructs (`,`, `;`, `->`, `call/N`,
 `catch/3`, `throw/1`) are not counted, so the counts measure logical work and not an engine's own steps. Nested
-resolutions (`findall/3`, ...) are not counted yet.
+resolutions (`findall/3`, ...) count into the same instance, through `ExecutionContext.counters`.
 
 ```kotlin
 val counters = ResolutionCounters()
 val solutions = solver.solve(goal, SolveOptions.allLazily().setCounters(counters)).timed()
 solutions.forEach { /* ... */ }
 println("${solutions.timing.firstAnswer}, ${solutions.timing.active}, ${counters.inferences} inferences")
+```
+
+### Observing and steering a resolution
+
+A `TransitionInterceptor` (`it.unibo.tuprolog.solve.intercept`), passed with `SolveOptions.setInterceptor`, sees the
+ports of each call, as in Byrd's box model: `CALL`, `EXIT`, `REDO`, `FAIL` and `EXCEPTION`. Control constructs have
+no ports of their own; the goals inside them do. `before(transition)` runs before the resolution goes past a port and
+returns a `Decision`:
+
+- `Continue`
+- `Fail`: at `CALL`, `EXIT` or `REDO`
+- `Redirect(goal)`: at `CALL`
+- `Halt`
+
+`after(transition)` runs once the resolution has gone past the port. A `Transition` carries the port, the goal with its
+bindings, an invocation id shared by the call's ports, the call depth, and a read-only context. It is valid only during
+the callback. While an interceptor is set, `:solve-prolog` turns last-call optimisation off, so that every call shows
+its `EXIT`.
+
+`SolveOptions.setRuleSelection` and `setGoalSelection` replace source clause order and leftmost goal selection with a
+`RuleSelectionPolicy` or a `GoalSelectionPolicy` (`it.unibo.tuprolog.solve.search`). Other orders are alternative
+semantics: they can change termination, errors, cuts and side effects. See
+[ADR 0001](../explanation/adr-0001-stateful-engine.md) for the design.
+
+```kotlin
+val tracer = object : TransitionInterceptor {
+    override fun before(transition: Transition): Decision {
+        println("${transition.port} ${transition.goal}")
+        return Decision.Continue
+    }
+}
+solver.solve(goal, SolveOptions.allLazily().setInterceptor(tracer)).toList()
 ```
 
 ## `Solution`
