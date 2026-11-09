@@ -40,6 +40,9 @@ abstract class BinaryRelation<E : ExecutionContext>(
     abstract class WithoutSideEffects<E : ExecutionContext>(
         operator: String,
     ) : BinaryRelation<E>(operator) {
+        override val alternatives: Alternatives
+            get() = Alternatives.LOOKAHEAD_SAFE
+
         /** Template method producing one [Substitution] per solution of relating [first] and [second]. */
         protected abstract fun Solve.Request<E>.computeAllSubstitutions(
             first: Term,
@@ -56,6 +59,9 @@ abstract class BinaryRelation<E : ExecutionContext>(
     abstract class NonBacktrackable<E : ExecutionContext>(
         operator: String,
     ) : BinaryRelation<E>(operator) {
+        override val alternatives: Alternatives
+            get() = Alternatives.AT_MOST_ONE
+
         /** Template method producing the single [Solve.Response] for relating [first] and [second]. */
         protected abstract fun Solve.Request<E>.computeOne(
             first: Term,

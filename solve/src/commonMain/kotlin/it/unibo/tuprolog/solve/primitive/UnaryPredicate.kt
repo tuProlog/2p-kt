@@ -24,6 +24,9 @@ abstract class UnaryPredicate<E : ExecutionContext>(
     abstract class WithoutSideEffects<E : ExecutionContext>(
         operator: String,
     ) : UnaryPredicate<E>(operator) {
+        override val alternatives: Alternatives
+            get() = Alternatives.LOOKAHEAD_SAFE
+
         protected abstract fun Solve.Request<E>.computeAllSubstitutions(first: Term): Sequence<Substitution>
 
         final override fun Solve.Request<E>.computeAll(first: Term): Sequence<Solve.Response> =
@@ -36,6 +39,9 @@ abstract class UnaryPredicate<E : ExecutionContext>(
     abstract class NonBacktrackable<E : ExecutionContext>(
         operator: String,
     ) : UnaryPredicate<E>(operator) {
+        override val alternatives: Alternatives
+            get() = Alternatives.AT_MOST_ONE
+
         protected abstract fun Solve.Request<E>.computeOne(first: Term): Solve.Response
 
         final override fun Solve.Request<E>.computeAll(first: Term): Sequence<Solve.Response> =

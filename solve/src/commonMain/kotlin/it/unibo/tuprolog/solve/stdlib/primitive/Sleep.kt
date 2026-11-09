@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 import kotlin.time.Duration
@@ -39,6 +40,9 @@ object Sleep : UnaryPredicate<ExecutionContext>("sleep") {
         throws error(type_error(integer, a), _).
         ```
         """.trimIndent()
+
+    override val alternatives: Alternatives
+        get() = Alternatives.AT_MOST_ONE
 
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> =
         sequence {

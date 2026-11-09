@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.ensuringArgumentIsStreamProperty
 import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.ensuringArgumentIsVarOrStream
 import it.unibo.tuprolog.solve.libs.io.primitives.IOPrimitiveUtils.propertiesOf
+import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
@@ -23,6 +24,10 @@ import it.unibo.tuprolog.solve.primitive.Solve
  * to something other than `input`, `output`, or `alias(_)`.
  */
 object StreamProperty : BinaryRelation<ExecutionContext>("stream_property") {
+    // the streams and their properties are enumerated purely
+    override val alternatives: Alternatives
+        get() = Alternatives.LOOKAHEAD_SAFE
+
     override val help: String =
         """
         `stream_property(?Stream, ?Property)`

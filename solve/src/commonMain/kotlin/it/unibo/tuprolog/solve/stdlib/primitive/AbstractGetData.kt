@@ -5,12 +5,16 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 
 abstract class AbstractGetData(
     suffix: String,
 ) : BinaryRelation<ExecutionContext>("get_$suffix") {
+    override val alternatives: Alternatives
+        get() = Alternatives.AT_MOST_ONE
+
     override fun Solve.Request<ExecutionContext>.computeAll(
         first: Term,
         second: Term,

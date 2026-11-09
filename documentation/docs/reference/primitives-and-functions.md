@@ -63,6 +63,34 @@ custom per-request data at three lifetimes (`SetEphemeralData`, `SetPersistentDa
 `get_ephemeral/2`/`get_persistent/2`/`get_durable/2` primitives). Each knows how to `applyTo(context)` to produce the
 next `ExecutionContext`.
 
+### Alternatives: how solvers pull a primitive's answers
+
+A primitive returns its answers as a `Sequence`, and a solver pulls the next one only when the search backtracks into
+the primitive. To know whether a primitive has more answers, e.g. to avoid keeping a choice point after its last one,
+the solver would have to pull ahead, which runs the primitive's code for an answer nobody asked for yet: a generator
+would run one step early, and an alternative that throws or diverges would run even if a cut discards it.
+`Primitive.alternatives` (`Alternatives`, `it.unibo.tuprolog.solve.primitive`) tells solvers what they may do:
+
+- `AT_MOST_ONE`: at most one answer, so no choice point is needed;
+- `LOOKAHEAD_SAFE`: more answers may follow, but computing the next one early is cheap, terminates and has no effects
+  (side effects described by a `Solve.Response` only happen when the solver uses it), so solvers may look ahead;
+- `ON_DEMAND` (the default): each answer is computed only when the search backtracks into the primitive. When a query's
+  last answer comes from such a primitive, finding out there are no more takes one more step, so the query ends with a
+  further `no`.
+
+`PrimitiveWrapper` subclasses override `alternatives`. The `NonBacktrackable` base classes (`Predicative`, `Functional`,
+type checks, ...) report `AT_MOST_ONE`, and the `WithoutSideEffects` ones `LOOKAHEAD_SAFE`. A primitive built from a
+function declares it with `Primitive.of(alternatives) { request -> ... }`.
+
+```kotlin
+// yields 1, 2, 3: cheap and pure, so solvers may look ahead, and `gen(X)` ends after X = 3 without a further `no`
+val gen = Primitive.of(Alternatives.LOOKAHEAD_SAFE) { request ->
+    (1..3).asSequence().map { request.replyWith(request.unificator.mgu(request.arguments[0], Integer.of(it))) }
+}
+```
+
+The stateful engine of `:solve-prolog` (#1010) follows `alternatives`; the FSM engine always looks ahead.
+
 ### `PrimitiveWrapper`
 
 Concrete primitives extend `PrimitiveWrapper<C>`, implementing `uncheckedImplementation(request): Sequence<Solve.Response>`;

@@ -11,10 +11,28 @@ fun interface Primitive : Helpable {
     @JsName("solve")
     fun solve(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response>
 
+    /** How solvers may pull this primitive's answers; [Alternatives.ON_DEMAND] unless declared otherwise. */
+    @JsName("alternatives")
+    val alternatives: Alternatives
+        get() = Alternatives.ON_DEMAND
+
     companion object {
         @JsName("of")
         @JvmStatic
         fun of(function: (Solve.Request<ExecutionContext>) -> Sequence<Solve.Response>): Primitive = Primitive(function)
+
+        /** A [Primitive] running [function], whose answers solvers pull as [alternatives] says. */
+        @JsName("ofWithAlternatives")
+        @JvmStatic
+        fun of(
+            alternatives: Alternatives,
+            function: (Solve.Request<ExecutionContext>) -> Sequence<Solve.Response>,
+        ): Primitive =
+            object : Primitive {
+                override val alternatives: Alternatives = alternatives
+
+                override fun solve(request: Solve.Request<ExecutionContext>) = function(request)
+            }
 
         /**
          * Creates a new [Primitive], behaving exactly as given [uncheckedPrimitive], but accepting only provided [supportedSignature]
@@ -42,6 +60,10 @@ fun interface Primitive : Helpable {
         fun enforcingSignature(
             supportedSignature: Signature,
             uncheckedPrimitive: Primitive,
-        ): Primitive = enforcingSignature<ExecutionContext>(supportedSignature, uncheckedPrimitive::solve)
+        ): Primitive =
+            of(
+                uncheckedPrimitive.alternatives,
+                enforcingSignature<ExecutionContext>(supportedSignature, uncheckedPrimitive::solve)::solve,
+            )
     }
 }

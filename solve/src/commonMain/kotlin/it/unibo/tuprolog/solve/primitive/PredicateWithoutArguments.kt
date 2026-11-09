@@ -21,6 +21,9 @@ abstract class PredicateWithoutArguments<E : ExecutionContext>(
     abstract class WithoutSideEffects<E : ExecutionContext>(
         operator: String,
     ) : PredicateWithoutArguments<E>(operator) {
+        override val alternatives: Alternatives
+            get() = Alternatives.LOOKAHEAD_SAFE
+
         protected abstract fun Solve.Request<E>.computeAllSubstitutions(): Sequence<Substitution>
 
         final override fun Solve.Request<E>.computeAll(): Sequence<Solve.Response> =
@@ -33,6 +36,9 @@ abstract class PredicateWithoutArguments<E : ExecutionContext>(
     abstract class NonBacktrackable<E : ExecutionContext>(
         operator: String,
     ) : PredicateWithoutArguments<E>(operator) {
+        override val alternatives: Alternatives
+            get() = Alternatives.AT_MOST_ONE
+
         protected abstract fun Solve.Request<E>.computeOne(): Solve.Response
 
         final override fun Solve.Request<E>.computeAll(): Sequence<Solve.Response> = sequenceOf(computeOne())
