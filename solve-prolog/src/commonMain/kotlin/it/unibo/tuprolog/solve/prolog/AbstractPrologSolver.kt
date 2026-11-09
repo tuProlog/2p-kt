@@ -13,9 +13,9 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.prolog.fsm.Interception
 import it.unibo.tuprolog.solve.prolog.fsm.State
 import it.unibo.tuprolog.solve.prolog.fsm.StateInit
+import it.unibo.tuprolog.solve.prolog.machine.PrologMachine
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
@@ -66,6 +66,18 @@ abstract class AbstractPrologSolver(
         trustKb,
     ) {
     override lateinit var currentContext: PrologExecutionContext
+
+    /**
+     * The engine resolving queries: the FSM unless a solver was made by [MachinePrologSolverFactory] (#1010), or a
+     * resolution's [SolveOptions.customOptions] map [ENGINE_OPTION] to `"machine"` (for benchmarks, until the switch).
+     * Nullable, meaning the FSM, as `initialization` directives run in the constructor before it is set (on JS it
+     * would be `undefined` there).
+     */
+    internal var engine: Engine? = null
+
+    internal companion object {
+        const val ENGINE_OPTION = "solve-prolog.engine"
+    }
 
     constructor(
         unificator: Unificator = Unificator.default,
@@ -138,6 +150,9 @@ abstract class AbstractPrologSolver(
                 ruleSelection = options.ruleSelection,
                 goalSelection = options.goalSelection,
             )
+        if (engine == Engine.MACHINE || options.customOptions[ENGINE_OPTION] == "machine") {
+            return PrologMachine(currentContext, goal) { currentContext = it }.asSequence()
+        }
         return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
     }
 

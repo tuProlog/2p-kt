@@ -52,7 +52,9 @@ internal open class PrologSolver : AbstractPrologSolver {
         stdOut: OutputChannel<String>,
         stdErr: OutputChannel<String>,
         warnings: OutputChannel<Warning>,
-    ) = PrologSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings)
+    ) = PrologSolver(unificator, libraries, flags, staticKb, dynamicKb, stdIn, stdOut, stdErr, warnings).also {
+        it.engine = engine
+    }
 
     override fun clone(): PrologSolver = copy()
 }
