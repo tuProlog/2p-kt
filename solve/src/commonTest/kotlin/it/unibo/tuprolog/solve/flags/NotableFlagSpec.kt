@@ -13,6 +13,8 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Term
 
+// the deprecated TrackVariables is still a notable flag, so that setting it stays validated
+@Suppress("DEPRECATION")
 private val notableFlags =
     listOf(
         DoubleQuotes,

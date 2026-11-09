@@ -2,35 +2,52 @@ package it.unibo.tuprolog.solve
 
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.flags.TrackVariables
-import it.unibo.tuprolog.solve.flags.invoke
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
-/** Conformance tests for how a resolved [Solution]'s substitution treats variables that do not directly appear in the original query ("uninteresting" variables, introduced only by intermediate goals/clause bodies), and for the [it.unibo.tuprolog.solve.flags.TrackVariables] flag that controls whether they are kept visible to a custom primitive during resolution. */
+/**
+ * Conformance tests for how a resolved [Solution]'s substitution treats variables that do not directly appear in the
+ * original query ("uninteresting" variables, introduced only by intermediate goals/clause bodies), and showing that the
+ * deprecated `track_variables` flag changes nothing: a binding still needed by a later goal of a clause is kept
+ * whatever the flag (#1078).
+ */
 fun substitutionsContract(
     solverFactory: SolverFactory,
     disabled: Set<String> = emptySet(),
 ) = contract(solverFactory, disabled) {
-    // Runs [interestingVariablesAreProperlyTracked]'s scenario with
-    // [it.unibo.tuprolog.solve.flags.TrackVariables] `off`, and checks that the query's own variables (`A`, `B`,
-    // `C`) are still observed by the inspector at every call site regardless. The intermediate variable `D` is
-    // observed at the fourth call site too, as it occurs in that goal: a binding still needed by a later goal of the
-    // clause is kept whatever the flag (#1078).
-    scenario("substitutions/interesting-variables-are-not-obliterated") {
-        testVariablesTracking(false)
+    // Solves `p(A, B, C)` against [TestingClauseTheories.callsWithVariablesAndInspectorTheory]'s theory, with the
+    // flag unset, `on` and `off`: the inspector observes the same variables at every call site each time, including
+    // the intermediate `D` (bound only inside the theory's own rule bodies) at the fourth one.
+    scenario("substitutions/interesting-variables-are-tracked-whatever-track-variables") {
+        trackVariablesSettings.forEach { flags ->
+            inspectedVariables(flags) shouldBe
+                listOf(setOf("A", "B", "C"), setOf("D"), setOf("E"), setOf("A", "B", "C", "D", "E"))
+        }
     }
 
-    // Solves `p(A, B, C)` against [TestingClauseTheories.callsWithVariablesAndInspectorTheory]'s theory with
-    // [it.unibo.tuprolog.solve.flags.TrackVariables] `on`; the intermediate variable `D` (bound only inside the
-    // theory's own rule bodies, not directly by the query) is observed by the inspector at its fourth call site,
-    // alongside the query's own `A`/`B`/`C`/`E` — it is not discarded even though it is not one of the query's
-    // variables.
-    scenario("substitutions/interesting-variables-are-properly-tracked") {
-        testVariablesTracking(true)
+    // Solves every `a(X)` against [TestingClauseTheories.callsWithVariablesTheory] with the flag unset, `on` and
+    // `off`: the solutions are the same each time.
+    scenario("substitutions/track-variables-does-not-change-solutions") {
+        logicProgramming {
+            val solutions =
+                trackVariablesSettings.map { flags ->
+                    solverFactory
+                        .solverOf(staticKb = TestingClauseTheories.callsWithVariablesTheory, flags = flags)
+                        .solve("a"(X))
+                        .toList()
+                }
+            solutions.distinct().size shouldBe 1
+        }
+    }
+
+    // Programs that still set the deprecated flag keep working.
+    case("substitutions/track-variables-can-still-be-set") {
+        "set_prolog_flag"("track_variables", "on") and "current_prolog_flag"("track_variables", "X") yields
+            { listOf(it.yes("X" to "on")) }
     }
 
     // Solves `a(X)` against [TestingClauseTheories.callsWithVariablesTheory] (`a(A) :- b(A), d(Z).` and similar
@@ -64,7 +81,15 @@ private class Inspect(
     }
 }
 
-private fun ContractScope.testVariablesTracking(tracking: Boolean) {
+// unset, `on` and `off`
+private val trackVariablesSettings =
+    listOf(
+        FlagStore.DEFAULT,
+        FlagStore.DEFAULT + ("track_variables" to Atom.of("on")),
+        FlagStore.DEFAULT + ("track_variables" to Atom.of("off")),
+    )
+
+private fun ContractScope.inspectedVariables(flags: FlagStore): List<Set<String>> {
     val inspections = mutableListOf<Set<String>>()
     logicProgramming {
         val inspect = Inspect(inspections)
@@ -72,13 +97,9 @@ private fun ContractScope.testVariablesTracking(tracking: Boolean) {
             solverFactory.solverOf(
                 staticKb = TestingClauseTheories.callsWithVariablesAndInspectorTheory("p", inspect.functor),
                 libraries = runtimeOf("default", inspect),
-                flags = FlagStore.EMPTY + TrackVariables { if (tracking) ON else OFF },
+                flags = flags,
             )
-        val query = "p"(A, B, C)
-        solver.solveOnce(query)
+        solver.solveOnce("p"(A, B, C))
     }
-    inspections[0] shouldBe setOf("A", "B", "C")
-    inspections[1] shouldBe setOf("D")
-    inspections[2] shouldBe setOf("E")
-    inspections[3] shouldBe setOf("A", "B", "C", "D", "E")
+    return inspections
 }
