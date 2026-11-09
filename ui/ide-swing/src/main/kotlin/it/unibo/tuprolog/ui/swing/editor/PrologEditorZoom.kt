@@ -4,7 +4,9 @@ import it.unibo.tuprolog.ui.gui.presentation.EditorZoom
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import java.awt.event.InputEvent
 import javax.swing.AbstractAction
+import javax.swing.JScrollPane
 import javax.swing.KeyStroke
+import javax.swing.SwingUtilities
 
 /**
  * Wires Ctrl/Cmd `+`/`-`/mouse-wheel to change this area's font size within [EditorZoom]'s bounds, invoking
@@ -33,10 +35,16 @@ internal fun RSyntaxTextArea.installZoomControls(onZoomed: (Int) -> Unit = {}) {
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PLUS, modifier), "zoom-in")
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_MINUS, modifier), "zoom-out")
     }
+    // A component with a wheel listener of its own receives every wheel event, and AWT no longer forwards them to its
+    // enclosing scroll pane: hand the plain (non-zoom) ones over explicitly, or scrolling (wheel or touchpad) stops.
     addMouseWheelListener { event ->
         if (event.isControlDown || event.isMetaDown) {
             zoom(if (event.preciseWheelRotation < 0) 1 else -1)
             event.consume()
+        } else {
+            SwingUtilities.getAncestorOfClass(JScrollPane::class.java, this)?.let {
+                it.dispatchEvent(SwingUtilities.convertMouseEvent(this, event, it))
+            }
         }
     }
 }
