@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.flags.GroundQueriesHaveBooleanSolution
+import it.unibo.tuprolog.solve.timing.timed
 import kotlin.time.Duration
 
 /**
@@ -49,7 +50,7 @@ class TuPrologSolveQuery :
     private fun evalAndPrint(solver: Solver) {
         try {
             val duration: Duration = parentCommand.getTimeout()
-            val solutions = solver.solve(Struct.parse(query), duration).iterator()
+            val solutions = solver.solve(Struct.parse(query), duration).timed()
             val groundQueriesHaveBooleanSolution =
                 solver.flags[GroundQueriesHaveBooleanSolution] == GroundQueriesHaveBooleanSolution.ON
             if (maxSolutions == 0) {

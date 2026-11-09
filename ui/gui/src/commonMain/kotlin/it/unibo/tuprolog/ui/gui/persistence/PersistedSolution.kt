@@ -3,6 +3,7 @@ package it.unibo.tuprolog.ui.gui.persistence
 import it.unibo.tuprolog.ui.gui.presentation.BindingPresentation
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration
 
 /** Mirrors [SolutionPresentation]'s shape for JSON persistence; converted back via [toSolutionPresentation]. */
 @Serializable
@@ -14,12 +15,14 @@ sealed interface PersistedSolution {
         val bindings: List<PersistedBinding> = emptyList(),
         val solvedQuery: String? = null,
         val metadata: Map<String, String> = emptyMap(),
+        val time: Duration? = null,
     ) : PersistedSolution
 
     /** A failed solution. */
     @Serializable
     data class No(
         val query: String,
+        val time: Duration? = null,
     ) : PersistedSolution
 
     /** An aborted solution, persisted with its error message and stack trace. */
@@ -29,6 +32,7 @@ sealed interface PersistedSolution {
         val message: String,
         val logicStackTrace: List<String> = emptyList(),
         val isTimeout: Boolean = false,
+        val time: Duration? = null,
     ) : PersistedSolution
 }
 
@@ -41,9 +45,10 @@ internal fun SolutionPresentation.toPersisted(): PersistedSolution =
                 bindings = bindings.map { PersistedBinding(it.variable, it.value) },
                 solvedQuery = solvedQuery,
                 metadata = metadata,
+                time = time,
             )
-        is SolutionPresentation.No -> PersistedSolution.No(query)
-        is SolutionPresentation.Halt -> PersistedSolution.Halt(query, message, logicStackTrace, isTimeout)
+        is SolutionPresentation.No -> PersistedSolution.No(query, time)
+        is SolutionPresentation.Halt -> PersistedSolution.Halt(query, message, logicStackTrace, isTimeout, time)
     }
 
 /** Restores the runtime presentation from its persisted shape. */
@@ -55,7 +60,8 @@ internal fun PersistedSolution.toSolutionPresentation(): SolutionPresentation =
                 bindings = bindings.map { BindingPresentation(it.variable, it.value) },
                 solvedQuery = solvedQuery,
                 metadata = metadata,
+                time = time,
             )
-        is PersistedSolution.No -> SolutionPresentation.No(query)
-        is PersistedSolution.Halt -> SolutionPresentation.Halt(query, message, logicStackTrace, isTimeout)
+        is PersistedSolution.No -> SolutionPresentation.No(query, time)
+        is PersistedSolution.Halt -> SolutionPresentation.Halt(query, message, logicStackTrace, isTimeout, time)
     }
