@@ -44,7 +44,7 @@ listOf("yaml", "json").forEach {
                     .jvm()
                     .compilations
                     .getByName("test")
-                    .compileDependencyFiles,
+                    .runtimeDependencyFiles,
             )
         standardInput = System.`in`
         mainClass.set("${it.uppercase(Locale.getDefault())}PrinterKt")
