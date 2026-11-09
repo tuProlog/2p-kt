@@ -604,6 +604,30 @@ class DefaultGuiControllerSpec :
             }
         }
 
+        test("delete-resolution/removes-only-the-selected-entry").config(coroutineTestScope = true) {
+            val (controller, _) = fixture(this)
+            try {
+                controller.dispatch(WorkspaceAction.NewDocumentPage("a.pl"))
+                val pageId = controller.state.value.workspace.selectedPageId!!
+                val first = ResolutionHistoryEntry("p.", emptyList(), ResolutionStatus.COMPLETED, submittedAt = 1L)
+                val second = first.copy(submittedAt = 2L)
+                controller.dispatch(PageAction.RestoreHistory(pageId, listOf("p."), listOf(first, second)))
+                controller.dispatch(PageAction.DeleteResolution(pageId, second))
+                controller.state.value.workspace
+                    .page(pageId)!!
+                    .history.resolutions shouldBe listOf(first)
+                controller.dispatch(PageAction.DeleteResolution(pageId, second))
+                controller.state.value.workspace
+                    .page(pageId)!!
+                    .history.resolutions shouldBe listOf(first)
+                controller.state.value.workspace
+                    .page(pageId)!!
+                    .query.history.entries shouldBe listOf("p.")
+            } finally {
+                controller.shutdown()
+            }
+        }
+
         test(
             "restore-history-replaces-query-and-resolution-history-without-touching-live-resolution",
         ).config(coroutineTestScope = true) {
