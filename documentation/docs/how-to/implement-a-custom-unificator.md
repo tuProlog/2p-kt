@@ -148,7 +148,7 @@ still use the argument indexes.
 
 ## 6. Let solvers unify in their own bindings
 
-Solvers that keep their own bindings (such as the stateful engine of `solve-prolog`, #1010) can unify goals with clauses
+Solvers that keep their own bindings (such as `:solve-prolog`'s, #1010) can unify goals with clauses
 right in those bindings, without building a `Substitution` per unification, if the solver's unificator implements
 `IncrementalUnificator`. The built-in strategies do; a custom one keeps working without it, on the slower path where the
 solver calls `mgu` and copies the result.

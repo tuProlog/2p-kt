@@ -27,11 +27,9 @@ import kotlin.js.JsExport
  * directly; it is public mainly so those lookups, and the `it.unibo.tuprolog.solve.problog` and other resolution
  * strategies that build on top of the prolog engine, have something to find and construct.
  *
- * Every [Solver]/[MutableSolver] produced here resolves goals with the explicit, inspectable finite-state
- * machine documented under `it.unibo.tuprolog.solve.prolog.fsm` (see [PrologExecutionContext] and
- * [SolutionIterator] for the two pieces that make it tick), rather than via the host language's call stack --
- * see the "state-machine" explanation page in the project documentation for the full rationale and its
- * grounding in Ciatto's 2021 paper on modelling a Prolog solver as a state machine.
+ * Every [Solver]/[MutableSolver] produced here resolves goals with a stateful machine (#1010): an explicit,
+ * heap-allocated continuation, choice-point stack and trailed bindings, rather than the host language's call stack --
+ * see the "state-machine" explanation page in the project documentation for the design.
  *
  * @see it.unibo.tuprolog.solve.Solver.prolog
  * @see AbstractPrologSolver

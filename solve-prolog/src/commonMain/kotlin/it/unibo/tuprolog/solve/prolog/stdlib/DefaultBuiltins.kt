@@ -16,8 +16,8 @@ import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
  * [CommonBuiltins]: this is what `it.unibo.tuprolog.solve.prolog.PrologSolverFactory.defaultBuiltins` returns,
  * and what a solver built via `Solver.prolog.solverWithDefaultBuiltins()` is loaded with.
  *
- * Everything here exists specifically because this engine resolves goals through the finite-state machine
- * under `it.unibo.tuprolog.solve.prolog.fsm` rather than host-language recursion, so control constructs need an
+ * Everything here exists specifically because this engine resolves goals through an explicit machine rather than
+ * host-language recursion, so control constructs need an
  * engine-specific implementation: [it.unibo.tuprolog.solve.prolog.stdlib.primitive.Throw] is a `Primitive`
  * (`throw/1`), while [it.unibo.tuprolog.solve.prolog.stdlib.rule.Catch] (`catch/3`),
  * [it.unibo.tuprolog.solve.prolog.stdlib.rule.Call] (`call/1`),
@@ -25,7 +25,7 @@ import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
  * [it.unibo.tuprolog.solve.prolog.stdlib.rule.Cut] (`'!'/0`) and
  * [it.unibo.tuprolog.solve.prolog.stdlib.rule.NegationAsFailure] (`'\+'/1`) are all `RuleWrapper`s expanded into
  * ordinary rule bodies that `StateRuleSelection`/`StateException` know how to special-case (cut transparency,
- * exception propagation) at the FSM level.
+ * exception propagation) at the machine level.
  */
 object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
     override val additionalPrimitives: Iterable<PrimitiveWrapper<*>>
