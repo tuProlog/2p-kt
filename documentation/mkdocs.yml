@@ -42,6 +42,8 @@ markdown_extensions:
         - ".."
         - "."
       check_paths: true
+      # sections quoted from inside a test or a function body start at column 0
+      dedent_subsections: true
   - toc:
       permalink: true
 
@@ -63,6 +65,7 @@ nav:
       - how-to/contribute-with-git-flow.md
       - how-to/reuse-variables-with-scope.md
       - how-to/implement-a-custom-unificator.md
+      - how-to/use-theories-and-clause-collections.md
       - how-to/use-io-lib.md
       - how-to/deploy-the-web-ide.md
   - Reference:
@@ -70,6 +73,7 @@ nav:
       - reference/module-map.md
       - reference/term-hierarchy.md
       - reference/unification-api.md
+      - reference/theory-api.md
       - reference/solver-api.md
       - reference/primitives-and-functions.md
       - reference/default-predicates.md
@@ -86,7 +90,7 @@ nav:
       - explanation/philosophy.md
       - explanation/term-model.md
       - explanation/variables-and-scoping.md
-      - explanation/clause-db-and-rete.md
+      - explanation/clause-storage-and-indexing.md
       - explanation/solver-design.md
       - explanation/state-machine.md
       - explanation/parsing-architecture.md

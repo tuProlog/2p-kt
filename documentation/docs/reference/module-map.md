@@ -11,7 +11,7 @@ This page documents what each module is for and how they depend on one another.
 | `utils` | Dependency-free general-purpose utilities shared by every other module: cursors, caches (LRU), graphs, tagging, type-inspection helpers. | — |
 | `core` | The `Term` type hierarchy (atoms, numbers, variables, structures, clauses...), `Scope`, term visitors/comparators/formatters — 2P-Kt's logic-data model. See [Term hierarchy](term-hierarchy.md). | `utils` |
 | `unify` | Unification algorithms and the `Unificator`/`Substitution` API over `Term`s. | `core` |
-| `theory` | In-memory clause databases (`Theory`): listed and indexed implementations, the latter backed by a RETE-like discrimination network. | `core`, `unify` |
+| `theory` | In-memory clause databases (`Theory`, read-optimised; `MutableTheory`, write-optimised) and unification-aware clause collections, with just-in-time argument indexing. | `core`, `unify` |
 | `datalog` | Static well-formedness checks restricting a `Theory` to the (function-free, safely-negated) Datalog subset. | `theory` |
 | `bdd` | A standalone Binary Decision Diagram implementation, used by the probabilistic-logic modules. | — |
 | `dsl-core` | Core building blocks of the Kotlin DSL for logic programming: `LogicProgrammingScope`, `Termificator` (term "reification" from Kotlin values). | `core` |

@@ -1,0 +1,52 @@
+@startuml
+skinparam shadowing false
+hide empty members
+
+interface Theory <<read-optimised>>
+interface MutableTheory <<write-optimised>>
+Theory <|-- MutableTheory
+
+class FrozenStore {
+    clauses: Array<Clause>
+    procedures: Map<ProcedureKey?, FrozenProcedure>
+    plus(added, atStart): FrozenStore
+    minusFirst(query) / minusAll(query)
+}
+class FrozenProcedure {
+    clauses: Array<Clause>
+    indexes: FrozenIndexes
+}
+class FrozenArgIndex {
+    buckets: key -> sorted positions
+    variables: sorted positions
+}
+
+class MutableStore {
+    generation: Long
+    all: EntryDeque
+    procedures: Map<ProcedureKey?, MutableProcedure>
+}
+class MutableProcedure {
+    entries: EntryDeque
+    indexes: path -> MutableArgIndex
+}
+class MutableArgIndex {
+    buckets: key -> EntryDeque
+    variables: EntryDeque
+}
+class Entry {
+    clause: Clause
+    order: Long
+    born: Long
+    erased: Long
+}
+
+Theory ..> FrozenStore : IndexedTheory
+MutableTheory ..> MutableStore : MutableIndexedTheory
+FrozenStore *-- "per functor/arity" FrozenProcedure
+FrozenProcedure *-- "per path, on demand" FrozenArgIndex
+MutableStore *-- "per functor/arity" MutableProcedure
+MutableProcedure *-- "per path, on demand" MutableArgIndex
+MutableProcedure o-- Entry
+MutableArgIndex o-- Entry
+@enduml

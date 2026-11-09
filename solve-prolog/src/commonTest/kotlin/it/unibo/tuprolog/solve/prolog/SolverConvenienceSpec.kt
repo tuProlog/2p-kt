@@ -4,15 +4,20 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.assertSolutionEquals
 import it.unibo.tuprolog.theory.Theory
+import it.unibo.tuprolog.unify.AbstractWorklistUnificator
+import it.unibo.tuprolog.unify.IndexKey
 import kotlin.time.Duration.Companion.seconds
 import it.unibo.tuprolog.core.List as LogicList
 
@@ -43,6 +48,20 @@ private val calls =
 
 class SolverConvenienceSpec :
     FunSpec({
+        test("custom-head-keys/ignores-directive-candidates") {
+            val unificator =
+                object : AbstractWorklistUnificator() {
+                    override fun indexKey(term: Term): IndexKey = IndexKey.Wildcard
+                }
+            val goal = Atom.of("p")
+            val solver =
+                Solver.prolog.solverWithDefaultBuiltins(
+                    unificator = unificator,
+                    staticKb = Theory.of(unificator, Directive.of(Atom.of("init")), Fact.of(goal)),
+                )
+            solver.solveOnce(goal).isYes shouldBe true
+        }
+
         withTests(nameFn = { it.id }, calls) { case ->
             // three yes solutions, then a final no
             val reference = newSolver().solve(goal).toList()

@@ -3,14 +3,6 @@ on:
   push:
     branches-ignore:
       - 'dependabot/**'
-    paths-ignore:
-      - '.gitignore'
-      - '.mergify.yml'
-      - 'CHANGELOG.md'
-      - 'LICENSE'
-      - 'README.md'
-      - 'renovate.json'
-      - '**/AGENTS.md'
   pull_request:
   workflow_dispatch:
 
@@ -23,7 +15,30 @@ jobs:
       || startsWith(github.head_ref, 'refs/heads/dependabot/')
     outputs:
       summary-check-run: ${{ steps.summary-check-run.outputs.id }}
+      code: ${{ steps.changes.outputs.code }}
     steps:
+      # No paths-ignore on `push`: master requires "ci-cd / success" (strict), which a skipped workflow never reports,
+      # leaving PRs whose last push only touched notes unmergeable. Pushes touching nothing but notes (Markdown outside
+      # `documentation/`, which the site builds from, and a few repo files) skip the jobs instead, and success passes.
+      - name: Detect pushes touching nothing that is built or tested
+        id: changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          code=true
+          if [[ "$GITHUB_EVENT_NAME" == push && -n "$BEFORE" && "$BEFORE" != 0000000000000000000000000000000000000000 ]]; then
+            # the compare API lists at most 300 files: a longer list counts as code
+            if files=$(gh api "repos/$GITHUB_REPOSITORY/compare/$BEFORE...$GITHUB_SHA" \
+                --jq 'if (.files | length) < 300 then .files[].filename else "too-many" end'); then
+              echo "$files"
+              if [[ -n "$files" ]] && ! grep -qvE '^(\.gitignore|LICENSE|renovate\.json|.*\.md)$' <<< "$files" \
+                  && ! grep -q '^documentation/' <<< "$files"; then
+                code=false
+              fi
+            fi
+          fi
+          echo "code=$code" | tee -a "$GITHUB_OUTPUT"
       - name: Create the "CI summary" check run, which every job updates as it finishes
         id: summary-check-run
         # fork PRs only get a read-only token: they go without the live summary, and only get the final one
@@ -41,12 +56,14 @@ jobs:
       - dispatcher
     uses: ./.github/workflows/build-and-deploy.yml
     with:
+      code: ${{ needs.dispatcher.outputs.code != 'false' }}
       summary-check-run: ${{ needs.dispatcher.outputs.summary-check-run }}
     secrets: inherit
   docs:
     needs:
       - dispatcher
       - ci-cd
+    if: needs.dispatcher.outputs.code != 'false'
     permissions:
       contents: read
       pages: write

@@ -124,17 +124,17 @@ internal class SolverBuilderImpl(
 
     override fun dynamicKb(vararg clauses: Clause): SolverBuilder =
         returningThis {
-            dynamicKb = Theory.listedOf(unificator, *clauses)
+            dynamicKb = Theory.of(unificator, *clauses)
         }
 
     override fun dynamicKb(clauses: Iterable<Clause>): SolverBuilder =
         returningThis {
-            dynamicKb = Theory.listedOf(unificator, clauses)
+            dynamicKb = Theory.of(unificator, clauses)
         }
 
     override fun dynamicKb(clauses: Sequence<Clause>): SolverBuilder =
         returningThis {
-            dynamicKb = Theory.listedOf(unificator, clauses)
+            dynamicKb = Theory.of(unificator, clauses)
         }
 
     override var inputs: InputStore = InputStore.fromStandard(factory.defaultInputChannel)

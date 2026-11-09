@@ -39,7 +39,7 @@ preserving because it is the actual design rationale, not just an API inventory)
 - an **input** and an **output** channel
 
 Calling these "mutable" is slightly counter-intuitive given that 2P-Kt's data structures are immutable
-end-to-end (terms, substitutions, theories — see [Clause databases and indexing](clause-db-and-rete.md)). The
+end-to-end (terms, substitutions, theories — see [Clause storage and indexing](clause-storage-and-indexing.md)). The
 resolution is: each of these five things is represented by an *immutable* data structure, but the solver's
 *current* one changes over the course of resolution by being replaced with a new instance (e.g. `assertz/1`
 during resolution replaces the dynamic KB with a new `Theory`, it does not mutate the old one in place). This

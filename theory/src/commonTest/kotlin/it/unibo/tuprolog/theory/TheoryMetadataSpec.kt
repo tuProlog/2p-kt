@@ -22,13 +22,9 @@ class TheoryMetadataSpec :
         val theoryCases =
             listOf(
                 TheoryKindCase("empty-indexed") { Theory.emptyIndexed(Unificator.default) },
-                TheoryKindCase("empty-listed") { Theory.emptyListed(Unificator.default) },
                 TheoryKindCase("indexed") { Theory.indexedOf(Unificator.default, it) },
-                TheoryKindCase("listed") { Theory.listedOf(Unificator.default, it) },
                 TheoryKindCase("mutable-empty-indexed") { MutableTheory.emptyIndexed(Unificator.default) },
-                TheoryKindCase("mutable-empty-listed") { MutableTheory.emptyListed(Unificator.default) },
                 TheoryKindCase("mutable-indexed") { MutableTheory.indexedOf(Unificator.default, it) },
-                TheoryKindCase("mutable-listed") { MutableTheory.listedOf(Unificator.default, it) },
             )
 
         val someKey = "some_key1"

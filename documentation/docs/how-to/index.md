@@ -11,5 +11,7 @@ you want to accomplish and need the steps to do it. Each guide stands alone — 
 3. [Contribute with Git Flow](contribute-with-git-flow.md) — the branch/commit/PR workflow for contributors.
 4. [Reuse variables with Scope](reuse-variables-with-scope.md) — a common usage recipe.
 5. [Implement a custom Unificator](implement-a-custom-unificator.md) — an advanced extension point.
-6. [Use the I/O library](use-io-lib.md) — load `:io-lib`, configure channels, and drive ISO stream predicates.
-7. [Deploy the Web IDE](deploy-the-web-ide.md) — use the hosted copy, or self-host it from a release or source.
+6. [Use theories and clause collections](use-theories-and-clause-collections.md) — build, query and update knowledge
+   bases and clause collections.
+7. [Use the I/O library](use-io-lib.md) — load `:io-lib`, configure channels, and drive ISO stream predicates.
+8. [Deploy the Web IDE](deploy-the-web-ide.md) — use the hosted copy, or self-host it from a release or source.

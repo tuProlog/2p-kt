@@ -1,115 +1,30 @@
 package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
-import kotlin.jvm.JvmStatic
 
 /**
- * A [ClauseCollection] that mutates itself in place: [add]/[addAll]/[retrieve]/[retrieveAll] change and return
- * `this`, instead of building a fresh collection. Preferred over the immutable [ClauseCollection] when clauses
- * are inserted/removed very frequently and the cost of copying (or of the underlying RETE tree's
- * `deepCopy`) would otherwise dominate.
+ * A [ClauseCollection] that can be changed in place. Lookups and iterations follow the *logical update view*: they
+ * see the clauses as of when they started, whatever changes happen while they are consumed.
  */
 interface MutableClauseCollection : ClauseCollection {
-    /** Adds the given [Clause] to this [MutableClauseCollection]. **/
-    override fun add(clause: Clause): MutableClauseCollection
+    /** Adds [clause] (at the end, if ordered); returns whether the collection changed. */
+    @JsName("add")
+    fun add(clause: Clause): Boolean
 
-    /** Adds all the given [Clause] to this [MutableClauseCollection] **/
-    override fun addAll(clauses: Iterable<Clause>): MutableClauseCollection
+    /** Adds all [clauses] (at the end and in order, if ordered); returns whether the collection changed. */
+    @JsName("addAll")
+    fun addAll(clauses: Iterable<Clause>): Boolean = clauses.fold(false) { changed, it -> add(it) || changed }
 
-    /** Retrieves the first occurrence of the given [Clause] from this [MutableClauseCollection] as a [RetrieveResult] **/
-    override fun retrieve(clause: Clause): RetrieveResult<out MutableClauseCollection>
+    /** Removes the first clause unifying with [query], returning it, or `null` if none does. */
+    @JsName("removeFirstMatching")
+    fun removeFirstMatching(query: Clause): Clause?
 
-    /** Retrieves all the occurrences of the given [Clause] from this [MutableClauseCollection] as a [RetrieveResult] **/
-    override fun retrieveAll(clause: Clause): RetrieveResult<out MutableClauseCollection>
+    /** Removes all the clauses unifying with [query], returning them (empty if none does). */
+    @JsName("removeAllMatching")
+    fun removeAllMatching(query: Clause): List<Clause>
 
-    companion object {
-        /** Creates an empty [MutableClauseMultiSet] **/
-        @JvmStatic
-        @JsName("emptyMultiSet")
-        fun emptyMultiSet(unificator: Unificator): MutableClauseMultiSet = multiSetOf(unificator, emptyList())
-
-        /** Creates a [MutableClauseMultiSet] with given clauses */
-        @JvmStatic
-        @JsName("multiSetOf")
-        fun multiSetOf(
-            unificator: Unificator,
-            vararg clause: Clause,
-        ): MutableClauseMultiSet = multiSetOf(unificator, clause.asIterable())
-
-        /** Let developers easily create a [MutableClauseMultiSet] programmatically while avoiding variables names clashing */
-        @JvmStatic
-        @JsName("multiSetOfScopes")
-        fun multiSetOf(
-            unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): MutableClauseMultiSet =
-            multiSetOf(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
-
-        /** Creates a [MutableClauseQueue] from the given [Sequence] of [Clause] */
-        @JvmStatic
-        @JsName("multiSetOfSequence")
-        fun multiSetOf(
-            unificator: Unificator,
-            clauses: Sequence<Clause>,
-        ): MutableClauseMultiSet = multiSetOf(unificator, clauses.asIterable())
-
-        /** Creates a [MutableClauseQueue] from the given [Iterable] of [Clause] */
-        @JvmStatic
-        @JsName("multiSetOfIterable")
-        fun multiSetOf(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): MutableClauseMultiSet = MutableClauseMultiSet.of(unificator, clauses)
-
-        /** Creates an empty [MutableClauseQueue] **/
-        @JvmStatic
-        @JsName("emptyQueue")
-        fun emptyQueue(unificator: Unificator): MutableClauseQueue = queueOf(unificator, emptyList())
-
-        /** Creates a [MutableClauseQueue] with given clauses */
-        @JvmStatic
-        @JsName("queueOf")
-        fun queueOf(
-            unificator: Unificator,
-            vararg clause: Clause,
-        ): MutableClauseQueue = queueOf(unificator, clause.asIterable())
-
-        /** Let developers easily create a [MutableClauseQueue] programmatically while avoiding variables names clashing */
-        @JvmStatic
-        @JsName("queueOfScopes")
-        fun queueOf(
-            unificator: Unificator,
-            vararg clause: Scope.() -> Clause,
-        ): MutableClauseQueue =
-            queueOf(
-                unificator,
-                clause.map {
-                    Scope.empty(it)
-                },
-            )
-
-        /** Creates a [MutableClauseQueue] from the given [Sequence] of [Clause] */
-        @JvmStatic
-        @JsName("queueOfSequence")
-        fun queueOf(
-            unificator: Unificator,
-            clauses: Sequence<Clause>,
-        ): MutableClauseQueue = queueOf(unificator, clauses.asIterable())
-
-        /** Creates a [MutableClauseQueue] from the given [Iterable] of [Clause] */
-        @JvmStatic
-        @JsName("queueOfIterable")
-        fun queueOf(
-            unificator: Unificator,
-            clauses: Iterable<Clause>,
-        ): MutableClauseQueue = MutableClauseQueue.of(unificator, clauses)
-    }
+    /** Removes all clauses. */
+    @JsName("clear")
+    fun clear()
 }
