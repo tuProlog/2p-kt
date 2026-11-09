@@ -10,7 +10,7 @@ import kotlin.collections.List as KtList
 /**
  * ISO `call/1`: `call(G) :- must_be_executable(G), G.` -- checks [it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable]
  * before proving `G` as a fresh, opaque-to-cut goal (a cut inside `G` only cuts choice points created while
- * proving `G` itself, since `call/1` becomes its own frame on the execution-context stack).
+ * proving `G` itself, since `call/1` gets a frame of its own in the machine).
  */
 object Call : RuleWrapper<ExecutionContext>("call", 1) {
     override val help: String =

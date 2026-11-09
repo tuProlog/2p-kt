@@ -8,9 +8,9 @@ import kotlin.collections.List as KtList
 
 /**
  * ISO `catch/3`: `catch(Goal, Catcher, Recovery) :- Goal.` -- the body just proves `Goal`; the actual
- * catch/recovery behaviour is not implemented here but in `StateException`, which climbs the execution-context
- * stack looking for a currently-executing goal shaped like this one whose `Catcher` unifies with a raised
- * exception, and if so proves `Recovery` instead.
+ * catch/recovery behaviour is not implemented here but in the machine (`PrologMachine`), which, on an exception,
+ * climbs the active frames looking for a `catch/3` call whose `Catcher` unifies with the ball, and if so proves
+ * `Recovery` instead.
  */
 object Catch : RuleWrapper<ExecutionContext>("catch", 3) {
     override val help: String =

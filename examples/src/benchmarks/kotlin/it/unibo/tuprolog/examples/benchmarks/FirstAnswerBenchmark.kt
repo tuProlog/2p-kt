@@ -33,5 +33,5 @@ class FirstAnswerBenchmark {
     }
 
     @Benchmark
-    fun solveFirst(): Solution = solver.solve(goal, options).first()
+    fun solveFirst(): Solution = solver.solve(goal, options).use { it.first() }
 }

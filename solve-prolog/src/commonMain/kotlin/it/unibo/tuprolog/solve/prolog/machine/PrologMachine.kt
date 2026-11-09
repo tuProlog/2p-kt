@@ -736,8 +736,8 @@ internal class PrologMachine(
                 .filter { (k, v) -> k != v },
         )
 
-    // the bindings of the variables of the query, of the calls in progress, and of the goals left, as the old engine showed
-    // them; computed only if a primitive reads them
+    // the bindings of the variables of the query, of the calls in progress, and of the goals left, as primitives saw
+    // them before #1010; computed only if a primitive reads them
     private fun substitution(
         frame: Frame,
         goal: Term?,

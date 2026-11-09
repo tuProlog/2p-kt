@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve
 import io.kotest.matchers.shouldBe
 
 /**
- * What `catch/3` restores when it catches (#1010, step 0): the goal's bindings and alternatives are discarded before the
- * recovery runs, the recovery keeps its own alternatives, and non-matching or rethrown balls reach outer catchers.
+ * What `catch/3` restores when it catches (#1010, step 0): the goal's bindings and alternatives are discarded before
+ * the recovery runs, the recovery keeps its own alternatives, and non-matching or rethrown balls reach outer catchers.
  */
 fun catchRestorationContract(
     solverFactory: SolverFactory,
@@ -52,7 +52,7 @@ fun catchRestorationContract(
     }
 
     scenario("catch-restoration/throw-after-catch-exited-is-not-caught") {
-        // after X = 1 fails, the redo goes back into member/2 inside catch/3, but throw(e) runs outside it
+        // after X >= 2 fails for X = 1, the redo goes back into member/2 inside catch/3, but throw(e) runs outside it
         solverFactory.answers("catch(member(X, [1, 2]), e, true), X >= 2, throw(e)") shouldBe
             listOf("halt: system_error")
     }

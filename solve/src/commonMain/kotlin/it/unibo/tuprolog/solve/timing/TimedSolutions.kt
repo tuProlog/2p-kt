@@ -7,42 +7,6 @@ import kotlin.time.ComparableTimeMark
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 
-/** How far a timed resolution got, as seen by its consumer. */
-enum class Outcome {
-    /** The solutions ran out, the last one not being a [Solution.Halt]. */
-    EXHAUSTED,
-
-    /** The last solution was a [Solution.Halt]. */
-    HALTED,
-
-    /** The consumer stopped (or hasn't yet finished) before the solutions ran out. */
-    ABANDONED,
-}
-
-/**
- * What a [TimedSolutions] measured so far (#1010). Times spent inside the solver (in `hasNext()`/`next()` calls, and
- * creating the iterator) are *active*; [elapsed] also includes the consumer's pauses between those calls.
- */
-data class ResolutionTiming(
-    /** From the start of iteration to the first solution, or `null` if there was none yet. */
-    @JsName("firstAnswer")
-    val firstAnswer: Duration?,
-    /** The active time spent producing each solution, the first included, in order. */
-    @JsName("advances")
-    val advances: List<Duration>,
-    /** All active time, including the time spent finding out that there are no more solutions. */
-    @JsName("active")
-    val active: Duration,
-    /** From the start of iteration to the end of the last call into the solver: includes the consumer's pauses. */
-    @JsName("elapsed")
-    val elapsed: Duration,
-    /** The number of solutions produced. */
-    @JsName("answers")
-    val answers: Int,
-    @JsName("outcome")
-    val outcome: Outcome,
-)
-
 /**
  * [solutions], timed on [timeSource] as they are consumed: see [timing]. Setting up the solver and the query happens
  * before, so it is up to the caller to time it. It can be iterated once, by one consumer at a time.
@@ -110,7 +74,10 @@ class TimedSolutions internal constructor(
     }
 }
 
-/** Times these solutions on [timeSource] as they are consumed (#1010): see [TimedSolutions.timing]. */
+/**
+ * Times these solutions on [timeSource] as they are consumed (#1010): see [TimedSolutions.timing]. The result does not
+ * close them: when they come from a [it.unibo.tuprolog.solve.SolutionStream], the caller still closes that.
+ */
 @JsName("timed")
 @JvmOverloads
 fun Sequence<Solution>.timed(timeSource: TimeSource.WithComparableMarks = TimeSource.Monotonic): TimedSolutions =
