@@ -6,12 +6,17 @@ import it.unibo.tuprolog.solve.SolutionFormatter
 import it.unibo.tuprolog.solve.exception.HaltException
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.TimeOutException
+import it.unibo.tuprolog.solve.timing.formatTime
+import it.unibo.tuprolog.solve.timing.time
 
 internal class SolutionFormatterImpl(
     private val termFormatter: TermFormatter,
     private val groundQueriesHaveBooleanSolution: Boolean = false,
 ) : SolutionFormatter {
     override fun format(value: Solution): String =
+        formatOutcome(value) + value.time?.let { "${ASSIGNMENT_SEPARATOR}% time: ${it.formatTime()}" }.orEmpty()
+
+    private fun formatOutcome(value: Solution): String =
         when (value) {
             is Solution.Yes -> formatYes(value)
             is Solution.No -> "no."
