@@ -49,6 +49,7 @@ class TuPrologSolveQuery :
 
     private fun evalAndPrint(solver: Solver) {
         try {
+            printQuery(query)
             val duration: Duration = parentCommand.getTimeout()
             val solutions = solver.solve(Struct.parse(query), duration).timed()
             val groundQueriesHaveBooleanSolution =
