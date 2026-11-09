@@ -18,7 +18,6 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.primitive.Solve
-import it.unibo.tuprolog.solve.prolog.fsm.Interception
 import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
 import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 import it.unibo.tuprolog.solve.sideffects.SideEffect

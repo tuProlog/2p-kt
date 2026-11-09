@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.prolog
 
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.funSpec
 import io.kotest.datatest.withTests
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
@@ -19,7 +20,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolvePrologExpectations
-import it.unibo.tuprolog.solve.Solver
+import it.unibo.tuprolog.solve.SolverFactory
 import it.unibo.tuprolog.solve.abolishContract
 import it.unibo.tuprolog.solve.andContract
 import it.unibo.tuprolog.solve.argContract
@@ -99,84 +100,92 @@ import it.unibo.tuprolog.solve.unifyContract
 import it.unibo.tuprolog.solve.univContract
 import it.unibo.tuprolog.solve.yes
 
-/** The shared solver contracts of `:test-solve`, run against [PrologSolverFactory]. */
+/** The shared solver contracts of `:test-solve`, run against [PrologSolverFactory] (the FSM). */
 class PrologSolverSpec :
     FunSpec({
-        val ensureExecutable = Signature("ensure_executable", 1)
-        include(unifyContract(PrologSolverFactory))
-        include(abolishContract(PrologSolverFactory))
-        include(andContract(PrologSolverFactory))
-        include(argContract(PrologSolverFactory))
-        include(arithContract(PrologSolverFactory))
-        include(assertAContract(PrologSolverFactory))
-        include(assertZContract(PrologSolverFactory))
-        include(atomContract(PrologSolverFactory))
-        include(atomCharsContract(PrologSolverFactory))
-        include(atomCodesContract(PrologSolverFactory))
-        include(atomConcatContract(PrologSolverFactory))
-        include(atomLengthContract(PrologSolverFactory))
-        include(atomicContract(PrologSolverFactory))
-        include(bagOfContract(PrologSolverFactory))
-        include(bigListContract(PrologSolverFactory))
-        include(callContract(PrologSolverFactory, ensureExecutable))
-        include(catchAndThrowContract(PrologSolverFactory))
-        include(charCodeContract(PrologSolverFactory))
-        include(clauseContract(PrologSolverFactory))
-        include(compoundContract(PrologSolverFactory))
-        include(copyTermContract(PrologSolverFactory))
-        include(customDataContract(PrologSolverFactory))
-        include(cutContract(PrologSolverFactory))
-        include(directivesContract(PrologSolverFactory))
-        include(failContract(PrologSolverFactory))
-        include(findAllContract(PrologSolverFactory, ensureExecutable))
-        include(flagsContract(PrologSolverFactory))
-        include(floatContract(PrologSolverFactory))
-        include(functorContract(PrologSolverFactory))
-        include(ifThenContract(PrologSolverFactory))
-        include(ifThenElseContract(PrologSolverFactory))
-        include(integerContract(PrologSolverFactory))
-        include(isContract(PrologSolverFactory))
-        include(nonVarContract(PrologSolverFactory))
-        include(notProvableContract(PrologSolverFactory, ensureExecutable))
-        include(notUnifyContract(PrologSolverFactory))
-        include(numberContract(PrologSolverFactory))
-        include(numberCharsContract(PrologSolverFactory))
-        include(numberCodesContract(PrologSolverFactory))
-        include(onceContract(PrologSolverFactory, ensureExecutable))
-        include(orContract(PrologSolverFactory))
-        include(recursionContract(PrologSolverFactory))
-        include(repeatContract(PrologSolverFactory))
-        include(retractContract(PrologSolverFactory))
-        include(setOfContract(PrologSolverFactory))
-        include(solutionPresentationContract(PrologSolverFactory))
-        include(solverContract(PrologSolverFactory, ensureExecutable, ensureExecutable, ensureExecutable))
-        include(solverConstructionContract<PrologSolver, MutablePrologSolver>(PrologSolverFactory, DefaultBuiltins))
-        include(stackTraceContract(PrologSolverFactory))
-        include(subAtomContract(PrologSolverFactory))
-        include(substitutionsContract(PrologSolverFactory))
-        include(tagsPreservationDuringResolutionContract(PrologSolverFactory))
-        include(termContract(PrologSolverFactory))
-        include(timeoutContract(PrologSolverFactory))
-        include(trueContract(PrologSolverFactory))
-        include(univContract(PrologSolverFactory))
-        include(opContract(PrologSolverFactory))
-        include(termSameContract(PrologSolverFactory))
         include(staticFactoryContract(SolvePrologExpectations.expectations))
+        include(prologSolverContracts(PrologSolverFactory))
+    })
+
+/** The shared solver contracts, and `:solve-prolog`'s own, against [factory]: one of this module's engines. */
+internal fun prologSolverContracts(factory: SolverFactory) =
+    funSpec {
+        val ensureExecutable = Signature("ensure_executable", 1)
+        include(unifyContract(factory))
+        include(abolishContract(factory))
+        include(andContract(factory))
+        include(argContract(factory))
+        include(arithContract(factory))
+        include(assertAContract(factory))
+        include(assertZContract(factory))
+        include(atomContract(factory))
+        include(atomCharsContract(factory))
+        include(atomCodesContract(factory))
+        include(atomConcatContract(factory))
+        include(atomLengthContract(factory))
+        include(atomicContract(factory))
+        include(bagOfContract(factory))
+        include(bigListContract(factory))
+        include(callContract(factory, ensureExecutable))
+        include(catchAndThrowContract(factory))
+        include(charCodeContract(factory))
+        include(clauseContract(factory))
+        include(compoundContract(factory))
+        include(copyTermContract(factory))
+        include(customDataContract(factory))
+        include(cutContract(factory))
+        include(directivesContract(factory))
+        include(failContract(factory))
+        include(findAllContract(factory, ensureExecutable))
+        include(flagsContract(factory))
+        include(floatContract(factory))
+        include(functorContract(factory))
+        include(ifThenContract(factory))
+        include(ifThenElseContract(factory))
+        include(integerContract(factory))
+        include(isContract(factory))
+        include(nonVarContract(factory))
+        include(notProvableContract(factory, ensureExecutable))
+        include(notUnifyContract(factory))
+        include(numberContract(factory))
+        include(numberCharsContract(factory))
+        include(numberCodesContract(factory))
+        include(onceContract(factory, ensureExecutable))
+        include(orContract(factory))
+        include(recursionContract(factory))
+        include(repeatContract(factory))
+        include(retractContract(factory))
+        include(setOfContract(factory))
+        include(solutionPresentationContract(factory))
+        include(solverContract(factory, ensureExecutable, ensureExecutable, ensureExecutable))
+        include(solverConstructionContract<PrologSolver, MutablePrologSolver>(factory, DefaultBuiltins))
+        include(stackTraceContract(factory))
+        include(subAtomContract(factory))
+        include(substitutionsContract(factory))
+        include(tagsPreservationDuringResolutionContract(factory))
+        include(termContract(factory))
+        include(timeoutContract(factory))
+        include(trueContract(factory))
+        include(univContract(factory))
+        include(opContract(factory))
+        include(termSameContract(factory))
 
         withTests(
             nameFn = { "custom-data/non-atom-keys-are-type-errors/${it.replace('_', '-')}" },
             listOf("set_ephemeral", "set_durable", "set_persistent"),
         ) { functor ->
             val solution =
-                PrologSolverFactory
+                factory
                     .solverWithDefaultBuiltins()
                     .solveOnce(Struct.of(functor, Integer.of(1), Integer.of(2)))
-            withClue("$functor: $solution") { (solution as? Solution.Halt)?.exception.shouldBeInstanceOf<TypeError>() }
+            withClue(
+                "$functor: $solution",
+            ) { (solution as? Solution.Halt)?.exception.shouldBeInstanceOf<TypeError>() }
         }
 
         test("op/priority-above-1200-is-domain-error") {
             val goal = Struct.of("op", Integer.of(1201), Atom.of("xfx"), Atom.of("foo"))
-            val solution = Solver.prolog.solverWithDefaultBuiltins().solveOnce(goal)
+            val solution = factory.solverWithDefaultBuiltins().solveOnce(goal)
             val error =
                 withClue("$solution") { (solution as? Solution.Halt)?.exception.shouldBeInstanceOf<DomainError>() }
             error.expectedDomain shouldBe DomainError.Expected.OPERATOR_PRIORITY
@@ -184,7 +193,7 @@ class PrologSolverSpec :
         }
 
         test("variant-operators/comparisons-are-infix-operators") {
-            val solver = Solver.prolog.solverWithDefaultBuiltins()
+            val solver = factory.solverWithDefaultBuiltins()
 
             fun solveText(goal: String) = solver.solveOnce(Struct.parse(goal, solver.operators))
             solveText("f(a, X) =@= f(a, X)").isYes.shouldBeTrue()
@@ -195,7 +204,7 @@ class PrologSolverSpec :
         // arithmetic results the host cannot represent must raise evaluation errors rather than crash the solver
         withTests(nameFn = { "arithmetic-errors/${it.id}" }, arithmeticErrorCases) { case ->
             val solution =
-                Solver.prolog
+                factory
                     .solverWithDefaultBuiltins()
                     .solveOnce(Struct.of("is", Var.of("X"), case.expression))
             val halt = withClue("${case.expression}") { solution.shouldBeInstanceOf<Solution.Halt>() }
@@ -208,7 +217,7 @@ class PrologSolverSpec :
         test("arithmetic/power-to-negative-integer-is-fractional") {
             val goal = Struct.of("is", Var.of("X"), Struct.of("**", Integer.of(2), Integer.of(-1)))
             val solution =
-                Solver.prolog
+                factory
                     .solverWithDefaultBuiltins()
                     .solveOnce(goal)
                     .shouldBeInstanceOf<Solution.Yes>()
@@ -218,7 +227,7 @@ class PrologSolverSpec :
         test("substitution-merging/substitutions-are-merged-after-primitives") {
             logicProgramming {
                 val solver =
-                    PrologSolverFactory
+                    factory
                         .newBuilder()
                         .staticKb(
                             theoryOf(
@@ -241,20 +250,16 @@ class PrologSolverSpec :
                 )
             }
         }
-        include(mutableSolverContract(PrologSolverFactory))
-        // With TrackVariables off (the default), bindings of clause-local variables are dropped by the next primitive:
-        // likely the same root cause as #1073
-        include(
-            bindingRestorationContract(PrologSolverFactory),
-        )
-        include(catchRestorationContract(PrologSolverFactory))
-        include(interceptionContract(PrologSolverFactory))
-        include(selectionPolicyContract(PrologSolverFactory))
-        include(controlScopeContract(PrologSolverFactory))
-        // This FSM pulls a primitive's next alternative before its current answer is used (#1010, section 4.6)
+        include(mutableSolverContract(factory))
+        include(bindingRestorationContract(factory))
+        include(catchRestorationContract(factory))
+        include(interceptionContract(factory))
+        include(selectionPolicyContract(factory))
+        include(controlScopeContract(factory))
+        // Both engines pull a primitive's next alternative before its current answer is used (#1010, section 4.6)
         include(
             lazinessContract(
-                PrologSolverFactory,
+                factory,
                 disabled =
                     setOf(
                         "laziness/alternatives-interleave-with-continuation",
@@ -267,9 +272,9 @@ class PrologSolverSpec :
                     ),
             ),
         )
-        include(lifetimeContract(PrologSolverFactory))
-        include(logicalUpdateViewContract(PrologSolverFactory))
-    })
+        include(lifetimeContract(factory))
+        include(logicalUpdateViewContract(factory))
+    }
 
 private data class ArithmeticErrorCase(
     val id: String,
