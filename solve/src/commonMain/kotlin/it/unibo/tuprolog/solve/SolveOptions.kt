@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.solve.impl.SolveOptionsImpl
 import it.unibo.tuprolog.solve.intercept.TransitionInterceptor
+import it.unibo.tuprolog.solve.search.BranchScheduler
 import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
 import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 import it.unibo.tuprolog.utils.time.Chronometer
@@ -69,6 +70,10 @@ interface SolveOptions {
     @JsName("goalSelection")
     val goalSelection: GoalSelectionPolicy?
 
+    /** The scheduler choosing which branch of the search advances next (#1010), or `null` (the default) for depth-first. */
+    @JsName("branchScheduler")
+    val branchScheduler: BranchScheduler?
+
     /**
      * The maximum number of solutions to produce, or [ALL_SOLUTIONS] (i.e. `-1`) for no cap.
      * @see isLimited
@@ -112,6 +117,10 @@ interface SolveOptions {
     /** Returns a copy of these options with [goalSelection] set to [value]. */
     @JsName("setGoalSelection")
     fun setGoalSelection(value: GoalSelectionPolicy?): SolveOptions
+
+    /** Returns a copy of these options with [branchScheduler] set to [value]. */
+    @JsName("setBranchScheduler")
+    fun setBranchScheduler(value: BranchScheduler?): SolveOptions
 
     /**
      * Creates the [Chronometer] of a new resolution, started now, from [chronometerFactory] (or
