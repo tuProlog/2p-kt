@@ -6,7 +6,7 @@ ids it does not support. This page records the reasons for those lists.
 
 | Solver | Spec | Shared contracts | Disabled cases |
 |---|---|---|---|
-| `:solve-prolog` | `PrologSolverSpec` | all | the 7 `laziness/*` cases about pulling primitive alternatives, and one binding-restoration case (see below) |
+| `:solve-prolog` | `PrologSolverSpec` (FSM), `MachineSolverSpec` (stateful machine) | all | the FSM: the 7 `laziness/*` cases about pulling primitive alternatives (see below); the machine: none |
 | `:solve-problog` | `ProblogSolverSpec` | ISO built-ins and solver contracts; not yet the #1010 semantic contracts | ~36 cases: ProbLog rewrites user clauses, so goals built at run time cannot reach user predicates |
 | `:solve-concurrent` | `ConcurrentSolverSpec` | construction, static factory, mutable solver | behaviour is tested by its own JVM-only suite. It will get its own async suite (coroutine-based solving) rather than the sequential contracts |
 | `:solve-plp` | `ProbabilitySpec` | none | probabilistic semantics, not a Prolog solver |
@@ -36,10 +36,12 @@ backtracking, cut, exceptions, meta-calls, all-solutions predicates and database
 
 ### Known gaps of the current `:solve-prolog` engines
 
-- **Primitive lookahead.** A primitive's next alternative is pulled before its current answer is used
-  (`fsm/Utils.kt`, `appendPrimitivesAndChoicePoints`; the machine does the same, to give the same answers). A generator therefore runs one step ahead, cut and `once/1`
+- **Primitive lookahead (FSM only).** The FSM pulls a primitive's next alternative before its current answer is used
+  (`fsm/Utils.kt`, `appendPrimitivesAndChoicePoints`). A generator therefore runs one step ahead, cut and `once/1`
   still pull one extra alternative, and an alternative that should never run (because it throws or diverges) does.
-  The seven `laziness/*` cases are disabled for this reason.
+  The seven `laziness/*` cases are disabled for it. The machine follows `Primitive.alternatives` instead (see
+  [Primitives and functions](primitives-and-functions.md)), so a query whose last answer comes from an on-demand
+  primitive ends with a further `no`; `DifferentialSpec` ignores that final `no`.
 - **Superlinear deep execution.** Non-tail recursion, redo through deep stacks and long list processing cost far more
   than linear time. At depth 2000 they take 100–240 s on the JVM, and 20,000-deep non-tail recursion runs out of a
   512 MB heap. Those `DeepExecutionSpec` cases therefore run at depth 300 on the FSM; tail recursion runs at 20,000. The

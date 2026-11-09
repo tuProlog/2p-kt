@@ -47,11 +47,18 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
     /** The function expressing the implementation of the primitive, without any check for application to correct signature */
     protected abstract fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response>
 
-    /** Checked primitive implementation, retaining this wrapper's [help] metadata. */
+    /** How solvers may pull this primitive's answers (see [Primitive.alternatives]). */
+    open val alternatives: Alternatives
+        get() = Alternatives.ON_DEMAND
+
+    /** Checked primitive implementation, retaining this wrapper's [help] metadata and [alternatives]. */
     final override val implementation: Primitive =
         object : Primitive {
             override val help: String
                 get() = this@PrimitiveWrapper.help
+
+            override val alternatives: Alternatives
+                get() = this@PrimitiveWrapper.alternatives
 
             @Suppress("UNCHECKED_CAST")
             override fun solve(request: Solve.Request<ExecutionContext>): Sequence<Solve.Response> =
@@ -131,6 +138,9 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         ) : PrimitiveWrapper<C>(signature) {
             constructor(name: String, arity: Int, vararg: Boolean = false, uncheckedPrimitive: Primitive) :
                 this(Signature(name, arity, vararg), uncheckedPrimitive)
+
+            override val alternatives: Alternatives
+                get() = uncheckedPrimitive.alternatives
 
             override fun uncheckedImplementation(request: Solve.Request<C>): Sequence<Solve.Response> =
                 uncheckedPrimitive.solve(

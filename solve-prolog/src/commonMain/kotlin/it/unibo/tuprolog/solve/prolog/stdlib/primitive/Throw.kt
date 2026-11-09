@@ -6,6 +6,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.LogicError
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.MessageError
+import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
@@ -20,6 +21,9 @@ import it.unibo.tuprolog.solve.primitive.UnaryPredicate
  * @throws it.unibo.tuprolog.solve.exception.error.InstantiationError if the argument is an unbound variable.
  */
 object Throw : UnaryPredicate<ExecutionContext>("throw") {
+    override val alternatives: Alternatives
+        get() = Alternatives.AT_MOST_ONE
+
     override val help: String =
         """
         `throw(+Ball)`

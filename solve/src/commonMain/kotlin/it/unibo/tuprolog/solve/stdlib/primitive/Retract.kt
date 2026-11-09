@@ -7,6 +7,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.PermissionError
+import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
 
@@ -33,6 +34,10 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
         no.
         ```
         """.trimIndent()
+
+    // the next match is computed purely: the removal happens when the solver applies the response's side effects
+    override val alternatives: Alternatives
+        get() = Alternatives.LOOKAHEAD_SAFE
 
     override fun Solve.Request<ExecutionContext>.computeAll(first: Term): Sequence<Solve.Response> {
         ensuringArgumentIsWellFormedClause(0)
