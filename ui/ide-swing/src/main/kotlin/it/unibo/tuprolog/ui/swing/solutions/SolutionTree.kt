@@ -1,11 +1,20 @@
 package it.unibo.tuprolog.ui.swing.solutions
 
-import it.unibo.tuprolog.solve.timing.formatTime
+import it.unibo.tuprolog.ui.gui.model.ResolutionHistoryEntry
 import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import it.unibo.tuprolog.ui.gui.presentation.detailLines
+import it.unibo.tuprolog.ui.gui.presentation.logicText
+import it.unibo.tuprolog.ui.gui.presentation.resultLabel
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
+import java.awt.event.ActionEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import javax.swing.AbstractAction
+import javax.swing.JMenuItem
+import javax.swing.JPopupMenu
 import javax.swing.JTree
+import javax.swing.KeyStroke
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 import javax.swing.tree.TreePath
@@ -14,6 +23,10 @@ import javax.swing.tree.TreePath
 internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
     /** Invoked with a query's text when the user selects (any row under) that query. */
     var onQuerySelected: ((String) -> Unit)? = null
+    var onDeleteQuery: ((ResolutionHistoryEntry) -> Unit)? = null
+    var onSolveQuery: ((String) -> Unit)? = null
+    private var renderedEntries: List<SolutionQueryEntry>? = null
+    private var renderedFocus: String? = null
     private var updating = false
 
     init {
@@ -21,6 +34,25 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         showsRootHandles = true
         // setting protected method directly would not work, must use setter
         setCellRenderer(SolutionCellRenderer())
+        addMouseListener(
+            object : MouseAdapter() {
+                override fun mousePressed(event: MouseEvent) = showPopup(event)
+
+                override fun mouseReleased(event: MouseEvent) = showPopup(event)
+            },
+        )
+        inputMap.put(KeyStroke.getKeyStroke("shift F10"), "solutionMenu")
+        inputMap.put(KeyStroke.getKeyStroke("CONTEXT_MENU"), "solutionMenu")
+        actionMap.put(
+            "solutionMenu",
+            object : AbstractAction() {
+                override fun actionPerformed(event: ActionEvent) {
+                    val path = selectionPath ?: return
+                    val bounds = getPathBounds(path) ?: return
+                    popupFor(path).show(this@SolutionTree, bounds.x, bounds.y + bounds.height)
+                }
+            },
+        )
         addTreeSelectionListener {
             if (updating) return@addTreeSelectionListener
             val node = lastSelectedPathComponent as? DefaultMutableTreeNode
@@ -34,6 +66,9 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         entries: List<SolutionQueryEntry>,
         focusedQuery: String? = null,
     ) {
+        if (entries == renderedEntries && focusedQuery == renderedFocus) return
+        renderedEntries = entries
+        renderedFocus = focusedQuery
         updating = true
         try {
             val root = DefaultMutableTreeNode("Solutions")
@@ -51,6 +86,82 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
             updating = false
         }
     }
+
+    private fun showPopup(event: MouseEvent) {
+        if (!event.isPopupTrigger) return
+        val path = getPathForLocation(event.x, event.y) ?: return
+        updating = true
+        try {
+            selectionPath = path
+        } finally {
+            updating = false
+        }
+        popupFor(path).show(this, event.x, event.y)
+    }
+
+    internal fun popupFor(path: TreePath): JPopupMenu {
+        val node = path.lastPathComponent as DefaultMutableTreeNode
+        val data = node.userObject
+        return JPopupMenu().apply {
+            fun item(
+                label: String,
+                id: String,
+                enabled: Boolean = true,
+                action: () -> Unit,
+            ) {
+                add(
+                    JMenuItem(label).apply {
+                        name = id
+                        isEnabled = enabled
+                        addActionListener { action() }
+                    },
+                )
+            }
+            item("Copy full text", "copySolutionText") { copyText(node.fullText()) }
+            item("Copy logic text", "copySolutionLogic", data != SolutionNodeData.EllipsisNode) {
+                copyText(
+                    when (data) {
+                        is SolutionNodeData.QueryNode -> data.query
+                        is SolutionNodeData.ResultNode -> data.logicText
+                        else -> data.toString()
+                    },
+                )
+            }
+            if (data is SolutionNodeData.QueryNode) {
+                addSeparator()
+                item("Delete", "deleteSolutionQuery", data.historyEntry != null) {
+                    data.historyEntry?.let { onDeleteQuery?.invoke(it) }
+                }
+                item("Solve this", "solveSolutionQuery") { onSolveQuery?.invoke(data.query) }
+            }
+            if (!node.isLeaf) {
+                addSeparator()
+                item(if (isExpanded(path)) "Collapse" else "Expand", "toggleSolutionNode") {
+                    if (isExpanded(path)) collapsePath(path) else expandPath(path)
+                }
+            }
+        }
+    }
+
+    private fun copyText(text: String) {
+        try {
+            Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(text), null)
+        } catch (exception: IllegalStateException) {
+            javax.swing.JOptionPane.showMessageDialog(
+                this,
+                exception.message,
+                "Cannot access clipboard",
+                javax.swing.JOptionPane.ERROR_MESSAGE,
+            )
+        }
+    }
+
+    private fun DefaultMutableTreeNode.fullText(indent: String = ""): String =
+        indent + userObject.toString() +
+            children()
+                .asSequence()
+                .filterIsInstance<DefaultMutableTreeNode>()
+                .joinToString("") { "\n" + it.fullText("$indent  ") }
 
     private fun expandRecursively(path: TreePath) {
         expandPath(path)
@@ -77,7 +188,8 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         DefaultMutableTreeNode(
             SolutionNodeData.QueryNode(
                 entry.query,
-                entry.submittedAt?.let { TIMESTAMP_FORMAT.format(Instant.ofEpochMilli(it)) },
+                entry.submittedAt,
+                entry.historyEntry,
             ),
         ).apply {
             entry.solutions.forEachIndexed { index, solution -> add(solutionNode(index + 1, solution)) }
@@ -88,59 +200,17 @@ internal class SolutionTree : JTree(DefaultMutableTreeNode("Solutions")) {
         number: Int,
         solution: SolutionPresentation,
     ): DefaultMutableTreeNode =
-        when (solution) {
-            is SolutionPresentation.Yes ->
-                DefaultMutableTreeNode(
-                    SolutionNodeData.ResultNode(
-                        "$number. ${solution.timePrefix}" +
-                            (solution.solvedQuery?.let { "yes: $it" } ?: "yes.") +
-                            probabilityAnnotation(solution),
-                        ResultKind.YES,
-                    ),
-                ).apply {
-                    solution.bindings.forEach {
-                        add(DefaultMutableTreeNode(SolutionNodeData.DetailNode("${it.variable} = ${it.value}")))
-                    }
-                }
-            is SolutionPresentation.No ->
-                DefaultMutableTreeNode(
-                    SolutionNodeData.ResultNode("$number. ${solution.timePrefix}no", ResultKind.NO),
-                )
-            is SolutionPresentation.Halt ->
-                DefaultMutableTreeNode(
-                    SolutionNodeData.ResultNode(
-                        "$number. ${solution.timePrefix}" +
-                            "${if (solution.isTimeout) "timeout" else "halt"}: ${solution.message}",
-                        ResultKind.HALT,
-                    ),
-                ).apply {
-                    solution.logicStackTrace.forEach {
-                        add(
-                            DefaultMutableTreeNode(SolutionNodeData.DetailNode("at $it")),
-                        )
-                    }
-                }
+        DefaultMutableTreeNode(
+            SolutionNodeData.ResultNode(
+                solution.resultLabel(number),
+                when (solution) {
+                    is SolutionPresentation.Yes -> ResultKind.YES
+                    is SolutionPresentation.No -> ResultKind.NO
+                    is SolutionPresentation.Halt -> ResultKind.HALT
+                },
+                solution.logicText,
+            ),
+        ).apply {
+            solution.detailLines.forEach { add(DefaultMutableTreeNode(SolutionNodeData.DetailNode(it))) }
         }
-
-    /**
-     * A trailing " (p=42%)"-style annotation when the solution carries a numeric `"probability"` entry in its
-     * [SolutionPresentation.Yes.metadata] (populated by profiles like PLP's, see `Solution.toStep` in
-     * :gui's `it.unibo.tuprolog.ui.gui.prolog` package) - so a probabilistic solver's per-solution probability
-     * shows up right next to each solution
-     * in this shared tree, without ide-swing needing any PLP-specific dependency to read it.
-     */
-    private fun probabilityAnnotation(solution: SolutionPresentation.Yes): String =
-        solution.metadata["probability"]
-            ?.toDoubleOrNull()
-            ?.let { " (p=%.1f%%)".format(it * PERCENT) }
-            .orEmpty()
-
-    private val SolutionPresentation.timePrefix: String
-        get() = time?.let { "[${it.formatTime()}] " }.orEmpty()
-
-    private companion object {
-        val TIMESTAMP_FORMAT: DateTimeFormatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault())
-        const val PERCENT = 100.0
-    }
 }

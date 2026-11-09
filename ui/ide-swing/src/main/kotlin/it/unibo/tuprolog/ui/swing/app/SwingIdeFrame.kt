@@ -39,7 +39,6 @@ import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
 import java.awt.Desktop
 import java.awt.Dimension
-import java.awt.FlowLayout
 import java.awt.Taskbar
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
@@ -126,7 +125,11 @@ class SwingIdeFrame(
     private val caretLabel = JLabel("Line 1, column 1", SwingConstants.RIGHT).apply { name = "caretLabel" }
 
     private val solutionsTree = SolutionTree().apply { name = "solutionsTree" }
-    private val clearSolutionsButton = JButton("Clear solutions", Icons.CLEAR).apply { name = "clearSolutionsButton" }
+    private val clearSolutionsButton =
+        JButton(Icons.CLEAR).apply {
+            name = "clearSolutionsButton"
+            accessibleContext.accessibleName = "Clear solutions"
+        }
     private val stdinArea = editorArea().apply { name = "stdinArea" }
     private val stdoutArea = readOnlyArea().apply { name = "stdoutArea" }
     private val stderrArea = readOnlyArea().apply { name = "stderrArea" }
@@ -200,6 +203,13 @@ class SwingIdeFrame(
         installWindowListener()
         solutionsTree.onQuerySelected =
             { query -> queryBoundPageId?.let { dispatch(PageAction.ChangeQuery(it, query)) } }
+        solutionsTree.onSolveQuery = { query ->
+            queryBoundPageId?.let { dispatch(PageAction.ChangeQuery(it, query)) }
+            queryField.requestFocusInWindow()
+        }
+        solutionsTree.onDeleteQuery = { entry ->
+            queryBoundPageId?.let { dispatch(PageAction.DeleteResolution(it, entry)) }
+        }
         diagnosticsList.onDiagnosticSelected = { diagnostic -> navigateToDiagnostic(diagnostic) }
         flagsTable.onFlagChanged = { name, value -> changeFlag(name, value) }
         operatorsTable.onOperatorAdded = ::addOperator
@@ -287,8 +297,8 @@ class SwingIdeFrame(
         val panel =
             JPanel(BorderLayout()).apply {
                 add(
-                    JPanel(FlowLayout(FlowLayout.LEFT, SOLUTIONS_TOOLBAR_HGAP, 2)).apply { add(clearSolutionsButton) },
-                    BorderLayout.NORTH,
+                    JPanel(BorderLayout()).apply { add(clearSolutionsButton, BorderLayout.NORTH) },
+                    BorderLayout.EAST,
                 )
                 add(JScrollPane(solutionsTree), BorderLayout.CENTER)
             }
@@ -872,7 +882,13 @@ class SwingIdeFrame(
     private fun solutionEntries(page: PageState): List<SolutionQueryEntry> {
         val history =
             page.history.resolutions.map {
-                SolutionQueryEntry(it.query, it.solutions, hasUnexploredPaths = false, submittedAt = it.submittedAt)
+                SolutionQueryEntry(
+                    it.query,
+                    it.solutions,
+                    hasUnexploredPaths = false,
+                    submittedAt = it.submittedAt,
+                    historyEntry = it,
+                )
             }
         val current = page.resolution
         val currentQuery = current.query
@@ -1276,7 +1292,6 @@ class SwingIdeFrame(
         private const val QUERY_ROW_HGAP = 8
         private const val QUERY_ROW_BORDER_INSET = 6
         private const val QUERY_BUTTONS_HGAP = 5
-        private const val SOLUTIONS_TOOLBAR_HGAP = 4
         private const val STATUS_BAR_VERTICAL_INSET = 3
         private const val STATUS_BAR_HORIZONTAL_INSET = 8
         private const val REPORT_PROBLEM_AREA_ROWS = 6
