@@ -19,10 +19,16 @@ fun SolverFactory.answers(
     query: String,
     vararg clauses: String,
     budget: SolveOptions = durations.mediumBudget,
+): List<String> =
+    solverWithDefaultBuiltins(staticKb = Theory.of(clauses.map { it.parseAsClause() })).answers(query, budget)
+
+/** The answers to the Prolog [query] on this solver, rendered as in [SolverFactory.answers]. */
+fun Solver.answers(
+    query: String,
+    budget: SolveOptions = durations.mediumBudget,
 ): List<String> {
-    val solver = solverWithDefaultBuiltins(staticKb = Theory.of(clauses.map { it.parseAsClause() }))
-    val formatter = TermFormatter.readable(solver.operators)
-    return solver.solve(query.parseAsStruct(solver.operators), budget).map { it.render(formatter) }.toList()
+    val formatter = TermFormatter.readable(operators)
+    return solve(query.parseAsStruct(operators), budget).map { it.render(formatter) }.toList()
 }
 
 private val durations = object : SolverTest {}
