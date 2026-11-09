@@ -32,6 +32,7 @@ data class StatePrimitiveExecution(
 
     override fun computeNext(): State =
         try {
+            if (context.primitives.current != null) context.countAlternative()
             context.primitives.current?.solution?.whenIs(
                 yes = {
                     StateGoalSelection(

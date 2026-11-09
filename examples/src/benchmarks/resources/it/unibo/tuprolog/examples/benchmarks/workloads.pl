@@ -47,5 +47,28 @@ vars(0, []) :- !.
 vars(N, [_ | T]) :- N1 is N - 1, vars(N1, T).
 bind_vars(N) :- vars(N, L), bind_all(L).
 
+% cut-catch: N rounds of cuts inside clauses and if-then-else, and of exceptions thrown and caught (#1010)
+pick(X, [X | _]) :- !.
+pick(X, [_ | T]) :- pick(X, T).
+guarded(I, R) :- (I mod 3 =:= 0 -> throw(skip(I)) ; R = I).
+cut_catch(N, N) :- !.
+cut_catch(I, N) :-
+    pick(X, [a, b, c]), X == a,
+    catch(guarded(I, _), skip(_), true),
+    I1 is I + 1, cut_catch(I1, N).
+
+% dynamic-churn: asserts and retracts while enumerating the same dynamic predicate (logical update view, #1010)
+churn(N) :- retractall(item(_)), fill(0, N), (item(X), retract(item(X)), Y is X + N, assertz(item(Y)), fail ; true).
+fill(N, N) :- !.
+fill(I, N) :- assertz(item(I)), I1 is I + 1, fill(I1, N).
+
+% first-of-many: the first answer out of N candidates, the rest never needed (#1010)
+candidate(N, X) :- between(1, N, X).
+first_of_many(N) :- candidate(N, X), X > 10, !.
+
+% arithmetic: N rounds of integer and floating-point evaluation (#1010)
+arith(N, N) :- !.
+arith(I, N) :- A is I * I + 3 * I - 7, B is A mod 13, C is sqrt(A * A + 1.0) + B, C > B, I1 is I + 1, arith(I1, N).
+
 % overshoot: never terminates, so only the timeout can stop it
 loop :- loop.

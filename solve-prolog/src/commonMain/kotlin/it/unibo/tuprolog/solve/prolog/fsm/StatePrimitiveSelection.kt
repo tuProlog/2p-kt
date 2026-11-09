@@ -43,6 +43,7 @@ data class StatePrimitiveSelection(
                     val signature = goalStruct.extractSignature()
 
                     if (libraries.hasPrimitive(signature)) {
+                        countInference(goalStruct)
                         val childContext = createChild()
                         try {
                             val request = childContext.toRequest(goalStruct, signature)

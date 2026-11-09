@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.impl
 
+import it.unibo.tuprolog.solve.ResolutionCounters
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.utils.time.ChronometerFactory
 import kotlin.time.Duration
@@ -10,6 +11,7 @@ internal data class SolveOptionsImpl(
     override val limit: Int = SolveOptions.ALL_SOLUTIONS,
     override val chronometerFactory: ChronometerFactory? = null,
     override val customOptions: Map<String, Any> = emptyMap(),
+    override val counters: ResolutionCounters? = null,
 ) : SolveOptions {
     init {
         require(!timeout.isNegative()) { "Invalid timeout: $timeout" }
@@ -21,6 +23,8 @@ internal data class SolveOptionsImpl(
     override fun setTimeout(value: Duration): SolveOptions = copy(timeout = value)
 
     override fun setChronometerFactory(value: ChronometerFactory?): SolveOptions = copy(chronometerFactory = value)
+
+    override fun setCounters(value: ResolutionCounters?): SolveOptions = copy(counters = value)
 
     override fun setLimit(value: Int): SolveOptions = copy(limit = value)
 

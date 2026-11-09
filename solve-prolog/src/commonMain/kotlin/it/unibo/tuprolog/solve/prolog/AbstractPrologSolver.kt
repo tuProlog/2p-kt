@@ -132,6 +132,7 @@ abstract class AbstractPrologSolver(
                 outputChannels = outputChannels,
                 customData = currentContext.customData,
                 chronometer = options.createChronometer(),
+                counters = options.counters,
             )
         return solutionIterator(StateInit(currentContext), this::updateCurrentContextAfterStateTransition).asSequence()
     }

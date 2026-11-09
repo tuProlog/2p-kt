@@ -225,6 +225,7 @@ data class StateRuleSelection(
                         }
 
                         else -> {
+                            countInference(currentGoalStruct)
                             // one lookup per source: an empty result is the "no matching clause" case
                             val rules = ruleSources.flatMap { it.selectClauses(currentGoalStruct) }.cursor()
                             when {
