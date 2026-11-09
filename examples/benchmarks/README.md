@@ -489,7 +489,8 @@ A follow-up cleanup gives unindexed mutable scans a single-view loop and drops t
 rounds on an x86 container against the branch without it (`-wi 3 -i 5 -w 1s -r 1s -f 2`): mutable `all` −4.4% to +1.5%,
 mutable `first` +2.7% to +6.2%, within the 5.9% spread of the untouched immutable cases. So it costs nothing, but is not
 shown to close the 0.87× gap, which was measured on the M1 only (details in
-[REPORTS.md](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/REPORTS.md#zero-arity-fix-check-2026-11-07-1b32e830c-vs-52d49d34b)).
+[REPORTS.md](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/REPORTS.md#zero-arity-fix-check-2026-11-07-1b32e830c-vs-52d49d34b)). The size-ladder run below
+locates and fixes it.
 
 **Scope and provenance.** This compares branches, not the store change in isolation: develop uses `kt-math 2.1.2`,
 while the measured branch uses `0.10.2`. The existing churn benchmark changes predicates; it does not directly time
@@ -508,6 +509,33 @@ No further baseline `size=100000` cases were run.
 - [Manifest: commits, settings, source hashes and durations](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-manifest.json.xz).
 - Excluded initial runs: [bulk construction](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-excluded-develop-100k-construction.json.xz),
   [aborted lookup log](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/results/2026-11-06-review-aborted-develop-100k-lookup.log).
+
+#### Size ladder: `2026-11-07-pr1071-ladder`, `06a152c6e` vs develop `da7edf64e`
+
+The whole suite after the rebase on develop `da7edf64e` (with #1075 and #1082), run with 2p-kt-benchmarks'
+`scripts/campaign.py`: theory sizes 10, 20, … 100, 200, … 1000, … 10,000, … 100,000, one JMH fork per measurement
+(`-wi 3 -i 5 -w 1s -r 1s`), repeated up to 5 times until the after/before ratio's 95% interval is within ±5%; about
+7,800 measurements on an Intel Xeon Gold 6248R (shared host), JDK 21. Geometric-mean speedups:
+
+| Class | Measured sizes | Sizes develop did not reach (≈) |
+|---|---|---|
+| Resolution (`PrologSolverBenchmark`, `UnificatorSolverBenchmark`) | 1.36×, 1.52× | — |
+| `TheorySolverBenchmark` | 1.93× | — |
+| Lookup, mutation, iteration | 15.3×, 34.7×, 51.2× | ≈ 52.6×, 62.1×, 26.0× |
+| Construction, incremental construction, churn | 14.7×, 72.5×, 45.0× | ≈ 11.4×, 174×, — |
+| Unification, recursive terms, variable creation | 1.00× | — |
+
+Develop exceeds the 180 s per-measurement budget on 16 of 72 theory ladders (between 20,000 and 90,000 clauses, and at
+700 for immutable incremental construction); this branch reaches 100,000 on all but immutable incremental construction,
+still superlinear, which stops at 20,000.
+
+That run found three small regressions, now fixed on this branch and re-measured on the same host over the whole ladder:
+immutable `hashCode` iteration (0.89–0.97×, now 1.08–1.57×), and zero-arity `all` lookups, immutable (0.91–0.93×, now
+1.00–1.20×) and mutable (0.86–0.94×, now 0.97–1.17×, no interval below 1). Zero-arity scans go through a plain
+`Sequence.filter` again, which C2 compiles better on that host than the inlined matching loop.
+
+Details, per-case tables and raw JSONL: [REPORTS.md](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/REPORTS.md#size-ladder-2026-11-07-pr1071-ladder-06a152c6e-vs-develop-da7edf64e)
+and the [regression fixes](https://github.com/tuProlog/2p-kt-benchmarks/blob/main/REPORTS.md#regression-fixes-2026-11-09-pr1071-regressions-b63616ccb-vs-develop-da7edf64e).
 
 #### Historical implementation comparison
 
