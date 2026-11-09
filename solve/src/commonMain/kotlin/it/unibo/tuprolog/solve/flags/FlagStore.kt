@@ -95,8 +95,9 @@ data class FlagStore(
          * The default [FlagStore] every new [it.unibo.tuprolog.solve.Solver] starts with (see
          * [it.unibo.tuprolog.solve.SolverFactory.defaultFlags]), with every [NotableFlag] set to its
          * [NotableFlag.defaultValue]: [Unknown], [Bounded], [MaxArity], [DoubleQuotes], [LastCallOptimization],
-         * [TrackVariables], [ShowWildCardVariablesInSolutions], [UniqueSolutions],
-         * [GroundQueriesHaveBooleanSolution], [RealPrecisionMode], [RealPrecisionDigits], [RealRoundingMode].
+         * [ShowWildCardVariablesInSolutions], [UniqueSolutions], [GroundQueriesHaveBooleanSolution],
+         * [RealPrecisionMode], [RealPrecisionDigits], [RealRoundingMode]. The deprecated `track_variables` flag is left
+         * out: it has no effect.
          */
         @JvmField
         val DEFAULT =
@@ -106,7 +107,6 @@ data class FlagStore(
                 MaxArity,
                 DoubleQuotes,
                 LastCallOptimization,
-                TrackVariables,
                 ShowWildCardVariablesInSolutions,
                 UniqueSolutions,
                 GroundQueriesHaveBooleanSolution,

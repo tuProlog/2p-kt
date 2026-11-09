@@ -9,8 +9,6 @@ import it.unibo.tuprolog.solve.channel.OutputChannel
 import it.unibo.tuprolog.solve.channel.OutputStore
 import it.unibo.tuprolog.solve.exception.Warning
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.flags.TrackVariables
-import it.unibo.tuprolog.solve.flags.invoke
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.problog.lib.ProblogLib
@@ -37,8 +35,7 @@ import kotlin.js.JsExport
  * [it.unibo.tuprolog.solve.binaryDecisionDiagram]. With probabilistic mode turned off, resolution behaves like
  * plain Prolog and annotations are ignored (every solution is treated as certain, i.e. probability 1.0).
  *
- * Solvers built by this factory always load [ProblogLib] (adding it to `libraries` if not already present) and
- * force the [TrackVariables] flag `ON`, because variable tracking is required to compute explanations correctly.
+ * Solvers built by this factory always load [ProblogLib] (adding it to `libraries` if not already present).
  *
  * @see it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
  * @see it.unibo.tuprolog.solve.isProbabilistic
@@ -51,15 +48,8 @@ object ProblogSolverFactory : SolverFactory {
     override val defaultBuiltins: Library
         get() = ProblogLib.DefaultBuiltins
 
-    /** Same as [SolverFactory.defaultFlags], but with [TrackVariables] forced `ON`, since ProbLog resolution
-     * relies on variable substitutions being tracked to build correct explanations. */
-    override val defaultFlags: FlagStore
-        get() = ensureVariablesTracking(super.defaultFlags)
-
-    private fun ensureVariablesTracking(flags: FlagStore): FlagStore = flags + TrackVariables { ON }
-
-    /** Same as [SolverFactory.solverOf], but ensures [ProblogLib] is loaded (see [fixLibraries]), forces
-     * [TrackVariables] `ON`, and rewrites [staticKb]/[dynamicKb] into a
+    /** Same as [SolverFactory.solverOf], but ensures [ProblogLib] is loaded (see [fixLibraries]), and rewrites
+     * [staticKb]/[dynamicKb] into a
      * [it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory] before handing everything to
      * [PrologSolverFactory]. */
     override fun solverOf(
@@ -75,7 +65,7 @@ object ProblogSolverFactory : SolverFactory {
             PrologSolverFactory.solverOf(
                 unificator,
                 fixLibraries(libraries),
-                ensureVariablesTracking(flags),
+                flags,
                 ProblogTheory.of(unificator, staticKb),
                 ProblogTheory.of(unificator, dynamicKb),
                 inputs,
@@ -109,7 +99,7 @@ object ProblogSolverFactory : SolverFactory {
             PrologSolverFactory.solverOf(
                 unificator,
                 fixLibraries(libraries),
-                ensureVariablesTracking(flags),
+                flags,
                 ProblogTheory.of(unificator, staticKb),
                 ProblogTheory.of(unificator, dynamicKb),
                 stdIn,
@@ -135,7 +125,7 @@ object ProblogSolverFactory : SolverFactory {
             PrologSolverFactory.mutableSolverOf(
                 unificator,
                 fixLibraries(libraries),
-                ensureVariablesTracking(flags),
+                flags,
                 ProblogTheory.of(unificator, staticKb),
                 ProblogTheory.of(unificator, dynamicKb),
                 stdIn,
@@ -145,8 +135,8 @@ object ProblogSolverFactory : SolverFactory {
             ),
         )
 
-    /** Same as [SolverFactory.mutableSolverOf], but ensures [ProblogLib] is loaded (see [fixLibraries]),
-     * forces [TrackVariables] `ON`, and rewrites [staticKb]/[dynamicKb] into a
+    /** Same as [SolverFactory.mutableSolverOf], but ensures [ProblogLib] is loaded (see [fixLibraries]), and rewrites
+     * [staticKb]/[dynamicKb] into a
      * [it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory] before handing everything to
      * [PrologSolverFactory]. */
     override fun mutableSolverOf(
@@ -162,7 +152,7 @@ object ProblogSolverFactory : SolverFactory {
             PrologSolverFactory.mutableSolverOf(
                 unificator,
                 fixLibraries(libraries),
-                ensureVariablesTracking(flags),
+                flags,
                 ProblogTheory.of(unificator, staticKb),
                 ProblogTheory.of(unificator, dynamicKb),
                 inputs,

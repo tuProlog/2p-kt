@@ -68,7 +68,7 @@ libraries without either library needing to know about the other.
 
 A Prolog `flag` is a named, valued switch — some standard (`double_quotes`, `unknown`), some
 implementation-specific — read via a `FlagStore` (an immutable `String → Term` map) and typed via `NotableFlag`
-subclasses (`Unknown`, `DoubleQuotes`, `LastCallOptimization`, `TrackVariables`, `MaxArity`, in
+subclasses (`Unknown`, `DoubleQuotes`, `LastCallOptimization`, `MaxArity`, in
 `it.unibo.tuprolog.solve.flags`). Keeping flags as data (a map) rather than as scattered solver fields means the
 whole configurable surface of a solver is enumerable, snapshot-able as part of `ExecutionContext`, and equally
 settable whether the strategy is `:solve-prolog` or `:solve-concurrent`.
@@ -78,6 +78,10 @@ cosmetic solver output: `Unknown` controls what happens in `Rule Selection` when
 exist at all (fail silently, raise an `ExistenceError`, or just warn — see `StateRuleSelection.missingProcedure`
 in the codebase), and `LastCallOptimization` lets the prolog solver avoid growing the execution-context stack
 on genuine tail calls.
+
+The `track_variables` flag (`TrackVariables`) is deprecated and has no effect: the solver always keeps every binding a
+resolution still needs, whatever its value. It is no longer among the default flags, and it is retained only so that
+programs setting it keep working, so don't use it.
 
 ### Channels: solver I/O without a fixed transport
 

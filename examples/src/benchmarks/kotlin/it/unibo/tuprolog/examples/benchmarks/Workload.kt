@@ -4,12 +4,9 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.flags.FlagStore
-import it.unibo.tuprolog.solve.flags.TrackVariables
 import it.unibo.tuprolog.theory.Theory
 
 private val STRIPS = listOf("strips.pl")
-
-private val TRACKING = FlagStore.DEFAULT + (TrackVariables.name to TrackVariables.ON)
 
 /**
  * A query over the theory loaded from [resources], solved to exhaustion by the timing benchmarks (#1012), by a
@@ -37,18 +34,14 @@ enum class Workload(
     /** Binds a 200-variable list one variable per step: substitutions over long non-ground lists (#1075). */
     BIND_VARS("bind-vars", "bind_vars(200)"),
 
-    /**
-     * STRIPS planning for the Sussman anomaly, with states as lists (#1075). Like the other `strips-*` workloads, it
-     * turns `TrackVariables` on, which engines before the #1078 fix needed for correct answers: keeping it lets runs
-     * compare with them.
-     */
-    STRIPS_LIST("strips-list", "sussman_checked", STRIPS + "strips-sets-list.pl", TRACKING),
+    /** STRIPS planning for the Sussman anomaly, with states as lists (#1075). */
+    STRIPS_LIST("strips-list", "sussman_checked", STRIPS + "strips-sets-list.pl"),
 
     /** STRIPS planning for the Sussman anomaly, with states as tuples (#1075). */
-    STRIPS_TUPLE("strips-tuple", "sussman_checked", STRIPS + "strips-sets-tuple.pl", TRACKING),
+    STRIPS_TUPLE("strips-tuple", "sussman_checked", STRIPS + "strips-sets-tuple.pl"),
 
     /** STRIPS planning for the Sussman anomaly, with states as blocks (#1075). */
-    STRIPS_BLOCK("strips-block", "sussman_checked", STRIPS + "strips-sets-block.pl", TRACKING),
+    STRIPS_BLOCK("strips-block", "sussman_checked", STRIPS + "strips-sets-block.pl"),
 
     /** All solutions of 6-queens via generate-and-test: heavy backtracking. */
     BACKTRACKING("backtracking", "queens(6, _)"),
@@ -71,10 +64,7 @@ enum class Workload(
     /** The first answer out of 100,000 candidates, the others never needed: lazy alternatives (#1010). */
     FIRST_OF_MANY("first-of-many", "first_of_many(100000)"),
 
-    /**
-     * 1000 rounds of integer and floating-point arithmetic (#1010). Before #1078 was fixed it needed `TrackVariables`
-     * on, which made `:solve-prolog`'s cost grow about cubically with the rounds (530 s for 1000; 0.17 s without it).
-     */
+    /** 1000 rounds of integer and floating-point arithmetic (#1010). */
     ARITHMETIC("arithmetic", "arith(0, 1000)"),
     ;
 
