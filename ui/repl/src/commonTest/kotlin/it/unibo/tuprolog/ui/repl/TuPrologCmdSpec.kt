@@ -116,7 +116,7 @@ private val timingCases =
         TimingCase("loop-each-query-its-own-resolution", emptyList(), "X = 1.\nfail.\n", 2, 2),
     )
 
-private val solutionTime = Regex("^ {4}% time: \\S+$", RegexOption.MULTILINE)
+private val solutionTime = Regex("""\d+\. \[\S+\] (?:yes|no|halt|timeout)""")
 
 // the prompt for the next solution (": ") may precede it on the same line
 private val resolutionTime = Regex("^(: )?% resolution time: \\S+$", RegexOption.MULTILINE)
