@@ -8,14 +8,18 @@ implementation modules `:solve-prolog`, `:solve-concurrent`, and `:solve-problog
 ## `Solver`
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solver.kt:22:66"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solver.kt:16:71"
 ```
 
-Three families of methods trigger resolution of a `Struct` goal, differing in how solutions are collected:
+Two families of methods trigger resolution of a `Struct` goal:
 
-- `solve(goal, options): Sequence<Solution>` — lazily or eagerly yields solutions, depending on `options.isLazy`;
-- `solveList(goal, options): List<Solution>` — always eager (careful with infinite solution sets);
-- `solveOnce(goal, options): Solution` — eagerly returns the first solution only (`options.setLimit(1)`).
+- `solve(goal, options): SolutionStream` — yields solutions lazily or eagerly, depending on `options.isLazy`, as a
+  [`SolutionStream`](#consuming-solutions-solutionstream);
+- `solveOnce(goal, options): Solution` — returns the first solution only (`options.setLimit(1)`), and closes the
+  stream behind it.
+
+To collect every solution, call `solve(goal).toList()` (careful with infinite solution sets). `solveList(goal, ...)`
+still exists, deprecated in favour of `solve(goal, ...).toList()`, which it calls.
 
 Overloads accepting a `timeout: kotlin.time.Duration` instead of `options` are shorthands built on `SolveOptions.of(...)`.
 
@@ -41,8 +45,98 @@ Each `SolverFactory` (`it.unibo.tuprolog.solve.SolverFactory`) provides `default
 
 ```kotlin
 val solver = Solver.prolog.solverWithDefaultBuiltins()
-val solutions = solver.solve(Struct.of("append", listA, listB, result))
+solver.solve(Struct.of("append", listA, listB, result)).use { solutions ->
+    for (solution in solutions) println(solution)
+}
 ```
+
+### Consuming solutions: `SolutionStream`
+
+`solve` returns a `SolutionStream` (#1010): a lazy, single-pass `Sequence<Solution>` that is also `AutoCloseable`,
+and that can be cancelled.
+
+- **Single pass.** It can be iterated only once; a second iteration throws `IllegalStateException`. Keep the result
+  of `toList()` if you need the solutions twice.
+- **Lazy.** With the default options, each solution is computed when it is asked for. Sequence operations such as
+  `map`, `filter` or `take` are lazy too, but they return a plain `Sequence`: close the stream itself, not what they
+  return.
+- **`toList()`** collects the remaining solutions and then closes the stream.
+- **`close()`** stops the resolution without a further solution, and releases what it holds right away. Call it from
+  the thread consuming the stream.
+- **`cancel()`** asks the resolution to stop. It can be called from any thread, or from an interceptor or a primitive
+  of the same resolution. The solution being computed, or the next one asked for, is a `Solution.Halt` with a
+  `ResolutionCancelledException`; then the stream ends. How soon the resolution notices depends on the solver:
+    - `:solve-prolog` checks at every inference step, so it also stops a never-ending search, and the nested
+      resolutions started from it (`Request.subSolver()`) stop as well; `:solve-problog` inherits this;
+    - solvers built on `AbstractSolver`, such as `:solve-concurrent`, check between solutions;
+    - cancellation cannot interrupt a primitive that blocks.
+
+#### Using it correctly on each platform
+
+Close the stream whenever you may stop before the end. Each platform has an idiom that does it for you, also when an
+exception is thrown:
+
+**Kotlin**
+
+```kotlin
+solver.solve(goal).use { solutions ->
+    for (solution in solutions) {
+        if (solution.isYes) break // leaving the block closes the stream
+    }
+}
+
+val first = solver.solve(goal).use { it.first() } // or solver.solveOnce(goal)
+val all = solver.solve(goal).toList() // closes the stream once collected
+```
+
+**Java**
+
+```java
+try (SolutionStream solutions = solver.solve(goal)) {
+    for (Solution solution : solutions.asIterable()) {
+        if (solution.isYes()) break; // leaving the block closes the stream
+    }
+}
+
+// or as a java.util.stream.Stream, which closes the SolutionStream when it is closed
+try (Stream<Solution> solutions = solver.solve(goal).stream()) {
+    solutions.filter(Solution::isYes).findFirst();
+}
+
+List<Solution> all = solver.solve(goal).toList(); // closes the stream once collected
+```
+
+A `SolutionStream` is not a `java.lang.Iterable` itself (a Kotlin type cannot be both a `Sequence` and an
+`Iterable` without making every collection operation ambiguous in Kotlin), hence `asIterable()`. `stream()` is
+available on the JVM only.
+
+**JavaScript**
+
+```js
+for (const solution of solver.solve(goal)) {
+  if (solution.isYes) break; // break, return or an exception close the stream
+}
+```
+
+Reaching the end of the loop closes the stream too. Outside `for...of`, call `close()` (or `cancel()`) on the
+stream yourself.
+
+#### What happens if you don't close it
+
+Nothing breaks immediately, which is why it is easy to miss. A stream that is abandoned before its end, e.g. after
+`take(1)` or a `break` outside `use`, is simply left to the garbage collector:
+
+- **Resources held by primitives leak.** A primitive whose pending answers come from a file, a database cursor, a
+  socket or an external process releases them only when its stream is closed (see
+  [releasing a primitive's resources](primitives-and-functions.md#alternatives-how-solvers-pull-a-primitives-answers)).
+  The garbage collector reclaims the objects but never calls their `close()`, so file handles, cursors or
+  connections stay open until the process exits.
+- **The resolution's state is kept longer.** Choice points, pending branches and the trail are dropped only when the
+  garbage collector gets to them, rather than right away.
+
+What closing does *not* save is computation: with the default lazy options, a stream that is no longer read does no
+work. Stopping a running or never-ending resolution is `cancel()`'s job. For plain Prolog with the built-in primitives,
+forgetting to close is therefore harmless; with libraries over external resources, it is a leak.
 
 ## `SolveOptions`
 

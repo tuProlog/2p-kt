@@ -247,7 +247,7 @@ internal fun prologSolverContracts(factory: SolverFactory) =
                         goal.yes(A to atomOf("Y")),
                         goal.yes(A to atomOf("Z")),
                     ),
-                    solver.solveList(goal),
+                    solver.solve(goal).toList(),
                 )
             }
         }

@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static it.unibo.tuprolog.solve.Utils.libraryOf;
 import static it.unibo.tuprolog.solve.Utils.runtimeOf;
@@ -109,7 +111,7 @@ public class PrimitiveExamplesJavaSpec {
                 libraryOf("prolog.ranges", IntRangePrimitive.INSTANCE)
         );
 
-        List<Solution> sol = solver.solveList(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
+        List<Solution> sol = solver.solve(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X"))).toList();
         assertEquals(5, sol.size());
         for (int i = 1; i <= 5; i++) {
             Solution s = sol.get(i - 1);
@@ -124,12 +126,37 @@ public class PrimitiveExamplesJavaSpec {
                 .runtime(runtimeOf("prolog.ranges", IntRangePrimitive.INSTANCE))
                 .buildMutable();
 
-        List<Solution> sol = solver.solveList(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
+        List<Solution> sol = new ArrayList<>();
+        try (SolutionStream solutions = solver.solve(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")))) {
+            for (Solution solution : solutions.asIterable()) {
+                sol.add(solution);
+            }
+        }
         assertEquals(5, sol.size());
         for (int i = 1; i <= 5; i++) {
             Solution s = sol.get(i - 1);
             assertTrue(s.isYes());
             assertEquals(Integer.of(i), s.getSubstitution().getByName("X"));
         }
+    }
+
+    @Test
+    public void intRangePrimitiveAsJavaStream() {
+        MutableSolver solver = Solver.prolog().newBuilder()
+                .runtime(runtimeOf("prolog.ranges", IntRangePrimitive.INSTANCE))
+                .buildMutable();
+
+        SolutionStream solutions = solver.solve(Struct.of("int_range", Integer.of(1), Integer.of(5), Var.of("X")));
+        List<Term> firstTwo;
+        try (Stream<Solution> stream = solutions.stream()) {
+            firstTwo = stream
+                    .filter(Solution::isYes)
+                    .limit(2)
+                    .map(s -> s.getSubstitution().getByName("X"))
+                    .collect(Collectors.toList());
+        }
+        assertEquals(List.of(Integer.of(1), Integer.of(2)), firstTwo);
+        // closing the java.util.stream.Stream closed the SolutionStream too
+        assertTrue(solutions.isCancelled());
     }
 }

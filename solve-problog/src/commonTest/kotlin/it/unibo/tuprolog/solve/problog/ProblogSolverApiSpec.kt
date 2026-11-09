@@ -26,8 +26,14 @@ class ProblogSolverApiSpec :
 
         test("solve-list/collects-every-solution") {
             val solver = solver("0.6::h.")
-            (solver.solveList(h).map { it.query }) shouldBe listOf(h)
-            (solver.solveList(h, 1.seconds).map { it.query }) shouldBe listOf(h)
+            (solver.solve(h).toList().map { it.query }) shouldBe listOf(h)
+            (solver.solve(h, 1.seconds).toList().map { it.query }) shouldBe listOf(h)
+            (solver.solve(h, probabilistic).toList().map { it.probability }) shouldBe listOf(0.6)
+        }
+
+        test("solve-list/deprecated-still-solves-probabilistically") {
+            val solver = solver("0.6::h.")
+            @Suppress("DEPRECATION")
             (solver.solveList(h, probabilistic).map { it.probability }) shouldBe listOf(0.6)
         }
 

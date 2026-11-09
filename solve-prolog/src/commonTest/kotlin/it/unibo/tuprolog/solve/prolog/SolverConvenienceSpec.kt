@@ -38,9 +38,10 @@ private class CallCase(
 private val calls =
     listOf(
         CallCase("solve/timeout", 4) { solve(it, TIMEOUT).toList() },
-        CallCase("solve-list", 4) { solveList(it) },
-        CallCase("solve-list/timeout", 4) { solveList(it, TIMEOUT) },
-        CallCase("solve-list/options", 2) { solveList(it, SolveOptions.someEagerly(2)) },
+        CallCase("solve", 4) { solve(it).toList() },
+        CallCase("solve/options", 2) { solve(it, SolveOptions.someEagerly(2)).toList() },
+        @Suppress("DEPRECATION")
+        CallCase("solve-list/deprecated", 2) { solveList(it, SolveOptions.someEagerly(2)) },
         CallCase("solve-once", 1) { listOf(solveOnce(it)) },
         CallCase("solve-once/timeout", 1) { listOf(solveOnce(it, TIMEOUT)) },
         CallCase("solve-once/options", 1) { listOf(solveOnce(it, SolveOptions.allEagerly())) },
@@ -77,7 +78,7 @@ class SolverConvenienceSpec :
             clone shouldNotBeSameInstanceAs solver
             clone.staticKb shouldBe solver.staticKb
             solver.loadStaticClauses(Fact.of(Struct.of("f", Integer.of(2))))
-            (clone.solveList(Struct.of("f", Var.of("X"))).count { it.isYes }) shouldBe 1
+            (clone.solve(Struct.of("f", Var.of("X"))).toList().count { it.isYes }) shouldBe 1
         }
 
         test("copy/replaces-only-what-it-is-given") {

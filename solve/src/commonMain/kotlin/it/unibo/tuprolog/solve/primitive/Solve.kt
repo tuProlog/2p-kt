@@ -7,6 +7,7 @@ import it.unibo.tuprolog.solve.Durable
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
+import it.unibo.tuprolog.solve.SolutionStream
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.exception.ResolutionException
@@ -220,7 +221,7 @@ sealed class Solve {
         fun solve(
             goal: Struct,
             limit: Duration = Duration.INFINITE,
-        ): Sequence<Solution> =
+        ): SolutionStream =
             subSolver().solve(
                 goal,
                 SolveOptions

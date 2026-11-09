@@ -9,6 +9,7 @@ import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.LogicError
+import it.unibo.tuprolog.solve.exception.ResolutionCancelledException
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.TimeOutException
 import it.unibo.tuprolog.solve.exception.error.ExistenceError
@@ -166,6 +167,7 @@ internal class PrologMachine(
             resumed = false
         }
         while (true) {
+            if (world.cancellation?.isCancelled == true) return cancelled()
             if (world.chronometer.leap()) return timeOut()
             val solution =
                 when (location) {
@@ -179,10 +181,33 @@ internal class PrologMachine(
     private fun timeOut(): Solution =
         halt(TimeOutException(exceededDuration = world.maxDuration, context = context(rootFrame)))
 
+    private fun cancelled(): Solution = halt(ResolutionCancelledException(context = context(rootFrame)))
+
     private fun halt(error: ResolutionException): Solution {
-        finished = true
+        finish()
         return Solution.halt(query, error)
     }
+
+    /**
+     * Ends the resolution now, disposing of its choice points, unless it is running: then the cancellation of its
+     * stream, set before, stops it at the next step.
+     */
+    fun close() {
+        if (!running) finish()
+    }
+
+    private fun finish() {
+        finished = true
+        cont = null
+        while (choices.isNotEmpty()) dropChoice()
+        frontier.forEach { it.choice?.dispose() }
+        frontier.clear()
+    }
+
+    private fun dropChoice() = choices.removeAt(choices.lastIndex).dispose()
+
+    // a primitive's alternatives may hold resources: they are released when its choice point goes
+    private fun Choice.dispose() = (alternatives as? AutoCloseable)?.close()
 
     private fun select(): Solution? {
         val current = cont ?: return answer()
@@ -257,7 +282,7 @@ internal class PrologMachine(
     }
 
     private fun cut(scope: Frame) {
-        while (choices.size > scope.cutBarrier) choices.removeAt(choices.lastIndex)
+        while (choices.size > scope.cutBarrier) dropChoice()
     }
 
     // the CALL port of [goal], if traced: null to go on with the call
@@ -298,7 +323,10 @@ internal class PrologMachine(
                     ReadOnlyExecutionContext(context(callee, rest, pinned = false)),
                 )
             val responses = primitive.solve(request).iterator()
-            if (!responses.hasNext()) return null.also { location = Location.BACKTRACK }
+            if (!responses.hasNext()) {
+                (responses as? AutoCloseable)?.close()
+                return null.also { location = Location.BACKTRACK }
+            }
             val first = responses.next()
             val more =
                 when (primitive.alternatives) {
@@ -310,6 +338,8 @@ internal class PrologMachine(
                 val lookahead = primitive.alternatives == Alternatives.LOOKAHEAD_SAFE
                 if (frontierMode) return suspendAll(first, responses, false, callee, rest, lookahead)
                 push(Choice(responses, false, callee, rest, bindings.mark, lookahead))
+            } else {
+                (responses as? AutoCloseable)?.close()
             }
             respond(first, callee, rest)
         } catch (error: ResolutionException) {
@@ -440,11 +470,18 @@ internal class PrologMachine(
         }
         branch = ++branches
         return try {
-            if (!choice.alternatives.hasNext()) return null.also { location = Location.BACKTRACK }
+            if (!choice.alternatives.hasNext()) {
+                return null.also {
+                    choice.dispose()
+                    location = Location.BACKTRACK
+                }
+            }
             val alternative = choice.alternatives.next()
             // the alternatives left stay suspended, with the bindings of the choice point
             if (!choice.lookahead || choice.alternatives.hasNext()) {
                 frontier.add(Suspended(next.id, next.depth, bindings.copy(), null, choice))
+            } else {
+                choice.dispose()
             }
             if (choice.isRules) {
                 execute(alternative as Rule, choice.frame, choice.cont)
@@ -551,7 +588,7 @@ internal class PrologMachine(
             }
             when (val decision = world.interception?.backtrack(choice.frame.invocation) { view(choice.frame) }) {
                 is Decision.Fail -> {
-                    choices.removeAt(choices.lastIndex)
+                    dropChoice()
                     continue
                 }
                 is Decision.Halt -> return haltOn(decision, choice.frame)
@@ -565,12 +602,12 @@ internal class PrologMachine(
             location = Location.SELECT
             return try {
                 if (!choice.lookahead && !choice.alternatives.hasNext()) {
-                    choices.removeAt(choices.lastIndex)
+                    dropChoice()
                     location = Location.BACKTRACK
                     continue
                 }
                 val alternative = choice.alternatives.next()
-                if (choice.lookahead && !choice.alternatives.hasNext()) choices.removeAt(choices.lastIndex)
+                if (choice.lookahead && !choice.alternatives.hasNext()) dropChoice()
                 if (choice.isRules) {
                     execute(alternative as Rule, choice.frame, choice.cont)
                 } else {

@@ -80,17 +80,21 @@ on the same required module — or `require("@tuprolog/core")` directly if you'd
 
 ## 5. Run it and read the solutions
 
-`solveList(goal)` eagerly collects every solution; Kotlin's `List` compiles to a JS array-like object you can
-iterate with a plain `for...of`:
+`solver.solve(goal)` returns a `SolutionStream`, which you iterate with a plain `for...of`. Solutions are
+computed as the loop asks for them, and leaving the loop early (`break`, `return`, an exception) closes the stream,
+releasing what the resolution holds:
 
 ```js
-const solutions = solver.solveList(query);
-for (const solution of solutions) {
+for (const solution of solver.solve(query)) {
   if (solution.isYes) {
     console.log(solution.substitution.getByName("X"));
   }
 }
 ```
+
+A stream can be iterated only once. If you consume it some other way and stop before its end, call `close()` on it;
+see [Consuming solutions](../reference/solver-api.md#consuming-solutions-solutionstream) for what an unclosed
+stream leaks.
 
 Running this logs `isaac`, `jacob` and `joseph` — one line per way `ancestor(abraham, X)` can be proven true.
 `solution.isYes` reads as a plain property here (Kotlin/JS compiles a Kotlin `val` to a native JS getter, unlike
