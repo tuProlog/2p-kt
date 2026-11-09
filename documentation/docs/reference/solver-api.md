@@ -128,7 +128,7 @@ returns a `Decision`:
 
 `after(transition)` runs once the resolution has gone past the port. A `Transition` carries the port, the goal with its
 bindings, an invocation id shared by the call's ports, the call depth, and a read-only context. It is valid only during
-the callback. While an interceptor is set, `:solve-prolog` turns last-call optimisation off, so that every call shows
+the callback: solvers may compute its goal and context when first read, so copy what you need to keep. While an interceptor is set, `:solve-prolog` turns last-call optimisation off, so that every call shows
 its `EXIT`.
 
 `SolveOptions.setRuleSelection` and `setGoalSelection` replace source clause order and leftmost goal selection with a

@@ -26,6 +26,10 @@ import it.unibo.tuprolog.unify.impl.hasCycles
  *   preserved, so that unification can be made asymmetric;
  * - [handleResult], invoked on the outcome of each [mgu] and [merge] call.
  *
+ * A subclass can also implement [IncrementalUnificator] by delegating to [unifyIncrementally], so that solvers unify in
+ * their own bindings, without building a [Substitution] per unification: do so only if it does not override
+ * [handleResult], which that path cannot call.
+ *
  * With occurs-check disabled, cyclic bindings such as `X -> f(X)` are allowed, and unifying cyclic terms terminates.
  *
  * ```kotlin
@@ -104,6 +108,37 @@ abstract class AbstractWorklistUnificator(
         val occursCheck = request.occurCheckEnabled
         if (base.isFailed || occursCheck && (if (base === context) contextHasCycles else base.hasCycles())) return null
         return UnificationRun(hooks, Bindings(if (base === context) baseContext else base), occursCheck, request)
+    }
+
+    /**
+     * Unifies [term1] and [term2] in [store], as [IncrementalUnificator.unifyInto] does, honouring [checkTermsEquality]
+     * and [handleComparison] but not [handleResult]. Meant for subclasses opting into [IncrementalUnificator]:
+     *
+     * ```kotlin
+     * class MyUnificator : AbstractWorklistUnificator(), IncrementalUnificator {
+     *     override fun handleComparison(step: UnificationStep) { /* ... */ }
+     *
+     *     override fun unifyInto(store: BindingStore, term1: Term, term2: Term, occurCheckEnabled: Boolean) =
+     *         unifyIncrementally(store, term1, term2, occurCheckEnabled)
+     * }
+     * ```
+     */
+    protected fun unifyIncrementally(
+        store: BindingStore,
+        term1: Term,
+        term2: Term,
+        occurCheckEnabled: Boolean,
+    ): Boolean {
+        if (context.isFailed || occurCheckEnabled && contextHasCycles) return false
+        val run =
+            UnificationRun(
+                hooks,
+                Bindings(baseContext, store),
+                occurCheckEnabled,
+                MguRequest(term1, term2, occurCheckEnabled),
+            )
+        run.push(term1, term2)
+        return run.unifyPending()
     }
 
     override fun mgu(

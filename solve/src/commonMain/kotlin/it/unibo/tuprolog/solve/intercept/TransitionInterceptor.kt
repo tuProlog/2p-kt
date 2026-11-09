@@ -32,7 +32,8 @@ enum class Port {
 
 /**
  * A port reached by a call, as a [TransitionInterceptor] sees it. Valid only during the callback it is passed to: copy
- * what you need to keep.
+ * what you need to keep. Solvers may compute [goal] and [context] when they are first read, from their current state,
+ * so a transition read after the callback returns may show the state of a later moment.
  */
 interface Transition {
     /** The port reached. */

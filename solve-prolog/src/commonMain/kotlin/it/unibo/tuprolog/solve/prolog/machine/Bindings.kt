@@ -3,6 +3,9 @@ package it.unibo.tuprolog.solve.prolog.machine
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.unify.BindingStore
+import it.unibo.tuprolog.unify.CachedUnificator
+import it.unibo.tuprolog.unify.IncrementalUnificator
 import it.unibo.tuprolog.unify.Unificator
 
 /**
@@ -10,11 +13,13 @@ import it.unibo.tuprolog.unify.Unificator
  * so that [undo] restores the state at any earlier [mark]. Values may refer to other bound variables: [resolve] follows
  * them.
  *
- * shortcut: every binding is trailed and kept until the resolution ends, and terms are bound with the solver's
- * `Unificator` and copied out by [resolve]; the trailed store of PR 6 (conditional trailing, unification in place,
- * clause environments) replaces this.
+ * An [IncrementalUnificator] unifies terms right in these bindings; any other `Unificator` computes an mgu of the
+ * resolved terms, which is then copied here.
+ *
+ * shortcut: every binding is trailed and kept until the resolution ends, and terms are copied out by [resolve];
+ * conditional trailing and clause environments would avoid both, if profiling shows they matter.
  */
-internal class Bindings {
+internal class Bindings : BindingStore {
     private val values = HashMap<Var, Term>()
     private val trail = ArrayList<Var>()
 
@@ -25,13 +30,29 @@ internal class Bindings {
     val isEmpty: Boolean
         get() = values.isEmpty()
 
-    /** Binds the unbound [variable] to [value]. */
-    fun bind(
+    override operator fun get(variable: Var): Term? = values[variable]
+
+    /** Binds the unbound [variable] to [term]. */
+    override fun bind(
         variable: Var,
-        value: Term,
+        term: Term,
     ) {
-        values[variable] = value
+        values[variable] = term
         trail.add(variable)
+    }
+
+    /**
+     * Unifies [first] and [second] with [unificator], adding the new bindings. Returns `false` if they do not unify,
+     * leaving the bindings made so far for the caller to [undo].
+     */
+    fun unify(
+        first: Term,
+        second: Term,
+        unificator: Unificator,
+    ): Boolean {
+        unificator.incremental?.let { return it.unifyInto(this, first, second) }
+        val mgu = unificator.mgu(resolve(first), resolve(second), occurCheckEnabled = false)
+        return mgu is Substitution.Unifier && copy(mgu, unificator)
     }
 
     /**
@@ -42,13 +63,21 @@ internal class Bindings {
         unifier: Substitution.Unifier,
         unificator: Unificator,
     ): Boolean {
+        val incremental = unificator.incremental ?: return copy(unifier, unificator)
+        return unifier.all { (variable, value) -> incremental.unifyInto(this, variable, value) }
+    }
+
+    private fun copy(
+        unifier: Substitution.Unifier,
+        unificator: Unificator,
+    ): Boolean {
         for ((variable, value) in unifier) {
             val current = deref(variable)
             if (current is Var) {
                 if (current != deref(value)) bind(current, value)
             } else {
                 val mgu = unificator.mgu(resolve(current), resolve(value), occurCheckEnabled = false)
-                if (mgu !is Substitution.Unifier || !bindAll(mgu, unificator)) return false
+                if (mgu !is Substitution.Unifier || !copy(mgu, unificator)) return false
             }
         }
         return true
@@ -115,3 +144,13 @@ internal class Bindings {
         }
     }
 }
+
+/** This unificator, or the one it caches, if it unifies in place; null to go through mgu. */
+internal val Unificator.incremental: IncrementalUnificator?
+    get() =
+        when (this) {
+            is IncrementalUnificator -> this
+            // caching is irrelevant to unification in place
+            is CachedUnificator -> decorated.incremental
+            else -> null
+        }

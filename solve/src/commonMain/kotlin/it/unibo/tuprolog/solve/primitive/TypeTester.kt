@@ -11,7 +11,8 @@ import it.unibo.tuprolog.solve.ExecutionContext
 abstract class TypeTester<E : ExecutionContext>(
     typeName: String,
 ) : UnaryPredicate.Predicative<E>(typeName) {
-    override fun Solve.Request<E>.compute(first: Term): Boolean = testType(arguments[0][context.substitution])
+    // solvers pass arguments with their bindings applied: applying the context's substitution again is a no-op
+    override fun Solve.Request<E>.compute(first: Term): Boolean = testType(first)
 
     /** Template method testing whether [term] has the expected shape/type. */
     abstract fun testType(term: Term): Boolean
