@@ -57,7 +57,7 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
                 // no icon of their own.
                 else -> BLANK_TREE_ICON
             }
-        super.getTreeCellRendererComponent(tree, label, selected, expanded, leaf, row, hasFocus)
+        super.getTreeCellRendererComponent(tree, styledLabel(label, data), selected, expanded, leaf, row, hasFocus)
         leafIcon = currentIcon
         openIcon = currentIcon
         closedIcon = currentIcon
@@ -75,6 +75,27 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
     /** @see getLeafIcon */
     override fun getClosedIcon(): Icon = currentIcon
 
+    private fun styledLabel(
+        label: String,
+        data: Any?,
+    ): String {
+        val keyword =
+            when (data) {
+                is SolutionNodeData.QueryNode -> "?-"
+                is SolutionNodeData.ResultNode -> OUTCOME.find(label)?.value
+                else -> null
+            }
+        val offset = keyword?.let { label.indexOf(it) } ?: -1
+
+        fun escape(text: String) = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        return if (keyword == null || offset < 0) {
+            "<html>${escape(label)}</html>"
+        } else {
+            "<html>${escape(label.take(offset))}<b>${escape(keyword)}</b>" +
+                "${escape(label.drop(offset + keyword.length))}</html>"
+        }
+    }
+
     private fun resultIcon(kind: ResultKind): Icon =
         when (kind) {
             ResultKind.YES -> Icons.YES_SOLUTION
@@ -83,6 +104,7 @@ internal class SolutionCellRenderer : DefaultTreeCellRenderer() {
         }
 
     private companion object {
+        val OUTCOME = Regex("""\b(yes|no|halt|timeout)\b""")
         val BLANK_TREE_ICON: Icon = BlankIcon(Icons.QUERY.iconWidth, Icons.QUERY.iconHeight)
     }
 }
