@@ -2,6 +2,7 @@ package it.unibo.tuprolog.ui.gui.prolog
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
@@ -85,5 +86,35 @@ class SolverFactoryProfileSpec :
                         ResolutionRequest(pageId, "write(hello).", 1.seconds, emptyMap(), ""),
                     ).next()
             (outputStep.signals.filterIsInstance<SolverSignal.Stdout>().any { "hello" in it.text }).shouldBeTrue()
+        }
+
+        test("resolution-steps-carry-each-solution-time").config(coroutineTestScope = true) {
+            val profile =
+                solverFactoryProfile(
+                    PrologSolverFactory,
+                    SolverProfileId("test"),
+                    "Test",
+                    runtimeLibraries = listOf(IOLib),
+                )
+            val pageId = PageId("page")
+            val session =
+                profile.factory.create(
+                    SolverSessionCreationRequest(
+                        pageId,
+                        DocumentId("document"),
+                        "p(a).\np(b).",
+                        1,
+                        profile.id,
+                        emptyMap(),
+                        "",
+                    ),
+                )
+            val cursor = session.openResolution(ResolutionRequest(pageId, "p(X).", 1.seconds, emptyMap(), ""))
+
+            repeat(2) {
+                val step = cursor.next()
+                step.shouldBeInstanceOf<ResolutionStep.Yield>()
+                step.solution.time.shouldNotBeNull()
+            }
         }
     })

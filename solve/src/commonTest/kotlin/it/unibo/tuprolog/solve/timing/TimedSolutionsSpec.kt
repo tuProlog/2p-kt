@@ -2,13 +2,16 @@ package it.unibo.tuprolog.solve.timing
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.solve.Dummy
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.HaltException
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.microseconds
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.TestTimeSource
 
 class TimedSolutionsSpec :
@@ -82,6 +85,21 @@ class TimedSolutionsSpec :
             iterator.next()
             iterator.hasNext() shouldBe false
             iterator.hasNext() shouldBe false
+        }
+
+        test("timing/solutions-tagged-with-their-time") {
+            val clock = TestTimeSource()
+            val timed = solutions(clock, 5.milliseconds to yes, 7.milliseconds to yes).timed(clock)
+            timed.map { it.time }.toList() shouldBe listOf(5.milliseconds, 7.milliseconds)
+            yes.time shouldBe null
+        }
+
+        withTests(
+            nameFn = { "format-time/${it.first}" },
+            "sub-second-to-microseconds" to (1234567.nanoseconds to "1.234ms"),
+            "above-a-second-to-milliseconds" to (2345678.microseconds to "2.345s"),
+        ) { (_, case) ->
+            case.first.formatTime() shouldBe case.second
         }
 
         test("timing/iterated-once") {

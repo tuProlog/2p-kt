@@ -65,8 +65,13 @@ class PlpSwingE2eSpec :
             // No more separate Probability tab: the probability is an annotation right on the solution row.
             // "twoHeads." is a ground query, and the IDE defaults GroundQueriesHaveBooleanSolution to on, so the
             // row reads a bare "yes." rather than repeating the (variable-free) solved query.
-            window.awaitCondition("the probabilistic solution and its probability to appear", timeoutSeconds = 15) {
-                tree("solutionsTree").rowTexts().any { it.contains("yes.") && it.contains("p=30.0%") }
+            // the solution's time follows its probability
+            val probabilityThenTime = Regex("""yes\. \(p=30\.0%\) \(\d+(\.\d+)?[a-z]+\)$""")
+            window.awaitCondition(
+                "the probabilistic solution, its probability and its time to appear",
+                timeoutSeconds = 15,
+            ) {
+                tree("solutionsTree").rowTexts().any { probabilityThenTime.containsMatchIn(it) }
             }
 
             window.selectLowerTab("BDD")

@@ -499,6 +499,89 @@ const SCENARIOS = [
     },
   },
   {
+    name: "each solution and its query show the time spent on them",
+    async run({ evalJs }) {
+      // a trailing " (1.234ms)"-style annotation, as Duration.toString renders it
+      const timed = /\(\d+(\.\d+)?[a-z]+\)$/;
+      const solveAndRead = async () => {
+        await evalJs(`
+          (function() {
+            const queryInput = document.getElementById('query-input');
+            queryInput.focus();
+            queryInput.value = 'member(X, [1, 2])';
+            queryInput.dispatchEvent(new Event('input', { bubbles: true }));
+          })()
+        `);
+        await evalJs(`document.getElementById('solve-all-button').click()`);
+        await pollUntil(
+          () => evalJs(`document.getElementById('status-label').textContent`),
+          (v) => /COMPLETED|FAILED|CANCELLED/.test(v),
+          5000,
+        );
+        // the last query's entry: its header, then one line per solution
+        return evalJs(`
+          (function() {
+            const entries = document.querySelectorAll('ul.solutions > li');
+            const last = entries[entries.length - 1];
+            if (!last) return null;
+            return Array.from(last.children).map(e => e.textContent.split('\\n')[0]);
+          })()
+        `);
+      };
+      // same race as in the multiple-facts scenario: retrying the whole thing until the query lands
+      const lines = await pollUntil(
+        solveAndRead,
+        (v) => v?.[0]?.startsWith("?- member(X, [1, 2])") && v.length >= 3,
+        8000,
+        250,
+      );
+      const failures = [];
+      // the header, both answers, and possibly a final "no"
+      if (!lines || lines.length < 3) return [`expected a query header and two solutions, got ${JSON.stringify(lines)}`];
+      for (const line of lines) if (!timed.test(line)) failures.push(`no time shown on: ${JSON.stringify(line)}`);
+      return failures;
+    },
+  },
+  {
+    name: "the STRIPS template is offered, loads, and plans the Sussman anomaly",
+    async run({ evalJs }) {
+      const offered = await evalJs(`!!document.querySelector('#templates-select option[value="strips"]')`);
+      if (!offered) return ["no STRIPS option in the templates menu"];
+      await evalJs(`
+        (function() {
+          const select = document.getElementById('templates-select');
+          select.value = 'strips';
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        })()
+      `);
+      const tabs = await pollUntil(
+        () => evalJs(`document.getElementById('tab-bar').textContent`),
+        (v) => v.includes("strips.pl"),
+        3000,
+      );
+      if (!tabs.includes("strips.pl")) return [`no strips.pl page opened, tabs: ${tabs}`];
+      const solveAndRead = async () => {
+        await evalJs(`
+          (function() {
+            const queryInput = document.getElementById('query-input');
+            queryInput.focus();
+            queryInput.value = 'sussman(Plan)';
+            queryInput.dispatchEvent(new Event('input', { bubbles: true }));
+          })()
+        `);
+        await evalJs(`document.getElementById('solve-button').click()`);
+        await pollUntil(
+          () => evalJs(`document.getElementById('status-label').textContent`),
+          (v) => /COMPLETED|FAILED|CANCELLED|AWAITING/.test(v),
+          20_000,
+        );
+        return evalJs(`(document.querySelector('ul.solutions') || {}).textContent || ''`);
+      };
+      const text = await pollUntil(solveAndRead, (v) => v.includes("Plan = [unstack(c, a), stack(c, b)"), 45_000, 250);
+      return text.includes("Plan = [unstack(c, a), stack(c, b)") ? [] : [`no Sussman plan among the solutions: ${text}`];
+    },
+  },
+  {
     name: "uploading a real file opens it as a new page",
     async run({ evalJs }) {
       const tabCountBefore = await evalJs(`document.getElementById('tab-bar').children.length`);
