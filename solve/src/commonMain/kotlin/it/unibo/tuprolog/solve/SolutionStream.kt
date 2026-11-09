@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve
 
-import kotlin.concurrent.Volatile
 import kotlin.js.JsName
 
 /**
@@ -59,85 +58,4 @@ interface SolutionStream :
             iterator().forEach { solutions += it }
             solutions
         }
-}
-
-/**
- * Base class of [SolutionStream]s: it makes the stream single-pass, and adds what each platform needs (e.g.
- * `[Symbol.iterator]` on JavaScript). Subclasses provide the solutions through [hasNextSolution] and [nextSolution].
- */
-abstract class AbstractSolutionStream : SolutionStream {
-    private var iterated = false
-
-    init {
-        @Suppress("LeakingThis")
-        installPlatformHooks(this)
-    }
-
-    /** Whether there is a further solution; called by [iterator]'s `hasNext`. */
-    protected abstract fun hasNextSolution(): Boolean
-
-    /** The next solution; called by [iterator]'s `next`. */
-    protected abstract fun nextSolution(): Solution
-
-    final override fun iterator(): Iterator<Solution> {
-        check(!iterated) { "A ${SolutionStream::class.simpleName} can be iterated only once" }
-        iterated = true
-        return object : Iterator<Solution> {
-            override fun hasNext(): Boolean = hasNextSolution()
-
-            override fun next(): Solution = nextSolution()
-        }
-    }
-}
-
-/**
- * Members [SolutionStream] has on one platform only: `stream()` on the JVM, a `java.util.stream.Stream` that closes
- * this one when it is closed.
- */
-expect interface PlatformSolutionStream
-
-internal expect fun installPlatformHooks(stream: AbstractSolutionStream)
-
-/**
- * A [SolutionStream] over [solutions] that checks cancellation between solutions: once cancelled, the next solution
- * is [onCancel]'s, if any, then the stream ends.
- */
-internal class IteratorSolutionStream(
-    private val solutions: Iterator<Solution>,
-    private val onCancel: () -> Solution? = { null },
-) : AbstractSolutionStream() {
-    @Volatile
-    private var cancelled = false
-
-    private var closed = false
-    private var halted = false
-
-    override val isCancelled: Boolean
-        get() = cancelled
-
-    override fun hasNextSolution(): Boolean =
-        when {
-            closed || halted -> false
-            cancelled -> onCancel() != null
-            else -> solutions.hasNext()
-        }
-
-    override fun nextSolution(): Solution {
-        if (!closed && !halted && cancelled) {
-            halted = true
-            return onCancel() ?: throw NoSuchElementException()
-        }
-        if (!hasNextSolution()) throw NoSuchElementException()
-        return solutions.next()
-    }
-
-    override fun cancel() {
-        cancelled = true
-    }
-
-    override fun close() {
-        cancelled = true
-        closed = true
-        (solutions as? AutoCloseable)?.close()
-    }
 }
