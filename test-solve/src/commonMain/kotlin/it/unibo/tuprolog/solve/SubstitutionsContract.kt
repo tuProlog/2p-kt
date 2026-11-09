@@ -17,8 +17,9 @@ fun substitutionsContract(
 ) = contract(solverFactory, disabled) {
     // Runs [interestingVariablesAreProperlyTracked]'s scenario with
     // [it.unibo.tuprolog.solve.flags.TrackVariables] `off`, and checks that the query's own variables (`A`, `B`,
-    // `C`) are still observed by the inspector at every call site regardless — only the *intermediate* variable
-    // `D` (introduced by `callsWithVariablesAndInspectorTheory`'s own rule bodies) is affected by the flag.
+    // `C`) are still observed by the inspector at every call site regardless. The intermediate variable `D` is
+    // observed at the fourth call site too, as it occurs in that goal: a binding still needed by a later goal of the
+    // clause is kept whatever the flag (#1078).
     scenario("substitutions/interesting-variables-are-not-obliterated") {
         testVariablesTracking(false)
     }
@@ -79,5 +80,5 @@ private fun ContractScope.testVariablesTracking(tracking: Boolean) {
     inspections[0] shouldBe setOf("A", "B", "C")
     inspections[1] shouldBe setOf("D")
     inspections[2] shouldBe setOf("E")
-    inspections[3] shouldBe (setOf("A", "B", "C", "E") + if (tracking) setOf("D") else emptySet())
+    inspections[3] shouldBe setOf("A", "B", "C", "D", "E")
 }

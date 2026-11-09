@@ -39,7 +39,8 @@ enum class Workload(
 
     /**
      * STRIPS planning for the Sussman anomaly, with states as lists (#1075). Like the other `strips-*` workloads, it
-     * needs `TrackVariables` on, as rule bodies may lose bindings otherwise (#1073).
+     * turns `TrackVariables` on, which engines before the #1078 fix needed for correct answers: keeping it lets runs
+     * compare with them.
      */
     STRIPS_LIST("strips-list", "sussman_checked", STRIPS + "strips-sets-list.pl", TRACKING),
 
@@ -71,11 +72,10 @@ enum class Workload(
     FIRST_OF_MANY("first-of-many", "first_of_many(100000)"),
 
     /**
-     * 100 rounds of integer and floating-point arithmetic (#1010). Needs `TrackVariables` on, as clause-local
-     * bindings are lost otherwise (see `binding-restoration/clause-local-bindings-survive-primitives`, #1073). With
-     * it on, `:solve-prolog`'s cost grows about cubically with the rounds (0.5 s for 100, 530 s for 1000).
+     * 1000 rounds of integer and floating-point arithmetic (#1010). Before #1078 was fixed it needed `TrackVariables`
+     * on, which made `:solve-prolog`'s cost grow about cubically with the rounds (530 s for 1000; 0.17 s without it).
      */
-    ARITHMETIC("arithmetic", "arith(0, 100)", flags = TRACKING),
+    ARITHMETIC("arithmetic", "arith(0, 1000)"),
     ;
 
     /** The query, parsed. */
