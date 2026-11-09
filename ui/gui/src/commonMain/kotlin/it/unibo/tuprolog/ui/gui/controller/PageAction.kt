@@ -78,6 +78,12 @@ sealed interface PageAction : GuiAction {
         override val pageId: PageId,
     ) : PageAction
 
+    /** Removes exactly one concluded resolution, leaving active work and other history intact. */
+    data class DeleteResolution(
+        override val pageId: PageId,
+        val entry: ResolutionHistoryEntry,
+    ) : PageAction
+
     /**
      * Replaces the page's query history and resolution/solutions history wholesale, e.g. right after creating
      * a page from previously-persisted state - restoring what a frontend's Solutions tree and query-history

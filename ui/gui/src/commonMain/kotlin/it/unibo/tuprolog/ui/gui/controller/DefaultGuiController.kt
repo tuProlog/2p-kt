@@ -192,6 +192,7 @@ class DefaultGuiController(
                 }
             is PageAction.MarkPanelRead -> markPanelRead(action)
             is PageAction.ClearHistory -> clearHistory(action)
+            is PageAction.DeleteResolution -> deleteResolution(action)
             is PageAction.RestoreHistory -> restoreHistory(action)
             is DocumentAction.ChangeText,
             is PageAction.ChangeScratchText,
@@ -1473,6 +1474,26 @@ class DefaultGuiController(
             updateWorkspace {
                 it.updatePage(page.id) { current ->
                     current.copy(history = current.history.copy(resolutions = emptyList()))
+                }
+            }
+        }
+    }
+
+    private suspend fun deleteResolution(action: PageAction.DeleteResolution) {
+        mutex.withLock {
+            val page = _state.value.workspace.page(action.pageId)
+            val index = page?.history?.resolutions?.indexOf(action.entry) ?: -1
+            if (page == null || index < 0) {
+                reject(action, "Resolution is no longer in this page's history")
+                return@withLock
+            }
+            updateWorkspace {
+                it.updatePage(page.id) { current ->
+                    val entries =
+                        current.history.resolutions
+                            .toMutableList()
+                            .apply { removeAt(index) }
+                    current.copy(history = current.history.copy(resolutions = entries))
                 }
             }
         }
