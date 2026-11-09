@@ -12,8 +12,8 @@ import it.unibo.tuprolog.unify.Unificator
  * A read-only view of [theory] (#1010): reads go to [theory]; every write returns a new, independent theory and leaves
  * [theory] untouched, and the view can't be cast to [MutableTheory].
  *
- * shortcut: reads are live, so the view shows clauses the resolution adds or removes later; the stateful engine's
- * generation-based store will give snapshots.
+ * shortcut: reads are live, so the view shows clauses the resolution adds or removes later; a generation-based store
+ * would give snapshots, if a primitive ever needs them.
  */
 internal class ReadOnlyTheory(
     val theory: Theory,

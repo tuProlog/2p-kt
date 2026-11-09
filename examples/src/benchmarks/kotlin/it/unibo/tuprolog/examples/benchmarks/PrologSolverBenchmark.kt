@@ -12,8 +12,8 @@ import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
 
 /**
- * Average time to solve each [Workload] to exhaustion with `:solve-prolog`, per [TimeoutSetting] and [ChronometerSetting]
- * (#1012), and per engine (#1010).
+ * Average time to solve each [Workload] to exhaustion with `:solve-prolog`, per [TimeoutSetting] and
+ * [ChronometerSetting] (#1012).
  */
 @State(Scope.Benchmark)
 class PrologSolverBenchmark {

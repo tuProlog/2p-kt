@@ -35,7 +35,7 @@ import kotlin.js.JsName
  * knowledge bases can't be changed in place; change them through side effects. (`:solve-prolog`'s current engine
  * doesn't snapshot its knowledge bases yet: their view shows later changes.)
  *
- * Resolution strategies (e.g. `:solve-prolog`'s state-machine solver) are free to extend this interface with
+ * Resolution strategies (e.g. `:solve-prolog`'s) are free to extend this interface with
  * whatever extra bookkeeping they personally need; code written against the generic [ExecutionContext] keeps
  * working regardless of which concrete strategy produced the instance.
  *

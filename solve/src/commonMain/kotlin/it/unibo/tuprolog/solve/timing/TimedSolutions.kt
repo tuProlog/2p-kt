@@ -74,7 +74,10 @@ class TimedSolutions internal constructor(
     }
 }
 
-/** Times these solutions on [timeSource] as they are consumed (#1010): see [TimedSolutions.timing]. */
+/**
+ * Times these solutions on [timeSource] as they are consumed (#1010): see [TimedSolutions.timing]. The result does not
+ * close them: when they come from a [it.unibo.tuprolog.solve.SolutionStream], the caller still closes that.
+ */
 @JsName("timed")
 @JvmOverloads
 fun Sequence<Solution>.timed(timeSource: TimeSource.WithComparableMarks = TimeSource.Monotonic): TimedSolutions =

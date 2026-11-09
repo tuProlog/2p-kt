@@ -10,8 +10,8 @@ import kotlin.jvm.JvmField
  * With any other scheduler, a supporting solver keeps every alternative as a branch of its own, with its own bindings
  * (copied when the branch is created), and asks the scheduler after each resolution step, so that an infinite branch
  * doesn't starve the others; the query has no more answers once no branch is left. Answers may come in another order,
- * or terminate where depth-first search doesn't. Solvers may only support a pure fragment of Prolog this way: the
- * stateful engine of `:solve-prolog` rejects cut, control constructs, meta-calls and impure built-ins.
+ * or terminate where depth-first search doesn't. Solvers may only support a pure fragment of Prolog this way:
+ * `:solve-prolog`'s engine rejects cut, control constructs, meta-calls and impure built-ins.
  */
 fun interface BranchScheduler {
     /** The index, in [frontier], of the branch to advance next. */

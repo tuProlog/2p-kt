@@ -29,8 +29,9 @@ import kotlin.collections.List as KtList
 /**
  * The world state of a `:solve-prolog` resolution (#1010): knowledge bases, flags, libraries, operators, channels and
  * custom data, plus the resolution's opt-in instruments. It changes only through side effects
- * ([apply]), and the stateful machine (`machine/PrologMachine`) reports each new one to its solver. What a primitive
- * sees is a read-only view of it, with the call's [procedure], [substitution] and [logicStackTrace] (`CallContext`).
+ * ([apply]), and the machine ([it.unibo.tuprolog.solve.prolog.machine.PrologMachine]) reports each new one to its
+ * solver. What a primitive sees is a read-only view of it ([ReadOnlyExecutionContext]), with the call's [procedure],
+ * [substitution] and [logicStackTrace] ([it.unibo.tuprolog.solve.prolog.machine.CallContext]).
  *
  * - [chronometer]: the resolution's chronometer (see [it.unibo.tuprolog.solve.Durable.chronometer]).
  * - [counters]: the resolution's opt-in [ResolutionCounters] (see [it.unibo.tuprolog.solve.SolveOptions.counters]).

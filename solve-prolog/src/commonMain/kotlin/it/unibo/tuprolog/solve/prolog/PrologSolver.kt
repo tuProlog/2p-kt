@@ -11,6 +11,7 @@ import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
+/** The immutable [it.unibo.tuprolog.solve.Solver] of `:solve-prolog`, built by [PrologSolverFactory]. */
 internal open class PrologSolver : AbstractPrologSolver {
     constructor(
         unificator: Unificator = Unificator.default,

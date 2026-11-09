@@ -61,7 +61,7 @@ object StreamProperty : BinaryRelation<ExecutionContext>("stream_property") {
             .flatMap { (streamTerm, properties) -> properties.map { streamTerm to it } }
             .map { (streamTerm, property) -> merge(mgu(first, streamTerm), mgu(second, property)) }
             // Candidates that do not unify must be dropped rather than turned into a `No` response:
-            // the FSM does not keep pulling from this sequence past the first non-matching element,
+            // solvers stop pulling from this sequence at the first `No` response,
             // so leaving them in would make stream_property/2 only ever consider the very first
             // (stream, property) pair it enumerates.
             .filter { it.isSuccess }

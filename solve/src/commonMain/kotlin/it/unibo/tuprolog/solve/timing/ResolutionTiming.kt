@@ -23,6 +23,7 @@ data class ResolutionTiming(
     /** The number of solutions produced. */
     @JsName("answers")
     val answers: Int,
+    /** How far the resolution got. */
     @JsName("outcome")
     val outcome: Outcome,
 )

@@ -24,8 +24,8 @@ import it.unibo.tuprolog.solve.stdlib.CommonBuiltins
  * [it.unibo.tuprolog.solve.prolog.stdlib.rule.Comma] (`','/2`),
  * [it.unibo.tuprolog.solve.prolog.stdlib.rule.Cut] (`'!'/0`) and
  * [it.unibo.tuprolog.solve.prolog.stdlib.rule.NegationAsFailure] (`'\+'/1`) are all `RuleWrapper`s expanded into
- * ordinary rule bodies that `StateRuleSelection`/`StateException` know how to special-case (cut transparency,
- * exception propagation) at the machine level.
+ * ordinary rule bodies, whose frames the machine (`PrologMachine`) special-cases where needed (cut, cut transparency,
+ * `catch/3` recovery).
  */
 object DefaultBuiltins : ExtensionLibrary(CommonBuiltins) {
     override val additionalPrimitives: Iterable<PrimitiveWrapper<*>>
