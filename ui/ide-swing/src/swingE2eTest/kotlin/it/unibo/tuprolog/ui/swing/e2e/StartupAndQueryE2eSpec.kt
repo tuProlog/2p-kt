@@ -7,6 +7,8 @@ import io.kotest.matchers.shouldBe
 import org.assertj.swing.fixture.FrameFixture
 import java.awt.event.KeyEvent
 
+private val failedSolution = Regex("""^1\. \[\S+\] no$""")
+
 /** Covers application startup and the core query-execution workflow through the real Swing UI. */
 class StartupAndQueryE2eSpec :
     FunSpec({
@@ -68,7 +70,7 @@ class StartupAndQueryE2eSpec :
             window.button("solveButton").click()
 
             window.awaitCondition("failure to appear") {
-                tree("solutionsTree").rowTexts().any { it.contains("1. no") }
+                tree("solutionsTree").rowTexts().any { failedSolution.matches(it) }
             }
         }
 
@@ -77,7 +79,7 @@ class StartupAndQueryE2eSpec :
             window.button("solveButton").click()
 
             window.awaitCondition("failure to appear") {
-                tree("solutionsTree").rowTexts().any { it.contains("1. no") }
+                tree("solutionsTree").rowTexts().any { failedSolution.matches(it) }
             }
 
             window.selectLowerTab("Warnings")
