@@ -55,13 +55,17 @@ internal class UnificationRun(
     }
 
     /** Unifies all pending pairs, then builds the resulting [Substitution]. */
-    fun solve(): Substitution {
+    fun solve(): Substitution =
+        if (unifyPending()) SubstitutionMaterializer(bindings).materialize() else Substitution.failed()
+
+    /** Unifies all pending pairs, leaving the bindings in [bindings]; `false` at the first failure. */
+    fun unifyPending(): Boolean {
         while (pending.isNotEmpty()) {
             val rhs = pending.removeAt(pending.lastIndex)
             val lhs = pending.removeAt(pending.lastIndex)
-            if (!unify(lhs, rhs)) return Substitution.failed()
+            if (!unify(lhs, rhs)) return false
         }
-        return SubstitutionMaterializer(bindings).materialize()
+        return true
     }
 
     private fun unify(

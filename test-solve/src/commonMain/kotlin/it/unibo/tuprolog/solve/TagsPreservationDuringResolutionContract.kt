@@ -8,6 +8,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.tags.TagComparisonVerse
 import it.unibo.tuprolog.solve.tags.TagFlow
+import it.unibo.tuprolog.solve.tags.TagResultUnificator
 import it.unibo.tuprolog.solve.tags.TagsUnificationEngine
 import it.unibo.tuprolog.utils.setTags
 
@@ -128,6 +129,39 @@ fun tagsPreservationDuringResolutionContract(
                     flow.sawTheoryOriginatedTag.shouldBeTrue()
                 }
             }
+        }
+    }
+
+    // Case 5: a custom unificator post-processing unifiers with `handleResult` (#1010): rejecting the ones binding a
+    // variable to a term tagged as forbidden must prune those clauses, and the tags it adds to bound values must
+    // reach the solutions.
+    scenario("tags-preservation-during-resolution/handled-results-drive-resolution") {
+        val forbidden = mapOf(TagResultUnificator.FORBIDDEN to true)
+        val theory =
+            logicProgramming {
+                theoryOf(
+                    fact { "p"(atomOf("a").setTags(forbidden)) },
+                    fact { "p"("b") },
+                    rule { "q"(X) impliedBy "p"(X) },
+                )
+            }
+        val solver = solverFactory.solverWithDefaultBuiltins(staticKb = theory, unificator = TagResultUnificator())
+        val answers = solver.solveList(logicProgramming { "q"(X) }).filter { it.isYes }
+
+        answers.map {
+            it.substitution.values
+                .single()
+                .toString()
+        } shouldBe listOf("b")
+        withClue("tags added by handleResult were lost: ${answers.single().substitution}") {
+            (
+                TagResultUnificator.SEEN in
+                    answers
+                        .single()
+                        .substitution.values
+                        .single()
+                        .tags
+            ).shouldBeTrue()
         }
     }
 }

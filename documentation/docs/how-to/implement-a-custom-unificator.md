@@ -145,3 +145,55 @@ functor/arity group. Immutable retractions on this path rebuild the remaining st
 still use the argument indexes.
 
 `Unificator.cached(...)` delegates `indexKey` to the unificator it wraps.
+
+## 6. Let solvers unify in their own bindings
+
+Solvers that keep their own bindings (such as the stateful engine of `solve-prolog`, #1010) can unify goals with clauses
+right in those bindings, without building a `Substitution` per unification, if the solver's unificator implements
+`IncrementalUnificator`. The built-in strategies do; a custom one keeps working without it, on the slower path where the
+solver calls `mgu` and copies the result.
+
+To opt in, implement the interface and delegate to `unifyIncrementally`:
+
+```kotlin
+import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.unify.AbstractWorklistUnificator
+import it.unibo.tuprolog.unify.BindingStore
+import it.unibo.tuprolog.unify.IncrementalUnificator
+import it.unibo.tuprolog.unify.UnificationStep
+
+class TagAwareUnificator :
+    AbstractWorklistUnificator(),
+    IncrementalUnificator {
+    override fun handleComparison(step: UnificationStep) {
+        if (!step.rhs.tags.entries.containsAll(step.lhs.tags.entries)) step.reject()
+    }
+
+    override fun unifyInto(
+        store: BindingStore,
+        term1: Term,
+        term2: Term,
+        occurCheckEnabled: Boolean,
+    ) = unifyIncrementally(store, term1, term2, occurCheckEnabled)
+}
+```
+
+`checkTermsEquality`, `handleComparison` and `indexKey` behave the same on both paths. `handleResult`, which
+post-processes the `Substitution` returned by `mgu` and `merge`, does not: `unifyInto` builds no `Substitution`, so it
+never calls it. **Do not opt in if your unificator overrides `handleResult`**, or solvers would skip it. Without
+opting in, such a unificator keeps working, as solvers then use `mgu`:
+
+```kotlin
+// fails every unifier binding a variable to a term tagged "forbidden": must stay on the mgu path
+val noForbidden =
+    object : AbstractWorklistUnificator() {
+        override fun handleResult(
+            request: UnificationRequest,
+            result: Substitution,
+        ): Substitution =
+            if (result.isSuccess && result.values.any { "forbidden" in it.tags }) Substitution.failed() else result
+    }
+```
+
+`Unificator.cached(...)` does not hide the opt-in: solvers unify in place with the unificator it wraps, if that one
+implements `IncrementalUnificator`.

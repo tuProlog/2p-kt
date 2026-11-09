@@ -13,7 +13,8 @@ abstract class TypeEnsurer<E : ExecutionContext>(
     typeName: String,
 ) : UnaryPredicate.Predicative<E>(typeName) {
     override fun Solve.Request<E>.compute(first: Term): Boolean {
-        ensureType(context, arguments[0][context.substitution])
+        // solvers pass arguments with their bindings applied: applying the context's substitution again is a no-op
+        ensureType(context, first)
         return true
     }
 

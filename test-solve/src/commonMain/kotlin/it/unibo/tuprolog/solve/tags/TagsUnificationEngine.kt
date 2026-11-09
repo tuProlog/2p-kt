@@ -12,6 +12,9 @@ internal enum class TagsUnificationEngine(
     /** Compound terms are compared, hence visible, before being decomposed. */
     WORKLIST(::TagAwareUnificator, ::TagFlowUnificator, compoundTagsVisible = true),
 
+    /** The worklist engine, opted into unification in the solver's bindings (#1010). */
+    INCREMENTAL(::incrementalTagAwareUnificator, ::incrementalTagFlowUnificator, compoundTagsVisible = true),
+
     /** Matching compound terms are decomposed straight into equations of their arguments, so they are invisible. */
     EQUATIONAL(::EquationalTagAwareUnificator, ::EquationalTagFlowUnificator, compoundTagsVisible = false),
 }

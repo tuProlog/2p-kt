@@ -18,10 +18,9 @@ import it.unibo.tuprolog.unify.Unificator
 /**
  * The context of a call made by a [PrologMachine]: the solver's [world] state, plus the call's [procedure], the
  * resolution's bindings as a [substitution], and the [logicStackTrace]. Both are computed on first access and kept, so
- * they read the same afterwards.
- *
- * shortcut: a context read for the first time after the machine has moved on shows the bindings of that later moment;
- * PR 6 pins observations before the bindings they show change.
+ * they read the same afterwards. The machine [pin]s a context that may be read after its bindings change (errors,
+ * warnings, interceptors); a primitive's request context is read while they still hold, or after backtracking has
+ * restored them.
  */
 internal class CallContext(
     private val world: PrologExecutionContext,
@@ -32,6 +31,9 @@ internal class CallContext(
     override val substitution: Substitution.Unifier by lazy(substitution)
 
     override val logicStackTrace: List<Struct> by lazy(logicStackTrace)
+
+    /** This context, with its [substitution] and [logicStackTrace] computed now. */
+    fun pin(): CallContext = also { substitution.size + logicStackTrace.size }
 
     override fun createSolver(
         unificator: Unificator,

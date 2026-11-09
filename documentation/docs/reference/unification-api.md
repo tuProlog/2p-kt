@@ -137,6 +137,26 @@ val sameTagsUnificator =
 A custom strategy unifying terms with different principal symbols, like `absoluteValueUnificator`, must also override
 `indexKey`, as explained next. `sameTagsUnificator` only rejects more pairs, so the default keys suit it.
 
+### Unifying in a solver's bindings
+
+`IncrementalUnificator` is a `Unificator` that can also unify two terms right in a `BindingStore`, i.e. a solver's own
+mutable bindings, instead of building a `Substitution`:
+
+- `BindingStore`: `get(variable): Term?` returns what a variable is bound to (bindings may be triangular), and
+  `bind(variable, term)` binds an unbound one;
+- `IncrementalUnificator.unifyInto(store, term1, term2, occurCheckEnabled = false): Boolean` unifies the two terms
+  under the bindings of the store and of `context`, adds the new bindings to the store, and returns `false` on failure,
+  leaving the bindings made so far for the caller to undo.
+
+The built-in strategies implement it. Solvers whose engine keeps its own bindings use `unifyInto` when their
+unificator implements it (unwrapping `Unificator.cached(...)`), and otherwise call `mgu` and copy its result. Either way
+they find the same unifiers, but the former is faster.
+
+A custom `AbstractWorklistUnificator` opts in by implementing the interface and delegating to the protected
+`unifyIncrementally`. `checkTermsEquality` and `handleComparison` work the same on both paths, but `handleResult` is
+never called by `unifyInto`, as there is no `Substitution` to post-process: a unificator overriding `handleResult` must
+not opt in. See [Implement a custom `Unificator`](../how-to/implement-a-custom-unificator.md#6-let-solvers-unify-in-their-own-bindings).
+
 ### Index keys
 
 Clause collections and theories (module `theory`) do not unify a query with every clause: they first narrow the
