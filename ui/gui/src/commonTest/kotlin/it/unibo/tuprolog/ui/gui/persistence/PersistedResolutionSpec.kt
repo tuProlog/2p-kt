@@ -25,6 +25,7 @@ class PersistedResolutionSpec :
                             ),
                         ),
                     terminalStatus = ResolutionStatus.COMPLETED,
+                    submittedAt = 1_234L,
                 )
 
             original.toPersisted().toResolutionHistoryEntry() shouldBe original
