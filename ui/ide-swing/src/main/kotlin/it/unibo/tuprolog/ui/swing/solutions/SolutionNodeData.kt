@@ -3,14 +3,13 @@ package it.unibo.tuprolog.ui.swing.solutions
 /** The payload a [SolutionTree] node's `userObject` carries, read by [SolutionCellRenderer] to pick its label/icon. */
 internal sealed interface SolutionNodeData {
     /**
-     * A submitted query, shown as its own top-level row with its solutions/details nested under it, followed by
-     * [timeAnnotation] (the resolution's time so far, if measured).
+     * A submitted query with its local submission timestamp and nested solutions/details.
      */
     data class QueryNode(
         val query: String,
-        val timeAnnotation: String = "",
+        val timestamp: String? = null,
     ) : SolutionNodeData {
-        override fun toString() = "?- $query$timeAnnotation"
+        override fun toString() = "${timestamp?.let { "[$it] " }.orEmpty()}?- ${query.trimEnd().removeSuffix(".")}."
     }
 
     /** One resolved solution (yes/no/halt) of the enclosing [QueryNode]'s query. */
