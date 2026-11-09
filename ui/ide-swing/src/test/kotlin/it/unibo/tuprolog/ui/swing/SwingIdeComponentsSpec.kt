@@ -252,6 +252,37 @@ class SwingIdeComponentsSpec :
             }
         }
 
+        test("solution-tree-styles-only-outcomes-and-escapes-prolog-text") {
+            SwingUtilities.invokeAndWait {
+                val tree = SolutionTree()
+                tree.render(
+                    listOf(
+                        SolutionQueryEntry(
+                            "p(X).",
+                            listOf(SolutionPresentation.Yes("p(X).", solvedQuery = "p('<b>&')")),
+                            false,
+                        ),
+                    ),
+                    "p(X).",
+                )
+                val root = tree.model.root as DefaultMutableTreeNode
+                val query = root.getChildAt(0) as DefaultMutableTreeNode
+                val result = query.getChildAt(0) as DefaultMutableTreeNode
+                val label =
+                    tree.cellRenderer.getTreeCellRendererComponent(
+                        tree,
+                        result,
+                        false,
+                        false,
+                        true,
+                        1,
+                        false,
+                    ) as javax.swing.JLabel
+                label.text shouldBe "<html>1. <b>yes</b>: p('&lt;b&gt;&amp;')</html>"
+                result.toString() shouldBe "1. yes: p('<b>&')"
+            }
+        }
+
         test("solution tree focuses one query and collapses the others") {
             SwingUtilities.invokeAndWait {
                 val tree = SolutionTree()
