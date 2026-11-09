@@ -35,11 +35,14 @@ import it.unibo.tuprolog.solve.atomLengthContract
 import it.unibo.tuprolog.solve.atomicContract
 import it.unibo.tuprolog.solve.bagOfContract
 import it.unibo.tuprolog.solve.bigListContract
+import it.unibo.tuprolog.solve.bindingRestorationContract
 import it.unibo.tuprolog.solve.callContract
 import it.unibo.tuprolog.solve.catchAndThrowContract
+import it.unibo.tuprolog.solve.catchRestorationContract
 import it.unibo.tuprolog.solve.charCodeContract
 import it.unibo.tuprolog.solve.clauseContract
 import it.unibo.tuprolog.solve.compoundContract
+import it.unibo.tuprolog.solve.controlScopeContract
 import it.unibo.tuprolog.solve.copyTermContract
 import it.unibo.tuprolog.solve.customDataContract
 import it.unibo.tuprolog.solve.cutContract
@@ -56,8 +59,11 @@ import it.unibo.tuprolog.solve.ifThenContract
 import it.unibo.tuprolog.solve.ifThenElseContract
 import it.unibo.tuprolog.solve.integerContract
 import it.unibo.tuprolog.solve.isContract
+import it.unibo.tuprolog.solve.lazinessContract
 import it.unibo.tuprolog.solve.library.toRuntime
 import it.unibo.tuprolog.solve.libraryOf
+import it.unibo.tuprolog.solve.lifetimeContract
+import it.unibo.tuprolog.solve.logicalUpdateViewContract
 import it.unibo.tuprolog.solve.mutableSolverContract
 import it.unibo.tuprolog.solve.nonVarContract
 import it.unibo.tuprolog.solve.notProvableContract
@@ -234,6 +240,27 @@ class PrologSolverSpec :
             }
         }
         include(mutableSolverContract(PrologSolverFactory))
+        include(bindingRestorationContract(PrologSolverFactory))
+        include(catchRestorationContract(PrologSolverFactory))
+        include(controlScopeContract(PrologSolverFactory))
+        // This FSM pulls a primitive's next alternative before its current answer is used (#1010, section 4.6)
+        include(
+            lazinessContract(
+                PrologSolverFactory,
+                disabled =
+                    setOf(
+                        "laziness/alternatives-interleave-with-continuation",
+                        "laziness/first-answer-pulls-one-alternative",
+                        "laziness/repeated-has-next-does-not-advance",
+                        "laziness/cut-prunes-without-pulling",
+                        "laziness/once-prunes-without-pulling",
+                        "laziness/unpulled-alternative-never-runs",
+                        "laziness/effect-order-across-backtracking",
+                    ),
+            ),
+        )
+        include(lifetimeContract(PrologSolverFactory))
+        include(logicalUpdateViewContract(PrologSolverFactory))
     })
 
 private data class ArithmeticErrorCase(
