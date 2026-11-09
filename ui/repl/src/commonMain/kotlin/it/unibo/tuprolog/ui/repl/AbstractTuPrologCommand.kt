@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.core.terminal
+import com.github.ajalt.mordant.rendering.TextStyles
 import com.github.ajalt.mordant.terminal.prompt
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -11,8 +12,12 @@ import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolutionFormatter
 import it.unibo.tuprolog.solve.exception.HaltException
+import it.unibo.tuprolog.solve.timing.TIME_TAG
 import it.unibo.tuprolog.solve.timing.TimedSolutions
 import it.unibo.tuprolog.solve.timing.formatTime
+import it.unibo.tuprolog.solve.timing.time
+import it.unibo.tuprolog.utils.time.formatLocalTimestamp
+import kotlin.time.Clock
 
 /**
  * Base class for the [clikt](https://ajalt.github.io/clikt/) commands that make up the 2P-Kt REPL CLI
@@ -47,41 +52,30 @@ abstract class AbstractTuPrologCommand(
 
     private fun printSolution(
         sol: Solution,
+        number: Int,
         operatorSet: OperatorSet,
         groundQueriesHaveBooleanSolution: Boolean,
     ) {
-        when (sol) {
-            is Solution.Yes -> {
-                printYesSolution(sol, operatorSet, groundQueriesHaveBooleanSolution)
-            }
-            is Solution.No -> {
-                printNoSolution(sol, operatorSet)
-            }
-            is Solution.Halt -> {
-                printHaltSolution(sol, operatorSet)
-            }
+        val exception = (sol as? Solution.Halt)?.exception
+        if (exception is HaltException) {
+            echo("# goodbye.")
+            throw ProgramResult(exception.exitStatus)
         }
+        val plain =
+            sol
+                .replaceTags(sol.tags - TIME_TAG)
+                .format(SolutionFormatter.withOperators(operatorSet, groundQueriesHaveBooleanSolution))
+        val keyword = plain.takeWhile { it.isLetter() }
+        val prefix = "$number. ${sol.time?.let { "[${it.formatTime()}] " }.orEmpty()}"
+        terminal.println(prefix + TextStyles.bold(keyword) + plain.drop(keyword.length))
     }
 
-    private fun printYesSolution(
-        sol: Solution.Yes,
-        operatorSet: OperatorSet,
-        groundQueriesHaveBooleanSolution: Boolean,
-    ) {
-        echo(sol.format(SolutionFormatter.withOperators(operatorSet, groundQueriesHaveBooleanSolution)))
-    }
-
-    private fun printHaltSolution(
-        sol: Solution.Halt,
-        operatorSet: OperatorSet,
-    ) {
-        when (val ex = sol.exception) {
-            is HaltException -> {
-                echo("# goodbye.")
-                throw ProgramResult(ex.exitStatus)
-            }
-            else -> echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
-        }
+    /** Prints a timestamped query header for non-interactive solving. */
+    protected fun printQuery(query: String) {
+        terminal.println(
+            "[${formatLocalTimestamp(Clock.System.now().toEpochMilliseconds())}] " +
+                TextStyles.bold("?-") + " ${query.trimEnd().removeSuffix(".")}.",
+        )
     }
 
     /**
@@ -106,7 +100,11 @@ abstract class AbstractTuPrologCommand(
      * @throws NullInputException if the terminal returns `null`, i.e. the standard input stream has been closed.
      */
     protected fun readQuery(): String {
-        val query: String? = terminal.prompt("?-", promptSuffix = " ")
+        val query: String? =
+            terminal.prompt(
+                "[${formatLocalTimestamp(Clock.System.now().toEpochMilliseconds())}] ${TextStyles.bold("?-")}",
+                promptSuffix = " ",
+            )
         return when {
             query == null -> {
                 throw NullInputException("The standard input has been close unexpectedly")
@@ -131,14 +129,6 @@ abstract class AbstractTuPrologCommand(
         return longQuery.toString()
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun printNoSolution(
-        sol: Solution.No,
-        operatorSet: OperatorSet,
-    ) {
-        echo(sol.format(SolutionFormatter.withOperators(operatorSet)))
-    }
-
     /**
      * Prints solutions from [solutions] one at a time, formatting each with [operatorSet]'s operators, in the
      * conventional Prolog top-level style: after the first solution, the user is prompted (with an empty prompt)
@@ -154,15 +144,13 @@ abstract class AbstractTuPrologCommand(
         groundQueriesHaveBooleanSolution: Boolean = false,
     ) {
         val solutions = timedSolutions.iterator()
-        var first = true
+        var number = 0
         while (solutions.hasNext()) {
-            if (!first) {
+            if (number > 0) {
                 val cmd = terminal.prompt("", hideInput = false)?.trim()
                 if (cmd != ";") break
-            } else {
-                first = false
             }
-            printSolution(solutions.next(), operatorSet, groundQueriesHaveBooleanSolution)
+            printSolution(solutions.next(), ++number, operatorSet, groundQueriesHaveBooleanSolution)
         }
         printEndOfSolutions(timedSolutions)
     }
@@ -184,7 +172,7 @@ abstract class AbstractTuPrologCommand(
         var i = 0
         while (i < maxSolutions && solutions.hasNext()) {
             i++
-            printSolution(solutions.next(), operatorSet, groundQueriesHaveBooleanSolution)
+            printSolution(solutions.next(), i, operatorSet, groundQueriesHaveBooleanSolution)
         }
         printEndOfSolutions(timedSolutions)
     }
