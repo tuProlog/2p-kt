@@ -16,20 +16,23 @@ internal class IteratorSolutionStream(
     private var closed = false
     private var halted = false
 
+    // onCancel runs once, however many times hasNextSolution/nextSolution ask for its solution
+    private val haltSolution: Solution? by lazy { onCancel() }
+
     override val isCancelled: Boolean
         get() = cancelled
 
     override fun hasNextSolution(): Boolean =
         when {
             closed || halted -> false
-            cancelled -> onCancel() != null
+            cancelled -> haltSolution != null
             else -> solutions.hasNext()
         }
 
     override fun nextSolution(): Solution {
         if (!closed && !halted && cancelled) {
             halted = true
-            return onCancel() ?: throw NoSuchElementException()
+            return haltSolution ?: throw NoSuchElementException()
         }
         if (!hasNextSolution()) throw NoSuchElementException()
         return solutions.next()
