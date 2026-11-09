@@ -9,4 +9,6 @@ data class ResolutionHistoryEntry(
     val solutions: List<SolutionPresentation>,
     val terminalStatus: ResolutionStatus,
     val error: String? = null,
+    /** Submission time as milliseconds since the Unix epoch; null for older saved history. */
+    val submittedAt: Long? = null,
 )

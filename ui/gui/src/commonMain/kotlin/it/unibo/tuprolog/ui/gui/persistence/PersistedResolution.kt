@@ -11,6 +11,8 @@ data class PersistedResolution(
     val solutions: List<PersistedSolution>,
     val terminalStatus: String,
     val error: String? = null,
+    /** Submission time as milliseconds since the Unix epoch; null for older saved history. */
+    val submittedAt: Long? = null,
 )
 
 /** Converts to the persisted, JSON-serializable shape. */
@@ -20,6 +22,7 @@ fun ResolutionHistoryEntry.toPersisted(): PersistedResolution =
         solutions = solutions.map { it.toPersisted() },
         terminalStatus = terminalStatus.name,
         error = error,
+        submittedAt = submittedAt,
     )
 
 /** [ResolutionStatus.COMPLETED] is the safe fallback for a status name this build no longer recognizes. */
@@ -30,4 +33,5 @@ fun PersistedResolution.toResolutionHistoryEntry(): ResolutionHistoryEntry =
         terminalStatus =
             runCatching { ResolutionStatus.valueOf(terminalStatus) }.getOrDefault(ResolutionStatus.COMPLETED),
         error = error,
+        submittedAt = submittedAt,
     )
