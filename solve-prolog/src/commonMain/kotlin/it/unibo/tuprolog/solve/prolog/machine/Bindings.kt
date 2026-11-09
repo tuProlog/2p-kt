@@ -23,6 +23,13 @@ internal class Bindings : BindingStore {
     private val values = HashMap<Var, Term>()
     private val trail = ArrayList<Var>()
 
+    /** An independent copy of these bindings and their trail, for a branch of the search of its own (frontier mode). */
+    fun copy(): Bindings =
+        Bindings().also {
+            it.values.putAll(values)
+            it.trail.addAll(trail)
+        }
+
     /** The current position of the trail, to [undo] to. */
     val mark: Int
         get() = trail.size
@@ -101,6 +108,40 @@ internal class Bindings : BindingStore {
         val resolved = HashMap<Var, Term>()
         for (variable in variables) if (variable !in resolved) resolveVar(variable, resolved)
         return Substitution.of(resolved.filter { (variable, value) -> variable != value })
+    }
+
+    /**
+     * [term] resolved as it was when the trail was at [mark]: the bindings made since are ignored. A variable met again
+     * while being resolved (a cyclic binding) is left as is.
+     */
+    fun resolveAt(
+        term: Term,
+        mark: Int,
+    ): Term {
+        if (mark >= trail.size || term.isGround) return resolve(term)
+        val later = trail.subList(mark, trail.size).toHashSet()
+        val memo = HashMap<Var, Term>()
+
+        fun substitute(
+            target: Term,
+            path: Set<Var>,
+        ): Term {
+            val replacements =
+                target.variables
+                    .distinct()
+                    .mapNotNull { variable ->
+                        val value =
+                            memo[variable] ?: run {
+                                val bound =
+                                    (if (variable in later) null else values[variable]) ?: return@mapNotNull null
+                                if (variable in path) return@mapNotNull null
+                                substitute(bound, path + variable).also { memo[variable] = it }
+                            }
+                        (variable to value).takeIf { value != variable }
+                    }.toMap()
+            return if (replacements.isEmpty()) target else target.apply(Substitution.of(replacements))
+        }
+        return substitute(term, emptySet())
     }
 
     /** [term] with every bound variable replaced by its value, recursively. */

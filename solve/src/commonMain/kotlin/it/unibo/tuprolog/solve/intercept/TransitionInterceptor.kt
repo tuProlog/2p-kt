@@ -78,6 +78,14 @@ sealed interface Decision {
     ) : Decision
 
     /**
+     * Run the call again from its [Port.CALL], as a new call with its own ports: the bindings it made are undone and
+     * the choice points it left are dropped (the outside world is not restored, and primitives are called anew, not
+     * replayed). Allowed at [Port.EXIT], [Port.REDO] and [Port.EXCEPTION], while the call's state is still there; at
+     * [Port.FAIL], backtracking has already undone it. Solvers that cannot retry reject it as any decision not allowed.
+     */
+    data object Retry : Decision
+
+    /**
      * End the resolution with a halt solution carrying [error], or a
      * [it.unibo.tuprolog.solve.exception.HaltException] if `null`. Allowed at every port.
      */
@@ -93,7 +101,8 @@ sealed interface Decision {
  * [before] is called at each port before the resolution goes past it, i.e. before any irreversible work of the
  * transition; [after] once the transition has happened, unless [before] decided otherwise. A decision not allowed at a
  * port throws an [IllegalArgumentException]. Callbacks run on the resolution's thread and must not advance the same
- * resolution: a synchronous debugger pauses it by blocking in [before].
+ * resolution (solvers may throw an [IllegalStateException] if they do). A debugger pauses a resolution by blocking in
+ * [before], e.g. running the resolution on a thread of its own: the resolution resumes, once, when [before] returns.
  *
  * Solvers may switch off optimisations that would hide ports (e.g. last-call optimisation, which merges EXITs) while
  * an interceptor is set.

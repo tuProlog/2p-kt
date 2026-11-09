@@ -35,6 +35,13 @@ class Interception internal constructor(
     // in id order, i.e. call order
     private val open = LinkedHashMap<Long, Call>()
 
+    /** Whether the engine can retry calls ([Decision.Retry]): only the stateful machine can. */
+    internal var retrySupported = false
+
+    /** The call a [Decision.Retry] at an EXCEPTION port is about. */
+    internal var retried: Long? = null
+        private set
+
     /** The frame an exception is being propagated from, while the FSM unwinds towards a `catch/3`. */
     internal var unwoundFrom: Long? = null
 
@@ -63,6 +70,8 @@ class Interception internal constructor(
                 is Decision.Continue, is Decision.Halt -> true
                 is Decision.Fail -> transition.port in allowed && transition.port != Port.FAIL
                 is Decision.Redirect -> transition.port == Port.CALL
+                is Decision.Retry ->
+                    retrySupported && transition.port in setOf(Port.EXIT, Port.REDO, Port.EXCEPTION)
             }
         require(ok) { "$decision is not allowed at ${transition.port}" }
         return decision
@@ -95,6 +104,7 @@ class Interception internal constructor(
             call.exited = true
             interceptor.after(transition)
         }
+        if (decision == Decision.Retry) closeFrom(id)
         return decision
     }
 
@@ -119,6 +129,7 @@ class Interception internal constructor(
                     call.exited = false
                     interceptor.after(transition)
                 }
+            is Decision.Retry -> decision.also { closeFrom(choice) }
             else -> decision
         }
     }
@@ -139,23 +150,39 @@ class Interception internal constructor(
 
     /**
      * [error] is caught by the `catch/3` whose frame is the [catcher]-th, or by nobody if `null`: EXCEPTION for the calls
-     * it leaves, i.e. the open ones from that frame on that hadn't exited (or all the open ones, if uncaught).
+     * it leaves, i.e. the open ones from that frame on that hadn't exited (or all the open ones, if uncaught). Returns
+     * [Decision.Halt], or [Decision.Retry] for the call [retried] names, or `null` to go on.
      */
     internal fun exception(
         error: ResolutionException,
         catcher: Long?,
         context: () -> ExecutionContext,
-    ): Decision.Halt? {
+    ): Decision? {
         val threshold = catcher ?: Long.MIN_VALUE
         unwoundFrom = null
+        retried = null
         for (id in open.keys.filter { it >= threshold }.asReversed()) {
-            val call = open.remove(id)!!
-            if (call.exited) continue
+            val call = open[id]!!
+            if (call.exited) {
+                open.remove(id)
+                continue
+            }
             val transition = PortTransition(Port.EXCEPTION, id, call.depth, error, context) { call.goal }
-            val decision = decide(transition)
+            val decision = decide(transition, Port.EXCEPTION)
+            if (decision is Decision.Retry) {
+                closeFrom(id)
+                retried = id
+                return decision
+            }
+            open.remove(id)
             if (decision is Decision.Halt) return decision
             interceptor.after(transition)
         }
         return null
+    }
+
+    // the call [id] is retried: it, and the calls it made, are no longer open
+    private fun closeFrom(id: Long) {
+        open.keys.removeAll { it >= id }
     }
 }

@@ -124,17 +124,37 @@ returns a `Decision`:
 - `Continue`
 - `Fail`: at `CALL`, `EXIT` or `REDO`
 - `Redirect(goal)`: at `CALL`
+- `Retry`: at `EXIT`, `REDO` or `EXCEPTION`: run the call again from its `CALL`, its bindings undone and its choice
+  points dropped. The outside world is not restored, and primitives are called anew rather than replayed. At `FAIL`
+  the call's state is gone, so it is rejected there. Only the stateful engine of `:solve-prolog` supports it.
 - `Halt`
 
-`after(transition)` runs once the resolution has gone past the port. A `Transition` carries the port, the goal with its
-bindings, an invocation id shared by the call's ports, the call depth, and a read-only context. It is valid only during
-the callback: solvers may compute its goal and context when first read, so copy what you need to keep. While an interceptor is set, `:solve-prolog` turns last-call optimisation off, so that every call shows
-its `EXIT`.
+A decision not allowed at a port throws an `IllegalArgumentException`. `after(transition)` runs once the resolution has
+gone past the port. A `Transition` carries the port, the goal with its bindings, an invocation id shared by the call's
+ports, the call depth, and a read-only context. It is valid only during the callback: solvers may compute its goal and
+context when first read, so copy what you need to keep. While an interceptor is set, `:solve-prolog` turns last-call
+optimisation off, so that every call shows its `EXIT`.
+
+To pause a resolution, a debugger blocks in `before`, e.g. running the resolution on a thread of its own: it resumes,
+once, when `before` returns. Callbacks must not advance the resolution they are called from (the stateful engine throws
+an `IllegalStateException` if they do).
 
 `SolveOptions.setRuleSelection` and `setGoalSelection` replace source clause order and leftmost goal selection with a
 `RuleSelectionPolicy` or a `GoalSelectionPolicy` (`it.unibo.tuprolog.solve.search`). Other orders are alternative
 semantics: they can change termination, errors, cuts and side effects. See
 [ADR 0001](../explanation/adr-0001-stateful-engine.md) for the design.
+
+`SolveOptions.setBranchScheduler` chooses which branch of the search advances next. A `BranchScheduler` picks among
+the suspended branches (`Branch`: an id, a proof depth, and the goals left with the branch's own bindings).
+`BranchScheduler.DEPTH_FIRST` is standard Prolog and the default; `BranchScheduler.BREADTH_FIRST` advances the oldest
+branch. With any scheduler other than depth-first, the stateful engine of `:solve-prolog` keeps every alternative as a
+branch of its own, with a copy of the bindings, and asks the scheduler after each resolution step, so an infinite
+branch can't starve the others (`p :- p. p.` answers `p` breadth-first). It supports a pure fragment only: user
+predicates, conjunctions, `true`, `fail`, and built-ins that neither change the world nor run goals (unification,
+comparison, arithmetic, type checks, `functor/3`, `arg/3`, `=../2`, `copy_term/2`, `between/3`, `succ/2`). Anything
+else (cut, control constructs, meta-calls, database updates, I/O, all-solutions predicates) ends the resolution with a
+`SystemError` naming it. An error also ends the whole search. It can't be combined with an interceptor, and the FSM
+ignores it.
 
 ```kotlin
 val tracer = object : TransitionInterceptor {
