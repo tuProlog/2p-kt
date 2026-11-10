@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.core.toAtom
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
@@ -42,35 +42,37 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
                 Substitution.failed()
             }
 
-            first is Var -> {
-                ensuringArgumentIsList(1)
-                val chars = second as LogicList
-                val numberString =
-                    chars
-                        .toSequence()
-                        .map { (it as Atom).value[0] }
-                        .joinToString("")
-                        .trim()
-                Substitution.of(first, Numeric.of(numberString))
-            }
+            first is Var -> Substitution.of(first, parseNumber(text(second)))
             second is Var -> {
                 ensuringArgumentIsNumeric(0)
-                val number = (first).toString().toAtom().value
-                val chars = LogicList.of(number.map { Atom.of("" + it) })
-                Substitution.of(second, chars)
+                Substitution.of(second, LogicList.of(first.toString().map { Atom.of("" + it) }))
             }
             else -> {
                 ensuringArgumentIsNumeric(0)
-                ensuringArgumentIsList(1)
-                val chars =
-                    LogicList.of(
-                        (first)
-                            .toString()
-                            .toAtom()
-                            .value
-                            .map { Atom.of("" + it) },
-                    )
-                mgu(chars, second)
+                if (second.isList && second.castToList().isWellFormed && second.variables.none()) {
+                    mgu(first, parseNumber(text(second)))
+                } else {
+                    ensuringArgumentIsList(1)
+                    mgu(LogicList.of(first.toString().map { Atom.of("" + it) }), second)
+                }
             }
         }
+
+    private fun Solve.Request<ExecutionContext>.text(chars: Term): String {
+        ensuringArgumentIsList(1)
+        val list = chars.castToList()
+        val tail = list.last
+        when {
+            tail is Var -> throw InstantiationError.forArgument(context, signature, tail, 1)
+            !list.isWellFormed -> throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, list, 1)
+        }
+        return list.toSequence().joinToString("") {
+            when {
+                it is Var -> throw InstantiationError.forArgument(context, signature, it, 1)
+                it !is Atom || it.value.length != 1 ->
+                    throw TypeError.forArgumentList(context, signature, TypeError.Expected.CHARACTER, it, 1)
+                else -> it.value
+            }
+        }
+    }
 }
