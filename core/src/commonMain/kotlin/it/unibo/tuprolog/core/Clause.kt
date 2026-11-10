@@ -173,7 +173,7 @@ interface Clause : Struct {
         fun of(
             head: Struct? = null,
             vararg body: Term,
-        ): Clause = of(head, body.asIterable())
+        ): Clause = of(head, body.asList())
 
         /**
          * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Directive] otherwise.
