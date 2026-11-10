@@ -41,8 +41,7 @@ fun concurrentSubAtomContract() =
                 val expected =
                     fromSequence(
                         sequenceOf(
-                            query.yes("S" to atomOf("acada")),
-                            query.yes("L" to 5),
+                            query.yes("S" to atomOf("acada"), "L" to 5),
                         ),
                     )
 
@@ -59,8 +58,7 @@ fun concurrentSubAtomContract() =
                 val expected =
                     fromSequence(
                         sequenceOf(
-                            query.yes("S" to atomOf("an")),
-                            query.yes("T" to 1),
+                            query.yes("S" to atomOf("an"), "T" to 1),
                         ),
                     )
 

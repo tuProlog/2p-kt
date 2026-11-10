@@ -2,6 +2,8 @@ package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.SyntaxError
+import it.unibo.tuprolog.solve.exception.error.TypeError
 
 /** Conformance tests for the ISO `number_chars/2` built-in. */
 fun numberCharsContract(
@@ -73,5 +75,35 @@ fun numberCharsContract(
                 ),
             )
         }
+    }
+
+    case("number-chars/number-chars-syntax-error") {
+        number_chars("X", logicListOf("3", atomOf("_"))) yields {
+            listOf(it.halt(SyntaxError.of(DummyInstances.executionContext, "Cannot parse `3_` as a number")))
+        }
+    }
+
+    case("number-chars/number-chars-type-error-character") {
+        number_chars("X", logicListOf("4", 2)) yields {
+            listOf(
+                it.halt(
+                    TypeError.forArgumentList(
+                        DummyInstances.executionContext,
+                        Signature("number_chars", 2),
+                        TypeError.Expected.CHARACTER,
+                        intOf(2),
+                        index = 1,
+                    ),
+                ),
+            )
+        }
+    }
+
+    case("number-chars/number-chars-char-code") {
+        number_chars("X", logicListOf("0", "'", atomOf("A"))) yields { listOf(it.yes("X" to 65)) }
+    }
+
+    case("number-chars/number-chars-compares-values") {
+        number_chars(3.3, logicListOf("3", ".", "3", atomOf("E"), "+", "0")) yields { listOf(it.yes()) }
     }
 }

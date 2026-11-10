@@ -24,14 +24,61 @@ fun subAtomContract(
 
     case("sub-atom/sub-atom-sub-is-var3") {
         sub_atom("abracadabra", intOf(3), "L", intOf(3), "S") yields {
-            kotlin.collections.listOf(it.yes("S" to atomOf("acada")), it.yes("L" to 5))
+            kotlin.collections.listOf(it.yes("S" to atomOf("acada"), "L" to 5))
         }
     }
 
     case("sub-atom/sub-atom-double-var4") {
         sub_atom("banana", intOf(3), intOf(2), "T", "S") yields {
-            kotlin.collections.listOf(it.yes("S" to atomOf("an")), it.yes("T" to 1))
+            kotlin.collections.listOf(it.yes("S" to atomOf("an"), "T" to 1))
         }
+    }
+
+    case("sub-atom/sub-atom-after-is-var") {
+        sub_atom("abracadabra", intOf(0), intOf(5), "A", "S") yields {
+            kotlin.collections.listOf(it.yes("A" to 6, "S" to atomOf("abrac")))
+        }
+    }
+
+    case("sub-atom/sub-atom-before-is-var") {
+        sub_atom("abracadabra", "B", intOf(5), intOf(0), "S") yields {
+            kotlin.collections.listOf(it.yes("B" to 6, "S" to atomOf("dabra")))
+        }
+    }
+
+    case("sub-atom/sub-atom-every-occurrence") {
+        sub_atom("abracadabra", "B", intOf(2), "A", "ab") yields {
+            kotlin.collections.listOf(it.yes("B" to 0, "A" to 9), it.yes("B" to 7, "A" to 2))
+        }
+    }
+
+    case("sub-atom/sub-atom-fixed-length") {
+        sub_atom("charity", "B", intOf(3), "A", "S") yields {
+            kotlin.collections.listOf(
+                it.yes("B" to 0, "A" to 4, "S" to atomOf("cha")),
+                it.yes("B" to 1, "A" to 3, "S" to atomOf("har")),
+                it.yes("B" to 2, "A" to 2, "S" to atomOf("ari")),
+                it.yes("B" to 3, "A" to 1, "S" to atomOf("rit")),
+                it.yes("B" to 4, "A" to 0, "S" to atomOf("ity")),
+            )
+        }
+    }
+
+    case("sub-atom/sub-atom-all-unbound") {
+        sub_atom("ab", "B", "L", "A", "S") yields {
+            kotlin.collections.listOf(
+                it.yes("B" to 0, "L" to 0, "A" to 2, "S" to atomOf("")),
+                it.yes("B" to 0, "L" to 1, "A" to 1, "S" to atomOf("a")),
+                it.yes("B" to 0, "L" to 2, "A" to 0, "S" to atomOf("ab")),
+                it.yes("B" to 1, "L" to 0, "A" to 1, "S" to atomOf("")),
+                it.yes("B" to 1, "L" to 1, "A" to 0, "S" to atomOf("b")),
+                it.yes("B" to 2, "L" to 0, "A" to 0, "S" to atomOf("")),
+            )
+        }
+    }
+
+    case("sub-atom/sub-atom-out-of-range") {
+        sub_atom("ab", intOf(1), intOf(5), "A", "S") yields { kotlin.collections.listOf(it.no()) }
     }
 
     case("sub-atom/sub-atom-instantiation-error") {

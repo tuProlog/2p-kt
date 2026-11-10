@@ -2,7 +2,9 @@ package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
 
@@ -37,6 +39,9 @@ object FindAll : AbstractCollectingPrimitive("findall") {
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         ensuringArgumentIsCallable(1)
+        if (third !is Var && !(third.isList && (third.castToList().isWellFormed || third.castToList().last is Var))) {
+            throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, third, 2)
+        }
         val solutions = computeIntermediateSolutions(second.castToStruct())
         val mapped = solutions.map { first[it.substitution].freshCopy() }
         return sequenceOf(mgu(third, LogicList.of(mapped)))
