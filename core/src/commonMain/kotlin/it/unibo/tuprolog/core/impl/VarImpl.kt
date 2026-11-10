@@ -74,14 +74,8 @@ internal class VarImpl(
         useVarCompleteName: Boolean,
     ): Boolean = other.isVar && equalsToVar(other.castToVar(), useVarCompleteName)
 
-    // 0 means "not computed yet", as in AbstractStruct
-    private var cachedHashCode: Int = 0
-
     override val hashCodeCache: Int
-        get() {
-            if (cachedHashCode == 0) cachedHashCode = identifier.hashCode()
-            return cachedHashCode
-        }
+        get() = identifier.hashCode()
 
     override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = this !in unifier
 

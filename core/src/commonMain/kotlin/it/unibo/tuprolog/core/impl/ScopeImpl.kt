@@ -27,7 +27,12 @@ import it.unibo.tuprolog.core.List as LogicList
 
 internal class ScopeImpl(
     private val _variables: MutableMap<String, Var>,
+    private var threadSafe: Boolean = true,
 ) : Scope {
+    internal fun enableThreadSafety() {
+        threadSafe = true
+    }
+
     override fun contains(variable: Var): Boolean = _variables.containsKey(variable.name)
 
     override fun contains(variable: String): Boolean = _variables.containsKey(variable)
@@ -37,13 +42,9 @@ internal class ScopeImpl(
     override val variables: Map<String, Var>
         get() = _variables.toMap()
 
-    override fun varOf(name: String): Var =
-        synchronizedOnSelf {
-            if (!_variables.containsKey(name)) {
-                _variables[name] = Var.of(name)
-            }
-            _variables[name]!!
-        }
+    override fun varOf(name: String): Var = if (threadSafe) synchronizedOnSelf { lookup(name) } else lookup(name)
+
+    private fun lookup(name: String): Var = _variables.getOrPut(name) { Var.of(name) }
 
     override fun varOf(name: Char): Var = varOf(name.toString())
 

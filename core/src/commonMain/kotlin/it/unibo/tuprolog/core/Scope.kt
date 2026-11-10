@@ -391,6 +391,16 @@ interface Scope {
         @JsName("empty")
         fun empty(): Scope = ScopeImpl(mutableMapOf())
 
+        // Lazy copies can retain the scope: enable locking before the result leaves this call.
+        internal fun <R> withQuickScope(action: Scope.() -> R): R {
+            val scope = ScopeImpl(HashMap(), threadSafe = false)
+            return try {
+                scope.action()
+            } finally {
+                scope.enableThreadSafety()
+            }
+        }
+
         /** Creates a new [Scope], pre-populated with fresh variables named after [vars]. */
         @JvmStatic
         @JsName("of")
