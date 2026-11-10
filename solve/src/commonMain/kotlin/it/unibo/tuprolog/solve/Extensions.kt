@@ -8,9 +8,9 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmName
 import kotlin.time.Duration
 
-/** Extracts this [Struct] indicator and converts it to [Signature] */
+/** This [Struct]'s functor and arity, as a [Signature] (as its indicator would give, without building one). */
 @JsName("extractSignature")
-fun Struct.extractSignature(): Signature = Signature.fromIndicator(indicator)!!
+fun Struct.extractSignature(): Signature = Signature(functor, arity)
 
 /**
  * Solves the goal built by [scopedContext] within a fresh, empty [Scope] (useful to build the goal [Struct] using
