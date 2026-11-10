@@ -63,18 +63,27 @@ abstract class AbstractWorklistUnificator(
                 this@AbstractWorklistUnificator.handleComparison(step)
         }
 
-    private val contextHasCycles: Boolean by lazy { context.hasCycles() }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyContextHasCycles = lazy { context.hasCycles() }
+
+    private val contextHasCycles: Boolean
+        get() = lazyContextHasCycles.value
+
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyBaseContext =
+        lazy {
+            if (context.isFailed || context.size < 2) {
+                context
+            } else {
+                val bindings = Bindings(Substitution.empty())
+                for ((variable, term) in context) bindings[variable] = term
+                SubstitutionMaterializer(bindings).materialize()
+            }
+        }
 
     /** The [context], made idempotent once and for all, as the bindings every run starts from must be. */
-    private val baseContext: Substitution by lazy {
-        if (context.isFailed || context.size < 2) {
-            context
-        } else {
-            val bindings = Bindings(Substitution.empty())
-            for ((variable, term) in context) bindings[variable] = term
-            SubstitutionMaterializer(bindings).materialize()
-        }
-    }
+    private val baseContext: Substitution
+        get() = lazyBaseContext.value
 
     /**
      * Decides whether [first] and [second] are equal, when both are constants or both are (distinct instances of)
