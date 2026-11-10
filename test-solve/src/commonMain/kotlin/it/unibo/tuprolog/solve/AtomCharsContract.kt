@@ -74,4 +74,34 @@ fun atomCharsContract(
             )
         }
     }
+
+    case("atom-chars/atom-chars-element-is-var") {
+        atom_chars("A", logicListOf("a", "E", "c")) yields {
+            listOf(
+                it.halt(
+                    InstantiationError.forArgument(
+                        DummyInstances.executionContext,
+                        Signature("atom_chars", 2),
+                        varOf("E"),
+                        index = 1,
+                    ),
+                ),
+            )
+        }
+    }
+
+    case("atom-chars/atom-chars-partial-list") {
+        atom_chars("A", consOf("a", consOf("b", "L"))) yields {
+            listOf(
+                it.halt(
+                    InstantiationError.forArgument(
+                        DummyInstances.executionContext,
+                        Signature("atom_chars", 2),
+                        varOf("L"),
+                        index = 1,
+                    ),
+                ),
+            )
+        }
+    }
 }

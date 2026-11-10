@@ -86,4 +86,24 @@ fun findAllContract(
             )
         }
     }
+
+    case("find-all/result-is-not-list") {
+        findall("X", true, "a") yields {
+            listOf(
+                it.halt(
+                    TypeError.forArgument(
+                        DummyInstances.executionContext,
+                        Signature("findall", 3),
+                        TypeError.Expected.LIST,
+                        atomOf("a"),
+                        index = 2,
+                    ),
+                ),
+            )
+        }
+    }
+
+    case("find-all/result-is-partial-list") {
+        findall("X", true, consOf("Y", "T")) yields { listOf(it.yes("Y" to varOf("X"), "T" to emptyLogicList)) }
+    }
 }
