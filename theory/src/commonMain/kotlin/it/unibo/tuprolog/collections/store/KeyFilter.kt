@@ -43,11 +43,18 @@ internal class KeyFilter private constructor(
         /** The filter accepting every clause: callers can skip it. */
         val NONE: (Clause) -> Boolean = { true }
 
-        /** A new filter for one iteration over the candidates for [query], [indexed] or not. */
+        /**
+         * A new filter for one iteration over the candidates for [query], [indexed] or not. A lambda, not a bound
+         * reference to [accepts]: on JS, a callable reference is a costlier object, built at every lookup.
+         */
         fun of(
             unificator: Unificator,
             query: Clause,
             indexed: Boolean,
-        ): (Clause) -> Boolean = query.indexableHead()?.let { KeyFilter(unificator, it, !indexed)::accepts } ?: NONE
+        ): (Clause) -> Boolean {
+            val head = query.indexableHead() ?: return NONE
+            val filter = KeyFilter(unificator, head, !indexed)
+            return { filter.accepts(it) }
+        }
     }
 }
