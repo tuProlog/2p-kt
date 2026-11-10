@@ -54,9 +54,13 @@ sealed class Solve {
         override val chronometer: Chronometer
             get() = context.chronometer
 
+        // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+        private val lazyQuery = lazy { signature withArgs arguments }
+
         /** The current query [Struct] of this request */
         @JsName("query")
-        val query: Struct by lazy { signature withArgs arguments }
+        val query: Struct
+            get() = lazyQuery.value
 
         @JsName("unificator")
         val unificator: Unificator
