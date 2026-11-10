@@ -48,12 +48,12 @@ internal abstract class AbstractStruct(
 
     protected open fun checkGroundness(): Boolean = args.all { it.isGround }
 
-    override fun freshCopy(): Struct = freshCopy(Scope.empty())
+    override fun freshCopy(): Struct = Scope.withQuickScope { freshCopy(this) }
 
     override fun freshCopy(scope: Scope): Struct =
         when {
             isGround -> this
-            else -> scope.structOf(functor, argsSequence.map { it.freshCopy(scope) }).setTags(tags)
+            else -> scope.structOf(functor, args.map { it.freshCopy(scope) }).setTags(tags)
         }
 
     final override fun structurallyEquals(other: Term): Boolean =
