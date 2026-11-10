@@ -283,7 +283,8 @@ internal sealed class SubstitutionImpl : Substitution {
 
         /** Utility function to filter out identity mappings from a Map<Var, Term> */
         private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> =
-            filterNot { (`var`, term) ->
+            // presized for the default load factor (0.75): growing it from the default capacity showed up in profiles
+            filterNotTo(LinkedHashMap(size * 4 / 3 + 1)) { (`var`, term) ->
                 `var` == term
             }
     }
