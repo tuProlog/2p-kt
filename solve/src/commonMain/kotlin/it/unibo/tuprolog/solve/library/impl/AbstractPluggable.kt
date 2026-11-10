@@ -9,9 +9,14 @@ abstract class AbstractPluggable : Pluggable {
     override val documentation: Map<Signature, String>
         get() = defaultDocumentation(this)
 
-    private val rulesSignaturesCache: Set<Signature> by lazy {
-        rulesSignatures.toSet()
-    }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyRulesSignaturesCache =
+        lazy {
+            rulesSignatures.toSet()
+        }
+
+    private val rulesSignaturesCache: Set<Signature>
+        get() = lazyRulesSignaturesCache.value
 
     override fun hasRule(signature: Signature): Boolean = signature in rulesSignaturesCache
 }
