@@ -312,7 +312,8 @@ internal class PrologMachine(
     ): Solution? {
         val invocation = world.interception?.nextId() ?: 0
         intercept(goal, invocation, frame, rest)?.let { return it.orNull() }
-        if (!goal.isControlConstruct) world.counters?.countInference(frame.depth + 1)
+        // counters first: they're usually off, and telling a control construct compares the functor's string
+        world.counters?.let { if (!goal.isControlConstruct) it.countInference(frame.depth + 1) }
         val callee = Frame(goal, frame, frame.depth + 1, choices.size, bindings.mark, rest, invocation)
         val primitive = world.libraries.primitives[signature] ?: error("Inconsistent primitive lookup for $signature")
         return try {
@@ -355,7 +356,7 @@ internal class PrologMachine(
         callee: Frame,
         rest: Cont?,
     ): Solution? {
-        if (!callee.procedure.isControlConstruct) world.counters?.countAlternative()
+        world.counters?.let { if (!callee.procedure.isControlConstruct) it.countAlternative() }
         if (response.sideEffects.isNotEmpty()) {
             world = world.apply(response.sideEffects)
             onWorld(world)
@@ -383,7 +384,7 @@ internal class PrologMachine(
             return
         }
         choices.add(choice)
-        if (!choice.frame.procedure.isControlConstruct) world.counters?.countChoicePoint(open = choices.size)
+        world.counters?.let { if (!choice.frame.procedure.isControlConstruct) it.countChoicePoint(open = choices.size) }
     }
 
     private fun callRules(
@@ -393,7 +394,7 @@ internal class PrologMachine(
     ): Solution? {
         val invocation = world.interception?.nextId() ?: 0
         intercept(goal, invocation, frame, rest)?.let { return it.orNull() }
-        if (!goal.isControlConstruct) world.counters?.countInference(frame.depth + 1)
+        world.counters?.let { if (!goal.isControlConstruct) it.countInference(frame.depth + 1) }
         // an incremental unificator unifies the goal as is, under the bindings; any other one needs it resolved
         val incremental = unificator.incremental != null
         val called = if (incremental) goal else bound(goal)
@@ -542,7 +543,7 @@ internal class PrologMachine(
         callee: Frame,
         rest: Cont?,
     ): Solution? {
-        if (!callee.procedure.isControlConstruct) world.counters?.countAlternative()
+        world.counters?.let { if (!callee.procedure.isControlConstruct) it.countAlternative() }
         val rule = if (alternative is MatchedRule) alternative.rule else alternative
         val unified =
             if (alternative is MatchedRule) {
