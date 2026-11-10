@@ -1,5 +1,8 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.solve.exception.error.InstantiationError
+import it.unibo.tuprolog.solve.exception.error.TypeError
+
 /** Conformance tests for the ISO `atom_concat/3` built-in. */
 fun atomConcatContract(
     solverFactory: SolverFactory,
@@ -38,6 +41,48 @@ fun atomConcatContract(
     case("atom-concat/atom-concat-first-is-var") {
         atom_concat("X", "query", "testquery") yields {
             kotlin.collections.listOf(it.yes("X" to atomOf("test")))
+        }
+    }
+
+    case("atom-concat/atom-concat-enumerates-splits") {
+        atom_concat("X", "Y", "abc") yields {
+            kotlin.collections.listOf(
+                it.yes("X" to atomOf(""), "Y" to atomOf("abc")),
+                it.yes("X" to atomOf("a"), "Y" to atomOf("bc")),
+                it.yes("X" to atomOf("ab"), "Y" to atomOf("c")),
+                it.yes("X" to atomOf("abc"), "Y" to atomOf("")),
+            )
+        }
+    }
+
+    case("atom-concat/atom-concat-whole-is-not-atom") {
+        atom_concat("X", "Y", structOf("f", atomOf("a"))) yields {
+            kotlin.collections.listOf(
+                it.halt(
+                    TypeError.forArgument(
+                        DummyInstances.executionContext,
+                        Signature("atom_concat", 3),
+                        TypeError.Expected.ATOM,
+                        structOf("f", atomOf("a")),
+                        index = 2,
+                    ),
+                ),
+            )
+        }
+    }
+
+    case("atom-concat/atom-concat-instantiation-error") {
+        atom_concat("X", "b", "Y") yields {
+            kotlin.collections.listOf(
+                it.halt(
+                    InstantiationError.forArgument(
+                        DummyInstances.executionContext,
+                        Signature("atom_concat", 3),
+                        varOf("X"),
+                        index = 0,
+                    ),
+                ),
+            )
         }
     }
 }
