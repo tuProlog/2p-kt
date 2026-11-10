@@ -35,9 +35,13 @@ sealed class Compute {
             }
         }
 
+        // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+        private val lazyQuery = lazy { signature withArgs arguments }
+
         /** The current expression [Struct] of this request */
         @JsName("query")
-        val query: Struct by lazy { signature withArgs arguments }
+        val query: Struct
+            get() = lazyQuery.value
 
         /** Creates a new [Response] to this Request */
         @JsName("replyWith")
