@@ -8,23 +8,26 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.QuinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.core.List as LogicList
 
 object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom") {
     override val help: String =
         """
         `sub_atom(+Atom, ?Before, ?Length, ?After, ?SubAtom)`
         
-        Relates `Atom` with a contiguous `SubAtom` and the number of characters before, within, and after it. This is a partial implementation: it computes a single slice when enough position arguments are bound, returns each computed binding as a separate solution, does not enumerate sub-atoms on backtracking, and, when `SubAtom` is bound, only considers its first occurrence.
+        Relates `Atom` with a contiguous `SubAtom` and the number of characters before, within, and after it. On backtracking, it enumerates every slice consistent with the bound arguments, by increasing `Before` and then `Length`.
 
         **Examples**
 
         ```prolog
-        % each computed binding is reported as a separate solution
         ?- sub_atom(hello, 1, 3, A, S).
-        S = ell ; A = 1.
+        A = 1, S = ell.
 
-        ?- sub_atom(hello, B, L, A, ll).
-        B = 2 ; A = 1 ; L = 2.
+        ?- sub_atom(abracadabra, B, 2, A, ab).
+        B = 0, A = 9 ; B = 7, A = 2.
+
+        ?- sub_atom(ab, B, L, A, S).
+        B = 0, L = 0, A = 2, S = '' ; B = 0, L = 1, A = 1, S = a.
 
         ?- sub_atom(X, 0, 1, _, S).
         throws error(instantiation_error, _).
@@ -32,120 +35,44 @@ object SubAtom : QuinaryRelation.WithoutSideEffects<ExecutionContext>("sub_atom"
         """.trimIndent()
 
     override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
-        // string
         first: Term,
-        // before
         second: Term,
-        // length
         third: Term,
-        // after
         fourth: Term,
-        // sub
         fifth: Term,
-    ): Sequence<Substitution> =
-        if (fifth is Var) {
-            ensuringArgumentIsInstantiated(0)
-            ensuringArgumentIsAtom(0)
-            if (second is Var) {
-                if (fourth is Var) {
-                    sequence<Substitution> {
-                        yield(mgu(second, Integer.ZERO))
-                        yield(mgu(third, Integer.ZERO))
-                        yield(mgu(fourth, Integer.of((first as Atom).value.length)))
-                        yield(mgu(fifth, Atom.of("")))
+    ): Sequence<Substitution> {
+        ensuringArgumentIsInstantiated(0)
+        ensuringArgumentIsAtom(0)
+        if (second !is Var) ensuringArgumentIsInteger(1)
+        if (third !is Var) ensuringArgumentIsInteger(2)
+        if (fourth !is Var) ensuringArgumentIsInteger(3)
+        if (fifth !is Var) ensuringArgumentIsAtom(4)
+        val whole = (first as Atom).value
+        val n = whole.length
+        val sub = (fifth as? Atom)?.value
+        val befores = (second as? Integer)?.intValue?.toInt()?.let { sequenceOf(it) } ?: (0..n).asSequence()
+        return befores
+            .filter { it in 0..n }
+            .flatMap { before ->
+                val lengths =
+                    when {
+                        sub != null -> sequenceOf(sub.length)
+                        third is Integer -> sequenceOf(third.intValue.toInt())
+                        fourth is Integer -> sequenceOf(n - before - fourth.intValue.toInt())
+                        else -> (0..n - before).asSequence()
                     }
-                } else {
-                    ensuringArgumentIsInteger(3)
-                    sequence<Substitution> {
-                        if (third is Var) {
-                            val result = (first as Atom).value.substring(0, (fourth as Integer).intValue.toInt())
-                            yield(mgu(fifth, Atom.of(result)))
-                            yield(mgu(second, Integer.ZERO))
-                        } else {
-                            ensuringArgumentIsInteger(2)
-                            val before = (fourth as Integer).intValue.toInt() + (third as Integer).intValue.toInt()
-                            val result = (first as Atom).value.substring(before, fourth.intValue.toInt())
-                            yield(mgu(fifth, Atom.of(result)))
-                            yield(mgu(second, Integer.of(before)))
-                        }
-                    }
-                }
-            } else {
-                ensuringArgumentIsInteger(1)
-                if (fourth.isVar) {
-                    sequence<Substitution> {
-                        if (third is Var) {
-                            val result = (first as Atom).value.substring((second as Integer).intValue.toInt())
-                            yield(mgu(fifth, Atom.of(result)))
-                            yield(mgu(Integer.of(result.length), third))
-                            yield(mgu(fourth, Integer.of(first.value.length - second.intValue.toInt())))
-                        } else {
-                            ensuringArgumentIsInteger(2)
-                            val before = (second as Integer).intValue.toInt()
-                            val result =
-                                (first as Atom).value.substring(before, before + (third as Integer).intValue.toInt())
-                            yield(mgu(fifth, Atom.of(result)))
-                            yield(mgu(fourth, Integer.of(first.value.length - result.length - before)))
-                        }
-                    }
-                } else {
-                    ensuringArgumentIsInteger(3)
-                    ensuringArgumentIsInteger(1)
-                    sequence<Substitution> {
-                        val subEnd = (first as Atom).value.length - (fourth as Integer).intValue.toInt()
-                        val result = first.value.substring((second as Integer).intValue.toInt(), subEnd)
-                        yield(mgu(fifth, Atom.of(result)))
-                        if (third is Var) {
-                            yield(mgu(Integer.of(result.length), third))
-                        }
-                    }
-                }
-            }
-        } else {
-            ensuringArgumentIsAtom(0)
-            ensuringArgumentIsAtom(4)
-            if (second.isVar) {
-                if (fourth.isVar) {
-                    sequence {
-                        val result = (fifth as Atom).value
-                        val before = (first as Atom).value.substringBefore(result, "").length
-                        val after = first.value.substringAfter(result, "").length
-                        yield(mgu(second, Integer.of(before)))
-                        yield(mgu(fourth, Integer.of(after)))
-                        if (third is Var) {
-                            yield(mgu(third, Integer.of(result.length)))
-                        }
-                    }
-                } else {
-                    sequence {
-                        val result = (fifth as Atom).value
-                        val before = (first as Atom).value.substringBefore(result, "").length
-                        yield(mgu(second, Integer.of(before)))
-                        if (third is Var) {
-                            yield(mgu(third, Integer.of(result.length)))
-                        }
-                    }
-                }
-            } else {
-                ensuringArgumentIsInteger(1)
-                if (fourth.isVar) {
-                    sequence<Substitution> {
-                        val result = (fifth as Atom).value
-                        val after = (first as Atom).value.substringAfter(result, "").length
-                        yield(mgu(fourth, Integer.of(after)))
-                        if (third is Var) {
-                            yield(mgu(third, Integer.of(result.length)))
-                        }
-                    }
-                } else {
-                    ensuringArgumentIsInteger(3)
-                    sequence<Substitution> {
-                        val result = (fifth as Atom).value
-                        if (third is Var) {
-                            yield(mgu(third, Integer.of(result.length)))
-                        }
-                    }
-                }
-            }
-        }
+                lengths.filter { it in 0..n - before }.map { length -> before to length }
+            }.filter { (before, length) -> sub == null || whole.startsWith(sub, before) }
+            .map { (before, length) ->
+                mgu(
+                    LogicList.of(second, third, fourth, fifth),
+                    LogicList.of(
+                        Integer.of(before),
+                        Integer.of(length),
+                        Integer.of(n - before - length),
+                        Atom.of(whole.substring(before, before + length)),
+                    ),
+                )
+            }.filter { it.isSuccess }
+    }
 }
