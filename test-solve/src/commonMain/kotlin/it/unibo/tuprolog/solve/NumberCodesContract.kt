@@ -71,6 +71,7 @@ fun numberCodesContract(
     }
 
     case("number-codes/number-codes-compares-values") {
-        number_codes(33.0, logicListOf(51, 46, 51, 69, 43, 48, 49)) yields { listOf(it.yes()) }
+        // not 33.0: on Kotlin/JS, a whole Double literal becomes an integer term
+        number_codes(3.3, logicListOf(48, 46, 51, 51, 69, 43, 48, 49)) yields { listOf(it.yes()) }
     }
 }
