@@ -77,7 +77,7 @@ internal sealed class SubstitutionImpl : Substitution {
             fun of(
                 mappings: Map<Var, Term>,
                 tags: Map<String, Any> = emptyMap(),
-            ) = UnifierImpl(mappings.trimVariableChains().withoutIdentityMappings(), tags)
+            ) = UnifierImpl(mappings.normalized(), tags)
         }
 
         // NOTE: no check for contradictions is made upon object construction
@@ -257,35 +257,32 @@ internal sealed class SubstitutionImpl : Substitution {
                     }
             }
 
-        /** Utility function to trim all Map variable chains, i.e. all var keys will be bound to the last possible term */
-        private fun Map<Var, Term>.trimVariableChains(): Map<Var, Term> {
-            /** Utility function to trim a single variable chain against a provided map, returning the last term */
-            fun Var.trimVariableChain(mappings: Map<Var, Term>): Term {
-                val alreadyUsedKeys = mutableSetOf(this) // to prevent infinite loop
-                var current: Term = mappings.getValue(this)
-                while (current.isVar && current in mappings && current !in alreadyUsedKeys) {
-                    current.castToVar().let {
-                        alreadyUsedKeys += it
-                        current = mappings.getValue(it)
-                    }
+        /** Utility function to trim a single variable chain against a provided map, returning the last term */
+        private fun Var.trimVariableChain(mappings: Map<Var, Term>): Term {
+            val alreadyUsedKeys = mutableSetOf(this) // to prevent infinite loop
+            var current: Term = mappings.getValue(this)
+            while (current.isVar && current in mappings && current !in alreadyUsedKeys) {
+                current.castToVar().let {
+                    alreadyUsedKeys += it
+                    current = mappings.getValue(it)
                 }
-                return current
             }
-
-            return when {
-                size < 2 -> this
-                else ->
-                    this.mapValues { (varKey, term) ->
-                        term.takeIf { !it.isVar } ?: varKey.trimVariableChain(this)
-                    }
-            }
+            return current
         }
 
-        /** Utility function to filter out identity mappings from a Map<Var, Term> */
-        private fun Map<Var, Term>.withoutIdentityMappings(): Map<Var, Term> =
+        /**
+         * A copy of these mappings with all variable chains trimmed (every var key bound to the last possible term) and
+         * identity mappings left out, built in one pass: an empty map is not copied at all.
+         */
+        private fun Map<Var, Term>.normalized(): Map<Var, Term> {
+            if (isEmpty()) return emptyMap()
             // presized for the default load factor (0.75): growing it from the default capacity showed up in profiles
-            filterNotTo(LinkedHashMap(size * 4 / 3 + 1)) { (`var`, term) ->
-                `var` == term
+            val result = LinkedHashMap<Var, Term>(size * 4 / 3 + 1)
+            for ((variable, term) in this) {
+                val value = if (size < 2 || !term.isVar) term else variable.trimVariableChain(this)
+                if (variable != value) result[variable] = value
             }
+            return result
+        }
     }
 }
