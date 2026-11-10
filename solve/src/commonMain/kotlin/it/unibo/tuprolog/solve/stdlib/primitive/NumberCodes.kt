@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -37,38 +36,39 @@ object NumberCodes : BinaryRelation.Functional<ExecutionContext>("number_codes")
         first: Term,
         second: Term,
     ): Substitution =
-        when (first) {
-            is Var -> {
+        when {
+            first is Var -> {
                 ensuringArgumentIsInstantiated(1)
-                ensuringArgumentIsList(1)
-                val codeList = second as LogicList
-                val chars: List<Char> =
-                    codeList.toList().map {
-                        when (it) {
-                            is Integer -> {
-                                ensuringTermIsCharCode(it)
-                                it.intValue.toChar()
-                            }
-                            is Var -> {
-                                throw InstantiationError.forArgument(context, signature, it, 1)
-                            }
-                            else -> {
-                                throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, it, 1)
-                            }
-                        }
-                    }
-                val numberString = chars.joinToString(separator = "")
-                Substitution.of(first, Numeric.of(numberString))
+                Substitution.of(first, parseNumber(text(second)))
             }
             else -> {
-                ensuringArgumentIsInstantiated(0)
                 ensuringArgumentIsNumeric(0)
-                if (second !is Var) {
-                    ensuringArgumentIsList(1)
+                if (second.isList && second.castToList().isWellFormed && second.variables.none()) {
+                    mgu(first, parseNumber(text(second)))
+                } else {
+                    if (second !is Var) ensuringArgumentIsList(1)
+                    mgu(second, LogicList.of(first.toString().map { Integer.of(it.code) }))
                 }
-                val numberString = first.toString()
-                val result = LogicList.of(numberString.map { Integer.of(it.code) })
-                mgu(second, result)
             }
         }
+
+    private fun Solve.Request<ExecutionContext>.text(codes: Term): String {
+        ensuringArgumentIsList(1)
+        val list = codes.castToList()
+        val tail = list.last
+        when {
+            tail is Var -> throw InstantiationError.forArgument(context, signature, tail, 1)
+            !list.isWellFormed -> throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, list, 1)
+        }
+        return list.toSequence().joinToString("") {
+            when (it) {
+                is Integer -> {
+                    ensuringTermIsCharCode(it)
+                    it.intValue.toChar().toString()
+                }
+                is Var -> throw InstantiationError.forArgument(context, signature, it, 1)
+                else -> throw TypeError.forArgument(context, signature, TypeError.Expected.INTEGER, it, 1)
+            }
+        }
+    }
 }

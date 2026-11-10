@@ -7,17 +7,18 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
+import it.unibo.tuprolog.core.List as LogicList
 
 /**
  * atom_concat(ab, cd, abcd).
  */
 
-object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") {
+object AtomConcat : TernaryRelation.WithoutSideEffects<ExecutionContext>("atom_concat") {
     override val help: String =
         """
         `atom_concat(?Left, ?Right, ?Whole)`
         
-        Relates two atoms with their concatenation. The predicate is deterministic and requires at least two of the three arguments to be instantiated; the possible splits of `Whole` are not enumerated.
+        Relates two atoms with their concatenation. When `Whole` is bound, it enumerates its splits on backtracking; otherwise both `Left` and `Right` must be bound.
 
         **Examples**
 
@@ -28,12 +29,35 @@ object AtomConcat : TernaryRelation.Functional<ExecutionContext>("atom_concat") 
         ?- atom_concat(X, def, abcdef).
         X = abc.
 
-        ?- atom_concat(X, Y, abc).
+        ?- atom_concat(X, Y, ab).
+        X = '', Y = ab ; X = a, Y = b ; X = ab, Y = ''.
+
+        ?- atom_concat(X, b, Y).
         throws error(instantiation_error, _).
         ```
         """.trimIndent()
 
-    override fun Solve.Request<ExecutionContext>.computeOneSubstitution(
+    override fun Solve.Request<ExecutionContext>.computeAllSubstitutions(
+        first: Term,
+        second: Term,
+        third: Term,
+    ): Sequence<Substitution> =
+        if (first is Var && second is Var && third !is Var) {
+            ensuringArgumentIsAtom(2)
+            val whole = (third as Atom).value
+            (0..whole.length)
+                .asSequence()
+                .map {
+                    mgu(
+                        LogicList.of(first, second),
+                        LogicList.of(Atom.of(whole.substring(0, it)), Atom.of(whole.substring(it))),
+                    )
+                }.filter { it.isSuccess }
+        } else {
+            sequenceOf(computeOneSubstitution(first, second, third))
+        }
+
+    private fun Solve.Request<ExecutionContext>.computeOneSubstitution(
         first: Term,
         second: Term,
         third: Term,
