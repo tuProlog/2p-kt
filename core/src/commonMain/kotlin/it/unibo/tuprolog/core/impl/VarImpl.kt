@@ -50,14 +50,21 @@ internal class VarImpl(
         return equalsByCompleteName(otherVar)
     }
 
+    // the same as comparing complete names (`${name}_$identifier`, whose last `_` precedes the identifier), without
+    // building them: VarImpl is the only Var
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun equalsByCompleteName(other: Var) = completeName == other.completeName
+    private inline fun equalsByCompleteName(other: Var) =
+        if (other is VarImpl) {
+            identifier == other.identifier && name == other.name
+        } else {
+            completeName == other.completeName
+        }
 
     private fun equalsToVar(
         other: Var,
         useVarCompleteName: Boolean,
     ) = if (useVarCompleteName) {
-        completeName == other.completeName
+        equalsByCompleteName(other)
     } else {
         name == other.name
     }
@@ -67,14 +74,8 @@ internal class VarImpl(
         useVarCompleteName: Boolean,
     ): Boolean = other.isVar && equalsToVar(other.castToVar(), useVarCompleteName)
 
-    // 0 means "not computed yet", as in AbstractStruct
-    private var cachedHashCode: Int = 0
-
     override val hashCodeCache: Int
-        get() {
-            if (cachedHashCode == 0) cachedHashCode = completeName.hashCode()
-            return cachedHashCode
-        }
+        get() = identifier.hashCode()
 
     override fun isUnifierSkippable(unifier: Substitution.Unifier): Boolean = this !in unifier
 
