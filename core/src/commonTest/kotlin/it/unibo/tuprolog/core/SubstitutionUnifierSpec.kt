@@ -55,6 +55,28 @@ class SubstitutionUnifierSpec :
             Substitution.unifier(mapOf(aVar to aVar)) shouldBe Substitution.unifier(emptyMap())
         }
 
+        test("unifier-constructor-of-empty-map-returns-empty-unifier") {
+            val mappings = mutableMapOf<Var, Term>()
+            val unifier = Substitution.unifier(mappings)
+            mappings[aVar] = xAtom
+            unifier.isEmpty().shouldBeTrue()
+            unifier shouldBe Substitution.empty()
+        }
+
+        withTests(
+            nameFn = { "unifier-constructor-copies-mappings/${it.first}" },
+            listOf(
+                "one-mapping" to mapOf<Var, Term>(aVar to xAtom),
+                "two-mappings" to mapOf(aVar to xAtom, bVar to aVar),
+            ),
+        ) { (_, original) ->
+            val mappings = original.toMutableMap()
+            val unifier = Substitution.unifier(mappings)
+            val expected = Substitution.unifier(original.toMap())
+            mappings.clear()
+            unifier shouldBe expected
+        }
+
         test("unifier-constructor-returns-empty-unifier-if-circular-identity-mappings-detected") {
             Substitution.unifier(mapOf(aVar to bVar, bVar to aVar)) shouldBe Substitution.unifier(emptyMap())
         }
