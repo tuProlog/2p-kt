@@ -58,29 +58,39 @@ internal class RuntimeImpl(
     override val clauses: List<Clause>
         get() = libraries.flatMap { it.clauses }
 
-    override val primitives: Map<Signature, Primitive> by lazy {
-        libraries
-            .flatMap { lib ->
-                lib.primitives.entries.asSequence().flatMap {
-                    sequenceOf(
-                        it.toPair(),
-                        it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
-                    )
-                }
-            }.toMap()
-    }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyPrimitives =
+        lazy {
+            libraries
+                .flatMap { lib ->
+                    lib.primitives.entries.asSequence().flatMap {
+                        sequenceOf(
+                            it.toPair(),
+                            it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
+                        )
+                    }
+                }.toMap()
+        }
 
-    override val functions: Map<Signature, LogicFunction> by lazy {
-        libraries
-            .flatMap { lib ->
-                lib.functions.entries.asSequence().flatMap {
-                    sequenceOf(
-                        it.toPair(),
-                        it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
-                    )
-                }
-            }.toMap()
-    }
+    override val primitives: Map<Signature, Primitive>
+        get() = lazyPrimitives.value
+
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyFunctions =
+        lazy {
+            libraries
+                .flatMap { lib ->
+                    lib.functions.entries.asSequence().flatMap {
+                        sequenceOf(
+                            it.toPair(),
+                            it.key.copy(name = lib.alias + Library.ALIAS_SEPARATOR + it.key.name) to it.value,
+                        )
+                    }
+                }.toMap()
+        }
+
+    override val functions: Map<Signature, LogicFunction>
+        get() = lazyFunctions.value
 
     override fun plus(other: Library): Runtime =
         aliases
