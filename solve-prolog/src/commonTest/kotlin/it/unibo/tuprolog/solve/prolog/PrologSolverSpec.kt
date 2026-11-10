@@ -53,6 +53,8 @@ import it.unibo.tuprolog.solve.exception.error.EvaluationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.failContract
 import it.unibo.tuprolog.solve.findAllContract
+import it.unibo.tuprolog.solve.flags.FlagStore
+import it.unibo.tuprolog.solve.flags.RealPrecisionMode
 import it.unibo.tuprolog.solve.flagsContract
 import it.unibo.tuprolog.solve.floatContract
 import it.unibo.tuprolog.solve.functorContract
@@ -213,6 +215,22 @@ internal fun prologSolverContracts(factory: SolverFactory) =
                 (halt.exception.shouldBeInstanceOf<EvaluationError>().errorType) shouldBe
                     case.type
             }
+        }
+
+        // sqrt is always rounded to real_precision_digits, whatever real_precision_mode is: an exact attempt costs a whole
+        // root, and an exception when the root is irrational (gciatto/kt-math#553)
+        withTests(
+            nameFn = { "arithmetic/sqrt-is-rounded/${it.first.value}/${it.second}" },
+            listOf(RealPrecisionMode.UNLIMITED, RealPrecisionMode.UNLIMITED_WITH_FALLBACK, RealPrecisionMode.LIMITED)
+                .flatMap { mode -> listOf(mode to "2", mode to "2.25") },
+        ) { (mode, radicand) ->
+            val solution =
+                factory
+                    .solverWithDefaultBuiltins(flags = FlagStore.DEFAULT.set(RealPrecisionMode.name, mode))
+                    .solveOnce(Struct.of("is", Var.of("X"), Struct.of("sqrt", Real.of(radicand))))
+                    .shouldBeInstanceOf<Solution.Yes>()
+            solution.substitution.values.single() shouldBe
+                Real.of(if (radicand == "2") "1.414213562373095" else "1.5")
         }
 
         test("arithmetic/power-to-negative-integer-is-fractional") {
