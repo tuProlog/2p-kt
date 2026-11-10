@@ -191,6 +191,12 @@ internal class Bindings : BindingStore {
         root: Var,
         resolved: HashMap<Var, Term>,
     ) {
+        // the common case, a variable bound to a variable or a ground term, needs no stack
+        val direct = deref(root)
+        if (direct is Var || direct.isGround) {
+            resolved[root] = direct
+            return
+        }
         val stack = ArrayList<Var>()
         val inProgress = HashSet<Var>()
         stack.add(root)
