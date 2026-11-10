@@ -97,7 +97,7 @@ interface Rule : Clause {
         fun of(
             head: Struct,
             vararg body: Term,
-        ): Rule = of(head, body.asIterable())
+        ): Rule = of(head, body.asList())
 
         /** @see of */
         @JvmStatic
