@@ -1,3 +1,140 @@
+## [4.0.0](https://github.com/tuProlog/2p-kt/compare/3.0.8...4.0.0) (2026-11-10)
+
+### ⚠ BREAKING CHANGES
+
+* **solve:** track_variables is no longer among the default flags, so
+current_prolog_flag(track_variables, V) fails on a fresh solver until it is set,
+and Kotlin code referencing TrackVariables gets a deprecation warning.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01X2xs6HqKeYraYVQEzZevce
+* **solve:** solve returns a SolutionStream: cancel and close a resolution (#1010) (#1095)
+* **solve-prolog:** the machine is the only engine; delete the FSM (#1010) (#1094)
+* **solve:** on the stateful engine, custom primitives that don't declare
+their alternatives are pulled on demand, so queries ending in them may end
+with a further `no`.
+* **solve:** `MutableSolutionIterator` and `HijackableSolutionIterator` are
+removed; use a `TransitionInterceptor`.
+* **solve:** `Solve.Response(...)` and `Compute.Response(...)` require a context.
+* **theory:** MutableTheory lookups and iterations follow the logical update view. Indexed theories honour the
+unificator's notion of equality: with Unificator.naive, f(1) now also retrieves f(1.0).
+* **theory:** ReteTree, RetrieveResult and the previous ClauseCollection/ClauseQueue/ClauseMultiSet API are
+replaced by the new collections; Theory.listedOf, Theory.emptyListed, MutableTheory.listedOf,
+MutableTheory.emptyListed and ListedTheoryFactory are removed (use the indexed equivalents).
+* **solve:** X is 1/3 now gives 16 digits instead of 9; transcendental functions give BigDecimal results rather
+than Double ones (e.g. log(e) of the double nearest e is 0.9999999999999999); exp(1000) and 10.0 ** 400.0 no longer
+overflow; MathFunction.realOf is replaced by MathFunction.computeReal.
+* **unify:** strict() and naive() no longer return AbstractUnificator
+subclasses; merge results are idempotent also without occurs-check (e.g.
+merging {Y -> a} and {X -> f(Y)} gives {Y -> a, X -> f(a)}, not
+{Y -> a, X -> f(Y)}); unifying cyclic terms without occurs-check terminates;
+the entries of a returned substitution may be ordered differently.
+
+merge only reports to handleComparison the pairs of values a variable is
+bound to by both substitutions, oriented as the substitutions are: bindings
+of the second substitution for variables unbound by the first are added as
+they are, so that a solver merging the unifier of a goal and a clause head
+keeps goal-side terms on the left.
+
+The tags-preservation contract runs every scenario against both engines:
+the worklist engine shows compound terms to handleComparison before
+decomposing them, so their tags become observable too.
+
+Docs embed Unificator.kt through named snippets instead of line ranges.
+* **solve:** Time.kt (TimeInstant, TimeDuration, currentTimeInstant) is gone; timeouts are
+kotlin.time.Duration everywhere (SolveOptions.timeout, MAX_TIMEOUT = Duration.INFINITE, the
+Solver/ProblogSolver timeout overloads, TimeOutException.exceededDuration). Durable exposes
+the resolution's chronometer instead of startTime/endTime; Solve.Request and Compute.Request
+lost their timing constructor parameters; Solve.Request.solve takes a Duration limit.
+
+- SolveOptions.chronometerFactory (null = ChronometerFactory.default) creates one chronometer
+  per resolution; options stay immutable and shareable.
+- Both solvers leap the chronometer at each state transition, force a reading after each
+  primitive and before publishing a solution, and share it across contexts, so backtracking
+  never refunds time. :solve-prolog restarts it when asked for the next solution (each
+  solution keeps getting the full budget, as before).
+- Nested resolutions (findall/3 & co.) run on a child scope, never outliving the parent
+  deadline; their timeouts surface as the parent's.
+- sleep/1 sleeps on the chronometer's timeline, up to the deadline, instead of busy-waiting.
+- Timeout tests run on simulated time; new scenarios cover strict boundaries, zero budgets,
+  catch/3, backtracking, nesting and lazy consumption.
+
+### Features
+
+* **gui:** capture and persist query submission timestamps ([2686e88](https://github.com/tuProlog/2p-kt/commit/2686e886892dbb79b7cea250e2501763f961ed96))
+* **gui:** share solution labels and delete individual history entries ([f9bc597](https://github.com/tuProlog/2p-kt/commit/f9bc5976517a2768cf92db9353b49d8961921bf4))
+* **ide-swing:** add solution context menus and styled outcome labels ([e5d5aac](https://github.com/tuProlog/2p-kt/commit/e5d5aac0157f184db00231dd4ad46e8a13c6c1a5))
+* **ide-swing:** prefix query timestamps and solution durations ([44b1bf1](https://github.com/tuProlog/2p-kt/commit/44b1bf1448ae894ca79f6afc50877a3349241cd7))
+* **ide-web:** add styled solution trees and contextual actions ([490a724](https://github.com/tuProlog/2p-kt/commit/490a7249ab424fd7405d77bbae3e2f9d5804faeb))
+* **repl:** show timestamped queries and styled timed solutions ([5dde1e7](https://github.com/tuProlog/2p-kt/commit/5dde1e7ff3b4cc0a8df555f092102a9c738d7448))
+* **solve-prolog:** stateful resolution machine behind an internal factory ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1090](https://github.com/tuProlog/2p-kt/issues/1090)) ([0fb9598](https://github.com/tuProlog/2p-kt/commit/0fb959832e87d3ba8fbe33cabcc205365d651d64))
+* **solve-prolog:** the machine is the only engine; delete the FSM ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1094](https://github.com/tuProlog/2p-kt/issues/1094)) ([7cd5bfa](https://github.com/tuProlog/2p-kt/commit/7cd5bfaf881a5b31402f38a28b4cfd299fbb5587))
+* **solve:** Decision.Retry and BranchScheduler; frontier mode on the machine ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1093](https://github.com/tuProlog/2p-kt/issues/1093)) ([03c85c2](https://github.com/tuProlog/2p-kt/commit/03c85c23b16b0c4d4b619392103a1774936ae8d8))
+* **solve:** kt-math 2.1.2, ISO mod, and flags for real arithmetic precision ([#1070](https://github.com/tuProlog/2p-kt/issues/1070)) ([2216383](https://github.com/tuProlog/2p-kt/commit/2216383535e4660f8274070d7781afd4c8089af6))
+* **solve:** pluggable chronometers for resolution timing ([#1012](https://github.com/tuProlog/2p-kt/issues/1012)) ([#1064](https://github.com/tuProlog/2p-kt/issues/1064)) ([8437d69](https://github.com/tuProlog/2p-kt/commit/8437d69a3bc305dcc58fd203dc4298860e2affa0))
+* **solve:** Primitive.alternatives; the machine pulls primitives on demand ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1092](https://github.com/tuProlog/2p-kt/issues/1092)) ([1b03776](https://github.com/tuProlog/2p-kt/commit/1b037762da872cca2c0a40e006312bb932d50bc9))
+* **solve:** resolution timing and logical counters for benchmarking ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1086](https://github.com/tuProlog/2p-kt/issues/1086)) ([3e3ee9e](https://github.com/tuProlog/2p-kt/commit/3e3ee9e5349fe2a8e4e4705f4c8616aa544c24d2)), closes [#1073](https://github.com/tuProlog/2p-kt/issues/1073)
+* **solve:** responses carry their context; primitives get a read-only context view ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1088](https://github.com/tuProlog/2p-kt/issues/1088)) ([6ebb580](https://github.com/tuProlog/2p-kt/commit/6ebb5806c5d1a2d0b17820f9035cfe6b661a35b1))
+* **solve:** solve returns a SolutionStream: cancel and close a resolution ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1095](https://github.com/tuProlog/2p-kt/issues/1095)) ([6c17cb7](https://github.com/tuProlog/2p-kt/commit/6c17cb7b16697523df7b7a389d24ffa7be822a8b))
+* **solve:** tag each timed solution with its time and print it in the solution formatter ([3f4cef7](https://github.com/tuProlog/2p-kt/commit/3f4cef770ff271833532497056ec4f85654e8415))
+* **solve:** transition interceptor and selection policies ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1089](https://github.com/tuProlog/2p-kt/issues/1089)) ([c92cb50](https://github.com/tuProlog/2p-kt/commit/c92cb50969c70b9e297425c211e111a5973ccf36))
+* **theory:** read-optimised Theory, write-optimised MutableTheory, unification-aware clause collections ([#1019](https://github.com/tuProlog/2p-kt/issues/1019)) ([#1071](https://github.com/tuProlog/2p-kt/issues/1071)) ([78e7953](https://github.com/tuProlog/2p-kt/commit/78e7953c0634318b3fdc6fa7f85c3c6aa2589eb0))
+* **ui:** show solution and resolution times in the REPL and in the Swing and web IDEs ([ceb43ef](https://github.com/tuProlog/2p-kt/commit/ceb43efdb1c0d2828daee1bcd27860bccb95b0e1))
+* **ui:** STRIPS planning template, with list-based sets ([3d5f1da](https://github.com/tuProlog/2p-kt/commit/3d5f1da83a8b00d7ea2cd73cc67c7962c482eca1))
+* **unify:** IncrementalUnificator, unifying in a solver's own bindings ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1091](https://github.com/tuProlog/2p-kt/issues/1091)) ([3473db0](https://github.com/tuProlog/2p-kt/commit/3473db0a306c62a3042da27ebbdb07b6e6279fa6))
+* **unify:** worklist-based unification engine, by default ([#1020](https://github.com/tuProlog/2p-kt/issues/1020)) ([#1068](https://github.com/tuProlog/2p-kt/issues/1068)) ([f6984ad](https://github.com/tuProlog/2p-kt/commit/f6984ad7a0ec5098d8e9016d9a07a9ed14c6cfaa)), closes [#1012](https://github.com/tuProlog/2p-kt/issues/1012) [#1012](https://github.com/tuProlog/2p-kt/issues/1012)
+
+### Bug Fixes
+
+* **build:** run the REPL and serialize-theory printers on their runtime classpath ([cb3bc74](https://github.com/tuProlog/2p-kt/commit/cb3bc74e257f17b86cea2e49f292db8462054878))
+* **ide-swing:** scroll the theory editor on plain mouse-wheel and touchpad events ([a3a4abd](https://github.com/tuProlog/2p-kt/commit/a3a4abd14f62939ee637e913b5c96adcd7c5849f))
+* **solve-prolog:** keep bindings still needed by a clause's remaining goals ([#1078](https://github.com/tuProlog/2p-kt/issues/1078), [#1073](https://github.com/tuProlog/2p-kt/issues/1073)) ([#1087](https://github.com/tuProlog/2p-kt/issues/1087)) ([0503d16](https://github.com/tuProlog/2p-kt/commit/0503d16ff8cb5566f6e0120cbe34f23f3d759968))
+* **solve:** ISO conformance of sub_atom/5, atom_concat/3, number_chars/2, number_codes/2, atom_chars/2, findall/3 ([#1101](https://github.com/tuProlog/2p-kt/issues/1101)) ([8c8b9c4](https://github.com/tuProlog/2p-kt/commit/8c8b9c41b9555742ed5846bb326bf6e3385a14d3))
+
+### Performance improvements
+
+* **core:** build a unifier's mappings in one pass, and not at all when empty ([64dc95f](https://github.com/tuProlog/2p-kt/commit/64dc95f48c13ed8ea035125c4477cbd465b6637b))
+* **core:** build vararg clause bodies from a list view, not a sequence ([70f2589](https://github.com/tuProlog/2p-kt/commit/70f2589aea8764ca4fd158e37ec7a01dd0ac7839))
+* **core:** cheaper variable creation: one counter, no by-lazy delegation ([#1082](https://github.com/tuProlog/2p-kt/issues/1082)) ([7c0d092](https://github.com/tuProlog/2p-kt/commit/7c0d0927b793a15f3859cd7c5302d62dd1c60b4a))
+* **core:** cheaper variable equality and clause renaming (part of [#1102](https://github.com/tuProlog/2p-kt/issues/1102), [#1103](https://github.com/tuProlog/2p-kt/issues/1103)) ([#1106](https://github.com/tuProlog/2p-kt/issues/1106)) ([f6d80ec](https://github.com/tuProlog/2p-kt/commit/f6d80ec606017765e45df0b51e0b3202e37be3a4))
+* **core:** lazy, stack-safe recursive terms ([#1075](https://github.com/tuProlog/2p-kt/issues/1075)) ([#1076](https://github.com/tuProlog/2p-kt/issues/1076)) ([51c21dd](https://github.com/tuProlog/2p-kt/commit/51c21ddea75fd2a6538c8c29726e0510c05176ef)), closes [#1073](https://github.com/tuProlog/2p-kt/issues/1073)
+* **core:** presize the map of a unifier's non-identity mappings ([ebd1919](https://github.com/tuProlog/2p-kt/commit/ebd19198ef238c349deeb1ca6ea80346f4dc18ac))
+* **solve-prolog:** don't filter identity mappings that Substitution.of leaves out anyway ([8536f1a](https://github.com/tuProlog/2p-kt/commit/8536f1ae274bd4b35db557810937bf5cffbc0d81))
+* **solve-prolog:** resolve a directly bound variable without a work stack ([6914bb9](https://github.com/tuProlog/2p-kt/commit/6914bb99115ffc5d8c1e2b26e98be9bf361af894))
+* **solve-prolog:** tell control constructs only when resolution counters are on ([ad2b0dc](https://github.com/tuProlog/2p-kt/commit/ad2b0dccef5e192c4469d8c15a5061984dd065f1))
+* **solve:** always round sqrt instead of attempting an exact root first ([3a7134c](https://github.com/tuProlog/2p-kt/commit/3a7134c9ec196bccc6acca65ae6a85e0c30d970e)), closes [gciatto/kt-math#553](https://github.com/gciatto/kt-math/issues/553)
+* **solve:** extract a goal's signature without building its indicator ([39a9271](https://github.com/tuProlog/2p-kt/commit/39a92713fc22c376c601acb155ffbc0ab1eec311))
+* **solve:** read a request's query without lazy delegation ([449f5c9](https://github.com/tuProlog/2p-kt/commit/449f5c9598d0f06c73d459bbeef02073b13af7eb))
+* **solve:** read an evaluator's loaded functions without lazy delegation ([5e3c3b1](https://github.com/tuProlog/2p-kt/commit/5e3c3b16961cb5fda417df6acaa96e8a9f82ac25))
+* **solve:** read libraries' primitives, functions and rule signatures without lazy delegation ([45be175](https://github.com/tuProlog/2p-kt/commit/45be175ece6deacf89d9682c927d544e5c67358b))
+* **theory:** filter clause candidates through a lambda, not a bound reference ([fc7a833](https://github.com/tuProlog/2p-kt/commit/fc7a8333c27fc60d83bd40a0572b6cabd0aaf967))
+* **unify:** read the unificator's cached context without lazy delegation ([a7c8f45](https://github.com/tuProlog/2p-kt/commit/a7c8f45e5e711bdfb7aed2ffabfd71c7ec11ed75))
+
+### Tests
+
+* **core:** pin that a unifier doesn't share the map it is built from ([aedcf8b](https://github.com/tuProlog/2p-kt/commit/aedcf8bae6cd2bdbcc61da8ff6424114472f5c04))
+* **gui:** cover solution labels and targeted history deletion ([8247fd2](https://github.com/tuProlog/2p-kt/commit/8247fd2e8cafe2950ad39106564597b3c95c4382))
+* **ide-plp-swing:** expect the duration before the outcome in probabilistic solution rows ([6a0a822](https://github.com/tuProlog/2p-kt/commit/6a0a8226c993620f6e9f4aa5adc7b4c113420887))
+* **ide-swing:** exercise solution menu actions and escaped styling ([ce1c532](https://github.com/tuProlog/2p-kt/commit/ce1c532e3cb173e29ea90416b03d2b4698267491))
+* **ide-swing:** expect duration prefixes on failing solutions ([7072a4b](https://github.com/tuProlog/2p-kt/commit/7072a4bad6a9b00d8f821cbccdb9983f051a065f))
+* **ide-web:** verify solution labels and context menu workflows ([9206977](https://github.com/tuProlog/2p-kt/commit/92069771c7aa1445acd631238a76e2ab78176dc1))
+* **repl:** check duration prefixes in numbered solutions ([18ea37c](https://github.com/tuProlog/2p-kt/commit/18ea37cf1c1fcea3d13e634e71452b2088529c2f))
+* **solve-prolog:** expect sqrt rounded to real_precision_digits in every precision mode ([94d0aef](https://github.com/tuProlog/2p-kt/commit/94d0aef8d6fa01521073a578ae215dc2412168d4))
+* **solve:** semantic contracts and small-stack run ahead of the stateful engine ([#1010](https://github.com/tuProlog/2p-kt/issues/1010)) ([#1085](https://github.com/tuProlog/2p-kt/issues/1085)) ([34cd625](https://github.com/tuProlog/2p-kt/commit/34cd6256d1d8d25a8e9dce9e8a8b67129c45ef4a))
+* **solve:** the solver behaves the same with or without track_variables ([bf8dc61](https://github.com/tuProlog/2p-kt/commit/bf8dc61912922dc6852ec1a5573531e79c5ff724))
+* **ui:** cover submission timestamps and solution tree labels ([aed11f3](https://github.com/tuProlog/2p-kt/commit/aed11f3de5f272911a71fd915e593cdf6e81b2de))
+* **ui:** coverage for solution timing, the STRIPS template and editor scrolling ([79dafce](https://github.com/tuProlog/2p-kt/commit/79dafce2745b09412db1d42d004888bd5b4b0e4a))
+* **ui:** select lower tabs directly when the click keeps missing in Swing e2e tests ([#1099](https://github.com/tuProlog/2p-kt/issues/1099)) ([6019708](https://github.com/tuProlog/2p-kt/commit/601970818a839424231c18e8437b650e60bf39b8))
+
+### General maintenance
+
+* **readme:** update ide and repl images ([1a734ee](https://github.com/tuProlog/2p-kt/commit/1a734ee6a13d34a06c13c6eb8b2553b6b02094fc))
+
+### Refactoring
+
+* **solve:** deprecate the track_variables flag, which has no effect ([5856655](https://github.com/tuProlog/2p-kt/commit/5856655eab46e731a2af6a7ba3473a62b89cd29e)), closes [#1078](https://github.com/tuProlog/2p-kt/issues/1078)
+* **solve:** one type per file and a KDoc pass over the [#1010](https://github.com/tuProlog/2p-kt/issues/1010) stack ([#1097](https://github.com/tuProlog/2p-kt/issues/1097)) ([bdeb3d9](https://github.com/tuProlog/2p-kt/commit/bdeb3d98315bbd041cb46751bb10131e169e5214))
+
 ## [3.0.8](https://github.com/tuProlog/2p-kt/compare/3.0.7...3.0.8) (2026-11-08)
 
 ### Dependency updates
