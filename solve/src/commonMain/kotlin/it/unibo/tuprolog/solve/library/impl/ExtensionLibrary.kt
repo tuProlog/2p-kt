@@ -62,21 +62,31 @@ abstract class ExtensionLibrary(
     protected open val additionalRules: Iterable<RuleWrapper<*>>
         get() = emptyList()
 
-    override val primitives: Map<Signature, Primitive> by lazy {
-        val initial = extended.primitives.asSequence().map { it.toPair() }
-        val additional = additionalPrimitives.asSequence().map { it.descriptionPair }
-        (initial + additional).toMapEnsuringNoDuplicates()
-    }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyPrimitives =
+        lazy {
+            val initial = extended.primitives.asSequence().map { it.toPair() }
+            val additional = additionalPrimitives.asSequence().map { it.descriptionPair }
+            (initial + additional).toMapEnsuringNoDuplicates()
+        }
+
+    override val primitives: Map<Signature, Primitive>
+        get() = lazyPrimitives.value
 
     /** Extra [Primitive]s to add on top of [extended]'s; empty by default. */
     protected open val additionalPrimitives: Iterable<PrimitiveWrapper<*>>
         get() = emptyList()
 
-    override val functions: Map<Signature, LogicFunction> by lazy {
-        val initial = extended.functions.asSequence().map { it.toPair() }
-        val additional = additionalFunctions.asSequence().map { it.descriptionPair }
-        (initial + additional).toMapEnsuringNoDuplicates()
-    }
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyFunctions =
+        lazy {
+            val initial = extended.functions.asSequence().map { it.toPair() }
+            val additional = additionalFunctions.asSequence().map { it.descriptionPair }
+            (initial + additional).toMapEnsuringNoDuplicates()
+        }
+
+    override val functions: Map<Signature, LogicFunction>
+        get() = lazyFunctions.value
 
     /** Extra [LogicFunction]s to add on top of [extended]'s; empty by default. */
     protected open val additionalFunctions: Iterable<FunctionWrapper<*>>
