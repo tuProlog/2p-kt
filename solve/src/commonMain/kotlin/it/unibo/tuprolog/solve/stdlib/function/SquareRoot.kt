@@ -5,6 +5,7 @@ import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.function.UnaryMathFunction
+import it.unibo.tuprolog.solve.function.realMathContext
 import org.gciatto.kt.math.BigDecimal
 
 /**
@@ -17,7 +18,7 @@ object SquareRoot : UnaryMathFunction("sqrt") {
         """
         `sqrt(+Number)`
         
-        Evaluates to the non-negative square root of `Number`, always as a real value. `Number` must be non-negative, otherwise the `undefined` evaluation error is raised.
+        Evaluates to the non-negative square root of `Number`, always as a real value, rounded to `real_precision_digits` digits whatever `real_precision_mode` is (an exact root, such as `sqrt(2.25)`, stays exact). `Number` must be non-negative, otherwise the `undefined` evaluation error is raised.
 
         **Examples**
 
@@ -51,6 +52,7 @@ object SquareRoot : UnaryMathFunction("sqrt") {
         if (decimal.signum < 0) {
             throwUndefinedError(context)
         } else {
-            computeReal(context) { decimal.sqrt(it) }
+            // always rounded: kt-math finds an inexact root only after computing it in full, then throws (gciatto/kt-math#553)
+            Real.of(decimal.sqrt(context.flags.realMathContext))
         }
 }
