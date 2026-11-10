@@ -113,15 +113,12 @@ internal class Bindings : BindingStore {
     fun substitutionOf(variables: Sequence<Var>): Substitution.Unifier {
         if (values.isEmpty()) return Substitution.empty()
         if (opaque) {
-            return Substitution.of(
-                variables.distinct().associateWith { resolveOpaque(it) }.filter { (variable, value) ->
-                    variable != value
-                },
-            )
+            return Substitution.of(variables.distinct().associateWith { resolveOpaque(it) })
         }
         val resolved = HashMap<Var, Term>()
         for (variable in variables) if (variable !in resolved) resolveVar(variable, resolved)
-        return Substitution.of(resolved.filter { (variable, value) -> variable != value })
+        // Substitution.of leaves identity mappings out
+        return Substitution.of(resolved)
     }
 
     /**
