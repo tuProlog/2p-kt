@@ -5,8 +5,6 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.core.List as LogicList
@@ -42,7 +40,7 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
                 Substitution.failed()
             }
 
-            first is Var -> Substitution.of(first, parseNumber(text(second)))
+            first is Var -> Substitution.of(first, parseNumber(charListText(1)))
             second is Var -> {
                 ensuringArgumentIsNumeric(0)
                 Substitution.of(second, LogicList.of(first.toString().map { Atom.of("" + it) }))
@@ -50,29 +48,11 @@ object NumberChars : BinaryRelation.Functional<ExecutionContext>("number_chars")
             else -> {
                 ensuringArgumentIsNumeric(0)
                 if (second.isList && second.castToList().isWellFormed && second.variables.none()) {
-                    mgu(first, parseNumber(text(second)))
+                    mgu(first, parseNumber(charListText(1)))
                 } else {
                     ensuringArgumentIsList(1)
                     mgu(LogicList.of(first.toString().map { Atom.of("" + it) }), second)
                 }
             }
         }
-
-    private fun Solve.Request<ExecutionContext>.text(chars: Term): String {
-        ensuringArgumentIsList(1)
-        val list = chars.castToList()
-        val tail = list.last
-        when {
-            tail is Var -> throw InstantiationError.forArgument(context, signature, tail, 1)
-            !list.isWellFormed -> throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, list, 1)
-        }
-        return list.toSequence().joinToString("") {
-            when {
-                it is Var -> throw InstantiationError.forArgument(context, signature, it, 1)
-                it !is Atom || it.value.length != 1 ->
-                    throw TypeError.forArgumentList(context, signature, TypeError.Expected.CHARACTER, it, 1)
-                else -> it.value
-            }
-        }
-    }
 }
