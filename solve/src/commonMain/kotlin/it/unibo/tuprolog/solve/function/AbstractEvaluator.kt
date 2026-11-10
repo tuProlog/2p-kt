@@ -6,6 +6,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.solve.ExecutionContext
+import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -27,9 +28,13 @@ abstract class AbstractEvaluator<E : ExecutionContext, T : Term>(
     protected val request: Solve.Request<E>,
     protected val index: Int?,
 ) : TermVisitor<T> {
+    // read through `.value`, not `by`: on JS, delegation builds a property reference at every read
+    private val lazyLoadedFunctions = lazy { request.context.libraries.functions }
+
     /** Shorthand to access context loaded functions */
     @Suppress("MemberVisibilityCanBePrivate")
-    protected val loadedFunctions by lazy { request.context.libraries.functions }
+    protected val loadedFunctions: Map<Signature, LogicFunction>
+        get() = lazyLoadedFunctions.value
 
     @Suppress("UNCHECKED_CAST")
     private inline fun casting(f: () -> Term): T = f() as T
