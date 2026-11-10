@@ -19,6 +19,7 @@ object RealPrecisionMode : NotableFlag {
         - `unlimited_with_fallback`: results are exact when they can be, and rounded to `real_precision_digits` digits otherwise (e.g. `1 / 3`, `sqrt(2)`, `sin(1)`).
         - `limited`: results are always rounded to `real_precision_digits` digits, so the digits of a real never grow beyond that.
         - `unlimited`: results are always exact; an operation whose result can't be exact raises `evaluation_error(undefined)`.
+        - In every mode, `sqrt/1` is rounded to `real_precision_digits` digits.
         - Default: `unlimited_with_fallback`
         - Editable: yes
 
