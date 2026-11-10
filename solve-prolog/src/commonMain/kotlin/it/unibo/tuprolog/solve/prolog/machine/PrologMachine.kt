@@ -733,8 +733,7 @@ internal class PrologMachine(
         Substitution.of(
             query.variables
                 .distinct()
-                .associateWith { bindings.resolve(it) }
-                .filter { (k, v) -> k != v },
+                .associateWith { bindings.resolve(it) },
         )
 
     // the bindings of the variables of the query, of the calls in progress, and of the goals left, as primitives saw
