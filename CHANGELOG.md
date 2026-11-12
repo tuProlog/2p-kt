@@ -1,3 +1,9 @@
+## [4.0.2](https://github.com/tuProlog/2p-kt/compare/4.0.1...4.0.2) (2026-11-12)
+
+### Bug Fixes
+
+* **deps:** update dependency net.sourceforge.plantuml:plantuml to v1.2026.10 ([#1114](https://github.com/tuProlog/2p-kt/issues/1114)) ([ebf3d1f](https://github.com/tuProlog/2p-kt/commit/ebf3d1f67c7a8f80ffcd56b3cb648a288c1c2783))
+
 ## [4.0.1](https://github.com/tuProlog/2p-kt/compare/4.0.0...4.0.1) (2026-11-12)
 
 ### Dependency updates
