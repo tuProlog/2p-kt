@@ -1,3 +1,14 @@
+## [4.0.1](https://github.com/tuProlog/2p-kt/compare/4.0.0...4.0.1) (2026-11-12)
+
+### Dependency updates
+
+* **deps:** update gradle to v9.9.1 ([#1112](https://github.com/tuProlog/2p-kt/issues/1112)) ([0923607](https://github.com/tuProlog/2p-kt/commit/0923607787806c6fcea65426934fd2891c73acae))
+* **deps:** update ktmpp to v6.1.4 ([#1113](https://github.com/tuProlog/2p-kt/issues/1113)) ([9e91662](https://github.com/tuProlog/2p-kt/commit/9e91662234d82b13a6e4936f11db878d5e0386ff))
+
+### Bug Fixes
+
+* **deps:** update kotlinx.serialization to v1.13.0 ([#1116](https://github.com/tuProlog/2p-kt/issues/1116)) ([0ee84c0](https://github.com/tuProlog/2p-kt/commit/0ee84c078f7f5a95df90387595564a4b88d8b849))
+
 ## [4.0.0](https://github.com/tuProlog/2p-kt/compare/3.0.8...4.0.0) (2026-11-10)
 
 ### ⚠ BREAKING CHANGES
