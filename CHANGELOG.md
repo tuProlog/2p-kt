@@ -1,3 +1,9 @@
+## [4.0.3](https://github.com/tuProlog/2p-kt/compare/4.0.2...4.0.3) (2026-11-13)
+
+### Bug Fixes
+
+* **deps:** update kotest to v6.2.7 ([#1115](https://github.com/tuProlog/2p-kt/issues/1115)) ([53dd032](https://github.com/tuProlog/2p-kt/commit/53dd03235462caead944dfb94e81b622cfd34de2))
+
 ## [4.0.2](https://github.com/tuProlog/2p-kt/compare/4.0.1...4.0.2) (2026-11-12)
 
 ### Bug Fixes
