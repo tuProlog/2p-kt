@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.itemWiseHashCode
 import it.unibo.tuprolog.utils.setTags
+import kotlin.concurrent.Volatile
 
 @Suppress("EqualsOrHashCode")
 internal class PatternImpl(
@@ -18,6 +19,10 @@ internal class PatternImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : TermImpl(tags),
     Pattern {
+    init {
+        if (!anyCreated) anyCreated = true
+    }
+
     override fun copyWithTags(tags: Map<String, Any>): Pattern = PatternImpl(functor, args, tags)
 
     override fun freshCopy(): Pattern = Scope.withQuickScope { freshCopy(this) }
@@ -76,4 +81,11 @@ internal class PatternImpl(
     override fun toString(): String = "$functor(${args.joinToString(", ")})"
 
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitPattern(this)
+
+    companion object {
+        // a process-wide hint, never affecting results: while false, no term contains a pattern
+        @Volatile
+        var anyCreated: Boolean = false
+            private set
+    }
 }

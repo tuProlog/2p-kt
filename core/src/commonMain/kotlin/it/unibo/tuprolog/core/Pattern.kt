@@ -51,6 +51,15 @@ interface Pattern : Compound {
 
     companion object {
         /**
+         * Whether any [Pattern] has been created in this process so far: once `true`, it stays such. Unificators read it
+         * to skip looking for patterns, and for their functor variables, when there can be none.
+         */
+        @JvmStatic
+        @JsName("anyCreated")
+        val anyCreated: Boolean
+            get() = PatternImpl.anyCreated
+
+        /**
          * Creates a new [Pattern] given its [functor] and (non-empty) [args].
          * @throws IllegalArgumentException if [args] is empty
          */
