@@ -43,7 +43,7 @@ jobs:
           token: ${{ secrets.DEPLOYMENT_TOKEN || github.token }}
       - name: Auto-format (ktlint)
         id: autoformat
-        uses: DanySK/build-check-deploy-gradle-action@4.0.51
+        uses: DanySK/build-check-deploy-gradle-action@4.0.52
         with:
           retries-on-failure: '2'
           build-command: ./gradlew ktlintFormat
@@ -53,7 +53,7 @@ jobs:
       - name: Check style (ktlint, detekt)
         # Runs even if formatting above failed, so real findings are still visible for a human to fix.
         if: always()
-        uses: DanySK/build-check-deploy-gradle-action@4.0.51
+        uses: DanySK/build-check-deploy-gradle-action@4.0.52
         with:
           retries-on-failure: '2'
           build-command: 'true'
@@ -101,7 +101,7 @@ jobs:
             echo "No default Chrome found; installing google-chrome-stable."
             sudo apt-get update && sudo apt-get install -y google-chrome-stable
           fi
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.51
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.52
         with:
           retries-on-failure: '2'
           # Dry-deployment
@@ -175,7 +175,7 @@ jobs:
         uses: actions/setup-node@v7.1.0
         with:
           node-version-file: package.json
-      - uses: DanySK/build-check-deploy-gradle-action@4.0.51
+      - uses: DanySK/build-check-deploy-gradle-action@4.0.52
         env:
           # Credentials for publishAllPublicationsToGithubRepository (see PublishOnMavenPlugin's
           # otherMaven* properties): GITHUB_TOKEN already has packages:write on this job (see the
