@@ -70,6 +70,7 @@ import it.unibo.tuprolog.solve.libraryOf
 import it.unibo.tuprolog.solve.lifetimeContract
 import it.unibo.tuprolog.solve.logicalUpdateViewContract
 import it.unibo.tuprolog.solve.metaResolutionContract
+import it.unibo.tuprolog.solve.metaVariableContract
 import it.unibo.tuprolog.solve.mutableSolverContract
 import it.unibo.tuprolog.solve.nonVarContract
 import it.unibo.tuprolog.solve.notProvableContract
@@ -166,6 +167,7 @@ internal fun prologSolverContracts(factory: SolverFactory) =
         include(goalQueryContract(factory))
         include(patternDataContract(factory))
         include(metaResolutionContract(factory))
+        include(metaVariableContract(factory))
         include(solverContract(factory, ensureExecutable, ensureExecutable, ensureExecutable))
         include(solverConstructionContract<PrologSolver, MutablePrologSolver>(factory, DefaultBuiltins))
         include(stackTraceContract(factory))

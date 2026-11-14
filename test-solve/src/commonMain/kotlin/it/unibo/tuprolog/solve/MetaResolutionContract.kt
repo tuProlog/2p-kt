@@ -7,7 +7,6 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.parsing.parseAsClause
 import it.unibo.tuprolog.core.parsing.parseAsCompound
-import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.search.MetaResolutionPolicy
 import it.unibo.tuprolog.theory.Theory
 
@@ -22,12 +21,6 @@ private fun Solver.valuesOf(
 ): List<Term?> =
     solve(query.parseAsCompound(), options).toList().filterIsInstance<Solution.Yes>().map { it.valueOf(variable) }
 
-private fun Solver.haltOf(query: String): Solution.Halt {
-    val solution = solveOnce(query.parseAsCompound(), SolveOptions.someLazilyWithTimeout(1, TIMEOUT))
-    solution.shouldBeInstanceOf<Solution.Halt>()
-    return solution
-}
-
 private val TIMEOUT = kotlin.time.Duration.parse("10s")
 
 private fun enumerating(limit: Int = SolveOptions.ALL_SOLUTIONS) =
@@ -38,7 +31,8 @@ private fun enumerating(limit: Int = SolveOptions.ALL_SOLUTIONS) =
 
 /**
  * Pattern-headed rules (metarules) run natively: concrete calls select them, interleaved with concrete clauses, binding
- * their functor variables. Calls whose functor is an unbound variable need a [MetaResolutionPolicy].
+ * their functor variables. Calls whose functor is an unbound variable unify with the clauses of their arity, unless a
+ * [MetaResolutionPolicy] chooses their functors instead.
  */
 fun metaResolutionContract(
     solverFactory: SolverFactory,
@@ -71,14 +65,16 @@ fun metaResolutionContract(
         solver.valuesOf("once(X = 1)", "X") shouldBe listOf(1.toTerm())
     }
 
-    scenario("meta-resolution/unbound-functor-requires-binding-by-default") {
-        val solver = solverFactory.solverOf("q(1).")
-        solver.haltOf("Q(X)").exception.shouldBeInstanceOf<InstantiationError>()
+    scenario("meta-resolution/unbound-functor-unifies-by-default") {
+        val solver = solverFactory.solverOf("q(1).", "r(2).")
+        solver.valuesOf("Q(X)", "Q") shouldContainExactlyInAnyOrder listOf("q", "r").map { Atom.of(it) }
     }
 
     scenario("meta-resolution/unbound-functor-in-a-metarule-body") {
-        val solver = solverFactory.solverOf("P(X) :- Q(X).", "q(1).")
-        solver.haltOf("p(1)").exception.shouldBeInstanceOf<InstantiationError>()
+        // the metarule comes after q(1): before it, Q(1) would select the metarule itself first, forever
+        val solver = solverFactory.solverOf("q(1).", "P(X) :- Q(X).")
+        val solution = solver.solveOnce("p(1)".parseAsCompound(), SolveOptions.someLazilyWithTimeout(1, TIMEOUT))
+        solution.shouldBeInstanceOf<Solution.Yes>()
     }
 
     scenario("meta-resolution/enumerate-user-predicates-of-the-arity") {

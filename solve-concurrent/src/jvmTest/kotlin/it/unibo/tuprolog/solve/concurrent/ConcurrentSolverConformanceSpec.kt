@@ -3,6 +3,7 @@ package it.unibo.tuprolog.solve.concurrent
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.solve.goalQueryContract
 import it.unibo.tuprolog.solve.metaResolutionContract
+import it.unibo.tuprolog.solve.metaVariableContract
 import it.unibo.tuprolog.solve.patternDataContract
 
 /**
@@ -72,4 +73,16 @@ class ConcurrentSolverConformanceSpec :
             ),
         )
         include(patternDataContract(ConcurrentSolverFactory))
+        include(
+            metaVariableContract(
+                ConcurrentSolverFactory,
+                // branches run concurrently: a later one may answer, or fail, first; and there are no counters
+                disabled =
+                    setOf(
+                        "meta-variables/mr-87/solutions-computed-lazily",
+                        "meta-variables/mr-88/early-stop-tries-few-candidates",
+                    ),
+                ordered = false,
+            ),
+        )
     })
