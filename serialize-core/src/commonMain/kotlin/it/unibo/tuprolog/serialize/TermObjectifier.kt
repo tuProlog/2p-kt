@@ -24,7 +24,7 @@ import kotlin.jvm.JvmStatic
  * - a [it.unibo.tuprolog.core.Block] becomes `{"block": [...]}`, a
  *   [it.unibo.tuprolog.core.Tuple] becomes `{"tuple": [...]}`;
  * - a [it.unibo.tuprolog.core.Rule] becomes `{"head": ..., "body": ...}`, a
- *   [it.unibo.tuprolog.core.Fact] becomes `{"head": ...}`, a [it.unibo.tuprolog.core.Directive]
+ *   [it.unibo.tuprolog.core.Fact] becomes `{"head": ...}`, a [it.unibo.tuprolog.core.Goal]
  *   becomes `{"body": ...}`.
  *
  * A [TermDeobjectifier] recognizes exactly this shape, so `deobjectifier.deobjectify(objectifier.objectify(term))`

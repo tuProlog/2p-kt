@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.solve.directives
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Substitution.Unifier
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.js.JsName
 
 /**
- * A [ClauseListener] refinement that further dispatches [Directive]s (`:- Goal` clauses) depending on which of
+ * A [ClauseListener] refinement that further dispatches [Goal]s (`:- Goal` clauses) depending on which of
  * [patterns] their body unifies with, rather than treating every directive alike via [ClauseListener.onDirective].
  *
  * @see DirectiveSelector for the concrete set of ISO/implementation-defined directive patterns 2P-Kt recognizes.
@@ -25,7 +25,7 @@ interface DirectiveListener : ClauseListener {
     /** Invoked when a directive's body unifies with one of [patterns], via [unifier]. */
     @JsName("onDirectiveMatchingPattern")
     fun onDirectiveMatchingPattern(
-        directive: Directive,
+        directive: Goal,
         pattern: Term,
         unifier: Unifier,
     )
@@ -35,7 +35,7 @@ interface DirectiveListener : ClauseListener {
      * [listenDirectiveMatchingPattern], otherwise falls back to [ClauseListener.onDirective].
      */
     @JsName("listenDirective")
-    fun listenDirective(directive: Directive) {
+    fun listenDirective(directive: Goal) {
         patterns
             .asSequence()
             .map { it to (unificator.mgu(directive.body, it)) }
@@ -49,14 +49,14 @@ interface DirectiveListener : ClauseListener {
     /** Invoked by [listenDirective] on a match; by default just forwards to [onDirectiveMatchingPattern]. */
     @JsName("listenDirectiveMatchingPattern")
     fun listenDirectiveMatchingPattern(
-        directive: Directive,
+        directive: Goal,
         pattern: Term,
         unifier: Unifier,
     ) = onDirectiveMatchingPattern(directive, pattern, unifier)
 
     override fun listen(clause: Clause) {
         when (clause) {
-            is Directive -> listenDirective(clause)
+            is Goal -> listenDirective(clause)
             else -> super.listen(clause)
         }
     }

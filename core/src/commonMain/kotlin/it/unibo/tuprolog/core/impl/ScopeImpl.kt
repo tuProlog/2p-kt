@@ -5,10 +5,10 @@ import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.NullRef
@@ -194,10 +194,10 @@ internal class ScopeImpl(
         vararg body: Term,
     ): Rule = Rule.of(head, body1, *body)
 
-    override fun directiveOf(
+    override fun goalOf(
         body1: Term,
         vararg body: Term,
-    ): Directive = Directive.of(body1, *body)
+    ): Goal = Goal.of(body1, *body)
 
     override fun clauseOf(
         head: Struct?,

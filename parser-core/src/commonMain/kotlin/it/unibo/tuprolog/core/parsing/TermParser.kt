@@ -3,8 +3,8 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Constant
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
@@ -255,23 +255,23 @@ interface TermParser {
     fun parseFact(input: String): Fact = parseFact(input, defaultOperatorSet)
 
     /**
-     * Parses [input] as a [Directive] using [operators].
+     * Parses [input] as a [Goal] using [operators].
      *
      * @throws ParseException if parsing fails
-     * @throws InvalidTermTypeException if the parsed term is not a [Directive]
+     * @throws InvalidTermTypeException if the parsed term is not a [Goal]
      */
-    @JsName("parseDirectiveWithOperators")
-    fun parseDirective(
+    @JsName("parseGoalWithOperators")
+    fun parseGoal(
         input: String,
         operators: OperatorSet,
-    ): Directive = parseAs(input, operators)
+    ): Goal = parseAs(input, operators)
 
     /**
      * @throws ParseException if parsing fails
-     * @throws InvalidTermTypeException if [input] does not denote a [Directive]
+     * @throws InvalidTermTypeException if [input] does not denote a [Goal]
      */
-    @JsName("parseDirective")
-    fun parseDirective(input: String): Directive = parseDirective(input, defaultOperatorSet)
+    @JsName("parseGoal")
+    fun parseGoal(input: String): Goal = parseGoal(input, defaultOperatorSet)
 
     companion object {
         /** Creates a parser whose default operator set is empty. */

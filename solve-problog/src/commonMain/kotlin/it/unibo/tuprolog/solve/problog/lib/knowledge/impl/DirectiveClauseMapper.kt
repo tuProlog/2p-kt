@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
@@ -12,12 +12,12 @@ import it.unibo.tuprolog.solve.problog.lib.exception.ClauseMappingException
  *
  * @author Jason Dellaluce */
 internal object DirectiveClauseMapper : ClauseMapper {
-    override fun isCompatible(clause: Clause): Boolean = clause.isDirective
+    override fun isCompatible(clause: Clause): Boolean = clause.isGoal
 
     override fun apply(clause: Clause): List<Clause> {
         val body = clause.body
-        if (clause !is Directive) {
-            throw ClauseMappingException("Clause is not an instance of Directive: $clause")
+        if (clause !is Goal) {
+            throw ClauseMappingException("Clause is not an instance of Goal: $clause")
         }
 
         if (body is Struct && (body.functor == "static" || body.functor == "dynamic")) {
@@ -32,7 +32,7 @@ internal object DirectiveClauseMapper : ClauseMapper {
             }
 
             return listOf(
-                Directive.of(
+                Goal.of(
                     Struct.of(
                         body.functor,
                         Indicator.of(name, Numeric.of(arity.decimalValue.toInt() + 1)),
@@ -43,7 +43,7 @@ internal object DirectiveClauseMapper : ClauseMapper {
 
         if (body is Struct && (body.functor == "initialization" || body.functor == "solve")) {
             return listOf(
-                Directive.of(
+                Goal.of(
                     Struct.of(
                         body.functor,
                         body[0].withBodyExplanation(Var.anonymous()),

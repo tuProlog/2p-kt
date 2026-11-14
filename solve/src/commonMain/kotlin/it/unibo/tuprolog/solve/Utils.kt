@@ -3,7 +3,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
 import it.unibo.tuprolog.core.operators.OperatorSet
@@ -37,7 +37,7 @@ inline fun <T> Sequence<T>.forEachWithLookahead(action: (T, Boolean) -> Unit) = 
 /** Extracts every `op/3` directive out of this collection of [Clause]s, converting each to its [Operator]s. */
 fun Iterable<Clause>.getAllOperators(): Sequence<Operator> =
     asSequence()
-        .filterIsInstance<Directive>()
+        .filterIsInstance<Goal>()
         .map { it.body }
         .filterIsInstance<Struct>()
         .filter { it.arity == 3 && it.functor == "op" }

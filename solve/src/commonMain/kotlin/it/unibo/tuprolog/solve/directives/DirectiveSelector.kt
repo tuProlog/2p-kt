@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.directives
 
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Substitution.Unifier
@@ -62,7 +62,7 @@ interface DirectiveSelector : DirectiveListener {
     override val patterns: List<Term> get() = PATTERNS
 
     override fun listenDirectiveMatchingPattern(
-        directive: Directive,
+        directive: Goal,
         pattern: Term,
         unifier: Unifier,
     ) {
@@ -79,14 +79,14 @@ interface DirectiveSelector : DirectiveListener {
 
     /** Invoked on a `set_flag(name, value)`/`set_prolog_flag(name, value)` directive. */
     fun onSetFlag(
-        directive: Directive,
+        directive: Goal,
         name: Term,
         value: Term,
     )
 
     /** Invoked on an `op(priority, specifier, name)` directive. */
     fun onOperator(
-        directive: Directive,
+        directive: Goal,
         priority: Term,
         specifier: Term,
         name: Term,
@@ -94,25 +94,25 @@ interface DirectiveSelector : DirectiveListener {
 
     /** Invoked on an `include(goal)`/`load(goal)` directive. */
     fun onLoad(
-        directive: Directive,
+        directive: Goal,
         goal: Term,
     )
 
     /** Invoked on an `initialization(goal)`/`solve(goal)` directive. */
     fun onSolve(
-        directive: Directive,
+        directive: Goal,
         goal: Term,
     )
 
     /** Invoked on a `static(indicator)` directive. */
     fun onStatic(
-        directive: Directive,
+        directive: Goal,
         indicator: Indicator,
     )
 
     /** Invoked on a `dynamic(indicator)` directive. */
     fun onDynamic(
-        directive: Directive,
+        directive: Goal,
         indicator: Indicator,
     )
 }

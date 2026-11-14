@@ -18,7 +18,7 @@ interface Rule : Clause {
     override val isFact: Boolean
         get() = body.isTrue
 
-    override val isDirective: Boolean
+    override val isGoal: Boolean
         get() = false
 
     override fun freshCopy(): Rule

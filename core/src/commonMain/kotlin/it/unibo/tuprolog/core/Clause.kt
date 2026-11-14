@@ -6,17 +6,17 @@ import kotlin.jvm.JvmStatic
 
 /**
  * A logic clause, i.e. a [Struct] with functor `:-`, representing either a [Rule] (`head :- body`, [head]
- * non-`null`) or a [Directive] (`:- body`, [head] `null`). A theory (see `:theory`) is, at its core, a
+ * non-`null`) or a [Goal] (`:- body`, [head] `null`). A theory (see `:theory`) is, at its core, a
  * sequence of [Clause]s.
  *
  * [Clause.of] is the general entry point for building either kind, dispatching on whether [head] is `null`;
- * reach for [Rule.of], [Fact.of], or [Directive.of] directly when the desired kind is already known.
+ * reach for [Rule.of], [Fact.of], or [Goal.of] directly when the desired kind is already known.
  */
 interface Clause : Struct {
     override val functor: String
         get() = CLAUSE_FUNCTOR
 
-    /** The head of this clause, or `null` if this is a [Directive]. */
+    /** The head of this clause, or `null` if this is a [Goal]. */
     @JsName("head")
     val head: Struct?
 
@@ -47,7 +47,7 @@ interface Clause : Struct {
     override val isFact: Boolean
         get() = head !== null && body.isTrue
 
-    override val isDirective: Boolean
+    override val isGoal: Boolean
         get() = head === null
 
     override fun freshCopy(): Clause
@@ -165,7 +165,7 @@ interface Clause : Struct {
         const val FUNCTOR = CLAUSE_FUNCTOR
 
         /**
-         * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Directive] otherwise.
+         * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Goal] otherwise.
          * @throws IllegalArgumentException if [head] is `null` and [body] is empty
          */
         @JvmStatic
@@ -176,7 +176,7 @@ interface Clause : Struct {
         ): Clause = of(head, body.asList())
 
         /**
-         * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Directive] otherwise.
+         * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Goal] otherwise.
          * @throws IllegalArgumentException if [head] is `null` and [body] is empty
          */
         @JvmStatic
@@ -188,7 +188,7 @@ interface Clause : Struct {
             when (head) {
                 null -> {
                     require(body.any()) { "If Clause head is null, at least one body element, is required" }
-                    Directive.of(body.asIterable())
+                    Goal.of(body.asIterable())
                 }
                 else -> Rule.of(head, body)
             }

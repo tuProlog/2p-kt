@@ -3,10 +3,10 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
@@ -117,7 +117,7 @@ internal class JsTermObjectifier : TermObjectifier {
             "head" to term.head.accept(this),
         )
 
-    override fun visitDirective(term: Directive): Any =
+    override fun visitGoal(term: Goal): Any =
         jsObject(
             "body" to term.body.accept(this),
         )

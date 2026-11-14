@@ -103,6 +103,6 @@ interface TermVisitor<T> {
     @JsName("visitFact")
     fun visitFact(term: Fact): T = visitRule(term)
 
-    @JsName("visitDirective")
-    fun visitDirective(term: Directive): T = visitClause(term)
+    @JsName("visitGoal")
+    fun visitGoal(term: Goal): T = visitClause(term)
 }

@@ -3,8 +3,8 @@ package it.unibo.tuprolog.dsl
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Tuple
@@ -66,12 +66,12 @@ interface MinimalLogicProgrammingScope<S : MinimalLogicProgrammingScope<S>> : Ba
         tail: Any,
     ): Cons = consOf(head.toTerm(), tail.toTerm())
 
-    /** Overload of [it.unibo.tuprolog.core.Scope.directiveOf] accepting plain values, [toTerm]-ing [term] and each of [terms]. */
-    @JsName("directiveOfAny")
-    fun directiveOf(
+    /** Overload of [it.unibo.tuprolog.core.Scope.goalOf] accepting plain values, [toTerm]-ing [term] and each of [terms]. */
+    @JsName("goalOfAny")
+    fun goalOf(
         term: Any,
         vararg terms: Any,
-    ): Directive = directiveOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
+    ): Goal = goalOf(term.toTerm(), *terms.map { it.toTerm() }.toTypedArray())
 
     /** Runs [function] with a [newScope] as its receiver, isolating any [it.unibo.tuprolog.core.Var] it creates. */
     @JsName("withScope")
@@ -113,13 +113,13 @@ interface MinimalLogicProgrammingScope<S : MinimalLogicProgrammingScope<S>> : Ba
         newScope().function().toSpecificSubTypeOfTerm(Clause::class, this::factOf)
 
     /**
-     * Runs [function] with a [newScope] as its receiver and coerces its result to a [Directive] via [directiveOf].
+     * Runs [function] with a [newScope] as its receiver and coerces its result to a [Goal] via [goalOf].
      *
-     * @throws IllegalArgumentException if [function]'s result is neither a [Directive] nor a [Struct].
+     * @throws IllegalArgumentException if [function]'s result is neither a [Goal] nor a [Struct].
      */
     @JsName("directive")
-    fun directive(function: S.() -> Any): Directive =
-        newScope().function().toSpecificSubTypeOfTerm(Directive::class, this::directiveOf)
+    fun directive(function: S.() -> Any): Goal =
+        newScope().function().toSpecificSubTypeOfTerm(Goal::class, this::goalOf)
 
     /**
      * Runs [function] with a [newScope] as its receiver and coerces its result to a [Fact] via [factOf].

@@ -5,8 +5,8 @@ package it.unibo.tuprolog.core.parsing
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Constant
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
@@ -428,32 +428,32 @@ fun String.parseAsFact(): Fact = defaultParser.parseFact(this)
  *
  * @throws ParseException if parsing or type checking fails
  */
-@JsName("parseDirectiveWithOperators")
-fun Directive.Companion.parse(
+@JsName("parseGoalWithOperators")
+fun Goal.Companion.parse(
     input: String,
     operators: OperatorSet,
-): Directive = defaultParser.parseDirective(input, operators)
+): Goal = defaultParser.parseGoal(input, operators)
 
 /**
  * Parses [input] as a directive.
  *
  * @throws ParseException if parsing or type checking fails
  */
-@JsName("parseDirective")
-fun Directive.Companion.parse(input: String): Directive = defaultParser.parseDirective(input)
+@JsName("parseGoal")
+fun Goal.Companion.parse(input: String): Goal = defaultParser.parseGoal(input)
 
 /**
  * Parses this string as a directive using [operators].
  *
  * @throws ParseException if parsing or type checking fails
  */
-@JsName("parseStringAsDirectiveWithOperators")
-fun String.parseAsDirective(operators: OperatorSet): Directive = defaultParser.parseDirective(this, operators)
+@JsName("parseStringAsGoalWithOperators")
+fun String.parseAsGoal(operators: OperatorSet): Goal = defaultParser.parseGoal(this, operators)
 
 /**
  * Parses this string as a directive.
  *
  * @throws ParseException if parsing or type checking fails
  */
-@JsName("parseStringAsDirective")
-fun String.parseAsDirective(): Directive = defaultParser.parseDirective(this)
+@JsName("parseStringAsGoal")
+fun String.parseAsGoal(): Goal = defaultParser.parseGoal(this)

@@ -284,11 +284,11 @@ interface Term :
     /**
      * Checks whether the current term is a directive.
      * This method is guaranteed to return `true` if and only if the current term
-     * is an instance of [Directive].
+     * is an instance of [Goal].
      * @return `true` if the current term is a directive, or `false`, otherwise
      */
-    @JsName("isDirective")
-    val isDirective: Boolean get() = false
+    @JsName("isGoal")
+    val isGoal: Boolean get() = false
 
     /**
      * Checks whether the current term is a cons.
@@ -384,13 +384,12 @@ interface Term :
         asConstant() ?: throw ClassCastException("Cannot cast $this to ${Constant::class.simpleName}")
 
     /**
-     * Casts the current [Term] to [Directive], if possible
-     * @throws ClassCastException if the current [Term] is not an instance of [Directive]
-     * @return the current [Term], casted to [Directive]
+     * Casts the current [Term] to [Goal], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Goal]
+     * @return the current [Term], casted to [Goal]
      */
-    @JsName("castToDirective")
-    fun castToDirective(): Directive =
-        asDirective() ?: throw ClassCastException("Cannot cast $this to ${Directive::class.simpleName}")
+    @JsName("castToGoal")
+    fun castToGoal(): Goal = asGoal() ?: throw ClassCastException("Cannot cast $this to ${Goal::class.simpleName}")
 
     /**
      * Casts the current [Term] to [EmptyList], if possible
@@ -599,11 +598,11 @@ interface Term :
     fun asConstant(): Constant? = null
 
     /**
-     * Casts the current [Term] to [Directive], if possible, or returns `null` otherwise
-     * @return the current [Term], casted to [Directive], or `null`, if the current term is not an instance of [Directive]
+     * Casts the current [Term] to [Goal], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Goal], or `null`, if the current term is not an instance of [Goal]
      */
-    @JsName("asDirective")
-    fun asDirective(): Directive? = null
+    @JsName("asGoal")
+    fun asGoal(): Goal? = null
 
     /**
      * Casts the current [Term] to [EmptyList], if possible, or returns `null` otherwise

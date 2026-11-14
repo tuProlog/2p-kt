@@ -20,7 +20,7 @@ import kotlin.collections.List as KtList
  * A [Struct] is characterised by a [functor] and a given (non-negative) amount of [args], namely [arity].
  * Each argument can be a [Term] of any sort.
  *
- * Most other non-atomic, non-variable terms in this hierarchy ([Clause], [Rule], [Fact], [Directive], [List],
+ * Most other non-atomic, non-variable terms in this hierarchy ([Clause], [Rule], [Fact], [Goal], [List],
  * [Cons], [Tuple], [Block], [Indicator], and even 0-arity [Atom]s) are, under the hood, just a [Struct] with
  * a conventional [functor] and a folding convention for its arguments. This lets code written generically
  * against [Struct] (e.g. pattern-matching on [functor]/[arity], or walking [args]) work uniformly across all
@@ -48,7 +48,7 @@ interface Struct : Compound {
     override val isRule: Boolean
         get() = isClause && arity == 2
 
-    override val isDirective: Boolean
+    override val isGoal: Boolean
         get() = isClause && arity == 1
 
     override val isFact: Boolean
@@ -313,7 +313,7 @@ interface Struct : Compound {
          * This implies that, whenever possible, the creation of the new [Struct] may be delegated to:
          * - [Cons.of]
          * - [Rule.of]
-         * - [Directive.of]
+         * - [Goal.of]
          * - [Tuple.of]
          * - [Indicator.of]
          * - [Block.of]
@@ -336,7 +336,7 @@ interface Struct : Compound {
                 args.size == 2 && TUPLE_FUNCTOR == functor -> Tuple.of(args)
                 args.size == 2 && INDICATOR_FUNCTOR == functor -> Indicator.of(args.first(), args.last())
                 args.size == 1 && BLOCK_FUNCTOR == functor -> Block.of(args)
-                args.size == 1 && CLAUSE_FUNCTOR == functor -> Directive.of(args.first())
+                args.size == 1 && CLAUSE_FUNCTOR == functor -> Goal.of(args.first())
                 args.isEmpty() -> Atom.of(functor)
                 else -> StructImpl(functor, args, emptyMap())
             }
@@ -347,7 +347,7 @@ interface Struct : Compound {
          * This implies that, whenever possible, the creation of the new [Struct] may be delegated to:
          * - [Cons.of]
          * - [Rule.of]
-         * - [Directive.of]
+         * - [Goal.of]
          * - [Tuple.of]
          * - [Indicator.of]
          * - [Block.of]
@@ -370,7 +370,7 @@ interface Struct : Compound {
          * This implies that, whenever possible, the creation of the new [Struct] may be delegated to:
          * - [Cons.of]
          * - [Rule.of]
-         * - [Directive.of]
+         * - [Goal.of]
          * - [Tuple.of]
          * - [Indicator.of]
          * - [Block.of]
@@ -393,7 +393,7 @@ interface Struct : Compound {
          * This implies that, whenever possible, the creation of the new [Struct] may be delegated to:
          * - [Cons.of]
          * - [Rule.of]
-         * - [Directive.of]
+         * - [Goal.of]
          * - [Tuple.of]
          * - [Indicator.of]
          * - [Block.of]

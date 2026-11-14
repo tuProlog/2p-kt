@@ -273,12 +273,12 @@ interface Scope {
         vararg body: Term,
     ): Rule
 
-    /** Creates a [Directive] with the given body. See [Directive.of]. */
-    @JsName("directiveOf")
-    fun directiveOf(
+    /** Creates a [Goal] with the given body. See [Goal.of]. */
+    @JsName("goalOf")
+    fun goalOf(
         body1: Term,
         vararg body: Term,
-    ): Directive
+    ): Goal
 
     /** Creates a [Clause] with the given (possibly `null`) [head] and body. See [Clause.of]. */
     @JsName("clauseOf")
