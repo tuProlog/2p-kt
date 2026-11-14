@@ -52,6 +52,15 @@ interface TermVisitor<T> {
     @JsName("visitTruth")
     fun visitTruth(term: Truth): T = visitAtom(term)
 
+    @JsName("visitRef")
+    fun visitRef(term: Ref): T = visitConstant(term)
+
+    @JsName("visitObjectRef")
+    fun visitObjectRef(term: ObjectRef): T = visitRef(term)
+
+    @JsName("visitNullRef")
+    fun visitNullRef(term: NullRef): T = visitRef(term)
+
     @JsName("visitNumeric")
     fun visitNumeric(term: Numeric): T = visitConstant(term)
 

@@ -164,6 +164,18 @@ interface Scope {
         args: List<Term>,
     ): Compound
 
+    /** Wraps the host [value] into a [Ref] ([NullRef] if `null`). See [Ref.of]. */
+    @JsName("refOf")
+    fun refOf(value: Any?): Ref
+
+    /** Wraps the non-null host [value] into an [ObjectRef]. See [ObjectRef.of]. */
+    @JsName("objectRefOf")
+    fun objectRefOf(value: Any): ObjectRef
+
+    /** Creates a [NullRef]. See [NullRef.invoke]. */
+    @JsName("nullRefOf")
+    fun nullRefOf(): NullRef
+
     /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
     @JsName("patternOf")
     fun patternOf(

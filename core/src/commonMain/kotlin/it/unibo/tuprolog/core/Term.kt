@@ -129,6 +129,33 @@ interface Term :
     val isPattern: Boolean get() = false
 
     /**
+     * Checks whether the current term is a reference to a host value.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Ref].
+     * @return `true` if the current term is a [Ref], or `false`, otherwise
+     */
+    @JsName("isRef")
+    val isRef: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a reference to a non-null host value.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [ObjectRef].
+     * @return `true` if the current term is a [ObjectRef], or `false`, otherwise
+     */
+    @JsName("isObjectRef")
+    val isObjectRef: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a reference to the host null value.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [NullRef].
+     * @return `true` if the current term is a [NullRef], or `false`, otherwise
+     */
+    @JsName("isNullRef")
+    val isNullRef: Boolean get() = false
+
+    /**
      * Checks whether the current term is a truth value.
      * This method is guaranteed to return `true` if and only if the current term
      * is an instance of [Truth].
@@ -478,6 +505,32 @@ interface Term :
         asPattern() ?: throw ClassCastException("Cannot cast $this to ${Pattern::class.simpleName}")
 
     /**
+     * Casts the current [Term] to [Ref], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Ref]
+     * @return the current [Term], casted to [Ref]
+     */
+    @JsName("castToRef")
+    fun castToRef(): Ref = asRef() ?: throw ClassCastException("Cannot cast $this to ${Ref::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [ObjectRef], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [ObjectRef]
+     * @return the current [Term], casted to [ObjectRef]
+     */
+    @JsName("castToObjectRef")
+    fun castToObjectRef(): ObjectRef =
+        asObjectRef() ?: throw ClassCastException("Cannot cast $this to ${ObjectRef::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [NullRef], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [NullRef]
+     * @return the current [Term], casted to [NullRef]
+     */
+    @JsName("castToNullRef")
+    fun castToNullRef(): NullRef =
+        asNullRef() ?: throw ClassCastException("Cannot cast $this to ${NullRef::class.simpleName}")
+
+    /**
      * Casts the current [Term] to [Recursive], if possible
      * @throws ClassCastException if the current [Term] is not an instance of [Recursive]
      * @return the current [Term], casted to [Recursive]
@@ -642,6 +695,27 @@ interface Term :
      */
     @JsName("asPattern")
     fun asPattern(): Pattern? = null
+
+    /**
+     * Casts the current [Term] to [Ref], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Ref], or `null`, if the current term is not an instance of [Ref]
+     */
+    @JsName("asRef")
+    fun asRef(): Ref? = null
+
+    /**
+     * Casts the current [Term] to [ObjectRef], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [ObjectRef], or `null`, if the current term is not an instance of [ObjectRef]
+     */
+    @JsName("asObjectRef")
+    fun asObjectRef(): ObjectRef? = null
+
+    /**
+     * Casts the current [Term] to [NullRef], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [NullRef], or `null`, if the current term is not an instance of [NullRef]
+     */
+    @JsName("asNullRef")
+    fun asNullRef(): NullRef? = null
 
     /**
      * Casts the current [Term] to [Recursive], if possible, or returns `null` otherwise

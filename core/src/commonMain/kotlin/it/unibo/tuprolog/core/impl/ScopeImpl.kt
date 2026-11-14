@@ -11,9 +11,12 @@ import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
@@ -156,6 +159,12 @@ internal class ScopeImpl(
         functor: Any,
         args: List<Term>,
     ): Compound = Compound.of(functor, args)
+
+    override fun refOf(value: Any?): Ref = Ref.of(value)
+
+    override fun objectRefOf(value: Any): ObjectRef = ObjectRef.of(value)
+
+    override fun nullRefOf(): NullRef = NullRef()
 
     override fun patternOf(
         functor: Var,
