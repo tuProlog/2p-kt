@@ -387,8 +387,14 @@ internal class PrologMachine(
         if (functor !is Var) {
             return raise(TypeError.forGoal(context(frame), procedure, TypeError.Expected.CALLABLE, functor), frame)
         }
-        // without a policy, the functor is bound by unifying the goal with the heads of the clauses of its arity
-        val policy = world.metaResolution ?: return callRules(goal, frame, rest)
+        // without a policy, the functor is bound by unifying the goal with the heads of the clauses of its arity. It is
+        // constrained once for the call, rather than by each unification with a candidate, undone after it
+        val policy =
+            world.metaResolution ?: return callRules(
+                goal.also { if (!bindings.isFunctorVariable(functor)) bindings.constrainFunctor(functor) },
+                frame,
+                rest,
+            )
         val selector = Struct.of(SELECT_FUNCTOR.name, functor, Integer.of(goal.arity))
         val invocation = world.interception?.nextId() ?: 0
         intercept(selector, invocation, frame, rest)?.let { return it.orNull() }
