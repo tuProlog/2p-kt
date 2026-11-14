@@ -98,10 +98,6 @@ object OOPLib : AbstractLibrary() {
         The operators `./2` (method call or property read, chainable), `:=/2` (capture a result or assign a property), `as/2` (explicit conversion) and `${'$'}/1` (alias reference, e.g. `${'$'}stdout`) provide a fluent syntax on top of these predicates. Example: `new_object('java.util.ArrayList', [], L), L.add(1 as 'java.lang.Long'), N := L.size, ${'$'}stdout.println(N)`. Host objects are reached through backends (see `HostInteropBackend`): reflection on the JVM, with overload selection; on JS, the properties and functions of objects (exported ones, for Kotlin classes), called with the arguments in order. Casts and type conversions are only available on the JVM.
         """.trimIndent()
 
-    /** The backends injected into this library, tried in order before the platform's one: none. */
-    val backends: kotlin.collections.List<HostInteropBackend>
-        get() = emptyList()
-
     /**
      * This library, reaching host objects through [backends] first, in order, and then through the platform's
      * [HostInteropBackend]: each solver loading it gets its own backends.

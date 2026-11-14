@@ -50,12 +50,6 @@ interface HostInteropBackend {
         arguments: List<Term>,
         converter: TermToObjectConverter,
     ): Result
-
-    companion object {
-        /** The backend of the current platform: reflection on the JVM, properties and functions on JS. */
-        val platform: HostInteropBackend
-            get() = platformBackend
-    }
 }
 
 /** The backend of the current platform. */

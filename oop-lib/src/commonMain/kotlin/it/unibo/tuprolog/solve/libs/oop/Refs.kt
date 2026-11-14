@@ -18,7 +18,7 @@ fun Ref.invoke(
     objectConverter: TermToObjectConverter,
     methodName: String,
     arguments: List<Term>,
-): Result = invoke(OOPLib.backends, objectConverter, methodName, arguments)
+): Result = invoke(emptyList(), objectConverter, methodName, arguments)
 
 internal fun Ref.invoke(
     backends: List<HostInteropBackend>,
@@ -80,7 +80,7 @@ fun Ref.assign(
     objectConverter: TermToObjectConverter,
     propertyName: String,
     value: Term,
-): Boolean = assign(OOPLib.backends, objectConverter, propertyName, value)
+): Boolean = assign(emptyList(), objectConverter, propertyName, value)
 
 internal fun Ref.assign(
     backends: List<HostInteropBackend>,
@@ -103,7 +103,7 @@ fun Ref.assign(
 fun TypeRef.create(
     objectConverter: TermToObjectConverter,
     arguments: List<Term>,
-): Result = create(OOPLib.backends, objectConverter, arguments)
+): Result = create(emptyList(), objectConverter, arguments)
 
 internal fun TypeRef.create(
     backends: List<HostInteropBackend>,

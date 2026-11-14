@@ -206,4 +206,4 @@ val <C : ExecutionContext> Solve.Request<C>.termToObjectConverter: TermToObjectC
 
 /** The backends injected into the OOP library of the solver of this request (see [OOPLib.withBackends]). */
 internal val <C : ExecutionContext> Solve.Request<C>.hostBackends: kotlin.collections.List<HostInteropBackend>
-    get() = (context.libraries[OOPLib.alias] as? OOPLib.WithBackends)?.backends ?: OOPLib.backends
+    get() = (context.libraries[OOPLib.alias] as? OOPLib.WithBackends)?.backends ?: emptyList()
