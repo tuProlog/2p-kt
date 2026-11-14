@@ -65,8 +65,14 @@ internal class FrozenStore private constructor(
         if (added.isEmpty()) return this
         val newClauses = if (atStart) (added + clauses).toTypedArray() else (clauses.asList() + added).toTypedArray()
         val newProcedures = HashMap(procedures)
-        val hasPatterns = added.any { it.hasPatternHead }
-        for ((key, group) in groupByProcedure(added, hasPatterns)) {
+        // one pass over the added clauses for both checks
+        var hasPatterns = false
+        var hasCustomHeadKeys = customHeadKeys
+        for (clause in added) {
+            if (clause.hasPatternHead) hasPatterns = true
+            if (!hasCustomHeadKeys && unificator.hasCustomHeadKey(clause)) hasCustomHeadKeys = true
+        }
+        for ((key, group) in if (hasPatterns) groupByProcedure(added) else added.groupBy { procedureKeyOf(it) }) {
             newProcedures[key] = procedures[key]?.plus(group, atStart) ?: newProcedure(key, group, atStart)
         }
         val newWildcards =
@@ -94,20 +100,16 @@ internal class FrozenStore private constructor(
             newClauses,
             newProcedures,
             newWildcards,
-            customHeadKeys || added.any { unificator.hasCustomHeadKey(it) },
+            hasCustomHeadKeys,
             newByArity,
         )
     }
 
     /**
-     * The clauses of [added] to add to each procedure, in order: a pattern-headed clause goes to every procedure of its
-     * arity, existing or being created.
+     * The clauses of [added], some of them pattern-headed, to add to each procedure, in order: a pattern-headed clause
+     * goes to every procedure of its arity, existing or being created.
      */
-    private fun groupByProcedure(
-        added: List<Clause>,
-        hasPatterns: Boolean,
-    ): Map<ProcedureKey?, List<Clause>> {
-        if (!hasPatterns) return added.groupBy { procedureKeyOf(it) }
+    private fun groupByProcedure(added: List<Clause>): Map<ProcedureKey?, List<Clause>> {
         val groups = LinkedHashMap<ProcedureKey?, MutableList<Clause>>()
         for (clause in added) if (!clause.hasPatternHead) groups.getOrPut(procedureKeyOf(clause)) { mutableListOf() }
         for (key in procedures.keys) if (key != null) groups.getOrPut(key) { mutableListOf() }
@@ -128,7 +130,8 @@ internal class FrozenStore private constructor(
         group: List<Clause>,
         atStart: Boolean,
     ): FrozenProcedure {
-        val shared = key?.let { wildcards[it.arity] } ?: return FrozenProcedure(group.toTypedArray(), unificator)
+        if (key == null || wildcards.isEmpty()) return FrozenProcedure(group.toTypedArray(), unificator)
+        val shared = wildcards[key.arity] ?: return FrozenProcedure(group.toTypedArray(), unificator)
         return shared.plus(group, atStart)
     }
 
