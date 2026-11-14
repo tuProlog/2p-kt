@@ -78,6 +78,11 @@ class PatternSpec :
             Scope.empty { indicatorOf(varOf("P"), 1).nameTerm shouldBeSameInstanceAs varOf("P") }
         }
 
+        test("any-created/once-a-pattern-exists") {
+            Pattern.of(Var.of("P"), a)
+            Pattern.anyCreated.shouldBeTrue()
+        }
+
         test("type-checks") {
             val pattern: Term = Pattern.of(Var.of("P"), a)
             pattern.isPattern.shouldBeTrue()
