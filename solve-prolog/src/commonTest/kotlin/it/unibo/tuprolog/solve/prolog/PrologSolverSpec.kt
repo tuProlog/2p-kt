@@ -79,6 +79,7 @@ import it.unibo.tuprolog.solve.numberContract
 import it.unibo.tuprolog.solve.onceContract
 import it.unibo.tuprolog.solve.opContract
 import it.unibo.tuprolog.solve.orContract
+import it.unibo.tuprolog.solve.patternDataContract
 import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
@@ -162,6 +163,7 @@ internal fun prologSolverContracts(factory: SolverFactory) =
         include(setOfContract(factory))
         include(solutionPresentationContract(factory))
         include(goalQueryContract(factory))
+        include(patternDataContract(factory))
         include(solverContract(factory, ensureExecutable, ensureExecutable, ensureExecutable))
         include(solverConstructionContract<PrologSolver, MutablePrologSolver>(factory, DefaultBuiltins))
         include(stackTraceContract(factory))
