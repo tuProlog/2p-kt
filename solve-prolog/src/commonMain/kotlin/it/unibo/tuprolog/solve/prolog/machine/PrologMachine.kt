@@ -35,6 +35,7 @@ import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
 import it.unibo.tuprolog.solve.search.Branch
 import it.unibo.tuprolog.solve.search.BranchScheduler
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
+import it.unibo.tuprolog.solve.toCallable
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
@@ -855,7 +856,10 @@ internal class PrologMachine(
         probe: Rule,
     ): Sequence<Rule> =
         candidates(probe).mapNotNull { candidate ->
-            if (candidate.head is Pattern && goal is Struct && isLibraryPredicate(goal)) return@mapNotNull null
+            // metarules do not extend library predicates, as no clause can: checked only for metarules
+            if (candidate.head is Pattern && goal is Struct && world.libraries.hasRule(goal.extractSignature())) {
+                return@mapNotNull null
+            }
             val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
             // the whole clause is unified, so that a unificator sees the tags of the clause itself too
             val clause = Rule.of(goal, rule.body)
@@ -867,11 +871,6 @@ internal class PrologMachine(
                 if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
             }
         }
-
-    // metarules do not extend library predicates (control constructs included), as no clause can: checked only when a
-    // metarule is a candidate, so theories without metarules never pay for it
-    private fun isLibraryPredicate(goal: Struct): Boolean =
-        goal.extractSignature().toIndicator() in world.libraries.asTheory(unificator)
 
     private fun Solution?.orNull(): Solution? = if (this === REFUSED) null else this
 

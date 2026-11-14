@@ -28,9 +28,3 @@ internal val Compound?.isControlConstruct: Boolean
                 EnsureExecutable.functor -> arity == 1
                 else -> false
             }
-
-/**
- * This goal as a [Struct], for the APIs showing goals (stack traces, interceptors, selection policies): a pattern whose
- * functor is still unbound shows as `call(P(...))`, which runs it the same way.
- */
-internal fun Compound.toCallable(): Struct = this as? Struct ?: Struct.of("call", this)

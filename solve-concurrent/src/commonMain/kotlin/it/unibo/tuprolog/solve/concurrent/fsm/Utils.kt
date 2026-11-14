@@ -3,13 +3,13 @@
 package it.unibo.tuprolog.solve.concurrent.fsm
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.toCallable
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
@@ -53,7 +53,7 @@ fun Term.toGoals(): Cursor<out Term> =
  * when a goal is not last-call-optimizable, so it gets its own stack frame to backtrack into.
  */
 fun ConcurrentExecutionContext.createChild(inferProcedureFromGoals: Boolean = true): ConcurrentExecutionContext {
-    val currentGoal = this.currentGoal!!.castToCompound().asProcedure()
+    val currentGoal = this.currentGoal!!.castToCompound().toCallable()
 
     return copy(
         goals = currentGoal.toGoals(),
@@ -70,7 +70,7 @@ fun ConcurrentExecutionContext.createChild(inferProcedureFromGoals: Boolean = tr
  * reusing the current stack frame rather than growing the chain of [ConcurrentExecutionContext.parent]s.
  */
 fun ConcurrentExecutionContext.replaceWithChild(inferProcedureFromGoals: Boolean = true): ConcurrentExecutionContext {
-    val currentGoal = this.currentGoal!!.castToCompound().asProcedure()
+    val currentGoal = this.currentGoal!!.castToCompound().toCallable()
 
     return copy(
         goals = currentGoal.toGoals(),
@@ -103,6 +103,3 @@ fun ConcurrentExecutionContext.toRequest(
     goal: Struct,
     signature: Signature,
 ) = Solve.Request(signature, goal.args, this)
-
-// a pattern, whose functor is unbound, shows as `call(P(...))` in stack traces, which runs it the same way
-private fun Compound.asProcedure(): Struct = this as? Struct ?: Struct.of("call", this)

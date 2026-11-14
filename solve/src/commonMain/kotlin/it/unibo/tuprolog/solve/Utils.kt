@@ -112,3 +112,10 @@ fun runtimeOf(
 @JsName("compoundToGoal")
 fun Compound.toGoal(): Goal =
     this as? Goal ?: Goal.of(this).let { if (tags.isEmpty()) it else it.replaceTags(tags).castToGoal() }
+
+/**
+ * This goal as a [Struct], for the APIs showing goals (stack traces, interceptors, selection policies): a
+ * [it.unibo.tuprolog.core.Pattern], whose functor is still a variable, as `call(P(...))`, which runs it the same way.
+ */
+@JsName("compoundToCallable")
+fun Compound.toCallable(): Struct = this as? Struct ?: Struct.of("call", this)

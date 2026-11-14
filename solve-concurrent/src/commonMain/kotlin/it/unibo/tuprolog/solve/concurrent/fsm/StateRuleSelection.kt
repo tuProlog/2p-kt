@@ -181,17 +181,13 @@ data class StateRuleSelection(
     private fun Theory.selectClauses(goal: Compound): Sequence<Rule> =
         candidates(Rule.of(goal, Var.anonymous())).mapNotNull { candidate ->
             // metarules do not extend library predicates, as no clause can: checked only for metarules
-            if (candidate.head is Pattern && goal is Struct && goal.isLibraryPredicate()) {
+            if (candidate.head is Pattern && goal is Struct && context.libraries.hasRule(goal.extractSignature())) {
                 return@mapNotNull null
             }
             val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
             val mgu = context.unificator.mgu(Rule.of(goal, rule.body), rule)
             if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
         }
-
-    // metarules do not extend library predicates, as no clause can: checked only for metarules
-    private fun Struct.isLibraryPredicate(): Boolean =
-        extractSignature().toIndicator() in context.libraries.asTheory(context.unificator)
 
     override fun clone(context: ConcurrentExecutionContext): StateRuleSelection = copy(context = context)
 }
