@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Rule
@@ -43,6 +44,12 @@ internal class JsTermObjectifier : TermObjectifier {
     override fun visitStruct(term: Struct): Any =
         jsObject(
             "fun" to term.functor,
+            "args" to term.args.map { it.accept(this) },
+        )
+
+    override fun visitPattern(term: Pattern): Any =
+        jsObject(
+            "fun" to visitVar(term.functor),
             "args" to term.args.map { it.accept(this) },
         )
 
