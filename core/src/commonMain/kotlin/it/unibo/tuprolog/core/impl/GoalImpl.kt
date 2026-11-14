@@ -2,7 +2,6 @@ package it.unibo.tuprolog.core.impl
 
 import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 
@@ -11,7 +10,7 @@ internal class GoalImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : ClauseImpl(null, body, tags),
     Goal {
-    override val head: Struct? = super<Goal>.head
+    override val head: Nothing? = super<Goal>.head
 
     override fun copyWithTags(tags: Map<String, Any>): Goal = GoalImpl(body, tags)
 

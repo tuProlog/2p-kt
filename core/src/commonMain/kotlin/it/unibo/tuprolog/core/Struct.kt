@@ -40,7 +40,7 @@ interface Struct : Compound {
         get() =
             CLAUSE_FUNCTOR == functor &&
                 when (arity) {
-                    2 -> getArgAt(0).isStruct
+                    2 -> getArgAt(0).isCompound
                     1 -> true
                     else -> false
                 }
@@ -331,8 +331,8 @@ interface Struct : Compound {
         ): Struct =
             when {
                 args.size == 2 && CONS_FUNCTOR == functor -> Cons.of(args.first(), args.last())
-                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first().isStruct ->
-                    Rule.of(args.first().castToStruct(), args.last())
+                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first().isCompound ->
+                    Rule.of(args.first().castToCompound(), args.last())
                 args.size == 2 && TUPLE_FUNCTOR == functor -> Tuple.of(args)
                 args.size == 2 && INDICATOR_FUNCTOR == functor -> Indicator.of(args.first(), args.last())
                 args.size == 1 && BLOCK_FUNCTOR == functor -> Block.of(args)

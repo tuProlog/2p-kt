@@ -41,7 +41,7 @@ abstract class AbstractClauseVisitor<T> :
     /** Visits [clause]'s head, if any, yielding an empty [Sequence] for a headless [Clause]. */
     protected fun dispatchHead(clause: Clause): Sequence<T> =
         sequenceOf(clause.head).filterNotNull().map {
-            dispatchHead(it)
+            dispatchHead(it.asLiteral(ofClause = clause))
         }
 
     /**

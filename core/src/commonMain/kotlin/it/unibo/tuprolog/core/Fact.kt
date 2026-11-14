@@ -48,7 +48,7 @@ interface Fact : Rule {
         /** Creates a [Fact] with the given [head]. */
         @JvmStatic
         @JsName("of")
-        fun of(head: Struct): Fact = FactImpl(head)
+        fun of(head: Compound): Fact = FactImpl(head)
 
         /**
          * Creates a [Fact] template: a head with [functor] and [arity] anonymous-variable arguments. See

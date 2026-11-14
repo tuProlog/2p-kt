@@ -227,7 +227,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             clause: Clause,
             operation: PermissionError.Operation,
         ): Solve.Request<C> {
-            val headSignature: Signature? = clause.head?.extractSignature()
+            // a Pattern head denotes no specific procedure, hence it has no signature to check permissions against
+            val headSignature: Signature? = clause.head?.asStruct()?.extractSignature()
             return ensuringProcedureHasPermission(headSignature, operation)
         }
 

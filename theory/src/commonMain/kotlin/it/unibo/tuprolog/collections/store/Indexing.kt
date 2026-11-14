@@ -27,7 +27,7 @@ import it.unibo.tuprolog.unify.Unificator
 internal const val INDEX_THRESHOLD = 4
 
 /** The head of a query worth indexing, or `null` if the query cannot select candidates through argument indexes. */
-internal fun Clause.indexableHead(): Struct? = head?.takeIf { it.arity > 0 }
+internal fun Clause.indexableHead(): Struct? = concreteHead()?.takeIf { it.arity > 0 }
 
 /** How deep indexes look into compound arguments: a head argument is at depth 1, its own arguments at depth 2, etc. */
 internal const val MAX_INDEX_DEPTH = 4

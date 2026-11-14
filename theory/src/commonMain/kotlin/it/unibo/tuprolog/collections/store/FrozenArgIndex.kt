@@ -23,7 +23,7 @@ internal class FrozenArgIndex private constructor(
             val wildcards = mutableListOf<Int>()
             val steps = stepsOf(path)
             for (i in clauses.indices) {
-                val key = unificator.keyAt(clauses[i].head!!, steps)
+                val key = unificator.keyAt(clauses[i].concreteHead()!!, steps)
                 if (key.isExact) buckets.getOrPut(key) { mutableListOf() }.add(i) else wildcards.add(i)
             }
             if (buckets.isEmpty()) return null

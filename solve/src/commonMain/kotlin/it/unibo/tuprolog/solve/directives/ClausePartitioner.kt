@@ -178,7 +178,8 @@ class ClausePartitioner(
     }
 
     override fun onRule(rule: Rule) {
-        when (rule.head.extractSignature()) {
+        // a Pattern head has no signature: such rules go to the default clauses, which decide whether to accept them
+        when (rule.head.asStruct()?.extractSignature()) {
             in dynamicSignatures -> _dynamicClauses.assertZ(rule)
             in staticSignatures -> _staticClauses.assertZ(rule)
             else -> defaultClauses.assertZ(rule)

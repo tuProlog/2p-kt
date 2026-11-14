@@ -2,11 +2,11 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.collections.MutableClauseDeque
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.theory.impl.MutableIndexedTheory
 import it.unibo.tuprolog.unify.Unificator
@@ -93,7 +93,7 @@ interface MutableTheory :
 
     override fun assertA(clause: Clause): MutableTheory
 
-    override fun assertA(struct: Struct): MutableTheory = assertA(Fact.of(struct))
+    override fun assertA(struct: Compound): MutableTheory = assertA(Fact.of(struct))
 
     override fun assertA(clauses: Iterable<Clause>): MutableTheory
 
@@ -101,7 +101,7 @@ interface MutableTheory :
 
     override fun assertZ(clause: Clause): MutableTheory
 
-    override fun assertZ(struct: Struct): MutableTheory = assertZ(Fact.of(struct))
+    override fun assertZ(struct: Compound): MutableTheory = assertZ(Fact.of(struct))
 
     override fun assertZ(clauses: Iterable<Clause>): MutableTheory
 
@@ -113,11 +113,11 @@ interface MutableTheory :
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<MutableTheory>
 
-    override fun retract(head: Struct): RetractResult<MutableTheory> = retract(Rule.of(head, Var.anonymous()))
+    override fun retract(head: Compound): RetractResult<MutableTheory> = retract(Rule.of(head, Var.anonymous()))
 
     override fun retractAll(clause: Clause): RetractResult<MutableTheory>
 
-    override fun retractAll(head: Struct): RetractResult<MutableTheory> = retractAll(Rule.of(head, Var.anonymous()))
+    override fun retractAll(head: Compound): RetractResult<MutableTheory> = retractAll(Rule.of(head, Var.anonymous()))
 
     override fun abolish(indicator: Indicator): MutableTheory
 

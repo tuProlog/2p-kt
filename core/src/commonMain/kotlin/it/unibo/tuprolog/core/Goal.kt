@@ -11,7 +11,7 @@ import kotlin.jvm.JvmStatic
  * A [Goal] is distinct from the individual goals of its body, i.e. its [bodyItems].
  */
 interface Goal : Clause {
-    override val head: Struct?
+    override val head: Nothing?
         get() = null
 
     override val isRule: Boolean

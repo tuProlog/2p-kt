@@ -18,7 +18,7 @@ interface Clause : Struct {
 
     /** The head of this clause, or `null` if this is a [Goal]. */
     @JsName("head")
-    val head: Struct?
+    val head: Compound?
 
     /** The body of this clause: a single goal, or a right-nested [Tuple] of goals if there is more than one. */
     @JsName("body")
@@ -77,7 +77,7 @@ interface Clause : Struct {
 
     /** Creates a novel [Rule] which is a copy of the current [Clause], except that [head] is set to [head]. */
     @JsName("setHead")
-    fun setHead(head: Struct): Rule
+    fun setHead(head: Compound): Rule
 
     /** Creates a novel [Clause] which is a copy of the current one, except that [body] is set to [body]. */
     @JsName("setBody")
@@ -171,7 +171,7 @@ interface Clause : Struct {
         @JvmStatic
         @JsName("of")
         fun of(
-            head: Struct? = null,
+            head: Compound? = null,
             vararg body: Term,
         ): Clause = of(head, body.asList())
 
@@ -182,7 +182,7 @@ interface Clause : Struct {
         @JvmStatic
         @JsName("ofIterable")
         fun of(
-            head: Struct? = null,
+            head: Compound? = null,
             body: Iterable<Term>,
         ): Clause =
             when (head) {
@@ -197,7 +197,7 @@ interface Clause : Struct {
         @JvmStatic
         @JsName("ofSequence")
         fun of(
-            head: Struct? = null,
+            head: Compound? = null,
             body: Sequence<Term>,
         ): Clause = of(head, body.asIterable())
 

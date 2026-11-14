@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Numeric
@@ -70,7 +71,7 @@ internal val Clause.isMappedAsProblog: Boolean
 internal fun Clause.setMappedAsProblog(value: Boolean): Clause = setTag(PROBLOG_MAPPED_TAG, value)
 
 /** An already-mapped [Clause] matching every mapped clause with this head, whatever its body and explanation. */
-internal fun Struct.anyMappedClause(): Clause =
+internal fun Compound.anyMappedClause(): Clause =
     Rule.of(withExplanation(Var.anonymous()), Var.anonymous()).setMappedAsProblog(true)
 
 private val nonWrappableFunctors = setOf("!", "true", "false")

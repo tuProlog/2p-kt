@@ -186,10 +186,10 @@ internal class ScopeImpl(
         args: List<Term>,
     ): Pattern = Pattern.of(functor, args)
 
-    override fun factOf(head: Struct): Fact = Fact.of(head)
+    override fun factOf(head: Compound): Fact = Fact.of(head)
 
     override fun ruleOf(
-        head: Struct,
+        head: Compound,
         body1: Term,
         vararg body: Term,
     ): Rule = Rule.of(head, body1, *body)
@@ -200,7 +200,7 @@ internal class ScopeImpl(
     ): Goal = Goal.of(body1, *body)
 
     override fun clauseOf(
-        head: Struct?,
+        head: Compound?,
         vararg body: Term,
     ): Clause = Clause.of(head, *body)
 

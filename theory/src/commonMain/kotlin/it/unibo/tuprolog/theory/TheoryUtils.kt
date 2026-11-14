@@ -7,6 +7,10 @@ internal object TheoryUtils {
     fun checkClauseCorrect(clause: Clause) =
         clause.also {
             require(clause.isWellFormed) { "A theory can only contain well-formed clauses: this isn't $clause" }
+            // shortcut: pattern-headed clauses are rejected until procedures support variable functors (wildcard buckets)
+            require(
+                clause.head?.isPattern != true,
+            ) { "Clauses whose head has a variable functor are not supported yet: $clause" }
         }
 }
 

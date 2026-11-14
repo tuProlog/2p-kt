@@ -263,12 +263,12 @@ interface Scope {
 
     /** Creates a [Fact] with the given [head]. See [Fact.of]. */
     @JsName("factOf")
-    fun factOf(head: Struct): Fact
+    fun factOf(head: Compound): Fact
 
     /** Creates a [Rule] with the given [head] and body. See [Rule.of]. */
     @JsName("ruleOf")
     fun ruleOf(
-        head: Struct,
+        head: Compound,
         body1: Term,
         vararg body: Term,
     ): Rule
@@ -283,7 +283,7 @@ interface Scope {
     /** Creates a [Clause] with the given (possibly `null`) [head] and body. See [Clause.of]. */
     @JsName("clauseOf")
     fun clauseOf(
-        head: Struct?,
+        head: Compound?,
         vararg body: Term,
     ): Clause
 
