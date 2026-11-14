@@ -23,6 +23,9 @@ internal abstract class TermImpl(
         useVarCompleteName: Boolean,
     ): Boolean
 
+    /** Whether [other] is a term equal to this one, comparing variables by their complete names. */
+    override fun equals(other: Any?): Boolean = asTerm(other)?.let { equals(it, true) } ?: false
+
     abstract override fun toString(): String
 
     override fun freshCopy(): Term = this

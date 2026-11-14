@@ -12,7 +12,6 @@ import it.unibo.tuprolog.utils.itemWiseHashCode
 import it.unibo.tuprolog.utils.setTags
 import kotlin.concurrent.Volatile
 
-@Suppress("EqualsOrHashCode")
 internal class PatternImpl(
     override val functor: Var,
     override val args: List<Term>,
@@ -58,8 +57,6 @@ internal class PatternImpl(
         other.asPattern()?.let { that ->
             arity == that.arity && (0 until arity).all { args[it].structurallyEquals(that[it]) }
         } ?: false
-
-    override fun equals(other: Any?): Boolean = asTerm(other)?.let { equals(it, true) } ?: false
 
     override fun equals(
         other: Term,

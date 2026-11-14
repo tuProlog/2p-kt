@@ -5,15 +5,12 @@ import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 
-@Suppress("EqualsOrHashCode")
 internal class NullRefImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : TermImpl(tags),
     NullRef {
     override val hashCodeCache: Int
         get() = HASH
-
-    override fun equals(other: Any?): Boolean = asTerm(other)?.isNullRef ?: false
 
     override fun equals(
         other: Term,
