@@ -15,6 +15,7 @@ import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Runtime
 import it.unibo.tuprolog.solve.prolog.machine.Cancellation
 import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
+import it.unibo.tuprolog.solve.search.MetaResolutionPolicy
 import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.toOperatorSet
@@ -35,8 +36,8 @@ import kotlin.collections.List as KtList
  *
  * - [chronometer]: the resolution's chronometer (see [it.unibo.tuprolog.solve.Durable.chronometer]).
  * - [counters]: the resolution's opt-in [ResolutionCounters] (see [it.unibo.tuprolog.solve.SolveOptions.counters]).
- * - [interception], [ruleSelection], [goalSelection]: the resolution's opt-in interceptor and selection policies (see
- *   [it.unibo.tuprolog.solve.SolveOptions]), or `null` for none.
+ * - [interception], [ruleSelection], [goalSelection], [metaResolution]: the resolution's opt-in interceptor and
+ *   selection policies (see [it.unibo.tuprolog.solve.SolveOptions]), or `null` for none.
  * - [cancellation]: the [Cancellation] of the `SolutionStream` this resolution answers or is nested in, or `null`; the
  *   solvers this context creates share it.
  */
@@ -57,6 +58,7 @@ internal data class PrologExecutionContext(
     val interception: Interception? = null,
     val ruleSelection: RuleSelectionPolicy? = null,
     val goalSelection: GoalSelectionPolicy? = null,
+    val metaResolution: MetaResolutionPolicy? = null,
     val cancellation: Cancellation? = null,
 ) : ExecutionContext {
     override val logicStackTrace: KtList<Struct>

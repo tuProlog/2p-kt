@@ -121,6 +121,7 @@ internal abstract class AbstractPrologSolver(
                 interception = options.interceptor?.let(::Interception),
                 ruleSelection = options.ruleSelection,
                 goalSelection = options.goalSelection,
+                metaResolution = options.metaResolution,
                 cancellation = starting?.cancellation ?: inheritedCancellation,
             )
         val machine = PrologMachine(currentContext, goal, options.branchScheduler) { currentContext = it }
