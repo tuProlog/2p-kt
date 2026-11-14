@@ -21,7 +21,7 @@ internal class TagResultUnificator : AbstractWorklistUnificator() {
         }
 
     companion object {
-        const val FORBIDDEN = "forbidden"
-        const val SEEN = "seen"
+        const val FORBIDDEN = "it.unibo.tuprolog.solve.tags.TagResultUnificator.forbidden"
+        const val SEEN = "it.unibo.tuprolog.solve.tags.TagResultUnificator.seen"
     }
 }

@@ -26,7 +26,7 @@ internal class TagFlow {
     }
 
     companion object {
-        const val ORIGIN = "origin"
+        const val ORIGIN = "it.unibo.tuprolog.solve.tags.TagFlow.origin"
         const val GOAL = "goal"
         const val THEORY = "theory"
     }
