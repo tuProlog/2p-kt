@@ -67,7 +67,7 @@ significant architectural change — almost all of it lives in `commonMain`, not
 2P-Kt's actual term model (`:core`). `TermParser` is its public contract:
 
 ```kotlin
---8<-- "parser-core/src/commonMain/kotlin/it/unibo/tuprolog/core/parsing/TermParser.kt:20:35"
+--8<-- "parser-core/src/commonMain/kotlin/it/unibo/tuprolog/core/parsing/TermParser.kt:22:37"
 ```
 
 `TermParserImpl` walks a `SyntaxTree` (via `PrologTermParserVisitor`) and builds `Term`/`Clause` instances

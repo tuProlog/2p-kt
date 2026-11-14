@@ -4,56 +4,68 @@ skinparam shadowing false
 interface Term
 interface Constant
 interface Var
+interface Compound
 interface Struct
+interface Pattern
 interface Numeric
 interface Integer
 interface Real
+interface Ref
+abstract class ObjectRef
+interface NullRef
 interface Atom
 interface Truth
 interface Indicator
 interface Empty
-interface EmptySet
+interface EmptyBlock
 interface EmptyList
 interface List
 interface Cons
-interface Set
+interface Block
 interface Tuple
 
-Term <|-down- Struct
+Term <|-down- Compound
 Term <|-down- Constant
 Term <|-down- Var
 
+Compound <|-down- Struct
+Compound <|-down- Pattern
+
 Constant <|-down- Numeric
 Constant <|-down- Atom
+Constant <|-down- Ref
 
 Numeric <|-down- Real
 Numeric <|-down- Integer
 
+Ref <|-down- ObjectRef
+Ref <|-down- NullRef
+
 Struct <|-down- Atom
 Struct <|-down- List
 Struct <|-down- Tuple
-Struct <|-down- Set
+Struct <|-down- Block
 Struct <|-down- Indicator
 
 Atom <|-down- Truth
 Atom <|-down- Empty
 
 Empty <|-up- EmptyList
-Empty <|-up- EmptySet
+Empty <|-up- EmptyBlock
 
 List <|-down- EmptyList
 List <|-down- Cons
-Set <|-down- EmptySet
+Block <|-down- EmptyBlock
 
 package clauses <<Rectangle>> {
 
     interface Clause
     interface Rule
-    interface Directive
+    interface Goal
     interface Fact
     Struct <|-down- Clause
     Clause <|-down- Rule
-    Clause <|-down- Directive
+    Clause <|-down- Goal
     Rule <|-down- Fact
 
 }
