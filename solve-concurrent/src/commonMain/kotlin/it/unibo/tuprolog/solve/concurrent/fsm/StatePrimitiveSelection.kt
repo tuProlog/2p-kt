@@ -1,12 +1,14 @@
 package it.unibo.tuprolog.solve.concurrent.fsm
 
 import it.unibo.tuprolog.core.Pattern
+import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.extractSignature
+import it.unibo.tuprolog.utils.Cursor
 
 /**
  * "Primitive Selection": inspects [ConcurrentExecutionContext.currentGoal] and either raises an
@@ -34,7 +36,24 @@ data class StatePrimitiveSelection(
 
     override fun computeNext(): Iterable<State> =
         with(context) {
-            val goal = currentGoal!!
+            val goal =
+                try {
+                    currentGoal!!
+                } catch (e: SubstitutionApplicationException) {
+                    // goals are substituted lazily: a pattern whose functor is bound to a non-atom is not callable
+                    val pattern = e.term as? Pattern ?: throw e
+                    val error =
+                        TypeError.forGoal(
+                            context = context,
+                            procedure = context.procedure?.extractSignature() ?: Signature("?-", 1),
+                            expectedType = TypeError.Expected.CALLABLE,
+                            culprit = pattern.functor[e.substitution],
+                        )
+                    // the goal raising the error is the pattern as written, which the error state can read
+                    return listOf(
+                        StateException(error, context.copy(goals = Cursor.of(sequenceOf(pattern)), step = nextStep())),
+                    )
+                }
             when {
                 goal.isVar -> {
                     exceptionalState(
@@ -45,16 +64,8 @@ data class StatePrimitiveSelection(
                         ),
                     )
                 }
-                // a call whose functor is still a variable: meta-resolution policies are not supported here
-                goal is Pattern -> {
-                    exceptionalState(
-                        InstantiationError.forGoal(
-                            context = context,
-                            procedure = context.procedure?.extractSignature() ?: Signature("?-", 1),
-                            variable = goal.functor,
-                        ),
-                    )
-                }
+                // a call whose functor is still a variable: no primitive, its functor is bound by rule selection
+                goal is Pattern -> listOf(StateRuleSelection(context.copy(step = nextStep())))
                 goal.isStruct -> {
                     val goalStruct = goal.castToStruct()
                     val signature = goalStruct.extractSignature()

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent.fsm
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -105,6 +106,16 @@ data class StateRuleSelection(
                         ),
                     ),
                 )
+            // its functor is bound by unifying it with the heads of the user clauses of its arity: no library predicate
+            currentGoal is Pattern ->
+                with(context) {
+                    val rules = sequenceOf(staticKb, dynamicKb).flatMap { it.selectClauses(currentGoal) }.toList()
+                    if (rules.isEmpty()) {
+                        listOf(failureState)
+                    } else {
+                        rules.map { StateRuleExecution(context.createChildAppendingRules(it)) }
+                    }
+                }
             currentGoal.isStruct ->
                 with(context) {
                     val currentGoalStruct = currentGoal.castToStruct()
@@ -167,18 +178,20 @@ data class StateRuleSelection(
      * with the rule `H :- B` compares whole clauses as `Theory.get` does, but costs no more than unifying heads, since
      * unifying `B` with itself is immediate. Mutable theories follow the logical update view: no need to copy them.
      */
-    private fun Theory.selectClauses(goal: Struct): Sequence<Rule> =
+    private fun Theory.selectClauses(goal: Compound): Sequence<Rule> =
         candidates(Rule.of(goal, Var.anonymous())).mapNotNull { candidate ->
             // metarules do not extend library predicates, as no clause can: checked only for metarules
-            if (candidate.head is Pattern &&
-                goal.extractSignature().toIndicator() in context.libraries.asTheory(context.unificator)
-            ) {
+            if (candidate.head is Pattern && goal is Struct && goal.isLibraryPredicate()) {
                 return@mapNotNull null
             }
             val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
             val mgu = context.unificator.mgu(Rule.of(goal, rule.body), rule)
             if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
         }
+
+    // metarules do not extend library predicates, as no clause can: checked only for metarules
+    private fun Struct.isLibraryPredicate(): Boolean =
+        extractSignature().toIndicator() in context.libraries.asTheory(context.unificator)
 
     override fun clone(context: ConcurrentExecutionContext): StateRuleSelection = copy(context = context)
 }
