@@ -10,6 +10,7 @@ import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
+import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
 import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
@@ -116,5 +117,32 @@ class SolverFactoryProfileSpec :
                 step.shouldBeInstanceOf<ResolutionStep.Yield>()
                 step.solution.time.shouldNotBeNull()
             }
+        }
+
+        test("pattern-queries-are-solved").config(coroutineTestScope = true) {
+            val profile =
+                solverFactoryProfile(
+                    PrologSolverFactory,
+                    SolverProfileId("test"),
+                    "Test",
+                    runtimeLibraries = listOf(IOLib),
+                )
+            val pageId = PageId("page")
+            val session =
+                profile.factory.create(
+                    SolverSessionCreationRequest(
+                        pageId,
+                        DocumentId("document"),
+                        "p(a).",
+                        1,
+                        profile.id,
+                        emptyMap(),
+                        "",
+                    ),
+                )
+            val step = session.openResolution(ResolutionRequest(pageId, "Q(X).", 1.seconds, emptyMap(), "")).next()
+            // an instantiation error, as the functor is unbound, rather than a syntax error
+            step.shouldBeInstanceOf<ResolutionStep.Yield>()
+            step.solution.shouldBeInstanceOf<SolutionPresentation.Halt>()
         }
     })
