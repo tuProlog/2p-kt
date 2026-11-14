@@ -10,6 +10,7 @@ import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Recursive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -56,6 +57,12 @@ internal abstract class AbstractTermFormatter(
                     "$functor$args"
                 }
             }.plusTagsOf(term)
+
+    override fun visitPattern(term: Pattern): String {
+        val functor = term.functor.accept(childFormatter())
+        val args = term.argsSequence.joinToString(", ", "(", ")") { it.accept(childFormatter()) }
+        return "$functor$args".plusTagsOf(term)
+    }
 
     private fun isNumberedVar(term: Struct): Boolean =
         term.functor == "\$VAR" &&

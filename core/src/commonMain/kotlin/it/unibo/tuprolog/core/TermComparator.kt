@@ -2,8 +2,8 @@ package it.unibo.tuprolog.core
 
 /**
  * A [Comparator] for a specific sort of [Term], following the standard logic-term total order: variables
- * order before numbers, which order before atoms, which order before structures (compared first by `arity`,
- * then `functor`, then arguments left-to-right). [DefaultComparator] implements the full order across any
+ * order before numbers, which order before atoms, which order before compound terms (compared first by `arity`,
+ * then `functor`, then arguments left-to-right; a [Pattern]'s variable functor orders before any atom functor). [DefaultComparator] implements the full order across any
  * two [Term]s and backs [Term.compareTo]; the other nested objects handle one specific sub-type each, and are
  * mostly useful when only same-sort terms are ever compared (e.g. sorting a list of [Atom]s).
  */
@@ -80,16 +80,16 @@ interface TermComparator<T : Term> : Comparator<T> {
         ): Int =
             when {
                 b.isAtom -> AtomComparator.compare(a, b.castToAtom())
-                b.isStruct -> -1
+                b.isCompound -> -1
                 else -> 1
             }
 
-        private fun compareStructAndTerm(
-            a: Struct,
+        private fun compareCompoundAndTerm(
+            a: Compound,
             b: Term,
         ): Int =
             when {
-                b.isStruct -> StructComparator.compare(a, b.castToStruct())
+                b.isCompound -> CompoundComparator.compare(a, b.castToCompound())
                 else -> 1
             }
 
@@ -102,7 +102,7 @@ interface TermComparator<T : Term> : Comparator<T> {
                 a.isReal -> compareRealAndTerm(a.castToReal(), b)
                 a.isInteger -> compareIntegerAndTerm(a.castToInteger(), b)
                 a.isAtom -> compareAtomAndTerm(a.castToAtom(), b)
-                a.isStruct -> compareStructAndTerm(a.castToStruct(), b)
+                a.isCompound -> compareCompoundAndTerm(a.castToCompound(), b)
                 else -> throw IllegalStateException("Cannot compare ${a::class} with ${b::class}. This is a bug.")
             }
     }
@@ -112,6 +112,33 @@ interface TermComparator<T : Term> : Comparator<T> {
         override fun compare(
             a: Struct,
             b: Struct,
+        ): Int = CompoundComparator.compare(a, b)
+    }
+
+    /**
+     * Compares two [Compound]s first by [Compound.arity], then by functor, then argument-wise, left to right.
+     * [Struct] functors are compared as strings, [Pattern] functors as variables, and any variable functor orders
+     * before any [String] functor.
+     */
+    object CompoundComparator : TermComparator<Compound> {
+        private fun compareFunctors(
+            a: Compound,
+            b: Compound,
+        ): Int =
+            when {
+                a.isPattern && b.isPattern ->
+                    VarComparator.compare(
+                        a.castToPattern().functor,
+                        b.castToPattern().functor,
+                    )
+                a.isPattern -> -1
+                b.isPattern -> 1
+                else -> a.castToStruct().functor.compareTo(b.castToStruct().functor)
+            }
+
+        override fun compare(
+            a: Compound,
+            b: Compound,
         ): Int {
             // The last argument is compared by looping rather than by recursion, so that right-nested terms
             // (lists, tuples, blocks) take O(1) native stack.
@@ -121,7 +148,7 @@ interface TermComparator<T : Term> : Comparator<T> {
                 if (x === y) return 0
                 val arityDelta = x.arity - y.arity
                 if (arityDelta != 0) return arityDelta
-                val functorComparison = x.functor.compareTo(y.functor)
+                val functorComparison = compareFunctors(x, y)
                 if (functorComparison != 0) return functorComparison
                 val last = x.arity - 1
                 if (last < 0) return 0
@@ -131,11 +158,11 @@ interface TermComparator<T : Term> : Comparator<T> {
                 }
                 val lastOfX = x[last]
                 val lastOfY = y[last]
-                if (!lastOfX.isStruct || !lastOfY.isStruct || lastOfX.isAtom || lastOfY.isAtom) {
+                if (!lastOfX.isCompound || !lastOfY.isCompound || lastOfX.isAtom || lastOfY.isAtom) {
                     return DefaultComparator.compare(lastOfX, lastOfY)
                 }
-                x = lastOfX.castToStruct()
-                y = lastOfY.castToStruct()
+                x = lastOfX.castToCompound()
+                y = lastOfY.castToCompound()
             }
         }
     }
