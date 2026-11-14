@@ -25,7 +25,7 @@ internal abstract class AbstractTheory(
     override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it.castToRule() }
 
     override fun get(indicator: Indicator): Sequence<Rule> {
-        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
+        require(indicator.isConcrete) { "The provided indicator is not well formed and concrete: $indicator" }
 
         return get(
             Rule.of(
@@ -36,7 +36,7 @@ internal abstract class AbstractTheory(
     }
 
     override fun abolish(indicator: Indicator): Theory {
-        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
+        require(indicator.isConcrete) { "The provided indicator is not well formed and concrete: $indicator" }
 
         return retractAll(Struct.template(indicator.indicatedName!!, indicator.indicatedArity!!)).theory
     }

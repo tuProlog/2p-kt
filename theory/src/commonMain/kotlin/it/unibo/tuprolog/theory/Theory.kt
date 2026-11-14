@@ -129,7 +129,7 @@ interface Theory :
 
     /**
      * Checks if clauses exist in this theory having the specified [indicator] as head.
-     * @throws IllegalArgumentException if [indicator] is not [well-formed][Indicator.isWellFormed]
+     * @throws IllegalArgumentException if [indicator] is not [concrete][Indicator.isConcrete]
      */
     @JsName("containsIndicator")
     operator fun contains(indicator: Indicator): Boolean
@@ -143,7 +143,7 @@ interface Theory :
 
     /**
      * Retrieves all the [Rule]s in this theory having the specified [indicator] as head.
-     * @throws IllegalArgumentException if [indicator] is not [well-formed][Indicator.isWellFormed]
+     * @throws IllegalArgumentException if [indicator] is not [concrete][Indicator.isConcrete]
      */
     @JsName("getByIndicator")
     operator fun get(indicator: Indicator): Sequence<Rule>
@@ -243,7 +243,7 @@ interface Theory :
     /**
      * Removes from this theory all the clauses whose head has the given [indicator] as functor/arity, mirroring
      * ISO Prolog's `abolish/1`.
-     * @throws IllegalArgumentException if [indicator] is not [well-formed][Indicator.isWellFormed]
+     * @throws IllegalArgumentException if [indicator] is not [concrete][Indicator.isConcrete]
      */
     @JsName("abolish")
     fun abolish(indicator: Indicator): Theory
