@@ -40,7 +40,7 @@ class TermMetadataSpec :
                 TaggableTermCase("fact-of-list", Fact.of(List.of(X))),
                 TaggableTermCase("fact-of-block", Fact.of(Block.of(X))),
                 TaggableTermCase("fact-of-tuple", Fact.of(Tuple.of(X, X))),
-                TaggableTermCase("directive", Directive.of(Struct.of("h", X), Tuple.of(X, X))),
+                TaggableTermCase("directive", Goal.of(Struct.of("h", X), Tuple.of(X, X))),
                 TaggableTermCase("rule", Rule.of(Struct.of("h", X), Tuple.of(X, X))),
             )
 

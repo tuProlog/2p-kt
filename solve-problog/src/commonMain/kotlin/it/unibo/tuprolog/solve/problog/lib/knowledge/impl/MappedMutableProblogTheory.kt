@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge.impl
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.problog.lib.knowledge.MutableProblogTheory
 import it.unibo.tuprolog.solve.problog.lib.knowledge.ProblogTheory
 import it.unibo.tuprolog.theory.MutableTheory
@@ -120,9 +120,9 @@ internal class MappedMutableProblogTheory(
     override fun abolish(indicator: Indicator): MutableProblogTheory =
         MappedMutableProblogTheory(null, unificator, this.theory.abolish(ClauseMappingUtils.map(indicator)))
 
-    override fun assertA(struct: Struct): MutableProblogTheory = assertA(Fact.of(struct))
+    override fun assertA(struct: Compound): MutableProblogTheory = assertA(Fact.of(struct))
 
-    override fun assertZ(struct: Struct): MutableProblogTheory = assertZ(Fact.of(struct))
+    override fun assertZ(struct: Compound): MutableProblogTheory = assertZ(Fact.of(struct))
 
     override fun assertA(clause: Clause): MutableProblogTheory = assertA(listOf(clause))
 
@@ -132,13 +132,13 @@ internal class MappedMutableProblogTheory(
 
     override fun assertZ(clauses: Sequence<Clause>): MutableProblogTheory = assertZ(clauses.asIterable())
 
-    override fun retract(head: Struct): RetractResult<MutableProblogTheory> = retract(head.anyMappedClause())
+    override fun retract(head: Compound): RetractResult<MutableProblogTheory> = retract(head.anyMappedClause())
 
     override fun retract(clause: Clause): RetractResult<MutableProblogTheory> = retract(listOf(clause))
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<MutableProblogTheory> = retract(clauses.asIterable())
 
-    override fun retractAll(head: Struct): RetractResult<MutableProblogTheory> =
+    override fun retractAll(head: Compound): RetractResult<MutableProblogTheory> =
         retractAll(
             head.anyMappedClause(),
         )

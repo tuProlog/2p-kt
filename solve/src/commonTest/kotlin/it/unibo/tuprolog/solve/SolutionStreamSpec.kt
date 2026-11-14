@@ -82,7 +82,7 @@ class SolutionStreamSpec :
             var produced = 0
             val stream = IteratorSolutionStream(generateSequence { Solution.yes(query).also { produced++ } }.iterator())
 
-            stream.map { it.query }.take(2).toList() shouldBe listOf(query, query)
+            stream.map { it.query.body }.take(2).toList() shouldBe listOf(query, query)
             produced shouldBe 2
         }
 

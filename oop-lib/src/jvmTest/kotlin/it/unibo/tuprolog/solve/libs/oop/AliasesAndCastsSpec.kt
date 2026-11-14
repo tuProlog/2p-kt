@@ -8,6 +8,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
@@ -170,6 +171,6 @@ class AliasesAndCastsSpec :
         }
 
         test("cast-of-an-unbound-term/is-null") {
-            solve("cast(X, T, R)").substitution.getByName("R") shouldBe ObjectRef.NULL
+            solve("cast(X, T, R)").substitution.getByName("R") shouldBe NullRef.instance
         }
     })

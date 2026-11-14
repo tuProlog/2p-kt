@@ -1,10 +1,12 @@
 package it.unibo.tuprolog.unify.impl
 
 import it.unibo.tuprolog.core.Cons
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.unify.withFunctorVariables
 
 /**
  * Turns triangular [Bindings] into the public, idempotent [Substitution], resolving each bound variable once.
@@ -19,7 +21,9 @@ internal class SubstitutionMaterializer(
     private val resolved = HashMap<Var, Term>()
     private val expanding = HashSet<Var>()
 
-    fun materialize(): Substitution {
+    fun materialize(): Substitution = materializeBindings().withFunctorVariables(bindings.functorVariables)
+
+    private fun materializeBindings(): Substitution {
         val base = bindings.base
         val result = LinkedHashMap<Var, Term>()
         bindings.forEachNew { variable, term -> result[variable] = term }
@@ -50,6 +54,7 @@ internal class SubstitutionMaterializer(
             term.isGround -> term
             term is Cons -> resolveList(term)
             term is Struct -> resolveStruct(term)
+            term is Pattern -> resolvePattern(term)
             else -> term
         }
 
@@ -64,6 +69,15 @@ internal class SubstitutionMaterializer(
             }
         }
         return args?.let { Struct.of(struct.functor, it).withTagsOf(struct) } ?: struct
+    }
+
+    private fun resolvePattern(pattern: Pattern): Term {
+        val functor = resolve(pattern.functor)
+        val args = pattern.args.map { resolve(it) }
+        if (functor === pattern.functor && args.indices.all { args[it] === pattern.args[it] }) return pattern
+        // functor variables are only ever bound to atoms or variables
+        val resolved = if (functor is Var) Pattern.of(functor, args) else Struct.of(functor.castToAtom().value, args)
+        return resolved.withTagsOf(pattern)
     }
 
     /** Iterates over the spine of [list], so that long lists need no deep recursion. */

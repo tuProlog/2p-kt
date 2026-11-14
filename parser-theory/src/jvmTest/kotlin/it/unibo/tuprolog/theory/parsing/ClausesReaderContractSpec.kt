@@ -23,11 +23,11 @@ class ClausesReaderContractSpec :
     FunSpec({
         fun stream(text: String) = ByteArrayInputStream(text.encodeToByteArray())
 
-        fun Iterable<Clause>.singleHead(): Struct = (single() as Fact).head
+        fun Iterable<Clause>.singleHead(): Struct = (single() as Fact).head.castToStruct()
 
-        fun Sequence<Clause>.singleHead(): Struct = (single() as Fact).head
+        fun Sequence<Clause>.singleHead(): Struct = (single() as Fact).head.castToStruct()
 
-        fun Theory.singleHead(): Struct = (single() as Fact).head
+        fun Theory.singleHead(): Struct = (single() as Fact).head.castToStruct()
 
         class GeneratedClauseReader(
             private val clauseCount: Int,

@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.libs.oop.allSupertypes
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
@@ -62,7 +62,7 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
     ): Sequence<Response> =
         catchingOopExceptions {
             when (second) {
-                is Struct -> {
+                is Struct, is TypeRef -> {
                     val type = getArgumentAsTypeRef(1)
                     try {
                         sequenceOf(replyWith(cast(first, type?.type, third)))
@@ -95,6 +95,6 @@ object Cast : TernaryRelation<ExecutionContext>("cast") {
             Substitution.failed()
         } else {
             val casted = termToObjectConverter.convertInto(type, term)
-            mgu(result, ObjectRef.of(casted))
+            mgu(result, Ref.of(casted))
         }
 }

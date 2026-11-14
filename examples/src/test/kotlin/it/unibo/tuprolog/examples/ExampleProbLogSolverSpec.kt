@@ -35,7 +35,7 @@ class ExampleProbLogSolverSpec :
             val goal = Struct.of("path", Var.of("From"), Var.of("To"))
             for (solution in problogSolver.solve(goal, SolveOptions.allLazily().probabilistic())) {
                 if (solution.isYes) {
-                    println("yes: ${solution.solvedQuery} with probability ${solution.probability}")
+                    println("yes: ${solution.solvedQuery?.body} with probability ${solution.probability}")
                 }
             }
         }

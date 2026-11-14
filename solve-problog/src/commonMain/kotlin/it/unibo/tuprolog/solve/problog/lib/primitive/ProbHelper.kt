@@ -116,7 +116,7 @@ internal object ProbHelper : TernaryRelation.WithoutSideEffects<ExecutionContext
                     val subGoal = goal[0]
                     val subGoalSignature =
                         when (subGoal) {
-                            is Clause -> subGoal.head!!.extractSignature()
+                            is Clause -> subGoal.head!!.castToStruct().extractSignature()
                             else -> subGoal.safeToStruct().extractSignature()
                         }
                     if (subGoalSignature in context.libraries || (subGoal is Clause && !subGoal.isWellFormed)) {

@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.prolog
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Indicator
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.RetractResult
 import it.unibo.tuprolog.theory.Theory
@@ -38,7 +38,7 @@ internal class ReadOnlyTheory(
 
     override fun assertA(clause: Clause): Theory = copy.assertA(clause)
 
-    override fun assertA(struct: Struct): Theory = copy.assertA(struct)
+    override fun assertA(struct: Compound): Theory = copy.assertA(struct)
 
     override fun assertA(clauses: Iterable<Clause>): Theory = copy.assertA(clauses)
 
@@ -46,7 +46,7 @@ internal class ReadOnlyTheory(
 
     override fun assertZ(clause: Clause): Theory = copy.assertZ(clause)
 
-    override fun assertZ(struct: Struct): Theory = copy.assertZ(struct)
+    override fun assertZ(struct: Compound): Theory = copy.assertZ(struct)
 
     override fun assertZ(clauses: Iterable<Clause>): Theory = copy.assertZ(clauses)
 
@@ -58,11 +58,11 @@ internal class ReadOnlyTheory(
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<Theory> = copy.retract(clauses)
 
-    override fun retract(head: Struct): RetractResult<Theory> = copy.retract(head)
+    override fun retract(head: Compound): RetractResult<Theory> = copy.retract(head)
 
     override fun retractAll(clause: Clause): RetractResult<Theory> = copy.retractAll(clause)
 
-    override fun retractAll(head: Struct): RetractResult<Theory> = copy.retractAll(head)
+    override fun retractAll(head: Compound): RetractResult<Theory> = copy.retractAll(head)
 
     override fun abolish(indicator: Indicator): Theory = copy.abolish(indicator)
 

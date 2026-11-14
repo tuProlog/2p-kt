@@ -1,11 +1,12 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
-import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.Result
+import it.unibo.tuprolog.solve.libs.oop.invoke
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.TernaryRelation
 
@@ -28,7 +29,7 @@ abstract class AbstractInvoke(
         second: Term,
         third: Term,
     ): Substitution {
-        ensuringArgumentIsStruct(0)
+        if (first !is Ref) ensuringArgumentIsStruct(0)
         ensuringArgumentIsStruct(1)
 
         val method = second as Struct
@@ -52,7 +53,7 @@ abstract class AbstractInvoke(
         method: Struct,
         resultTerm: Term,
     ): Substitution =
-        when (val result = ref.invoke(termToObjectConverter, method.functor, method.args)) {
+        when (val result = ref.invoke(hostBackends, termToObjectConverter, method.functor, method.args)) {
             is Result.Value -> mgu(resultTerm, result.getInvocationResult())
             else -> Substitution.failed()
         }

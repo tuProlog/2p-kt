@@ -13,6 +13,10 @@ import kotlin.js.JsName
  * "mutating" the tags of a [Self] does not happen in place: it always goes through [replaceTags] (see the
  * [addTag]/[addTags]/[setTag]/[setTags]/[clearTags] extension functions in `Taggables.kt` for convenient,
  * higher-level ways to derive a new, differently-tagged instance).
+ *
+ * Tag names are qualified, so that tags of different modules never clash: the fully qualified name of the scope
+ * declaring the name (a class or object, or the package of a top-level declaration), then a kebab-case name, e.g.
+ * `it.unibo.tuprolog.core.Clause.verbatim-body` or `it.unibo.tuprolog.solve.timing.time`.
  * @param Self is the (CRTP) concrete type implementing this interface, i.e. the type returned by [replaceTags]
  */
 interface Taggable<Self : Taggable<Self>> {

@@ -8,11 +8,11 @@ import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Constant
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
@@ -46,7 +46,7 @@ internal object TermTypeAssertionUtils {
             any.isReal,
             any.isInteger,
             any.isClause,
-            any.isDirective,
+            any.isGoal,
             any.isFact,
             any.isRule,
             any.isCons,
@@ -84,7 +84,7 @@ internal object TermTypeAssertionUtils {
         assertAllFalse(
             any.isVar,
             any.isClause,
-            any.isDirective,
+            any.isGoal,
             any.isFact,
             any.isRule,
             any.isCons,
@@ -140,7 +140,7 @@ internal object TermTypeAssertionUtils {
             any.isReal,
             any.isInteger,
             any.isClause,
-            any.isDirective,
+            any.isGoal,
             any.isFact,
             any.isRule,
             any.isCons,
@@ -183,7 +183,7 @@ internal object TermTypeAssertionUtils {
             any.isReal,
             any.isInteger,
             any.isClause,
-            any.isDirective,
+            any.isGoal,
             any.isFact,
             any.isRule,
             any.isCons,
@@ -256,7 +256,7 @@ internal object TermTypeAssertionUtils {
             any.isReal,
             any.isInteger,
             any.isClause,
-            any.isDirective,
+            any.isGoal,
             any.isFact,
             any.isRule,
             any.isCons,
@@ -297,7 +297,7 @@ internal object TermTypeAssertionUtils {
             any.isReal,
             any.isInteger,
             any.isClause,
-            any.isDirective,
+            any.isGoal,
             any.isFact,
             any.isRule,
             any.isCons,
@@ -338,7 +338,7 @@ internal object TermTypeAssertionUtils {
             any.isReal,
             any.isInteger,
             any.isClause,
-            any.isDirective,
+            any.isGoal,
             any.isFact,
             any.isRule,
             any.isAtom,
@@ -375,7 +375,7 @@ internal object TermTypeAssertionUtils {
             any.isReal,
             any.isInteger,
             any.isClause,
-            any.isDirective,
+            any.isGoal,
             any.isFact,
             any.isRule,
             any.isCons,
@@ -496,17 +496,17 @@ internal object TermTypeAssertionUtils {
         any.isRule.shouldBeTrue()
 
         assertAllFalse(
-            any.isDirective,
-            any is Directive,
+            any.isGoal,
+            any is Goal,
         )
     }
 
-    /** Checks passed term to be a Directive or fails otherwise */
-    fun assertIsDirective(any: Any) {
+    /** Checks passed term to be a Goal or fails otherwise */
+    fun assertIsGoal(any: Any) {
         commonClauseAssertions(any)
 
-        any.shouldBeInstanceOf<Directive>()
-        any.isDirective.shouldBeTrue()
+        any.shouldBeInstanceOf<Goal>()
+        any.isGoal.shouldBeTrue()
 
         assertAllFalse(
             any.isRule,
@@ -529,8 +529,8 @@ internal object TermTypeAssertionUtils {
         )
 
         assertAllFalse(
-            any.isDirective,
-            any is Directive,
+            any.isGoal,
+            any is Goal,
         )
     }
 }

@@ -68,6 +68,7 @@ nav:
       - how-to/use-theories-and-clause-collections.md
       - how-to/use-io-lib.md
       - how-to/deploy-the-web-ide.md
+      - how-to/migrate-to-compounds-goals-and-refs.md
   - Reference:
       - reference/index.md
       - reference/module-map.md

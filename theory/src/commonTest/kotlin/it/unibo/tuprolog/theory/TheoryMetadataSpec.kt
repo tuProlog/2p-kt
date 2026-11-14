@@ -54,7 +54,7 @@ class TheoryMetadataSpec :
         val missingClauses =
             TheoryUtils.wellFormedClauses
                 .filterIsInstance<Rule>()
-                .map { Rule.of(it.head.setFunctor(it.head.functor + "'"), it.body) }
+                .map { Rule.of(it.head.castToStruct().let { head -> head.setFunctor(head.functor + "'") }, it.body) }
 
         val presentClauses = TheoryUtils.wellFormedClauses
 

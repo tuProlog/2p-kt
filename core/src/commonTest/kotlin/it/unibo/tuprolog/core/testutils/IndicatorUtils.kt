@@ -35,7 +35,7 @@ internal object IndicatorUtils {
                     .toInt()
     }
 
-    /** Well-formed [Indicator]s according to [Indicator.isWellFormed] */
+    /** Well-formed, concrete [Indicator]s according to [Indicator.isWellFormed] and [Indicator.isConcrete] */
     internal val wellFormedIndicatorCases by lazy {
         listOf(
             IndicatorCase("well-formed/sumlist-2", Atom.of("sumlist"), Integer.of(2)),
@@ -50,10 +50,17 @@ internal object IndicatorUtils {
         )
     }
 
+    /** Well-formed, non-concrete [Indicator]s, whose name is a [Var] (e.g. `P/2`) */
+    internal val variableNameIndicatorCases by lazy {
+        listOf(
+            IndicatorCase("variable-name/anonymous-variable-2", Var.anonymous(), Integer.of(2)),
+            IndicatorCase("variable-name/named-variable-1", Var.of("P"), Integer.of(1)),
+        )
+    }
+
     /** Non well-formed [Indicator]s, due to bad name */
     internal val nonWellFormedNameIndicatorCases by lazy {
         listOf(
-            IndicatorCase("bad-name/anonymous-variable", Var.anonymous(), Integer.of(2)),
             IndicatorCase("bad-name/compound", Struct.of(".", Truth.TRUE), Integer.of(2)),
         )
     }
@@ -70,6 +77,7 @@ internal object IndicatorUtils {
 
     /** Well-formed and non-well-formed indicators */
     internal val mixedIndicatorCases by lazy {
-        wellFormedIndicatorCases + nonWellFormedNameIndicatorCases + nonWellFormedArityIndicatorCases
+        wellFormedIndicatorCases + variableNameIndicatorCases + nonWellFormedNameIndicatorCases +
+            nonWellFormedArityIndicatorCases
     }
 }

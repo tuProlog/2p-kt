@@ -5,7 +5,7 @@ import com.github.ajalt.clikt.parameters.arguments.check
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.parsing.ParseException
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.solve.Solver
@@ -51,7 +51,7 @@ class TuPrologSolveQuery :
         try {
             printQuery(query)
             val duration: Duration = parentCommand.getTimeout()
-            val solutions = solver.solve(Struct.parse(query), duration).timed()
+            val solutions = solver.solve(Compound.parse(query), duration).timed()
             val groundQueriesHaveBooleanSolution =
                 solver.flags[GroundQueriesHaveBooleanSolution] == GroundQueriesHaveBooleanSolution.ON
             if (maxSolutions == 0) {

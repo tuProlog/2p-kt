@@ -39,7 +39,7 @@ interface LogicProgrammingScopeWithTheories<S : LogicProgrammingScopeWithTheorie
     /**
      * Converts this value into a [Clause]: returned as-is if [it.unibo.tuprolog.dsl.BaseLogicProgrammingScope.toTerm]
      * already yields a [Clause] (e.g. a [it.unibo.tuprolog.core.Rule], [it.unibo.tuprolog.core.Fact] or
-     * [it.unibo.tuprolog.core.Directive]), or wrapped into a headless-body [Clause] via
+     * [it.unibo.tuprolog.core.Goal]), or wrapped into a headless-body [Clause] via
      * [it.unibo.tuprolog.core.Scope.clauseOf] if it is a plain [it.unibo.tuprolog.core.Struct] (mirroring how
      * [it.unibo.tuprolog.dsl.MinimalLogicProgrammingScope.fact] wraps a bare [it.unibo.tuprolog.core.Struct] via
      * [it.unibo.tuprolog.core.Scope.factOf]).
@@ -53,7 +53,7 @@ interface LogicProgrammingScopeWithTheories<S : LogicProgrammingScopeWithTheorie
      * Builds a [Theory] out of [clauseFunctions], one per clause: each lambda runs with a fresh [newScope] as its
      * receiver, and its result is coerced into a [Clause] via [toClause] — so it may return an already-built
      * [Clause] (from [it.unibo.tuprolog.core.Scope.factOf]/[it.unibo.tuprolog.core.Scope.ruleOf]/
-     * [it.unibo.tuprolog.core.Scope.directiveOf]) or a plain [it.unibo.tuprolog.core.Struct], as shown in this
+     * [it.unibo.tuprolog.core.Scope.goalOf]) or a plain [it.unibo.tuprolog.core.Struct], as shown in this
      * interface's example. Delegates to [TheoryFactory.theoryOf] (via [theoryFactory]) for the actual construction.
      * @throws IllegalArgumentException if any of [clauseFunctions] returns a value that [toClause] cannot convert.
      */

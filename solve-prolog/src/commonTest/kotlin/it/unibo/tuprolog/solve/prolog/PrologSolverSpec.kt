@@ -58,6 +58,7 @@ import it.unibo.tuprolog.solve.flags.RealPrecisionMode
 import it.unibo.tuprolog.solve.flagsContract
 import it.unibo.tuprolog.solve.floatContract
 import it.unibo.tuprolog.solve.functorContract
+import it.unibo.tuprolog.solve.goalQueryContract
 import it.unibo.tuprolog.solve.ifThenContract
 import it.unibo.tuprolog.solve.ifThenElseContract
 import it.unibo.tuprolog.solve.integerContract
@@ -68,6 +69,8 @@ import it.unibo.tuprolog.solve.library.toRuntime
 import it.unibo.tuprolog.solve.libraryOf
 import it.unibo.tuprolog.solve.lifetimeContract
 import it.unibo.tuprolog.solve.logicalUpdateViewContract
+import it.unibo.tuprolog.solve.metaResolutionContract
+import it.unibo.tuprolog.solve.metaVariableContract
 import it.unibo.tuprolog.solve.mutableSolverContract
 import it.unibo.tuprolog.solve.nonVarContract
 import it.unibo.tuprolog.solve.notProvableContract
@@ -78,6 +81,7 @@ import it.unibo.tuprolog.solve.numberContract
 import it.unibo.tuprolog.solve.onceContract
 import it.unibo.tuprolog.solve.opContract
 import it.unibo.tuprolog.solve.orContract
+import it.unibo.tuprolog.solve.patternDataContract
 import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.Solve
 import it.unibo.tuprolog.solve.primitive.UnaryPredicate
@@ -160,6 +164,10 @@ internal fun prologSolverContracts(factory: SolverFactory) =
         include(retractContract(factory))
         include(setOfContract(factory))
         include(solutionPresentationContract(factory))
+        include(goalQueryContract(factory))
+        include(patternDataContract(factory))
+        include(metaResolutionContract(factory))
+        include(metaVariableContract(factory))
         include(solverContract(factory, ensureExecutable, ensureExecutable, ensureExecutable))
         include(solverConstructionContract<PrologSolver, MutablePrologSolver>(factory, DefaultBuiltins))
         include(stackTraceContract(factory))

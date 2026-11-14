@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent.stdlib.primitive
 
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
@@ -47,9 +48,10 @@ object Naf : UnaryPredicate.NonBacktrackable<ConcurrentExecutionContext>("\\+") 
         """.trimIndent()
 
     override fun Solve.Request<ConcurrentExecutionContext>.computeOne(first: Term): Solve.Response {
-        ensuringArgumentIsCallable(0)
+        // patterns are callable: their functors are bound by the resolution
+        if (first !is Pattern) ensuringArgumentIsCallable(0)
         val solver = subSolver() as ConcurrentSolver
-        val solution = solver.solveOnce(first.castToStruct())
+        val solution = solver.solveOnce(first.castToCompound())
         return when (solution) {
             is Solution.Yes -> replyFail()
             is Solution.Halt -> replyException(solution.exception.pushContext(context))

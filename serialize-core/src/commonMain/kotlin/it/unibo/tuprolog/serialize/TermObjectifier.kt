@@ -18,13 +18,14 @@ import kotlin.jvm.JvmStatic
  * - a small [it.unibo.tuprolog.core.Integer] becomes a plain number, a larger one (that overflows
  *   a platform `Long`/`Int`) becomes `{"integer": "<decimal string>"}`;
  * - a [it.unibo.tuprolog.core.Real] becomes `{"real": "<decimal string>"}`;
- * - a [it.unibo.tuprolog.core.Struct] becomes `{"fun": "<functor>", "args": [...]}`;
+ * - a [it.unibo.tuprolog.core.Struct] becomes `{"fun": "<functor>", "args": [...]}`, a
+ *   [it.unibo.tuprolog.core.Pattern] becomes `{"fun": {"var": "<functor>"}, "args": [...]}`;
  * - a well-formed [it.unibo.tuprolog.core.List] becomes `{"list": [...]}`, a non-well-formed one
  *   additionally carries `"tail": ...`;
  * - a [it.unibo.tuprolog.core.Block] becomes `{"block": [...]}`, a
  *   [it.unibo.tuprolog.core.Tuple] becomes `{"tuple": [...]}`;
  * - a [it.unibo.tuprolog.core.Rule] becomes `{"head": ..., "body": ...}`, a
- *   [it.unibo.tuprolog.core.Fact] becomes `{"head": ...}`, a [it.unibo.tuprolog.core.Directive]
+ *   [it.unibo.tuprolog.core.Fact] becomes `{"head": ...}`, a [it.unibo.tuprolog.core.Goal]
  *   becomes `{"body": ...}`.
  *
  * A [TermDeobjectifier] recognizes exactly this shape, so `deobjectifier.deobjectify(objectifier.objectify(term))`

@@ -2,11 +2,13 @@ package it.unibo.tuprolog.core.parsing
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Constant
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
@@ -80,6 +82,44 @@ interface TermParser {
      */
     @JsName("parseStruct")
     fun parseStruct(input: String): Struct = parseStruct(input, defaultOperatorSet)
+
+    /**
+     * Parses [input] as a [Compound] using [operators].
+     *
+     * @throws ParseException if parsing fails
+     * @throws InvalidTermTypeException if the parsed term is not a [Compound]
+     */
+    @JsName("parseCompoundWithOperators")
+    fun parseCompound(
+        input: String,
+        operators: OperatorSet,
+    ): Compound = parseAs(input, operators)
+
+    /**
+     * @throws ParseException if parsing fails
+     * @throws InvalidTermTypeException if [input] does not denote a [Compound]
+     */
+    @JsName("parseCompound")
+    fun parseCompound(input: String): Compound = parseCompound(input, defaultOperatorSet)
+
+    /**
+     * Parses [input] as a [Pattern] using [operators].
+     *
+     * @throws ParseException if parsing fails
+     * @throws InvalidTermTypeException if the parsed term is not a [Pattern]
+     */
+    @JsName("parsePatternWithOperators")
+    fun parsePattern(
+        input: String,
+        operators: OperatorSet,
+    ): Pattern = parseAs(input, operators)
+
+    /**
+     * @throws ParseException if parsing fails
+     * @throws InvalidTermTypeException if [input] does not denote a [Pattern]
+     */
+    @JsName("parsePattern")
+    fun parsePattern(input: String): Pattern = parsePattern(input, defaultOperatorSet)
 
     /**
      * Parses [input] as a [Constant] using [operators].
@@ -255,23 +295,23 @@ interface TermParser {
     fun parseFact(input: String): Fact = parseFact(input, defaultOperatorSet)
 
     /**
-     * Parses [input] as a [Directive] using [operators].
+     * Parses [input] as a [Goal] using [operators].
      *
      * @throws ParseException if parsing fails
-     * @throws InvalidTermTypeException if the parsed term is not a [Directive]
+     * @throws InvalidTermTypeException if the parsed term is not a [Goal]
      */
-    @JsName("parseDirectiveWithOperators")
-    fun parseDirective(
+    @JsName("parseGoalWithOperators")
+    fun parseGoal(
         input: String,
         operators: OperatorSet,
-    ): Directive = parseAs(input, operators)
+    ): Goal = parseAs(input, operators)
 
     /**
      * @throws ParseException if parsing fails
-     * @throws InvalidTermTypeException if [input] does not denote a [Directive]
+     * @throws InvalidTermTypeException if [input] does not denote a [Goal]
      */
-    @JsName("parseDirective")
-    fun parseDirective(input: String): Directive = parseDirective(input, defaultOperatorSet)
+    @JsName("parseGoal")
+    fun parseGoal(input: String): Goal = parseGoal(input, defaultOperatorSet)
 
     companion object {
         /** Creates a parser whose default operator set is empty. */

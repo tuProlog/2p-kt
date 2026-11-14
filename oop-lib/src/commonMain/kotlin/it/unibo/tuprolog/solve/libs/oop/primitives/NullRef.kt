@@ -3,9 +3,9 @@ package it.unibo.tuprolog.solve.libs.oop.primitives
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.TypeTester
-import it.unibo.tuprolog.solve.libs.oop.NullRef as NullRefTerm
+import it.unibo.tuprolog.core.NullRef as NullRefTerm
 
-/** `null_ref(?Term)`: succeeds iff `Term` is [it.unibo.tuprolog.solve.libs.oop.ObjectRef.NULL]. */
+/** `null_ref(?Term)`: succeeds iff `Term` is [it.unibo.tuprolog.solve.libs.oop.NullRef.instance]. */
 object NullRef : TypeTester<ExecutionContext>("null_ref") {
     override val help: String =
         """

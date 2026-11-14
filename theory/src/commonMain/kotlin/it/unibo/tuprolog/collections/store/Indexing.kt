@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.collections.store
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.IndexKey
 import it.unibo.tuprolog.unify.Unificator
@@ -27,7 +27,7 @@ import it.unibo.tuprolog.unify.Unificator
 internal const val INDEX_THRESHOLD = 4
 
 /** The head of a query worth indexing, or `null` if the query cannot select candidates through argument indexes. */
-internal fun Clause.indexableHead(): Struct? = head?.takeIf { it.arity > 0 }
+internal fun Clause.indexableHead(): Compound? = head?.takeIf { it.arity > 0 }
 
 /** How deep indexes look into compound arguments: a head argument is at depth 1, its own arguments at depth 2, etc. */
 internal const val MAX_INDEX_DEPTH = 4
@@ -62,13 +62,13 @@ internal fun stepsOf(path: Int): IntArray {
  * required argument.
  */
 internal fun Unificator.keyAt(
-    head: Struct,
+    head: Compound,
     steps: IntArray,
 ): IndexKey {
     var term: Term = head
     for (i in steps.indices) {
         if (i > 0 && (indexKey(term) !is IndexKey.OfStruct || !term.isStruct)) return IndexKey.Wildcard
-        val struct = term.castToStruct()
+        val struct = term.castToCompound()
         if (steps[i] >= struct.arity) return IndexKey.Wildcard
         term = struct.getArgAt(steps[i])
     }
@@ -82,7 +82,7 @@ internal fun Unificator.keyAt(
  * index cannot tell clauses apart), down to [MAX_INDEX_DEPTH].
  */
 internal fun Unificator.searchPositions(
-    head: Struct,
+    head: Compound,
     visit: (path: Int, key: IndexKey) -> Visit,
 ) {
     fun search(

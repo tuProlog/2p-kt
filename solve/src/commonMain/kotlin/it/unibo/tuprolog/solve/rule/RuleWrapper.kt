@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.rule
 
+import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
@@ -8,6 +9,7 @@ import it.unibo.tuprolog.core.VariablesProvider
 import it.unibo.tuprolog.solve.AbstractWrapper
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.utils.setTag
 import kotlin.collections.List as KtList
 
 /**
@@ -38,7 +40,8 @@ abstract class RuleWrapper<C : ExecutionContext>(
         val headArgs = scope.head
         require(headArgs.size == signature.arity)
         val body = scope.body
-        Rule.of(Struct.of(functor, headArgs), body)
+        // built-in definitions may run variable goals as the terms they are bound to (e.g. call/1), so they are verbatim
+        Rule.of(Struct.of(functor, headArgs), body).setTag(Clause.VERBATIM_BODY_TAG, true)
     }
 
     /** The rule head's arguments, in [scope]; must have as many elements as [signature]'s arity. */

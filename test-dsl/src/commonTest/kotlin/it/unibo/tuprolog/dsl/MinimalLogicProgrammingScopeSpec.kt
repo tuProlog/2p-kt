@@ -8,7 +8,7 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Real
@@ -22,8 +22,7 @@ import it.unibo.tuprolog.dsl.PlatformSpecificValues.THREE_POINT_ONE_FLOAT
 class MinimalLogicProgrammingScopeSpec :
     FunSpec({
         with(LogicProgrammingScopeTester<MinimalLogicProgrammingScope<*>> { LogicProgrammingScope.empty() }) {
-            fun MinimalLogicProgrammingScope<*>.createDirectiveUnderTest(): Term =
-                directiveOf(structOf("test", varOf("X")))
+            fun MinimalLogicProgrammingScope<*>.createGoalUnderTest(): Term = goalOf(structOf("test", varOf("X")))
 
             fun MinimalLogicProgrammingScope<*>.createRuleUnderTest(): Term =
                 ruleOf(
@@ -81,8 +80,8 @@ class MinimalLogicProgrammingScopeSpec :
 
             test("directive") {
                 logicProgramming {
-                    val expected = createDirectiveUnderTest()
-                    val actual = directive { createDirectiveUnderTest() }
+                    val expected = createGoalUnderTest()
+                    val actual = directive { createGoalUnderTest() }
                     expected.structurallyEquals(actual).shouldBeTrue()
                     actual shouldNotBe expected
                 }
@@ -286,8 +285,8 @@ class MinimalLogicProgrammingScopeSpec :
             }
 
             test("directive-of-plain-values") {
-                assertLogicProgrammingExpressionIsCorrect(Directive.of(Atom.of("a"), Atom.of("b"))) {
-                    directiveOf("a", "b")
+                assertLogicProgrammingExpressionIsCorrect(Goal.of(Atom.of("a"), Atom.of("b"))) {
+                    goalOf("a", "b")
                 }
             }
 

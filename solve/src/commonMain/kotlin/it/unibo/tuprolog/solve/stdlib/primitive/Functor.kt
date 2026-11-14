@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
@@ -47,11 +48,11 @@ object Functor : TernaryRelation.Functional<ExecutionContext>("functor") {
         third: Term,
     ): Substitution =
         when (first) {
-            is Struct -> {
+            is Compound -> {
                 if (third !is Var) {
                     ensuringArgumentIsArity(2)
                 }
-                merge(mgu(second, Atom.of(first.functor)), mgu(third, Integer.of(first.arity)))
+                merge(mgu(second, first.functorTerm), mgu(third, Integer.of(first.arity)))
             }
             is Numeric -> {
                 if (third !is Var) {

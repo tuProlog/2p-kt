@@ -37,7 +37,7 @@ internal object EvidenceClauseMapper : ClauseMapper {
         }
 
         // Adjust implicit evidence predicates
-        var headTerm = clause.head
+        var headTerm = clause.head.castToStruct()
         if (headTerm.arity == 1) {
             headTerm = Struct.of(headTerm.functor, headTerm[0], Truth.TRUE)
         }

@@ -31,7 +31,7 @@ class ClausesParserSpec :
                 "f"("X") impliedBy "g"("X")
             }
             assertMatch(directives[0]) {
-                directiveOf("f"("X"), "g"("X"))
+                goalOf("f"("X"), "g"("X"))
             }
         }
 

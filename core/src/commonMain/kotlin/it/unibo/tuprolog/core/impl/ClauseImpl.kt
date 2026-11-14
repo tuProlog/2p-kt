@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Clause.Companion.bodyWellFormedVisitor
 import it.unibo.tuprolog.core.Clause.Companion.of
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
@@ -13,7 +14,7 @@ import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.utils.insertAt
 
 internal abstract class ClauseImpl(
-    override val head: Struct?,
+    override val head: Compound?,
     override val body: Term,
     tags: Map<String, Any>,
 ) : AbstractStruct(CLAUSE_FUNCTOR, (if (head === null) listOf(body) else listOf(head, body)), tags),
@@ -74,11 +75,11 @@ internal abstract class ClauseImpl(
         return bodyItemsSequence.drop(index).first()
     }
 
-    override fun setHead(head: Struct): Rule = Rule.of(head, body)
+    override fun setHead(head: Compound): Rule = Rule.of(head, body)
 
     override fun setBody(body: Term): Clause = of(head, body)
 
-    override fun setHeadFunctor(functor: String): Clause = of(head?.setFunctor(functor), body)
+    override fun setHeadFunctor(functor: String): Clause = of(head?.let { Struct.of(functor, it.args) }, body)
 
     override fun setHeadArgs(vararg arguments: Term): Clause = of(head?.setArgs(*arguments), body)
 
@@ -86,14 +87,22 @@ internal abstract class ClauseImpl(
 
     override fun setHeadArgs(arguments: Sequence<Term>): Clause = of(head?.setArgs(arguments), body)
 
+    // rebuilding through Compound.of keeps a Pattern head a Pattern, and lets a Struct head be specialised
+    private inline fun withHeadArgs(newArgs: (List<Term>) -> List<Term>): Clause =
+        of(head?.let { Compound.of(it.functor, newArgs(it.args)) }, body)
+
     override fun insertHeadArg(
         index: Int,
         argument: Term,
-    ): Clause = of(head?.insertAt(index, argument), body)
+    ): Clause =
+        withHeadArgs { args ->
+            if (index !in args.indices) throw IndexOutOfBoundsException("Index $index is out of bounds ${args.indices}")
+            args.subList(0, index) + argument + args.subList(index, args.size)
+        }
 
-    override fun addFirstHeadArg(argument: Term): Clause = of(head?.addFirst(argument), body)
+    override fun addFirstHeadArg(argument: Term): Clause = withHeadArgs { listOf(argument) + it }
 
-    override fun addLastHeadArg(argument: Term): Clause = of(head?.addLast(argument), body)
+    override fun addLastHeadArg(argument: Term): Clause = withHeadArgs { it + argument }
 
     override fun appendHeadArg(argument: Term): Clause = addLastHeadArg(argument)
 

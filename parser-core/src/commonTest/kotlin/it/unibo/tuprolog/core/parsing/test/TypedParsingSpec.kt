@@ -8,11 +8,13 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Constant
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
@@ -27,11 +29,13 @@ import it.unibo.tuprolog.core.parsing.TermParser
 import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.core.parsing.parseAsAtom
 import it.unibo.tuprolog.core.parsing.parseAsClause
+import it.unibo.tuprolog.core.parsing.parseAsCompound
 import it.unibo.tuprolog.core.parsing.parseAsConstant
-import it.unibo.tuprolog.core.parsing.parseAsDirective
 import it.unibo.tuprolog.core.parsing.parseAsFact
+import it.unibo.tuprolog.core.parsing.parseAsGoal
 import it.unibo.tuprolog.core.parsing.parseAsInteger
 import it.unibo.tuprolog.core.parsing.parseAsNumeric
+import it.unibo.tuprolog.core.parsing.parseAsPattern
 import it.unibo.tuprolog.core.parsing.parseAsReal
 import it.unibo.tuprolog.core.parsing.parseAsRule
 import it.unibo.tuprolog.core.parsing.parseAsStruct
@@ -105,6 +109,34 @@ private val kinds =
                 { s, ops -> if (ops == null) parseStruct(s) else parseStruct(s, ops) },
                 { s, ops -> if (ops == null) Struct.parse(s) else Struct.parse(s, ops) },
                 { ops -> if (ops == null) parseAsStruct() else parseAsStruct(ops) },
+            ),
+        ),
+        KindCase(
+            "compound",
+            Compound::class,
+            "P(a)",
+            "a ++ b",
+            { patternOf(varOf("P"), atomOf("a")) },
+            { structOf("++", atomOf("a"), atomOf("b")) },
+            "X",
+            entryPoints(
+                { s, ops -> if (ops == null) parseCompound(s) else parseCompound(s, ops) },
+                { s, ops -> if (ops == null) Compound.parse(s) else Compound.parse(s, ops) },
+                { ops -> if (ops == null) parseAsCompound() else parseAsCompound(ops) },
+            ),
+        ),
+        KindCase(
+            "pattern",
+            Pattern::class,
+            "P(X, a)",
+            "P(a ++ b)",
+            { patternOf(varOf("P"), varOf("X"), atomOf("a")) },
+            { patternOf(varOf("P"), structOf("++", atomOf("a"), atomOf("b"))) },
+            "f(a)",
+            entryPoints(
+                { s, ops -> if (ops == null) parsePattern(s) else parsePattern(s, ops) },
+                { s, ops -> if (ops == null) Pattern.parse(s) else Pattern.parse(s, ops) },
+                { ops -> if (ops == null) parseAsPattern() else parseAsPattern(ops) },
             ),
         ),
         KindCase(
@@ -235,16 +267,16 @@ private val kinds =
         ),
         KindCase(
             "directive",
-            Directive::class,
+            Goal::class,
             ":- dynamic(p/1)",
             ":- a ++ b",
-            { directiveOf(structOf("dynamic", structOf("/", atomOf("p"), intOf(1)))) },
-            { directiveOf(structOf("++", atomOf("a"), atomOf("b"))) },
+            { goalOf(structOf("dynamic", structOf("/", atomOf("p"), intOf(1)))) },
+            { goalOf(structOf("++", atomOf("a"), atomOf("b"))) },
             "p :- q",
             entryPoints(
-                { s, ops -> if (ops == null) parseDirective(s) else parseDirective(s, ops) },
-                { s, ops -> if (ops == null) Directive.parse(s) else Directive.parse(s, ops) },
-                { ops -> if (ops == null) parseAsDirective() else parseAsDirective(ops) },
+                { s, ops -> if (ops == null) parseGoal(s) else parseGoal(s, ops) },
+                { s, ops -> if (ops == null) Goal.parse(s) else Goal.parse(s, ops) },
+                { ops -> if (ops == null) parseAsGoal() else parseAsGoal(ops) },
             ),
         ),
     )

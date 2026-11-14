@@ -98,7 +98,7 @@ fun main() {
             when (it) {
                 is Solution.No -> println("no.\n")
                 is Solution.Yes -> {
-                    println("yes: ${it.solvedQuery}")
+                    println("yes: ${it.solvedQuery.body}")
                     for (assignment in it.substitution) {
                         println("\t${assignment.key} / ${assignment.value}")
                     }

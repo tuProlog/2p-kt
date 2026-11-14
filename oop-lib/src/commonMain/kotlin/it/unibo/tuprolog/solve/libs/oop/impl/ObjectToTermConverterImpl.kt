@@ -2,10 +2,11 @@ package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectToTermConverter
 import it.unibo.tuprolog.utils.NumberTypeTester
 import org.gciatto.kt.math.BigDecimal
@@ -17,7 +18,8 @@ internal class ObjectToTermConverterImpl : ObjectToTermConverter {
     override fun convert(source: Any?): Term =
         with(numberTypeTester) {
             when (source) {
-                null -> ObjectRef.NULL
+                null -> NullRef.instance
+                is Term -> source
                 is String -> Atom.of(source)
                 // what Prolog numbers are converted into, see TermToObjectConverter
                 is BigInteger -> Integer.of(source)

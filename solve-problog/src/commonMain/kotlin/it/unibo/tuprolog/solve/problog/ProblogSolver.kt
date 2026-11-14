@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.problog
 
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Tuple
@@ -23,6 +25,7 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.toProbConfigT
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.solve.setBinaryDecisionDiagram
 import it.unibo.tuprolog.solve.setProbability
+import it.unibo.tuprolog.solve.toGoal
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.time.Duration
@@ -31,7 +34,7 @@ internal open class ProblogSolver(
     private val solver: Solver,
 ) : Solver by solver {
     private fun solveNonProbabilistically(
-        goal: Struct,
+        goal: Goal,
         options: SolveOptions,
     ): SolutionStream {
         val anonVar = Var.anonymous()
@@ -42,7 +45,7 @@ internal open class ProblogSolver(
                         ProbSetConfig.functor,
                         options.toProbConfigTerm(),
                     ),
-                    Struct.of(Prob.functor, anonVar, goal),
+                    Struct.of(Prob.functor, anonVar, goal.body),
                 ),
                 options,
             ).mapSolutions {
@@ -59,7 +62,7 @@ internal open class ProblogSolver(
     }
 
     private fun solveProbabilistically(
-        goal: Struct,
+        goal: Goal,
         options: SolveOptions,
     ): SolutionStream {
         val probabilityVar = Var.of("Prob")
@@ -69,7 +72,7 @@ internal open class ProblogSolver(
                 Struct.of(
                     ProbQuery.functor,
                     probabilityVar,
-                    goal,
+                    goal.body,
                     options.toProbConfigTerm(),
                     bddVar,
                 ),
@@ -118,7 +121,7 @@ internal open class ProblogSolver(
     }
 
     override fun solve(
-        goal: Struct,
+        goal: Goal,
         options: SolveOptions,
     ): SolutionStream =
         if (!options.isProbabilistic) {
@@ -128,11 +131,16 @@ internal open class ProblogSolver(
         }
 
     override fun solve(
-        goal: Struct,
+        goal: Compound,
+        options: SolveOptions,
+    ): SolutionStream = solve(goal.toGoal(), options)
+
+    override fun solve(
+        goal: Compound,
         timeout: Duration,
     ): SolutionStream = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
-    override fun solve(goal: Struct): SolutionStream = solve(goal, SolveOptions.DEFAULT)
+    override fun solve(goal: Compound): SolutionStream = solve(goal, SolveOptions.DEFAULT)
 
     // overridden so that the delegation to solver does not bypass the probabilistic solve above
     @Deprecated(
@@ -140,7 +148,7 @@ internal open class ProblogSolver(
         ReplaceWith("solve(goal, timeout).toList()"),
     )
     override fun solveList(
-        goal: Struct,
+        goal: Compound,
         timeout: Duration,
     ): List<Solution> = solve(goal, timeout).toList()
 
@@ -148,26 +156,26 @@ internal open class ProblogSolver(
         "Call solve(goal).toList() instead, which also closes the SolutionStream",
         ReplaceWith("solve(goal).toList()"),
     )
-    override fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
+    override fun solveList(goal: Compound): List<Solution> = solve(goal).toList()
 
     @Deprecated(
         "Call solve(goal, options).toList() instead, which also closes the SolutionStream",
         ReplaceWith("solve(goal, options).toList()"),
     )
     override fun solveList(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): List<Solution> = solve(goal, options).toList()
 
     override fun solveOnce(
-        goal: Struct,
+        goal: Compound,
         timeout: Duration,
     ): Solution = solveOnce(goal, SolveOptions.someLazilyWithTimeout(1, timeout))
 
-    override fun solveOnce(goal: Struct): Solution = solveOnce(goal, SolveOptions.someLazily(1))
+    override fun solveOnce(goal: Compound): Solution = solveOnce(goal, SolveOptions.someLazily(1))
 
     override fun solveOnce(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): Solution = solve(goal, options.setLimit(1)).use { it.first() }
 

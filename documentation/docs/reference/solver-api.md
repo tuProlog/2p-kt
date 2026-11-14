@@ -8,10 +8,15 @@ implementation modules `:solve-prolog`, `:solve-concurrent`, and `:solve-problog
 ## `Solver`
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solver.kt:16:71"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solver.kt:17:83"
 ```
 
-Two families of methods trigger resolution of a `Struct` goal:
+Solvers solve `Goal`s, i.e. headless clauses `:- Body`: `solve(goal: Goal, options)` is the one method solvers
+implement, and runs `goal.body`. Every other overload takes any `Compound` (a `Struct` such as `p(X)`, a `Pattern`, or
+a `Goal`) and solves its goal: `:- p(X)` for `p(X)`, the goal itself for a `Goal`, which is never wrapped again.
+Solutions refer to that `Goal` as their `query`.
+
+Two families of methods trigger resolution:
 
 - `solve(goal, options): SolutionStream` — yields solutions lazily or eagerly, depending on `options.isLazy`, as a
   [`SolutionStream`](#consuming-solutions-solutionstream);
@@ -141,7 +146,7 @@ forgetting to close is therefore harmless; with libraries over external resource
 ## `SolveOptions`
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/SolveOptions.kt:10:33"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/SolveOptions.kt:11:34"
 ```
 
 - `isLazy` / `isEager` — controls whether `solve()` streams solutions on demand or computes eagerly;
@@ -238,6 +243,9 @@ an `IllegalStateException` if they do).
 semantics: they can change termination, errors, cuts and side effects. See
 [ADR 0001](../explanation/adr-0001-stateful-engine.md) for the design.
 
+`SolveOptions.setMetaResolution` chooses the functors of calls whose functor is an unbound variable: see
+[Metarules](#metarules).
+
 `SolveOptions.setBranchScheduler` chooses which branch of the search advances next. A `BranchScheduler` picks among
 the suspended branches (`Branch`: an id, a proof depth, and the goals left with the branch's own bindings).
 `BranchScheduler.DEPTH_FIRST` is standard Prolog and the default; `BranchScheduler.BREADTH_FIRST` advances the oldest
@@ -263,15 +271,53 @@ solver.solve(goal, SolveOptions.allLazily().setInterceptor(tracer)).toList()
 
 Every solution is one of three sealed subtypes of `Solution`:
 
-- `Solution.Yes` — successful; `substitution: Substitution.Unifier`, `solvedQuery: Struct` are non-nullable;
+- `Solution.Yes` — successful; `substitution: Substitution.Unifier` and `solvedQuery: Goal` (the query with the
+  substitution applied: read `solvedQuery.body` for the solved call) are non-nullable;
 - `Solution.No` — the goal failed; `substitution` is `Substitution.Fail`, `solvedQuery` is `null`;
 - `Solution.Halt` — resolution was aborted by an exception; carries `exception: ResolutionException`.
 
-All three share `query: Struct` (the original goal), `isYes`/`isNo`/`isHalt`, `asYes()`/`asNo()`/`asHalt()` (nullable
+All three share `query: Goal` (the original goal; solutions built from a `Compound` refer to its goal), `isYes`/`isNo`/`isHalt`, `asYes()`/`asNo()`/`asHalt()` (nullable
 casts), `whenIs(yes = ..., no = ..., halt = ...)` for exhaustive pattern matching, and `valueOf(variable)` to read a
 binding directly off the solution. Construct them via `Solution.yes(...)`, `Solution.no(...)`, `Solution.halt(...)`.
 
 See [Errors and exceptions](errors-and-exceptions.md) for `ResolutionException` and its hierarchy.
+
+## Metarules
+
+Goals whose functors are variables, i.e. [`Pattern`s](term-hierarchy.md#pattern) such as `F(X)`, and *metarules*,
+i.e. rules whose heads are patterns, resolve natively, by unification, as any other goal:
+
+```prolog
+f(1).
+g(2).
+stored(likes, alice, pizza).
+P(X, Y) :- stored(P, X, Y).
+compose(grandparent, parent, parent).
+P(X, Y) :- compose(P, Q, R), Q(X, Z), R(Z, Y).
+```
+
+- A goal `F(X)` unifies with the heads of the clauses of arity 1 of the knowledge bases, concrete or patterns, in the
+  order of the theory, binding `F`: here `F = f, X = 1`, then `F = g, X = 2`. No option is needed. Library
+  predicates, control constructs included, are no candidates.
+- A concrete goal `likes(alice, X)` selects the clauses of `likes/2` and the metarules of arity 2, in the order of the
+  theory, binding `P = likes`. The body runs with `P` bound, so a body goal `P(A, B)` would call `likes(A, B)`, and `F(alice, X)`
+  enumerates the relations the metarule defines (`F = likes, X = pizza`).
+- Functors bound by a body goal select the procedures of the later ones: `grandparent(alice, X)` binds `Q` and `R` to
+  `parent` through `compose/3`, then calls `parent/2` twice.
+- Metarules never extend library predicates, as no clause can, but they apply to every user predicate of their arity,
+  including the ones their bodies call: a binary metarule guarded by a binary fact, e.g.
+  `P(X, Y) :- view(P, E), E(X, Y)`, defines `view/2` too, and calling `view(edge, E)` calls the metarule again,
+  forever. Guard metarules with predicates of another arity, as `stored/3` and `compose/3` above, or use limits and
+  timeouts.
+- Built-ins running or inspecting goals accept patterns: `findall/3`, `bagof/3`, `setof/3`, `\+/1`, `clause/2`,
+  `retract/1`. A functor bound to anything but an atom makes the goal non-callable: `F = 1, F(X)` raises a type error.
+- A `MetaResolutionPolicy` (`it.unibo.tuprolog.solve.search`), set via `SolveOptions.setMetaResolution`, replaces
+  unification for unbound functors: it lists the functors to try, each bound in turn, on backtracking, through a call
+  of `'$select_functor'(Functor, Arity)` that interceptors see. `MetaResolutionPolicy.ENUMERATE` tries the predicates
+  of the call's arity defined in the knowledge bases; any lambda `(goal, context) -> Sequence<Atom>` is a policy too.
+
+The concurrent solver resolves patterns and metarules the same way, finding solutions in no particular order, but
+supports no policy.
 
 ## `ExecutionContextAware`
 

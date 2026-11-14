@@ -3,6 +3,7 @@ package it.unibo.tuprolog.ui.gui.prolog
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
@@ -10,6 +11,7 @@ import it.unibo.tuprolog.ui.gui.identity.DocumentId
 import it.unibo.tuprolog.ui.gui.identity.PageId
 import it.unibo.tuprolog.ui.gui.identity.SolverProfileId
 import it.unibo.tuprolog.ui.gui.presentation.OperatorPresentation
+import it.unibo.tuprolog.ui.gui.presentation.SolutionPresentation
 import it.unibo.tuprolog.ui.gui.solver.ResolutionRequest
 import it.unibo.tuprolog.ui.gui.solver.ResolutionStep
 import it.unibo.tuprolog.ui.gui.solver.SolverCapabilities
@@ -116,5 +118,70 @@ class SolverFactoryProfileSpec :
                 step.shouldBeInstanceOf<ResolutionStep.Yield>()
                 step.solution.time.shouldNotBeNull()
             }
+        }
+
+        test("pattern-queries-are-solved").config(coroutineTestScope = true) {
+            val profile =
+                solverFactoryProfile(
+                    PrologSolverFactory,
+                    SolverProfileId("test"),
+                    "Test",
+                    runtimeLibraries = listOf(IOLib),
+                )
+            val pageId = PageId("page")
+            val session =
+                profile.factory.create(
+                    SolverSessionCreationRequest(
+                        pageId,
+                        DocumentId("document"),
+                        "p(a).",
+                        1,
+                        profile.id,
+                        emptyMap(),
+                        "",
+                    ),
+                )
+            val step = session.openResolution(ResolutionRequest(pageId, "Q(X).", 1.seconds, emptyMap(), "")).next()
+            // solved by unification with p(a), rather than rejected as a syntax error
+            step.shouldBeInstanceOf<ResolutionStep.Yield>()
+            val solution = step.solution.shouldBeInstanceOf<SolutionPresentation.Yes>()
+            solution.bindings.associate { it.variable to it.value } shouldBe mapOf("Q" to "p", "X" to "a")
+        }
+
+        test("e2e/variable-functor-queries-enumerate-predicates").config(coroutineTestScope = true) {
+            val profile =
+                solverFactoryProfile(
+                    PrologSolverFactory,
+                    SolverProfileId("test"),
+                    "Test",
+                    runtimeLibraries = listOf(IOLib),
+                )
+            val pageId = PageId("page")
+            val session =
+                profile.factory.create(
+                    SolverSessionCreationRequest(
+                        pageId,
+                        DocumentId("document"),
+                        "f(1).\ng(2).\nP(X) :- cached(P, X).\ncached(h, 3).",
+                        1,
+                        profile.id,
+                        emptyMap(),
+                        "",
+                    ),
+                )
+            val cursor = session.openResolution(ResolutionRequest(pageId, "F(X).", 1.seconds, emptyMap(), ""))
+            val answers =
+                List(3) {
+                    val step = cursor.next()
+                    step.shouldBeInstanceOf<ResolutionStep.Yield>()
+                    val solution = step.solution.shouldBeInstanceOf<SolutionPresentation.Yes>()
+                    solution.bindings.associate { it.variable to it.value }
+                }
+            answers shouldBe
+                listOf(
+                    mapOf("F" to "f", "X" to "1"),
+                    mapOf("F" to "g", "X" to "2"),
+                    mapOf("F" to "h", "X" to "3"),
+                )
         }
     })

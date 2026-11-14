@@ -8,6 +8,7 @@ import it.unibo.tuprolog.core.operators.Specifier.XFX
 import it.unibo.tuprolog.core.operators.Specifier.XFY
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Signature
+import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.documentationOf
 import it.unibo.tuprolog.solve.library.impl.AbstractLibrary
 import it.unibo.tuprolog.solve.library.mergeDocumentation
@@ -75,10 +76,9 @@ import org.gciatto.kt.math.BigInteger
  *   [it.unibo.tuprolog.solve.libs.oop.rules.ColonEquals] and
  *   [it.unibo.tuprolog.solve.libs.oop.rules.Dot].
  *
- * Reflection-based method/constructor invocation (everything beyond alias/type-name resolution)
- * is only implemented on the JVM target: see the platform notes on
- * [it.unibo.tuprolog.solve.libs.oop.allSupertypes], [it.unibo.tuprolog.solve.libs.oop.fullName]
- * and the other `expect` declarations in `TypeUtils.kt` for what throws
+ * Host objects are reached through [HostInteropBackend]s: Kotlin reflection on the JVM, the properties and
+ * functions of objects on JS, and any backend injected via [withBackends]. Casts and type conversions rely on
+ * reflection, and are only implemented on the JVM: see the `expect` declarations in `TypeUtils.kt` for what throws
  * [kotlin.NotImplementedError] on Kotlin/JS.
  *
  * @see it.unibo.tuprolog.solve.library.Runtime
@@ -95,8 +95,22 @@ object OOPLib : AbstractLibrary() {
         
         Main entry points are `new_object/2,3` (instantiation), `invoke_method/3` and `invoke_strict/3` (method calls), `assign/3` (property writes), `cast/3` and `type/2` (types and conversions), `array_items/2`, `list_items/2` and `set_items/2` (collections), and `register/2`/`unregister/1` (aliases, see `alias/2`).
         
-        The operators `./2` (method call or property read, chainable), `:=/2` (capture a result or assign a property), `as/2` (explicit conversion) and `${'$'}/1` (alias reference, e.g. `${'$'}stdout`) provide a fluent syntax on top of these predicates. Example: `new_object('java.util.ArrayList', [], L), L.add(1 as 'java.lang.Long'), N := L.size, ${'$'}stdout.println(N)`. Reflective invocation is only available on the JVM.
+        The operators `./2` (method call or property read, chainable), `:=/2` (capture a result or assign a property), `as/2` (explicit conversion) and `${'$'}/1` (alias reference, e.g. `${'$'}stdout`) provide a fluent syntax on top of these predicates. Example: `new_object('java.util.ArrayList', [], L), L.add(1 as 'java.lang.Long'), N := L.size, ${'$'}stdout.println(N)`. Host objects are reached through backends (see `HostInteropBackend`): reflection on the JVM, with overload selection; on JS, the properties and functions of objects (exported ones, for Kotlin classes), called with the arguments in order. Casts and type conversions are only available on the JVM.
         """.trimIndent()
+
+    /** The backends injected into this library, tried in order before the platform's one: none. */
+    val backends: kotlin.collections.List<HostInteropBackend>
+        get() = emptyList()
+
+    /**
+     * This library, reaching host objects through [backends] first, in order, and then through the platform's
+     * [HostInteropBackend]: each solver loading it gets its own backends.
+     */
+    fun withBackends(vararg backends: HostInteropBackend): Library = WithBackends(backends.toList())
+
+    internal class WithBackends(
+        val backends: kotlin.collections.List<HostInteropBackend>,
+    ) : Library by OOPLib
 
     override val primitives: Map<Signature, Primitive>
         get() =

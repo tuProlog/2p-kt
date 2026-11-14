@@ -2,7 +2,8 @@
 
 package it.unibo.tuprolog.unify.impl
 
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -27,7 +28,7 @@ internal fun Bindings.occurs(
             val value = this[current] ?: continue
             val seen = visited ?: HashSet<Var>().also { visited = it }
             if (seen.add(current)) pending.add(value)
-        } else if (current is Struct) {
+        } else if (current is Compound) {
             for (i in 0 until current.arity) {
                 val arg = current[i]
                 if (arg is Var && arg == variable) return true
@@ -35,8 +36,9 @@ internal fun Bindings.occurs(
             // last argument first, so that list spines are visited with a constant amount of pending terms
             for (i in current.arity - 1 downTo 0) {
                 val arg = current[i]
-                if (arg is Var || (arg is Struct && arg.arity > 0)) pending.add(arg)
+                if (arg is Var || (arg is Compound && arg.arity > 0)) pending.add(arg)
             }
+            if (current is Pattern) pending.add(current.functor)
         }
     }
     return false

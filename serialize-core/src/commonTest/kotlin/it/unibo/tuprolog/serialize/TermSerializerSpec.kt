@@ -3,8 +3,14 @@ package it.unibo.tuprolog.serialize
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.ObjectRef
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Truth
@@ -24,8 +30,19 @@ private class UnknownTerm : Term by Atom.of("unknown") {
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitTerm(this)
 }
 
-private val unrepresentable: List<Pair<String, () -> Term>> =
+private val unrepresentable: kotlin.collections.List<Pair<String, () -> Term>> =
     listOf("unknown-truth" to ::UnknownTruth, "unknown-term" to ::UnknownTerm)
+
+/** Host references, which are never portably serialized, wherever they occur. */
+private val references: kotlin.collections.List<Pair<String, () -> Term>> =
+    listOf(
+        "object-ref" to { ObjectRef.of(Any()) },
+        "null-ref" to { NullRef() },
+        "tagged-null-ref" to { NullRef().replaceTags(mapOf("origin" to "test")) },
+        "nested-object-ref" to { Struct.of("f", Atom.of("a"), ObjectRef.of(Any())) },
+        "nested-null-ref" to { Struct.of("f", NullRef()) },
+        "listed-object-ref" to { List.of(Atom.of("a"), ObjectRef.of(Any())) },
+    )
 
 class TermSerializerSpec :
     FunSpec({
@@ -272,5 +289,13 @@ class TermSerializerSpec :
             unrepresentable.flatMap { (id, term) -> listOf(MimeType.Json, MimeType.Yaml).map { Triple(id, it, term) } },
         ) { (_, mimeType, term) ->
             shouldThrow<SerializationException> { TermSerializer.of(mimeType).serialize(term()) }
+        }
+
+        withTests(
+            nameFn = { (id, mimeType) -> "reference/$id/${mimeType.subType}" },
+            references.flatMap { (id, term) -> listOf(MimeType.Json, MimeType.Yaml).map { Triple(id, it, term) } },
+        ) { (_, mimeType, term) ->
+            val error = shouldThrow<SerializationException> { TermSerializer.of(mimeType).serialize(term()) }
+            error.message.shouldNotBeNull() shouldContain "reference"
         }
     })

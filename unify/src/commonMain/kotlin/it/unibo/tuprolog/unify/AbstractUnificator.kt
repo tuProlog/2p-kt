@@ -92,7 +92,7 @@ abstract class AbstractUnificator(
         when {
             term.isVar -> checkTermsEquality(variable, term)
             // groundness is cached on structures: ground ones need no walk over their variables
-            term.isStruct -> !term.isGround && term.variables.any { occurrenceCheck(variable, it) }
+            term.isCompound -> !term.isGround && term.variables.any { occurrenceCheck(variable, it) }
             else -> false
         }
 
@@ -160,10 +160,25 @@ abstract class AbstractUnificator(
         equation: Equation,
     ): Equation = equation
 
+    /**
+     * The functor variables of [context], of [substitutions], and of the patterns in [terms]: they can only be bound to
+     * atoms or variables (see [functorVariables]).
+     */
+    private fun functorVariablesOf(
+        terms: Sequence<Term>,
+        substitutions: Sequence<Substitution> = emptySequence(),
+    ): MutableSet<Var> {
+        val result = context.functorVariables.toMutableSet()
+        for (substitution in substitutions) result.addAll(substitution.functorVariables)
+        for (term in terms) forEachPatternFunctor(term) { result.add(it) }
+        return result
+    }
+
     private fun mgu(
         request: Request,
         equations: MutableList<Equation>,
         occurCheckEnabled: Boolean,
+        functorVariables: MutableSet<Var>,
     ): Substitution {
         var changed = true
 
@@ -185,7 +200,9 @@ abstract class AbstractUnificator(
 
                     eq.isAssignment -> {
                         val assignment = eq.castToAssignment()
-                        if (occurCheckEnabled && occurrenceCheck(assignment.variable, assignment.term)) {
+                        if (!bindFunctorVariable(assignment.variable, assignment.term, functorVariables)) {
+                            return failed()
+                        } else if (occurCheckEnabled && occurrenceCheck(assignment.variable, assignment.term)) {
                             return failed()
                         } else {
                             changed = changed ||
@@ -215,7 +232,30 @@ abstract class AbstractUnificator(
             }
         }
 
-        return handleResult(request, equations.filter { it.isAssignment }.toSubstitution())
+        return handleResult(
+            request,
+            equations.filter { it.isAssignment }.toSubstitution().withFunctorVariables(functorVariables),
+        )
+    }
+
+    /**
+     * Whether [variable] can be bound to [term]: not if it is a functor variable and [term] is neither an atom nor a
+     * variable. A variable bound to a functor variable, or vice versa, becomes one too.
+     */
+    private fun bindFunctorVariable(
+        variable: Var,
+        term: Term,
+        functorVariables: MutableSet<Var>,
+    ): Boolean {
+        if (functorVariables.isEmpty()) return true
+        if (term.isVar) {
+            if (variable in functorVariables || term in functorVariables) {
+                functorVariables.add(variable)
+                functorVariables.add(term.castToVar())
+            }
+            return true
+        }
+        return variable !in functorVariables || term.isAtom
     }
 
     override fun mgu(
@@ -225,7 +265,8 @@ abstract class AbstractUnificator(
     ): Substitution {
         if (context.isFailed) return failed()
         val equations = newDeque(contextEquations.asSequence() + equationsFor(term1, term2))
-        return mgu(Request.Mgu(term1, term2, occurCheckEnabled), equations, occurCheckEnabled)
+        val functorVariables = functorVariablesOf(sequenceOf(term1, term2))
+        return mgu(Request.Mgu(term1, term2, occurCheckEnabled), equations, occurCheckEnabled, functorVariables)
     }
 
     /**
@@ -239,14 +280,20 @@ abstract class AbstractUnificator(
         occurCheckEnabled: Boolean,
     ): Substitution {
         if (context.isFailed || substitution1.isFailed || substitution2.isFailed) return failed()
-        if (!occurCheckEnabled) {
+        val functorVariables =
+            functorVariablesOf(
+                substitution1.values.asSequence() + substitution2.values.asSequence(),
+                sequenceOf(substitution1, substitution2),
+            )
+        if (!occurCheckEnabled && functorVariables.isEmpty()) {
             val quickMerge = context + substitution1 + substitution2
             if (quickMerge.isSuccess) {
                 return quickMerge
             }
         }
         val equations = newDeque(contextEquations.asSequence() + equationsFor(substitution1, substitution2))
-        return mgu(Request.Merge(substitution1, substitution2, occurCheckEnabled), equations, occurCheckEnabled)
+        val request = Request.Merge(substitution1, substitution2, occurCheckEnabled)
+        return mgu(request, equations, occurCheckEnabled, functorVariables)
     }
 
     private fun <T> newDeque(items: Sequence<T>): MutableList<T> = items.toCollection(arrayListOf())

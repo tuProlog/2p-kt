@@ -3,14 +3,16 @@ package it.unibo.tuprolog.serialize
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -21,6 +23,8 @@ import it.unibo.tuprolog.core.Var
 @Suppress("TooManyFunctions")
 internal class JsTermObjectifier : TermObjectifier {
     override fun defaultValue(term: Term): Any = throw SerializationException(term)
+
+    override fun visitRef(term: Ref): Any = throw SerializationException.forReference(term)
 
     override fun objectifyMany(values: Iterable<Term>): Any = values.map { objectify(it) }.toTypedArray()
 
@@ -40,6 +44,12 @@ internal class JsTermObjectifier : TermObjectifier {
     override fun visitStruct(term: Struct): Any =
         jsObject(
             "fun" to term.functor,
+            "args" to term.args.map { it.accept(this) },
+        )
+
+    override fun visitPattern(term: Pattern): Any =
+        jsObject(
+            "fun" to visitVar(term.functor),
             "args" to term.args.map { it.accept(this) },
         )
 
@@ -114,7 +124,7 @@ internal class JsTermObjectifier : TermObjectifier {
             "head" to term.head.accept(this),
         )
 
-    override fun visitDirective(term: Directive): Any =
+    override fun visitGoal(term: Goal): Any =
         jsObject(
             "body" to term.body.accept(this),
         )

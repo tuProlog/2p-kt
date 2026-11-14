@@ -36,7 +36,7 @@ internal class SolutionFormatterImpl(
         if (groundQueriesHaveBooleanSolution && value.query.variables.none()) {
             "yes."
         } else {
-            "yes: ${termFormatter.format(value.solvedQuery)}" +
+            "yes: ${termFormatter.format(value.solvedQuery.body)}" +
                 value.substitution.asIterable().joinToString("") { (v, t) ->
                     "$ASSIGNMENT_SEPARATOR${termFormatter.format(v)} = ${termFormatter.format(t)}"
                 }

@@ -10,7 +10,7 @@ import kotlin.jvm.JvmStatic
  * so most code building rules can just call [Rule.of] uniformly and let it decide.
  */
 interface Rule : Clause {
-    override val head: Struct
+    override val head: Compound
 
     override val isRule: Boolean
         get() = true
@@ -18,7 +18,7 @@ interface Rule : Clause {
     override val isFact: Boolean
         get() = body.isTrue
 
-    override val isDirective: Boolean
+    override val isGoal: Boolean
         get() = false
 
     override fun freshCopy(): Rule
@@ -95,7 +95,7 @@ interface Rule : Clause {
         @JvmStatic
         @JsName("of")
         fun of(
-            head: Struct,
+            head: Compound,
             vararg body: Term,
         ): Rule = of(head, body.asList())
 
@@ -103,7 +103,7 @@ interface Rule : Clause {
         @JvmStatic
         @JsName("ofIterable")
         fun of(
-            head: Struct,
+            head: Compound,
             body: Iterable<Term>,
         ): Rule {
             val i = body.iterator()
@@ -117,7 +117,7 @@ interface Rule : Clause {
         @JvmStatic
         @JsName("ofSequence")
         fun of(
-            head: Struct,
+            head: Compound,
             body: Sequence<Term>,
         ): Rule = of(head, body.asIterable())
 

@@ -135,11 +135,11 @@ data class Signature(
                 else -> null
             }
 
-        /** Creates a Signature instance from a well-formed Indicator, or returns `null` if it wasn't */
+        /** Creates a Signature instance from a concrete Indicator, or returns `null` if it wasn't */
         @JsName("fromIndicator")
         fun fromIndicator(indicator: Indicator): Signature? =
             when {
-                indicator.isWellFormed -> {
+                indicator.isConcrete -> {
                     Signature(
                         indicator.indicatedName!!,
                         indicator.indicatedArity!!,

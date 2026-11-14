@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.TimeOutException
@@ -15,7 +15,7 @@ abstract class AbstractCollectingPrimitive(
      * [Solve.Request.solve]). If that times out, so does this resolution: the [TimeOutException] is reported against
      * this request's [context], as if expiration had been detected here.
      */
-    protected fun Solve.Request<ExecutionContext>.computeIntermediateSolutions(goal: Struct): List<Solution.Yes> =
+    protected fun Solve.Request<ExecutionContext>.computeIntermediateSolutions(goal: Compound): List<Solution.Yes> =
         buildList {
             for (solution in solve(goal)) {
                 when {

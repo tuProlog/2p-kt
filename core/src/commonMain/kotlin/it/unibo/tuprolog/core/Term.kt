@@ -111,6 +111,51 @@ interface Term :
     val isStruct: Boolean get() = false
 
     /**
+     * Checks whether the current term is a compound term, i.e. a term made of a functor and arguments.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Compound].
+     * @return `true` if the current term is a compound, or `false`, otherwise
+     */
+    @JsName("isCompound")
+    val isCompound: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a pattern, i.e. a compound term whose functor is a variable.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Pattern].
+     * @return `true` if the current term is a pattern, or `false`, otherwise
+     */
+    @JsName("isPattern")
+    val isPattern: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a reference to a host value.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Ref].
+     * @return `true` if the current term is a [Ref], or `false`, otherwise
+     */
+    @JsName("isRef")
+    val isRef: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a reference to a non-null host value.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [ObjectRef].
+     * @return `true` if the current term is a [ObjectRef], or `false`, otherwise
+     */
+    @JsName("isObjectRef")
+    val isObjectRef: Boolean get() = false
+
+    /**
+     * Checks whether the current term is a reference to the host null value.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [NullRef].
+     * @return `true` if the current term is a [NullRef], or `false`, otherwise
+     */
+    @JsName("isNullRef")
+    val isNullRef: Boolean get() = false
+
+    /**
      * Checks whether the current term is a truth value.
      * This method is guaranteed to return `true` if and only if the current term
      * is an instance of [Truth].
@@ -239,11 +284,11 @@ interface Term :
     /**
      * Checks whether the current term is a directive.
      * This method is guaranteed to return `true` if and only if the current term
-     * is an instance of [Directive].
+     * is an instance of [Goal].
      * @return `true` if the current term is a directive, or `false`, otherwise
      */
-    @JsName("isDirective")
-    val isDirective: Boolean get() = false
+    @JsName("isGoal")
+    val isGoal: Boolean get() = false
 
     /**
      * Checks whether the current term is a cons.
@@ -339,13 +384,12 @@ interface Term :
         asConstant() ?: throw ClassCastException("Cannot cast $this to ${Constant::class.simpleName}")
 
     /**
-     * Casts the current [Term] to [Directive], if possible
-     * @throws ClassCastException if the current [Term] is not an instance of [Directive]
-     * @return the current [Term], casted to [Directive]
+     * Casts the current [Term] to [Goal], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Goal]
+     * @return the current [Term], casted to [Goal]
      */
-    @JsName("castToDirective")
-    fun castToDirective(): Directive =
-        asDirective() ?: throw ClassCastException("Cannot cast $this to ${Directive::class.simpleName}")
+    @JsName("castToGoal")
+    fun castToGoal(): Goal = asGoal() ?: throw ClassCastException("Cannot cast $this to ${Goal::class.simpleName}")
 
     /**
      * Casts the current [Term] to [EmptyList], if possible
@@ -442,6 +486,50 @@ interface Term :
         asStruct() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
 
     /**
+     * Casts the current [Term] to [Compound], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Compound]
+     * @return the current [Term], casted to [Compound]
+     */
+    @JsName("castToCompound")
+    fun castToCompound(): Compound =
+        asCompound() ?: throw ClassCastException("Cannot cast $this to ${Compound::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Pattern], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Pattern]
+     * @return the current [Term], casted to [Pattern]
+     */
+    @JsName("castToPattern")
+    fun castToPattern(): Pattern =
+        asPattern() ?: throw ClassCastException("Cannot cast $this to ${Pattern::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [Ref], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Ref]
+     * @return the current [Term], casted to [Ref]
+     */
+    @JsName("castToRef")
+    fun castToRef(): Ref = asRef() ?: throw ClassCastException("Cannot cast $this to ${Ref::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [ObjectRef], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [ObjectRef]
+     * @return the current [Term], casted to [ObjectRef]
+     */
+    @JsName("castToObjectRef")
+    fun castToObjectRef(): ObjectRef =
+        asObjectRef() ?: throw ClassCastException("Cannot cast $this to ${ObjectRef::class.simpleName}")
+
+    /**
+     * Casts the current [Term] to [NullRef], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [NullRef]
+     * @return the current [Term], casted to [NullRef]
+     */
+    @JsName("castToNullRef")
+    fun castToNullRef(): NullRef =
+        asNullRef() ?: throw ClassCastException("Cannot cast $this to ${NullRef::class.simpleName}")
+
+    /**
      * Casts the current [Term] to [Recursive], if possible
      * @throws ClassCastException if the current [Term] is not an instance of [Recursive]
      * @return the current [Term], casted to [Recursive]
@@ -510,11 +598,11 @@ interface Term :
     fun asConstant(): Constant? = null
 
     /**
-     * Casts the current [Term] to [Directive], if possible, or returns `null` otherwise
-     * @return the current [Term], casted to [Directive], or `null`, if the current term is not an instance of [Directive]
+     * Casts the current [Term] to [Goal], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Goal], or `null`, if the current term is not an instance of [Goal]
      */
-    @JsName("asDirective")
-    fun asDirective(): Directive? = null
+    @JsName("asGoal")
+    fun asGoal(): Goal? = null
 
     /**
      * Casts the current [Term] to [EmptyList], if possible, or returns `null` otherwise
@@ -592,6 +680,41 @@ interface Term :
      */
     @JsName("asStruct")
     fun asStruct(): Struct? = null
+
+    /**
+     * Casts the current [Term] to [Compound], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Compound], or `null`, if the current term is not an instance of [Compound]
+     */
+    @JsName("asCompound")
+    fun asCompound(): Compound? = null
+
+    /**
+     * Casts the current [Term] to [Pattern], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Pattern], or `null`, if the current term is not an instance of [Pattern]
+     */
+    @JsName("asPattern")
+    fun asPattern(): Pattern? = null
+
+    /**
+     * Casts the current [Term] to [Ref], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Ref], or `null`, if the current term is not an instance of [Ref]
+     */
+    @JsName("asRef")
+    fun asRef(): Ref? = null
+
+    /**
+     * Casts the current [Term] to [ObjectRef], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [ObjectRef], or `null`, if the current term is not an instance of [ObjectRef]
+     */
+    @JsName("asObjectRef")
+    fun asObjectRef(): ObjectRef? = null
+
+    /**
+     * Casts the current [Term] to [NullRef], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [NullRef], or `null`, if the current term is not an instance of [NullRef]
+     */
+    @JsName("asNullRef")
+    fun asNullRef(): NullRef? = null
 
     /**
      * Casts the current [Term] to [Recursive], if possible, or returns `null` otherwise

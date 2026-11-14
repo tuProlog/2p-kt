@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.concurrent.stdlib.primitive
 
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -60,28 +62,33 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
         first: Term,
         second: Term,
     ): Sequence<Solve.Response> {
-        ensuringArgumentIsCallable(0)
-        ensuringArgumentIsCallable(1)
+        // patterns are callable: their functors are bound by the resolution
+        if (first !is Pattern) ensuringArgumentIsCallable(0)
+        if (second !is Pattern) ensuringArgumentIsCallable(1)
         if (first is Struct && first.arity == 2 && first.functor == Arrow.functor) {
             val solver: ConcurrentSolver = subSolver() as ConcurrentSolver
             // TODO open an issue to create and ad-hoc ensuringMethod to serve this purpose
             first.args.forEach {
-                if (it !is Struct) {
+                if (it !is Compound) {
                     throw TypeError.forGoal(context, signature, TypeError.Expected.CALLABLE, it)
                 }
             }
-            return when (val condition = solver.solveOnce(first[0] as Struct)) {
+            return when (val condition = solver.solveOnce(first[0] as Compound)) {
                 is Solution.Yes ->
-                    solver.solve(first[1].apply(condition.substitution).castToStruct()).map {
+                    solver.solve(first[1].apply(condition.substitution).castToCompound()).map {
                         mapSolution(it, condition.substitution)
                     }
-                is Solution.No -> solver.solve(second as Struct).map { mapSolution(it) }
+                is Solution.No -> solver.solve(second as Compound).map { mapSolution(it) }
                 is Solution.Halt -> sequenceOf(mapSolution(condition))
             }
         } else {
             val solver1: ConcurrentSolver = subSolver() as ConcurrentSolver
             val solver2: ConcurrentSolver = subSolver() as ConcurrentSolver
-            return (solver1.solve(first.castToStruct()) + solver2.solve(second.castToStruct())).map { mapSolution(it) }
+            return (
+                solver1.solve(
+                    first.castToCompound(),
+                ) + solver2.solve(second.castToCompound())
+            ).map { mapSolution(it) }
         }
     }
 
