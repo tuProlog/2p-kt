@@ -1,8 +1,11 @@
 package it.unibo.tuprolog.core
 
+import it.unibo.tuprolog.core.impl.compareHostIdentities
+
 /**
  * A [Comparator] for a specific sort of [Term], following the standard logic-term total order: variables
- * order before numbers, which order before atoms, which order before compound terms (compared first by `arity`,
+ * order before numbers, which order before atoms, which order before references ([Ref]s, non-standard), which
+ * order before compound terms (compared first by `arity`,
  * then `functor`, then arguments left-to-right; a [Pattern]'s variable functor orders before any atom functor). [DefaultComparator] implements the full order across any
  * two [Term]s and backs [Term.compareTo]; the other nested objects handle one specific sub-type each, and are
  * mostly useful when only same-sort terms are ever compared (e.g. sorting a list of [Atom]s).
@@ -80,7 +83,17 @@ interface TermComparator<T : Term> : Comparator<T> {
         ): Int =
             when {
                 b.isAtom -> AtomComparator.compare(a, b.castToAtom())
-                b.isCompound -> -1
+                b.isCompound || b.isRef -> -1
+                else -> 1
+            }
+
+        private fun compareRefAndTerm(
+            a: Ref,
+            b: Term,
+        ): Int =
+            when {
+                b.isRef -> RefComparator.compare(a, b.castToRef())
+                b.isCompound && !b.isAtom -> -1
                 else -> 1
             }
 
@@ -102,9 +115,41 @@ interface TermComparator<T : Term> : Comparator<T> {
                 a.isReal -> compareRealAndTerm(a.castToReal(), b)
                 a.isInteger -> compareIntegerAndTerm(a.castToInteger(), b)
                 a.isAtom -> compareAtomAndTerm(a.castToAtom(), b)
+                a.isRef -> compareRefAndTerm(a.castToRef(), b)
                 a.isCompound -> compareCompoundAndTerm(a.castToCompound(), b)
                 else -> throw IllegalStateException("Cannot compare ${a::class} with ${b::class}. This is a bug.")
             }
+    }
+
+    /**
+     * Compares two [Ref]s: [NullRef]s come first (and are all equal), then [ObjectRef]s (ordered by the identity of
+     * their host values, deterministically within a process), then any other kind of [Ref] (ordered by class name,
+     * then by identity of the reference itself, unless they are equal).
+     */
+    object RefComparator : TermComparator<Ref> {
+        private val Ref.rank: Int
+            get() =
+                when {
+                    isNullRef -> 0
+                    isObjectRef -> 1
+                    else -> 2
+                }
+
+        override fun compare(
+            a: Ref,
+            b: Ref,
+        ): Int {
+            val rankDelta = a.rank - b.rank
+            return when {
+                rankDelta != 0 -> rankDelta
+                a.isNullRef -> 0
+                a.isObjectRef -> compareHostIdentities(a.castToObjectRef().value, b.castToObjectRef().value)
+                a == b -> 0
+                else ->
+                    (a::class.simpleName ?: "").compareTo(b::class.simpleName ?: "").takeIf { it != 0 }
+                        ?: compareHostIdentities(a, b)
+            }
+        }
     }
 
     /** Compares two [Struct]s first by [Struct.arity], then by [Struct.functor], then argument-wise, left to right. */
