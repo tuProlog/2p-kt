@@ -136,6 +136,34 @@ interface Scope {
         args: List<Term>,
     ): Struct
 
+    /** Creates a [Compound] with the given [functor] and [args]. See [Compound.of]. */
+    @JsName("compoundOf")
+    fun compoundOf(
+        functor: Any,
+        vararg args: Term,
+    ): Compound
+
+    /** Creates a [Compound] with the given [functor] and [args]. See [Compound.of]. */
+    @JsName("compoundOfSequence")
+    fun compoundOf(
+        functor: Any,
+        args: Sequence<Term>,
+    ): Compound
+
+    /** Creates a [Compound] with the given [functor] and [args]. See [Compound.of]. */
+    @JsName("compoundOfIterable")
+    fun compoundOf(
+        functor: Any,
+        args: Iterable<Term>,
+    ): Compound
+
+    /** Creates a [Compound] with the given [functor] and [args]. See [Compound.of]. */
+    @JsName("compoundOfList")
+    fun compoundOf(
+        functor: Any,
+        args: List<Term>,
+    ): Compound
+
     /** Creates a [Tuple] out of [terms]. See [Tuple.of]. */
     @JsName("tupleOf")
     fun tupleOf(vararg terms: Term): Tuple

@@ -3,6 +3,7 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Cons
 import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.EmptyBlock
@@ -134,6 +135,26 @@ internal class ScopeImpl(
         functor: String,
         args: List<Term>,
     ): Struct = Struct.of(functor, args)
+
+    override fun compoundOf(
+        functor: Any,
+        vararg args: Term,
+    ): Compound = Compound.of(functor, *args)
+
+    override fun compoundOf(
+        functor: Any,
+        args: Sequence<Term>,
+    ): Compound = Compound.of(functor, args)
+
+    override fun compoundOf(
+        functor: Any,
+        args: Iterable<Term>,
+    ): Compound = Compound.of(functor, args)
+
+    override fun compoundOf(
+        functor: Any,
+        args: List<Term>,
+    ): Compound = Compound.of(functor, args)
 
     override fun factOf(head: Struct): Fact = Fact.of(head)
 
