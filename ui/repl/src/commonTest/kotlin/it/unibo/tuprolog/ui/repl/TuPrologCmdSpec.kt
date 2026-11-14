@@ -55,7 +55,8 @@ private val solveCases =
         RunCase(
             "pattern-query-is-solved",
             listOf("solve", "Q(X)."),
-            stdout = listOf("halt: ", "Uninstantiated subgoal"),
+            // no clause unifies with it: it fails, rather than being rejected as a syntax error
+            stdout = listOf("no."),
         ),
         RunCase(
             "empty-query-is-a-usage-error",
@@ -91,7 +92,7 @@ private val loopCases =
             "pattern-query-is-solved",
             emptyList(),
             stdin = "Q(X).\n",
-            stdout = listOf("halt: ", "Uninstantiated subgoal"),
+            stdout = listOf("no."),
         ),
         RunCase(
             "parse-error-does-not-stop-the-loop",

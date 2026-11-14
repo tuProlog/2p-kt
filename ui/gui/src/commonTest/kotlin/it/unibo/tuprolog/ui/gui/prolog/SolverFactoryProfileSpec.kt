@@ -142,9 +142,10 @@ class SolverFactoryProfileSpec :
                     ),
                 )
             val step = session.openResolution(ResolutionRequest(pageId, "Q(X).", 1.seconds, emptyMap(), "")).next()
-            // an instantiation error, as the functor is unbound, rather than a syntax error
+            // solved by unification with p(a), rather than rejected as a syntax error
             step.shouldBeInstanceOf<ResolutionStep.Yield>()
-            step.solution.shouldBeInstanceOf<SolutionPresentation.Halt>()
+            val solution = step.solution.shouldBeInstanceOf<SolutionPresentation.Yes>()
+            solution.bindings.associate { it.variable to it.value } shouldBe mapOf("Q" to "p", "X" to "a")
         }
 
         test("e2e/variable-functor-queries-enumerate-predicates").config(coroutineTestScope = true) {
