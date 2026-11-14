@@ -63,7 +63,7 @@ internal object ClauseMappingUtils {
     }
 }
 
-private const val PROBLOG_MAPPED_TAG = "it.unibo.tuprolog.problog.mapped"
+private const val PROBLOG_MAPPED_TAG = "it.unibo.tuprolog.solve.problog.lib.knowledge.impl.problog-mapped"
 
 internal val Clause.isMappedAsProblog: Boolean
     get() = getTag(PROBLOG_MAPPED_TAG) ?: false
