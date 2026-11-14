@@ -37,6 +37,9 @@ interface TermVisitor<T> {
     @JsName("visitCompound")
     fun visitCompound(term: Compound): T = visitTerm(term)
 
+    @JsName("visitPattern")
+    fun visitPattern(term: Pattern): T = visitCompound(term)
+
     @JsName("visitStruct")
     fun visitStruct(term: Struct): T = visitCompound(term)
 

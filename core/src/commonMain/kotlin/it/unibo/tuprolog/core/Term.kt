@@ -120,6 +120,15 @@ interface Term :
     val isCompound: Boolean get() = false
 
     /**
+     * Checks whether the current term is a pattern, i.e. a compound term whose functor is a variable.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Pattern].
+     * @return `true` if the current term is a pattern, or `false`, otherwise
+     */
+    @JsName("isPattern")
+    val isPattern: Boolean get() = false
+
+    /**
      * Checks whether the current term is a truth value.
      * This method is guaranteed to return `true` if and only if the current term
      * is an instance of [Truth].
@@ -460,6 +469,15 @@ interface Term :
         asCompound() ?: throw ClassCastException("Cannot cast $this to ${Compound::class.simpleName}")
 
     /**
+     * Casts the current [Term] to [Pattern], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Pattern]
+     * @return the current [Term], casted to [Pattern]
+     */
+    @JsName("castToPattern")
+    fun castToPattern(): Pattern =
+        asPattern() ?: throw ClassCastException("Cannot cast $this to ${Pattern::class.simpleName}")
+
+    /**
      * Casts the current [Term] to [Recursive], if possible
      * @throws ClassCastException if the current [Term] is not an instance of [Recursive]
      * @return the current [Term], casted to [Recursive]
@@ -617,6 +635,13 @@ interface Term :
      */
     @JsName("asCompound")
     fun asCompound(): Compound? = null
+
+    /**
+     * Casts the current [Term] to [Pattern], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Pattern], or `null`, if the current term is not an instance of [Pattern]
+     */
+    @JsName("asPattern")
+    fun asPattern(): Pattern? = null
 
     /**
      * Casts the current [Term] to [Recursive], if possible, or returns `null` otherwise

@@ -164,6 +164,34 @@ interface Scope {
         args: List<Term>,
     ): Compound
 
+    /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
+    @JsName("patternOf")
+    fun patternOf(
+        functor: Var,
+        vararg args: Term,
+    ): Pattern
+
+    /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
+    @JsName("patternOfSequence")
+    fun patternOf(
+        functor: Var,
+        args: Sequence<Term>,
+    ): Pattern
+
+    /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
+    @JsName("patternOfIterable")
+    fun patternOf(
+        functor: Var,
+        args: Iterable<Term>,
+    ): Pattern
+
+    /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
+    @JsName("patternOfList")
+    fun patternOf(
+        functor: Var,
+        args: List<Term>,
+    ): Pattern
+
     /** Creates a [Tuple] out of [terms]. See [Tuple.of]. */
     @JsName("tupleOf")
     fun tupleOf(vararg terms: Term): Tuple
@@ -259,6 +287,13 @@ interface Scope {
     fun indicatorOf(
         name: Term,
         arity: Term,
+    ): Indicator
+
+    /** Creates a (non-concrete) [Indicator] with the given variable [name] and [arity]. See [Indicator.of]. */
+    @JsName("indicatorOfVarInt")
+    fun indicatorOf(
+        name: Var,
+        arity: Int,
     ): Indicator
 
     /** Creates an [Indicator] with the given [name] and [arity]. See [Indicator.of]. */

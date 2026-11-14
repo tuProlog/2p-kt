@@ -7,12 +7,13 @@ import kotlin.collections.List as KtList
 /**
  * Common abstraction of [Term]s made of a functor and a (possibly empty) list of arguments.
  *
- * Its concrete sub-types refine [functor] covariantly: a [Struct] has a [String] functor, whereas a variable-functor
- * compound (introduced later in the hierarchy) has a [Var] functor. [functorTerm] is the [Term] form of the functor,
+ * Its concrete sub-types refine [functor] covariantly: a [Struct] has a [String] functor, whereas a [Pattern] has a
+ * [Var] functor. [functorTerm] is the [Term] form of the functor,
  * and [indicator] is always `functorTerm/arity`.
  *
  * [Compound.of] is the canonical factory: it selects the most specific sub-type from the functor's type, delegating
- * to [Struct.of] (which in turn selects specialised [Struct]s such as [Atom], [List], [Tuple], [Clause]...).
+ * to [Struct.of] (which in turn selects specialised [Struct]s such as [Atom], [List], [Tuple], [Clause]...) or to
+ * [Pattern.of].
  */
 interface Compound : Term {
     override val isCompound: Boolean
@@ -77,7 +78,7 @@ interface Compound : Term {
     companion object {
         /**
          * Creates a new [Compound], of the most specific sub-type, given its [functor] and [args].
-         * A [String] or [Atom] functor delegates to [Struct.of].
+         * A [String] or [Atom] functor delegates to [Struct.of], a [Var] functor delegates to [Pattern.of].
          * @throws IllegalArgumentException if [functor] is not a valid functor
          */
         @JvmStatic
@@ -89,9 +90,9 @@ interface Compound : Term {
             when (functor) {
                 is String -> Struct.of(functor, args)
                 is Atom -> Struct.of(functor.value, args)
-                // shortcut: Var functors are rejected until Pattern is introduced
+                is Var -> Pattern.of(functor, args)
                 else -> throw IllegalArgumentException(
-                    "Invalid functor for a compound term: $functor (a String or an Atom is required)",
+                    "Invalid functor for a compound term: $functor (a String, an Atom, or a Var is required)",
                 )
             }
 
