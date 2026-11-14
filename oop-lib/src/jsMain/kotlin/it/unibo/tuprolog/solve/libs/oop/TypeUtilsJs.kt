@@ -75,3 +75,8 @@ actual fun overloadSelector(
     type: KClass<*>,
     termToObjectConverter: TermToObjectConverter,
 ): OverloadSelector = throw TODO_EXCEPTION
+
+private val canonicalTypes = mutableMapOf<KClass<*>, KClass<*>>()
+
+internal actual val KClass<*>.canonical: KClass<*>
+    get() = canonicalTypes.getOrPut(this) { this }

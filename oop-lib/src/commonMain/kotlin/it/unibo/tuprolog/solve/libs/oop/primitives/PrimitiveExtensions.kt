@@ -3,6 +3,8 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.ObjectRef
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -13,8 +15,6 @@ import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
 import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.OOP.DEALIASING_OPERATOR
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
@@ -108,12 +108,10 @@ fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsTypeRef(index: Int
  * @throws it.unibo.tuprolog.solve.exception.error.TypeError if the argument is none of the above.
  */
 fun <C : ExecutionContext> Solve.Request<C>.getArgumentAsTypeRef(index: Int): TypeRef? {
-    ensuringArgumentIsStruct(index)
     val arg = arguments[index]
+    if (arg is TypeRef) return arg
+    ensuringArgumentIsStruct(index)
     return when {
-        arg is TypeRef -> {
-            arg
-        }
         arg is Atom -> {
             TypeFactory.default.typeRefFromName(arg.value)
         }

@@ -1,13 +1,13 @@
 package it.unibo.tuprolog.solve.libs.oop.rules
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.ObjectRef
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.libs.oop.OOP
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
 import it.unibo.tuprolog.solve.rule.RuleWrapper
 import kotlin.reflect.KClass
@@ -52,7 +52,7 @@ class Alias private constructor(
         fun forObject(
             alias: String,
             `object`: Any?,
-        ) = Alias(Atom.of(alias), ObjectRef.of(`object`))
+        ) = Alias(Atom.of(alias), Ref.of(`object`))
 
         /** Builds an [Alias] fact naming [type] (wrapped into a [TypeRef]) as [alias]. */
         fun forType(

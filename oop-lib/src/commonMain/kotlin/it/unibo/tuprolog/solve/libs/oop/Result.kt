@@ -1,10 +1,12 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermConvertible
 
 /**
- * The outcome of reflectively invoking a member via [Ref.invoke], [Ref.assign], or [TypeRef.create]:
+ * The outcome of reflectively invoking a member via [invoke], [assign], or [create]:
  * either [None] -- there was no return value, e.g. a `void`/`Unit`-returning method -- or a
  * [Value] wrapping whatever was returned (including `null`).
  *
@@ -21,14 +23,17 @@ sealed class Result {
     /** This result's value as a [Term] (via [ObjectToTermConverter.default]), or `null` if [isNone]. */
     abstract fun toTerm(): Term?
 
-    /** This result's value wrapped into an [ObjectRef] (even if it converts to a non-reference [Term]), or `null` if [isNone]. */
-    abstract fun asObjectRef(): ObjectRef?
+    /**
+     * This result's value wrapped into a [Ref] (even if it converts to a non-reference [Term]): a [NullRef] for
+     * `null`; `null` if [isNone]. Logic terms cannot be wrapped: their reference is the term itself, see [toTerm].
+     */
+    abstract fun asRef(): Ref?
 
     /** The result of invoking a member that returns no value. */
     object None : Result() {
         override fun toTerm(): Term? = null
 
-        override fun asObjectRef(): ObjectRef? = null
+        override fun asRef(): Ref? = null
 
         override fun isNone(): Boolean = true
 
@@ -44,15 +49,15 @@ sealed class Result {
             ObjectToTermConverter.default.convert(value)
         }
 
-        private val objectRef: ObjectRef by lazy {
+        private val ref: Ref by lazy {
             termValue.let {
-                if (it is ObjectRef) it else ObjectRef.of(value)
+                if (it is Ref) it else Ref.of(value)
             }
         }
 
         override fun toTerm(): Term = termValue
 
-        override fun asObjectRef(): ObjectRef = objectRef
+        override fun asRef(): Ref = ref
 
         override fun isValue(): Boolean = true
 

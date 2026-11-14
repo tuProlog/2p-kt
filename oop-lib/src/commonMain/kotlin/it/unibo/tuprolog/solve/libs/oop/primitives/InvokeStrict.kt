@@ -33,5 +33,6 @@ object InvokeStrict : AbstractInvoke("strict") {
         ```
         """.trimIndent()
 
-    override fun Result.Value.getInvocationResult(): Term = asObjectRef()
+    // a logic term cannot be wrapped into a reference: it is its own reference
+    override fun Result.Value.getInvocationResult(): Term = value as? Term ?: asRef()
 }

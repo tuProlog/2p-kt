@@ -1,12 +1,12 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.TypeError
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.ObjectToTermConverter
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve
@@ -52,7 +52,7 @@ abstract class AbstractIterableItems<T : Any>(
                 mgu(first, objectRef)
             }
             first is ObjectRef -> {
-                val obj = first.`object`
+                val obj = first.value
                 if (obj.isIterable) {
                     @Suppress("UNCHECKED_CAST")
                     val items =
