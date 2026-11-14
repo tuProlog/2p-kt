@@ -69,6 +69,7 @@ import it.unibo.tuprolog.solve.library.toRuntime
 import it.unibo.tuprolog.solve.libraryOf
 import it.unibo.tuprolog.solve.lifetimeContract
 import it.unibo.tuprolog.solve.logicalUpdateViewContract
+import it.unibo.tuprolog.solve.metaResolutionContract
 import it.unibo.tuprolog.solve.mutableSolverContract
 import it.unibo.tuprolog.solve.nonVarContract
 import it.unibo.tuprolog.solve.notProvableContract
@@ -79,7 +80,6 @@ import it.unibo.tuprolog.solve.numberContract
 import it.unibo.tuprolog.solve.onceContract
 import it.unibo.tuprolog.solve.opContract
 import it.unibo.tuprolog.solve.orContract
-import it.unibo.tuprolog.solve.metaResolutionContract
 import it.unibo.tuprolog.solve.patternDataContract
 import it.unibo.tuprolog.solve.primitive.Alternatives
 import it.unibo.tuprolog.solve.primitive.Solve
