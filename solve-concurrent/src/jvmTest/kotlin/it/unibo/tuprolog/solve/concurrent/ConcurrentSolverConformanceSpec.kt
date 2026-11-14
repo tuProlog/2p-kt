@@ -81,6 +81,8 @@ class ConcurrentSolverConformanceSpec :
                     setOf(
                         "meta-variables/mr-87/solutions-computed-lazily",
                         "meta-variables/mr-88/early-stop-tries-few-candidates",
+                        // in the order solutions come in
+                        "meta-variables/built-ins/findall-collects-every-answer",
                     ),
                 ordered = false,
             ),

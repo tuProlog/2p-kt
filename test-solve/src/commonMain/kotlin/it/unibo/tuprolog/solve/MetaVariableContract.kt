@@ -354,6 +354,32 @@ fun metaVariableContract(
         withClue("$counters") { (counters.alternatives < 10) shouldBe true }
     }
 
+    scenario("meta-variables/built-ins/findall-collects-every-answer") {
+        solverFactory.solverOf(basic).answersOf("findall(F-X, F(X), L)", listOf("L")) shouldAnswer
+            listOf(listOf("['-'(f, 1), '-'(g, 2), '-'(h, 3)]"))
+    }
+
+    scenario("meta-variables/built-ins/setof-collects-every-answer") {
+        solverFactory.solverOf(basic).answersOf("setof(X-F, F(X), L)", listOf("L")) shouldAnswer
+            listOf(listOf("['-'(1, f), '-'(2, g), '-'(3, h)]"))
+    }
+
+    scenario("meta-variables/built-ins/negation") {
+        val solver = solverFactory.solverOf(basic)
+        solver.answersOf("\\+ F(4)", emptyList()) shouldAnswer yes()
+        solver.answersOf("\\+ F(1)", emptyList()) shouldAnswer emptyList()
+    }
+
+    scenario("meta-variables/built-ins/clause-inspection") {
+        solverFactory.solverOf(basic).answersOf("clause(F(X), true)", listOf("F", "X")) shouldAnswer
+            answers("f,1", "g,2", "h,3")
+    }
+
+    scenario("meta-variables/built-ins/retract-by-pattern") {
+        val solver = solverFactory.solverOf(emptyList())
+        solver.answersOf("assertz(d(1)), assertz(e(2)), retract(F(2))", listOf("F")) shouldAnswer answers("e")
+    }
+
     scenario("meta-variables/library-predicates-are-not-candidates") {
         // call/1, once/1, \+/1 are library rules of arity 1: only the user's predicates answer
         val solver = solverFactory.solverOf(listOf("f(1)"))
