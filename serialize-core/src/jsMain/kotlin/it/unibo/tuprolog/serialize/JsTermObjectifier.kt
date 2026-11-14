@@ -11,6 +11,7 @@ import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -21,6 +22,8 @@ import it.unibo.tuprolog.core.Var
 @Suppress("TooManyFunctions")
 internal class JsTermObjectifier : TermObjectifier {
     override fun defaultValue(term: Term): Any = throw SerializationException(term)
+
+    override fun visitRef(term: Ref): Any = throw SerializationException.forReference(term)
 
     override fun objectifyMany(values: Iterable<Term>): Any = values.map { objectify(it) }.toTypedArray()
 
