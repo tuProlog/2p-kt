@@ -4,6 +4,9 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.ObjectRef
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
@@ -32,7 +35,7 @@ class AliasSpec :
             val ref =
                 when (obj) {
                     is KClass<*> -> TypeRef.of(obj)
-                    null -> ObjectRef.NULL
+                    null -> NullRef.instance
                     else -> ObjectRef.of(obj)
                 }
             return OOPLib.clauses
@@ -72,10 +75,10 @@ class AliasSpec :
             logicProgramming {
                 val query1 = Alias.FUNCTOR(alias, T)
                 assertSolutionEquals(
-                    listOf(query1.yes(T to ObjectRef.of(obj))),
+                    listOf(query1.yes(T to Ref.of(obj))),
                     solver.solve(query1).toList(),
                 )
-                val query2 = Alias.FUNCTOR(A, ObjectRef.of(obj))
+                val query2 = Alias.FUNCTOR(A, Ref.of(obj))
                 assertSolutionEquals(
                     aliasesByObject(obj).map { query2.yes(A to it) },
                     solver.solve(query2).toList(),
@@ -154,7 +157,7 @@ class AliasSpec :
             val bInstance = ObjectRef.of(A.B(1, "a"))
             val bType = TypeRef.of(A.B::class)
 
-            val bInstanceAlias = Alias.forObject("bInstance", bInstance.`object`)
+            val bInstanceAlias = Alias.forObject("bInstance", bInstance.value)
             val bTypeAlias = Alias.forObject("bType", bType.type)
 
             logicProgramming {
@@ -207,7 +210,7 @@ class AliasSpec :
                     solver.solveOnce(query),
                 )
 
-                query = Register.functor(ObjectRef.NULL, A)
+                query = Register.functor(NullRef.instance, A)
                 assertSolutionEquals(
                     query.halt(
                         InstantiationError.forArgument(
@@ -234,7 +237,7 @@ class AliasSpec :
                     solver.solveOnce(query),
                 )
 
-                query = Register.functor(ObjectRef.NULL, 3)
+                query = Register.functor(NullRef.instance, 3)
                 assertSolutionEquals(
                     query.halt(
                         TypeError.forArgument(

@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.libs.oop.exceptions.OopException
 import it.unibo.tuprolog.solve.libs.oop.exceptions.TermToObjectConversionException
@@ -16,7 +18,7 @@ internal data class TestDatum(
     val string: String get() = type.name
 
     constructor(termId: String, obj: Any?, type: KClass<*>) :
-        this(termId, obj?.let { ObjectRef.of(obj) } ?: ObjectRef.NULL, type, obj)
+        this(termId, obj?.let { ObjectRef.of(obj) } ?: NullRef.instance, type, obj)
 
     val exception by lazy { converted as? OopException }
 

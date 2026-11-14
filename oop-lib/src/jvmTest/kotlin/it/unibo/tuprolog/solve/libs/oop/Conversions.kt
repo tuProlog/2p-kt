@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve.libs.oop
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
