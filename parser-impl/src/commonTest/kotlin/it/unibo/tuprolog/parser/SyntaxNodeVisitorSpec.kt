@@ -8,6 +8,7 @@ import it.unibo.tuprolog.parser.tree.BlockNode
 import it.unibo.tuprolog.parser.tree.ListNode
 import it.unibo.tuprolog.parser.tree.NumberNode
 import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
+import it.unibo.tuprolog.parser.tree.PatternNode
 import it.unibo.tuprolog.parser.tree.StructureNode
 import it.unibo.tuprolog.parser.tree.SyntaxNodeVisitor
 import it.unibo.tuprolog.parser.tree.TheoryNode
@@ -27,6 +28,8 @@ private object KindsVisitor : SyntaxNodeVisitor<String> {
     override fun visitStructure(node: StructureNode) =
         if (node.arguments.isEmpty()) "atom" else "struct(${node.arguments.joinToString { visit(it) }})"
 
+    override fun visitPattern(node: PatternNode) = "pattern(${node.arguments.joinToString { visit(it) }})"
+
     override fun visitList(node: ListNode) = "list(${node.items.joinToString { visit(it) }})"
 
     override fun visitBlock(node: BlockNode) = "block(${node.items.joinToString { visit(it) }})"
@@ -36,7 +39,7 @@ class SyntaxNodeVisitorSpec :
     FunSpec({
         test("default-dispatch/reaches-every-node-kind") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
-            val theory = testParser.parseTheory(lex("f([a], {b}, (c), 1, X). a + b."), operators).root
-            KindsVisitor.visit(theory) shouldBe "struct(list(atom), block(atom), atom, number, var) op(atom, atom)"
+            val theory = testParser.parseTheory(lex("f([a], {b}, (c), 1, X, P(a)). a + b."), operators).root
+            KindsVisitor.visit(theory) shouldBe "struct(list(atom), block(atom), atom, number, var, pattern(atom)) op(atom, atom)"
         }
     })
