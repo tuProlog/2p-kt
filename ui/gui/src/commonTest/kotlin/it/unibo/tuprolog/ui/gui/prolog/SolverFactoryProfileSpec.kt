@@ -3,6 +3,7 @@ package it.unibo.tuprolog.ui.gui.prolog
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.solve.libs.io.IOLib
 import it.unibo.tuprolog.solve.prolog.PrologSolverFactory
@@ -144,5 +145,42 @@ class SolverFactoryProfileSpec :
             // an instantiation error, as the functor is unbound, rather than a syntax error
             step.shouldBeInstanceOf<ResolutionStep.Yield>()
             step.solution.shouldBeInstanceOf<SolutionPresentation.Halt>()
+        }
+
+        test("e2e/variable-functor-queries-enumerate-predicates").config(coroutineTestScope = true) {
+            val profile =
+                solverFactoryProfile(
+                    PrologSolverFactory,
+                    SolverProfileId("test"),
+                    "Test",
+                    runtimeLibraries = listOf(IOLib),
+                )
+            val pageId = PageId("page")
+            val session =
+                profile.factory.create(
+                    SolverSessionCreationRequest(
+                        pageId,
+                        DocumentId("document"),
+                        "f(1).\ng(2).\nP(X) :- cached(P, X).\ncached(h, 3).",
+                        1,
+                        profile.id,
+                        emptyMap(),
+                        "",
+                    ),
+                )
+            val cursor = session.openResolution(ResolutionRequest(pageId, "F(X).", 1.seconds, emptyMap(), ""))
+            val answers =
+                List(3) {
+                    val step = cursor.next()
+                    step.shouldBeInstanceOf<ResolutionStep.Yield>()
+                    val solution = step.solution.shouldBeInstanceOf<SolutionPresentation.Yes>()
+                    solution.bindings.associate { it.variable to it.value }
+                }
+            answers shouldBe
+                listOf(
+                    mapOf("F" to "f", "X" to "1"),
+                    mapOf("F" to "g", "X" to "2"),
+                    mapOf("F" to "h", "X" to "3"),
+                )
         }
     })
