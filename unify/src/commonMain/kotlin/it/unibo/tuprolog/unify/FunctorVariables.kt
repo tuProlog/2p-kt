@@ -17,17 +17,16 @@ const val FUNCTOR_VARIABLES_TAG = "it.unibo.tuprolog.unify.functor-variables"
  * bound to atoms or variables. Unificators record them in the substitutions they return (and read them from the ones
  * they are given), so that the restriction holds across unifications, e.g. after `P(X) = Q(a)`, `Q = f(b)` fails.
  */
-@Suppress("UNCHECKED_CAST")
 @get:JsName("functorVariables")
 val Substitution.functorVariables: Set<Var>
-    get() = tags[FUNCTOR_VARIABLES_TAG] as? Set<Var> ?: emptySet()
+    get() = (tags[FUNCTOR_VARIABLES_TAG] as? FunctorVariableSet)?.variables ?: emptySet()
 
 /** This substitution, with [variables] as its [functorVariables] (in addition to the ones it has). */
 internal fun Substitution.withFunctorVariables(variables: Set<Var>): Substitution =
     if (isFailed || variables.isEmpty() || functorVariables.containsAll(variables)) {
         this
     } else {
-        replaceTags(tags + (FUNCTOR_VARIABLES_TAG to (functorVariables + variables)))
+        replaceTags(tags + (FUNCTOR_VARIABLES_TAG to FunctorVariableSet(functorVariables + variables)))
     }
 
 /**
@@ -51,3 +50,8 @@ internal inline fun forEachPatternFunctor(
         }
     }
 }
+
+/** The value of the [FUNCTOR_VARIABLES_TAG] tag: a type of its own, so that reading it needs no unchecked cast. */
+private data class FunctorVariableSet(
+    val variables: Set<Var>,
+)
