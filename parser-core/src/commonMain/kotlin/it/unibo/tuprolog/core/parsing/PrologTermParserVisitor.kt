@@ -7,6 +7,7 @@ import it.unibo.tuprolog.parser.tree.ListNode
 import it.unibo.tuprolog.parser.tree.NumberKind
 import it.unibo.tuprolog.parser.tree.NumberNode
 import it.unibo.tuprolog.parser.tree.OperatorExpressionNode
+import it.unibo.tuprolog.parser.tree.PatternNode
 import it.unibo.tuprolog.parser.tree.StructureNode
 import it.unibo.tuprolog.parser.tree.SyntaxNodeVisitor
 import it.unibo.tuprolog.parser.tree.TheoryNode
@@ -62,6 +63,10 @@ open class PrologTermParserVisitor(
     /** Converts a structure and recursively converts its arguments. */
     override fun visitStructure(node: StructureNode): Term =
         scope.structOf(node.functor, node.children.map { it.accept(this) })
+
+    /** Converts a pattern, i.e. a compound term whose functor is a variable, and recursively converts its arguments. */
+    override fun visitPattern(node: PatternNode): Term =
+        scope.patternOf(visitVariable(node.functor).castToVar(), node.arguments.map { it.accept(this) })
 
     /** Converts list items and an optional explicit tail to a tuProlog logic list. */
     override fun visitList(node: ListNode): Term =
