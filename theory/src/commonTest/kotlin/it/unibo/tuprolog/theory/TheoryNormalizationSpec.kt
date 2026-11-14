@@ -45,11 +45,19 @@ class TheoryNormalizationSpec :
         ) { case ->
             val g = Var.of("G")
             val definition = Rule.of(Struct.of("my_call", g), g).setTag(Clause.VERBATIM_BODY_TAG, true)
-            case.store(definition).clauses.single().body shouldBeSameInstanceAs g
+            case
+                .store(definition)
+                .clauses
+                .single()
+                .body shouldBeSameInstanceAs g
         }
 
         test("directives-are-normalized") {
             val x = Var.of("X")
-            Theory.of(Goal.of(x)).directives.single().body shouldBe Struct.of("call", x)
+            Theory
+                .of(Goal.of(x))
+                .directives
+                .single()
+                .body shouldBe Struct.of("call", x)
         }
     })

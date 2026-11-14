@@ -53,7 +53,7 @@ fun theoryTests(
 
     val anIndependentFact: Fact = Fact.of(Atom.of("myTestingFact"))
 
-    val aRule: Rule = Rule.of(Atom.of("a"), Var.of("A"))
+    val aRule: Rule = Rule.of(Atom.of("a"), Struct.of("call", Var.of("A")))
 
     val successfulRetractQueryCases = clauseQueryCases.filter { it.expected.isNotEmpty() }
 

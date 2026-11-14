@@ -26,12 +26,16 @@ class ClauseNormalizationSpec :
         withTests(
             nameFn = { "rewrites-goal-positions/${it.id}" },
             NormalizationCase("variable-body") {
-                Scope.empty { ruleOf(structOf("p", varOf("X")), varOf("X")) to ruleOf(structOf("p", varOf("X")), call(varOf("X"))) }
+                Scope.empty {
+                    ruleOf(structOf("p", varOf("X")), varOf("X")) to
+                        ruleOf(structOf("p", varOf("X")), call(varOf("X")))
+                }
             },
             NormalizationCase("conjunction") {
                 Scope.empty {
                     val q = structOf("q", varOf("X"))
-                    ruleOf(structOf("p", varOf("X")), varOf("X"), q) to ruleOf(structOf("p", varOf("X")), call(varOf("X")), q)
+                    ruleOf(structOf("p", varOf("X")), varOf("X"), q) to
+                        ruleOf(structOf("p", varOf("X")), call(varOf("X")), q)
                 }
             },
             NormalizationCase("disjunction") {
@@ -54,7 +58,10 @@ class ClauseNormalizationSpec :
             NormalizationCase("nested-on-the-left") {
                 Scope.empty {
                     ruleOf(atomOf("p"), structOf(";", tupleOf(varOf("X"), varOf("Y")), varOf("Z"))) to
-                        ruleOf(atomOf("p"), structOf(";", tupleOf(call(varOf("X")), call(varOf("Y"))), call(varOf("Z"))))
+                        ruleOf(
+                            atomOf("p"),
+                            structOf(";", tupleOf(call(varOf("X")), call(varOf("Y"))), call(varOf("Z"))),
+                        )
                 }
             },
             NormalizationCase("goal") {
@@ -78,9 +85,13 @@ class ClauseNormalizationSpec :
             nameFn = { "leaves-unchanged/${it.id}" },
             UnchangedCase("fact") { Fact.of(Struct.of("p", Var.of("X"))) },
             UnchangedCase("ground-body") { Rule.of(Atom.of("p"), Atom.of("q"), Atom.of("r")) },
-            UnchangedCase("data-argument") { Scope.empty { ruleOf(atomOf("p"), structOf("q", structOf("f", varOf("X")))) } },
+            UnchangedCase(
+                "data-argument",
+            ) { Scope.empty { ruleOf(atomOf("p"), structOf("q", structOf("f", varOf("X")))) } },
             UnchangedCase("unification") { Scope.empty { ruleOf(atomOf("p"), structOf("=", varOf("X"), varOf("Y"))) } },
-            UnchangedCase("list-of-variables") { Scope.empty { ruleOf(atomOf("p"), structOf("r", logicListOf(varOf("X")))) } },
+            UnchangedCase(
+                "list-of-variables",
+            ) { Scope.empty { ruleOf(atomOf("p"), structOf("r", logicListOf(varOf("X")))) } },
             UnchangedCase("call") { Scope.empty { ruleOf(atomOf("p"), structOf("call", varOf("X"))) } },
             UnchangedCase("negation") { Scope.empty { ruleOf(atomOf("p"), structOf("\\+", varOf("X"))) } },
             UnchangedCase("findall") {

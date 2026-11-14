@@ -14,6 +14,7 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.normalized
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /**
@@ -35,7 +36,7 @@ internal object ClauseFixtures {
         val expected: List<C>,
     )
 
-    /** Contains some well-formed rules */
+    /** Contains some well-formed rules, normalized as theories store them */
     internal val ruleCases =
         listOf(
             ClauseCase("fact-true", Fact.of(Truth.TRUE)),
@@ -69,7 +70,7 @@ internal object ClauseFixtures {
                 Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
             ),
             ClauseCase("rule-a-of-a-if-anonymous", Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())),
-        )
+        ).map { ClauseCase(it.id, it.clause.normalized().castToRule()) }
 
     internal val rules = ruleCases.map { it.clause }
 
@@ -94,7 +95,7 @@ internal object ClauseFixtures {
             matchingQuery("a-of-any", Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()), rules),
         )
 
-    /** Contains some well-formed directives */
+    /** Contains some well-formed directives, normalized as theories store them */
     internal val directiveCases =
         listOf(
             ClauseCase("directive-true", Goal.of(Truth.TRUE)),
@@ -141,7 +142,7 @@ internal object ClauseFixtures {
                 "directive-a-of-a-and-anonymous",
                 Goal.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
             ),
-        )
+        ).map { ClauseCase(it.id, it.clause.normalized().castToGoal()) }
 
     internal val directives = directiveCases.map { it.clause }
 
