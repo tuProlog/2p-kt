@@ -13,8 +13,8 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Rule
@@ -376,7 +376,7 @@ class ClauseCollectionsSpec :
         test("rules-and-directives") {
             val fact = p(1)
             val rule = Rule.of(Struct.of("q", Var.of("X")), Struct.of("p", Var.of("X")))
-            val directive = Directive.of(Atom.of("init"))
+            val directive = Goal.of(Atom.of("init"))
             val multiSet = ClauseMultiSet.of(Unificator.default, fact, directive, rule)
             multiSet.rules.toList() shouldContainExactlyInAnyOrder listOf(fact, rule)
             multiSet.directives.toList() shouldBe listOf(directive)

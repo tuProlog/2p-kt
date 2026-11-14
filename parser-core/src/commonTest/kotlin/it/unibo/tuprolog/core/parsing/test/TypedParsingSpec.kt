@@ -9,8 +9,8 @@ import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Constant
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
@@ -28,8 +28,8 @@ import it.unibo.tuprolog.core.parsing.parse
 import it.unibo.tuprolog.core.parsing.parseAsAtom
 import it.unibo.tuprolog.core.parsing.parseAsClause
 import it.unibo.tuprolog.core.parsing.parseAsConstant
-import it.unibo.tuprolog.core.parsing.parseAsDirective
 import it.unibo.tuprolog.core.parsing.parseAsFact
+import it.unibo.tuprolog.core.parsing.parseAsGoal
 import it.unibo.tuprolog.core.parsing.parseAsInteger
 import it.unibo.tuprolog.core.parsing.parseAsNumeric
 import it.unibo.tuprolog.core.parsing.parseAsReal
@@ -235,16 +235,16 @@ private val kinds =
         ),
         KindCase(
             "directive",
-            Directive::class,
+            Goal::class,
             ":- dynamic(p/1)",
             ":- a ++ b",
-            { directiveOf(structOf("dynamic", structOf("/", atomOf("p"), intOf(1)))) },
-            { directiveOf(structOf("++", atomOf("a"), atomOf("b"))) },
+            { goalOf(structOf("dynamic", structOf("/", atomOf("p"), intOf(1)))) },
+            { goalOf(structOf("++", atomOf("a"), atomOf("b"))) },
             "p :- q",
             entryPoints(
-                { s, ops -> if (ops == null) parseDirective(s) else parseDirective(s, ops) },
-                { s, ops -> if (ops == null) Directive.parse(s) else Directive.parse(s, ops) },
-                { ops -> if (ops == null) parseAsDirective() else parseAsDirective(ops) },
+                { s, ops -> if (ops == null) parseGoal(s) else parseGoal(s, ops) },
+                { s, ops -> if (ops == null) Goal.parse(s) else Goal.parse(s, ops) },
+                { ops -> if (ops == null) parseAsGoal() else parseAsGoal(ops) },
             ),
         ),
     )

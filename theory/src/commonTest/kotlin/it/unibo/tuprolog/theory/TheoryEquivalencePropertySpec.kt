@@ -16,7 +16,7 @@ import io.kotest.property.arbitrary.list
 import io.kotest.property.checkAll
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
@@ -209,14 +209,14 @@ private val clauses: Arb<Clause> =
                     val body = if (Arb.boolean().bind()) Truth.TRUE else Struct.of("q", Var.of("X"), Var.of("Y"))
                     Rule.of(heads.bind(), body)
                 },
-            1 to arbitrary { Directive.of(Struct.of("d", arguments(1).bind())) },
+            1 to arbitrary { Goal.of(Struct.of("d", arguments(1).bind())) },
         ).sometimesTagged()
 
 private val queries: Arb<Clause> =
     Arb.choose(
         2 to clauses,
         3 to arbitrary { Rule.of(heads.bind(), Var.anonymous()) },
-        1 to arbitrary { Directive.of(Var.anonymous()) },
+        1 to arbitrary { Goal.of(Var.anonymous()) },
     )
 
 private val ops: Arb<Op> =

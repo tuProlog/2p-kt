@@ -7,53 +7,53 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.ConstantUtils
-import it.unibo.tuprolog.core.testutils.DirectiveUtils
+import it.unibo.tuprolog.core.testutils.GoalUtils
 import it.unibo.tuprolog.core.testutils.StructUtils
 import it.unibo.tuprolog.core.testutils.TermTypeAssertionUtils
 
 /**
- * Test class for [DirectiveImpl] and [Directive]
+ * Test class for [GoalImpl] and [Goal]
  *
  * @author Enrico
  */
-class DirectiveImplSpec :
+class GoalImplSpec :
     FunSpec({
         fun directives(
             property: String,
-            cases: List<DirectiveUtils.DirectiveCase> = DirectiveUtils.mixedDirectiveCases,
-            test: (DirectiveUtils.DirectiveCase, Directive) -> Unit,
-        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, DirectiveImpl(it.body)) }
+            cases: List<GoalUtils.GoalCase> = GoalUtils.mixedGoalCases,
+            test: (GoalUtils.GoalCase, Goal) -> Unit,
+        ) = withTests(nameFn = { "$property/${it.id}" }, cases) { test(it, GoalImpl(it.body)) }
 
         directives("head-null") { _, directive -> directive.head.shouldBeNull() }
 
         directives("body") { case, directive -> assertEqualities(case.body, directive.body) }
 
-        directives("is-well-formed", DirectiveUtils.wellFormedDirectiveCases) { _, directive ->
+        directives("is-well-formed", GoalUtils.wellFormedGoalCases) { _, directive ->
             withClue("$directive isWellFormed should be true") { directive.isWellFormed.shouldBeTrue() }
         }
 
-        directives("is-not-well-formed", DirectiveUtils.nonWellFormedDirectiveCases) { _, directive ->
+        directives("is-not-well-formed", GoalUtils.nonWellFormedGoalCases) { _, directive ->
             withClue("$directive isWellFormed should be false") { directive.isWellFormed.shouldBeFalse() }
         }
 
-        directives("type-checks") { _, directive -> TermTypeAssertionUtils.assertIsDirective(directive) }
+        directives("type-checks") { _, directive -> TermTypeAssertionUtils.assertIsGoal(directive) }
 
-        directives("is-ground", DirectiveUtils.groundDirectiveCases) { _, directive ->
+        directives("is-ground", GoalUtils.groundGoalCases) { _, directive ->
             withClue("$directive isGround should be true") { directive.isGround.shouldBeTrue() }
         }
 
-        directives("is-not-ground", DirectiveUtils.nonGroundDirectiveCases) { _, directive ->
+        directives("is-not-ground", GoalUtils.nonGroundGoalCases) { _, directive ->
             withClue("$directive isGround should be false") { directive.isGround.shouldBeFalse() }
         }
 
-        directives("fresh-copy-is-itself", DirectiveUtils.groundDirectiveCases) { _, directive ->
+        directives("fresh-copy-is-itself", GoalUtils.groundGoalCases) { _, directive ->
             ConstantUtils.assertFreshCopyIsItself(directive)
         }
 
-        directives("fresh-copy-renews-variables", DirectiveUtils.nonGroundDirectiveCases) { _, directive ->
+        directives("fresh-copy-renews-variables", GoalUtils.nonGroundGoalCases) { _, directive ->
             StructUtils.assertFreshCopyRenewsContainedVariables(directive)
         }
 

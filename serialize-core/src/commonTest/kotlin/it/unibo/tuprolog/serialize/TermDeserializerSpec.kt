@@ -16,14 +16,14 @@ private class Representation(
 private val representations =
     listOf(
         Representation("directive", "{\"body\": {\"fun\": \"initialization\", \"args\": [\"main\"]}}") {
-            directiveOf(structOf("initialization", atomOf("main")))
+            goalOf(structOf("initialization", atomOf("main")))
         },
         Representation("indicator", "{\"name\": \"counter\", \"arity\": 1}") { indicatorOf("counter", 1) },
         Representation(
             "directive-on-an-indicator",
             "{\"body\": {\"fun\": \"dynamic\", \"args\": [{\"name\": \"counter\", \"arity\": 1}]}}",
         ) {
-            directiveOf(structOf("dynamic", indicatorOf("counter", 1)))
+            goalOf(structOf("dynamic", indicatorOf("counter", 1)))
         },
     )
 

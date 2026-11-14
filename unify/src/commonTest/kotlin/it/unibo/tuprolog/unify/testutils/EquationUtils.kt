@@ -6,9 +6,9 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Constant
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
@@ -96,8 +96,8 @@ internal object EquationUtils {
             named(
                 "identity/directive",
                 Scope.empty {
-                    directiveOf(atomOf("here"), structOf("f", Truth.TRUE)) to
-                        directiveOf(atomOf("here"), structOf("f", Truth.TRUE))
+                    goalOf(atomOf("here"), structOf("f", Truth.TRUE)) to
+                        goalOf(atomOf("here"), structOf("f", Truth.TRUE))
                 },
             ),
             named(
@@ -136,7 +136,7 @@ internal object EquationUtils {
             named("assignment/anonymous-to-fact", Var.anonymous() to Fact.of(Struct.of("aa", Var.of("A")))),
             named(
                 "assignment/anonymous-to-directive",
-                Var.anonymous() to Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE)),
+                Var.anonymous() to Goal.of(Atom.of("here"), Struct.of("f", Truth.TRUE)),
             ),
             named(
                 "assignment/anonymous-to-rule",
@@ -161,8 +161,8 @@ internal object EquationUtils {
             named("comparison/fact", Fact.of(Struct.of("aa", Var.of("A"))) to Fact.of(Struct.of("aa", Var.of("B")))),
             named(
                 "comparison/directive",
-                Directive.of(Atom.of("here"), Struct.of("f", Var.of("A"))) to
-                    Directive.of(Atom.of("here"), Struct.of("f", Var.of("B"))),
+                Goal.of(Atom.of("here"), Struct.of("f", Var.of("A"))) to
+                    Goal.of(Atom.of("here"), Struct.of("f", Var.of("B"))),
             ),
             named(
                 "comparison/rule",
@@ -214,8 +214,8 @@ internal object EquationUtils {
             ),
             named(
                 "contradiction/different-directive-arities",
-                Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE)) to
-                    Directive.of(Atom.of("here"), Struct.of("f", Truth.TRUE, Atom.of("extra"))),
+                Goal.of(Atom.of("here"), Struct.of("f", Truth.TRUE)) to
+                    Goal.of(Atom.of("here"), Struct.of("f", Truth.TRUE, Atom.of("extra"))),
             ),
             named(
                 "contradiction/different-rule-functors",

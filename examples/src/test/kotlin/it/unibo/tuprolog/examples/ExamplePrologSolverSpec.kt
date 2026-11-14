@@ -8,8 +8,8 @@ package it.unibo.tuprolog.examples
 
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -253,7 +253,7 @@ class ExamplePrologSolverSpec :
                 Theory.of(
                     Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
                     Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
-                    Directive.of(Struct.of("dynamic", Indicator.of("g", 1))), // :- dynamic(g/1).
+                    Goal.of(Struct.of("dynamic", Indicator.of("g", 1))), // :- dynamic(g/1).
                     Fact.of(Struct.of("g", Integer.of(1))), // g(1).
                     Fact.of(Struct.of("g", Integer.of(2))), // g(2).
                 )

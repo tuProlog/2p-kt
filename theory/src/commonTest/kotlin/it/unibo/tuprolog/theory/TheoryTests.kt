@@ -11,8 +11,8 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -118,7 +118,7 @@ fun theoryTests(
 
     test("directives-correct") {
         withFreshTheories {
-            val directives = wellFormedClauses.filterIsInstance<Directive>()
+            val directives = wellFormedClauses.filterIsInstance<Goal>()
 
             assertClauseHeadPartialOrderingRespected(directives, filledTheory.directives)
             emptyTheory.directives.none().shouldBeTrue()

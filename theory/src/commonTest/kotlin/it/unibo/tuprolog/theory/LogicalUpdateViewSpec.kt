@@ -5,8 +5,8 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Struct
@@ -85,9 +85,9 @@ class LogicalUpdateViewSpec :
         }
 
         test("directives-follow-the-update-view") {
-            val directive = { i: Int -> Directive.of(Struct.of("init", Integer.of(i))) }
+            val directive = { i: Int -> Goal.of(Struct.of("init", Integer.of(i))) }
             val theory = MutableTheory.of(Unificator.default, List(5) { directive(it) })
-            val anyDirective = Directive.of(Var.anonymous())
+            val anyDirective = Goal.of(Var.anonymous())
             val seen = theory[anyDirective].onEach { theory.retract(it) }.toList()
             seen shouldBe List(5) { directive(it) }
             theory.directives.toList() shouldBe emptyList()
