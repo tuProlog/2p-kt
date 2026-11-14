@@ -111,6 +111,15 @@ interface Term :
     val isStruct: Boolean get() = false
 
     /**
+     * Checks whether the current term is a compound term, i.e. a term made of a functor and arguments.
+     * This method is guaranteed to return `true` if and only if the current term
+     * is an instance of [Compound].
+     * @return `true` if the current term is a compound, or `false`, otherwise
+     */
+    @JsName("isCompound")
+    val isCompound: Boolean get() = false
+
+    /**
      * Checks whether the current term is a truth value.
      * This method is guaranteed to return `true` if and only if the current term
      * is an instance of [Truth].
@@ -442,6 +451,15 @@ interface Term :
         asStruct() ?: throw ClassCastException("Cannot cast $this to ${Struct::class.simpleName}")
 
     /**
+     * Casts the current [Term] to [Compound], if possible
+     * @throws ClassCastException if the current [Term] is not an instance of [Compound]
+     * @return the current [Term], casted to [Compound]
+     */
+    @JsName("castToCompound")
+    fun castToCompound(): Compound =
+        asCompound() ?: throw ClassCastException("Cannot cast $this to ${Compound::class.simpleName}")
+
+    /**
      * Casts the current [Term] to [Recursive], if possible
      * @throws ClassCastException if the current [Term] is not an instance of [Recursive]
      * @return the current [Term], casted to [Recursive]
@@ -592,6 +610,13 @@ interface Term :
      */
     @JsName("asStruct")
     fun asStruct(): Struct? = null
+
+    /**
+     * Casts the current [Term] to [Compound], if possible, or returns `null` otherwise
+     * @return the current [Term], casted to [Compound], or `null`, if the current term is not an instance of [Compound]
+     */
+    @JsName("asCompound")
+    fun asCompound(): Compound? = null
 
     /**
      * Casts the current [Term] to [Recursive], if possible, or returns `null` otherwise

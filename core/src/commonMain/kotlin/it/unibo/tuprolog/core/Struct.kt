@@ -32,7 +32,7 @@ import kotlin.collections.List as KtList
  * directly (e.g. [Tuple.of], [Cons.of]) when the sub-type is already known, or for the DSL builders in
  * `:dsl-core`/[Scope] when building many related terms with shared variables.
  */
-interface Struct : Term {
+interface Struct : Compound {
     override val isStruct: Boolean
         get() = true
 
@@ -147,8 +147,13 @@ interface Struct : Term {
     /**
      * The functor of this [Struct].
      */
-    @JsName("functor")
-    val functor: String
+    override val functor: String
+
+    /**
+     * The functor of this [Struct], as an [Atom].
+     */
+    override val functorTerm: Atom
+        get() = Atom.of(functor)
 
     /**
      * Returns `true` if and only if [functor] matches [Struct.WELL_FORMED_FUNCTOR_PATTERN].
@@ -157,63 +162,22 @@ interface Struct : Term {
     val isFunctorWellFormed: Boolean
 
     /**
-     * The total amount of arguments of this [Struct].
-     * This is equal to the length of [args].
-     */
-    @JsName("arity")
-    val arity: Int
-        get() = args.size
-
-    /**
      * The indicator corresponding to this [Struct], i.e. [functor]/[arity].
      */
-    @JsName("indicator")
-    val indicator: Indicator
+    override val indicator: Indicator
         get() = Indicator.of(functor, arity)
-
-    /**
-     * List of arguments of this [Struct].
-     */
-    @JsName("argsList")
-    val args: KtList<Term>
-
-    /**
-     * Sequence of arguments of this [Struct].
-     */
-    @JsName("argsSequence")
-    val argsSequence: Sequence<Term>
-        get() = args.asSequence()
-
-    /**
-     * Gets the [index]-th argument if this [Struct].
-     * @param index is the index the argument which should be retrieved
-     * @throws IndexOutOfBoundsException if [index] is lower than 0 or greater or equal to [arity]
-     * @return the [Term] having position [index] in [args]
-     */
-    @JsName("getArgAt")
-    fun getArgAt(index: Int): Term = args[index]
 
     /**
      * Creates a novel [Struct] which is a copy of the current one, except that its [args] are replaced by [args].
      * @return a new [Struct], whose [functor] equals the current one, and whose arguments are [args]
      */
-    @JsName("setArgs")
-    fun setArgs(vararg args: Term): Struct
+    override fun setArgs(vararg args: Term): Struct
 
     /** @see setArgs */
-    @JsName("setArgsIterable")
-    fun setArgs(args: Iterable<Term>): Struct
+    override fun setArgs(args: Iterable<Term>): Struct
 
     /** @see setArgs */
-    @JsName("setArgsSequence")
-    fun setArgs(args: Sequence<Term>): Struct
-
-    /**
-     * Alias for [getArgAt].
-     * In Kotlin, this method enables the syntax `struct[index]`.
-     */
-    @JsName("get")
-    operator fun get(index: Int): Term = getArgAt(index)
+    override fun setArgs(args: Sequence<Term>): Struct
 
     companion object {
         /**
