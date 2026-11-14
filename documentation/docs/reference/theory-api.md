@@ -82,7 +82,7 @@ A `Theory` is a `ClauseDeque` and a `Taggable<Theory>`, with the ISO-flavoured v
 |---|---|
 | `clauses`, `rules`, `directives` | all clauses / rules (facts included) / directives, in order |
 | `get(clause)` | the clauses unifying with `clause`, lazily, in order |
-| `get(head: Struct)` | the rules whose head unifies with `head`, whatever their body |
+| `get(head: Compound)` | the rules whose head unifies with `head`, whatever their body |
 | `get(indicator)` | the rules of procedure `indicator` (e.g. `parent/2`); throws `IllegalArgumentException` if not well formed |
 | `contains(clause / head / indicator)` | whether the corresponding `get` yields anything |
 | `assertA(clause)`, `assertZ(clause)` | the clause added at the beginning / end; also on a `Struct` (a fact), an `Iterable` or a `Sequence` |
@@ -94,6 +94,12 @@ A `Theory` is a `ClauseDeque` and a `Taggable<Theory>`, with the ISO-flavoured v
 | `setUnificator(unificator)` | the same clauses, matched (and indexed) by another unificator: `this` if equal to the current one |
 | `toString(asPrologText = true)` | the clauses as Prolog source, each terminated by `.` and a newline |
 | `equals(other, useVarCompleteName)` | same clauses in the same order; variables compared by complete name, or by name only |
+
+Clauses whose heads are [`Pattern`s](term-hierarchy.md#pattern), i.e. *metarules* such as `P(X) :- Q(X)`, belong to
+every procedure of their arity: `get` and `contains` on `p(a)` see them, in their place in the theory, whereas
+`get(indicator)` and `abolish(indicator)` concern concrete indicators, and so concrete clauses only. Removals by a
+head with a name (`retract(p(X))`, `retractAll(p(X))`, `abolish(p/1)`) remove concrete clauses only, never
+metarules; removals by a pattern head (`retract(P(X))`) remove whatever unifies with it, metarules included.
 
 Every update rejects clauses that are not well formed (`Clause.isWellFormed`, e.g. a number as a clause head) with an
 `IllegalArgumentException`. Retractions return a `RetractResult`: a `Success`, carrying the resulting `theory` and the
