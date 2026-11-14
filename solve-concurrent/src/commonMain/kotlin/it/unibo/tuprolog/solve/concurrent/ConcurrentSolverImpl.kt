@@ -89,18 +89,19 @@ internal open class ConcurrentSolverImpl(
             } else {
                 // an unexpected error ends the resolution with a halt: escaping, it would leave the solutions unended.
                 // Successors are produced lazily (they may be infinitely many), so the iteration is guarded too
-                try {
+                runCatching {
                     for (it in state.next()) {
                         handleAsyncStateTransition(it, handle)
                         yield()
                     }
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (
-                    @Suppress("TooGenericExceptionCaught") e: Exception,
-                ) {
-                    val error = SystemError.forUncaughtException(state.context, e)
-                    handle.publishSolutionAndTerminateResolutionIfNeed(Solution.halt(state.context.query, error), this)
+                }.onFailure { error ->
+                    if (error is CancellationException) throw error
+                    val halt =
+                        Solution.halt(
+                            state.context.query,
+                            SystemError.forUncaughtException(state.context, error),
+                        )
+                    handle.publishSolutionAndTerminateResolutionIfNeed(halt, this)
                 }
             }
         }
