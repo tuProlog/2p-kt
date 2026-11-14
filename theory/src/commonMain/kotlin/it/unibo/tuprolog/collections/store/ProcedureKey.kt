@@ -16,11 +16,12 @@ internal data class ProcedureKey(
  * (see [hasPatternHead]): they belong to every procedure of their arity.
  */
 internal fun procedureKeyOf(clause: Clause): ProcedureKey? =
-    clause.head?.let { ProcedureKey(it.castToStruct().functor, it.arity) }
+    clause.head?.let { ProcedureKey(it.functor as String, it.arity) }
 
 /** Whether the head of this clause is a [Pattern], i.e. it has a variable functor. */
 internal val Clause.hasPatternHead: Boolean
-    get() = head is Pattern
+    // a property rather than a type check: failed checks against interfaces are slow on the JVM
+    get() = head?.isPattern == true
 
 // shortcut: custom head keys use store scans; add head-key indexes if these lookups become hot.
 internal fun Unificator.hasCustomHeadKey(clause: Clause): Boolean =

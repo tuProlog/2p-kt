@@ -275,7 +275,8 @@ internal class PrologMachine(
             val procedure = frame.signature
             return raise(InstantiationError.forGoal(context(frame), procedure, goal), frame)
         }
-        if (goal is Pattern) return callPattern(goal, frame, rest)
+        // a property rather than a type check, run at each call: failed checks against interfaces are slow on the JVM
+        if (goal.isPattern) return callPattern(goal.castToPattern(), frame, rest)
         if (goal !is Struct) {
             val procedure = frame.signature
             return raise(TypeError.forGoal(context(frame), procedure, TypeError.Expected.CALLABLE, goal), frame)
@@ -863,7 +864,10 @@ internal class PrologMachine(
     ): Sequence<Rule> =
         candidates(probe).mapNotNull { candidate ->
             // metarules do not extend library predicates, as no clause can: checked only for metarules
-            if (candidate.head is Pattern && goal is Struct && world.libraries.hasRule(goal.extractSignature())) {
+            if (candidate.head?.isPattern == true &&
+                goal is Struct &&
+                world.libraries.hasRule(goal.extractSignature())
+            ) {
                 return@mapNotNull null
             }
             val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null

@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -40,7 +39,7 @@ object FindAll : AbstractCollectingPrimitive("findall") {
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
         // patterns are callable: their functors are bound by the resolution
-        if (second !is Pattern) ensuringArgumentIsCallable(1)
+        if (!second.isPattern) ensuringArgumentIsCallable(1)
         if (third !is Var && !(third.isList && (third.castToList().isWellFormed || third.castToList().last is Var))) {
             throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, third, 2)
         }

@@ -3,7 +3,6 @@
 package it.unibo.tuprolog.unify.impl
 
 import it.unibo.tuprolog.core.Compound
-import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -38,7 +37,8 @@ internal fun Bindings.occurs(
                 val arg = current[i]
                 if (arg is Var || (arg is Compound && arg.arity > 0)) pending.add(arg)
             }
-            if (current is Pattern) pending.add(current.functor)
+            // a property rather than a type check: failed checks against interfaces are slow on the JVM
+            if (current.isPattern) pending.add(current.castToPattern().functor)
         }
     }
     return false

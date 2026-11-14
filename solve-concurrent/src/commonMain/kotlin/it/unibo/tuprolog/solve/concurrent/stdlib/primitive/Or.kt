@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent.stdlib.primitive
 
 import it.unibo.tuprolog.core.Compound
-import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -63,8 +62,8 @@ object Or : BinaryRelation<ConcurrentExecutionContext>(";") {
         second: Term,
     ): Sequence<Solve.Response> {
         // patterns are callable: their functors are bound by the resolution
-        if (first !is Pattern) ensuringArgumentIsCallable(0)
-        if (second !is Pattern) ensuringArgumentIsCallable(1)
+        if (!first.isPattern) ensuringArgumentIsCallable(0)
+        if (!second.isPattern) ensuringArgumentIsCallable(1)
         if (first is Struct && first.arity == 2 && first.functor == Arrow.functor) {
             val solver: ConcurrentSolver = subSolver() as ConcurrentSolver
             // TODO open an issue to create and ad-hoc ensuringMethod to serve this purpose

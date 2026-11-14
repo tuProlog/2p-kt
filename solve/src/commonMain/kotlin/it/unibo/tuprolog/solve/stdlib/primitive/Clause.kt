@@ -1,6 +1,5 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -44,8 +43,8 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(0)
         // a pattern head inspects the clauses of every procedure of its arity, none of them protected library ones
-        if (first !is Pattern) ensuringArgumentIsStruct(0)
-        if (!second.isVar && second !is Pattern) {
+        if (!first.isPattern) ensuringArgumentIsStruct(0)
+        if (!second.isVar && !second.isPattern) {
             ensuringArgumentIsCallable(1)
         }
         val head = first.castToCompound()

@@ -65,7 +65,7 @@ data class StatePrimitiveSelection(
                     )
                 }
                 // a call whose functor is still a variable: no primitive, its functor is bound by rule selection
-                goal is Pattern -> listOf(StateRuleSelection(context.copy(step = nextStep())))
+                goal.isPattern -> listOf(StateRuleSelection(context.copy(step = nextStep())))
                 goal.isStruct -> {
                     val goalStruct = goal.castToStruct()
                     val signature = goalStruct.extractSignature()

@@ -65,14 +65,23 @@ internal class FrozenStore private constructor(
         if (added.isEmpty()) return this
         val newClauses = if (atStart) (added + clauses).toTypedArray() else (clauses.asList() + added).toTypedArray()
         val newProcedures = HashMap(procedures)
-        // one pass over the added clauses for both checks
+        // one pass over the added clauses, grouping them by procedure unless some of them is pattern-headed
         var hasPatterns = false
         var hasCustomHeadKeys = customHeadKeys
+        val groups = LinkedHashMap<ProcedureKey?, MutableList<Clause>>()
         for (clause in added) {
-            if (clause.hasPatternHead) hasPatterns = true
             if (!hasCustomHeadKeys && unificator.hasCustomHeadKey(clause)) hasCustomHeadKeys = true
+            if (hasPatterns) continue
+            val head = clause.head
+            // the functor of a pattern is a variable, and checking for a final class is cheap
+            val functor = head?.functor
+            if (head != null && functor !is String) {
+                hasPatterns = true
+            } else {
+                groups.getOrPut(head?.let { ProcedureKey(functor as String, it.arity) }) { ArrayList() }.add(clause)
+            }
         }
-        for ((key, group) in if (hasPatterns) groupByProcedure(added) else added.groupBy { procedureKeyOf(it) }) {
+        for ((key, group) in if (hasPatterns) groupByProcedure(added) else groups) {
             newProcedures[key] = procedures[key]?.plus(group, atStart) ?: newProcedure(key, group, atStart)
         }
         val newWildcards =

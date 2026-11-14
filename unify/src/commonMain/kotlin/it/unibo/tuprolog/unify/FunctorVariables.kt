@@ -42,7 +42,7 @@ internal inline fun forEachPatternFunctor(
     var pending: ArrayList<Term>? = null
     var current: Term? = term
     while (current != null) {
-        if (current is Pattern) action(current.functor)
+        if (current.isPattern) action(current.castToPattern().functor)
         var next: Term? = null
         val compound = current.asCompound()
         if (compound != null) {
