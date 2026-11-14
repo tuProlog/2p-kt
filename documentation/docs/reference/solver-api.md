@@ -313,8 +313,8 @@ P(X, Y) :- compose(P, Q, R), Q(X, Z), R(Z, Y).
   `retract/1`. A functor bound to anything but an atom makes the goal non-callable: `F = 1, F(X)` raises a type error.
 - A `MetaResolutionPolicy` (`it.unibo.tuprolog.solve.search`), set via `SolveOptions.setMetaResolution`, replaces
   unification for unbound functors: it lists the functors to try, each bound in turn, on backtracking, through a call
-  of `'$select_functor'(Functor, Arity)` that interceptors see. `MetaResolutionPolicy.ENUMERATE` tries the predicates
-  of the call's arity defined in the knowledge bases; any lambda `(goal, context) -> Sequence<Atom>` is a policy too.
+  of `'$select_functor'(Functor, Arity)` that interceptors see. Any lambda `(goal, context) -> Sequence<Atom>` is a
+  policy, e.g. one restricting or ordering the candidate predicates of an inductive learner.
 
 The concurrent solver resolves patterns and metarules the same way, finding solutions in no particular order, but
 supports no policy.

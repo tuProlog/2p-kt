@@ -4,7 +4,6 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.solve.ExecutionContext
 import kotlin.js.JsName
-import kotlin.jvm.JvmStatic
 
 /**
  * Chooses the predicate symbols to try for a call whose functor is an unbound variable, e.g. `Q(a)` in the body of the
@@ -23,26 +22,4 @@ fun interface MetaResolutionPolicy {
         goal: Pattern,
         context: ExecutionContext,
     ): Sequence<Atom>
-
-    companion object {
-        /**
-         * Tries the predicates defined in the static and then the dynamic knowledge base, with the arity of the call,
-         * once each, in the order they are first defined. Neither library predicates (control constructs included)
-         * nor symbols defined only by metarules are tried.
-         */
-        @JvmStatic
-        @JsName("ENUMERATE")
-        val ENUMERATE: MetaResolutionPolicy =
-            MetaResolutionPolicy { goal, context ->
-                // shortcut: scans the clauses at every such call, fine while enumeration is rare; index symbols if not
-                (context.staticKb.clauses.asSequence() + context.dynamicKb.clauses.asSequence())
-                    .mapNotNull { it.head?.asStruct() }
-                    .filter { it.arity == goal.arity }
-                    .map { it.functor }
-                    .distinct()
-                    .map { Atom.of(it) }
-                    .toList()
-                    .asSequence()
-            }
-    }
 }
