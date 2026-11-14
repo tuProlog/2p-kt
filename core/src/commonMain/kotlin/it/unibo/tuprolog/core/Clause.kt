@@ -29,8 +29,8 @@ interface Clause : Struct {
      *
      * A [Clause] is well-formed if and only if:
      * - its [head] is neither a [Numeric] nor a [Var] (when non-`null`);
-     * - its [body] is not a [Numeric], nor does it contain one as a direct argument of a `, `/2, `;`/2, or
-     *   `->`/2 structure (see [notableFunctors]).
+     * - its [body] is not a [Numeric] nor a [Ref], nor does it contain one as a direct argument of a `, `/2, `;`/2,
+     *   or `->`/2 structure (see [notableFunctors]).
      */
     @JsName("isWellFormed")
     val isWellFormed: Boolean
@@ -165,6 +165,13 @@ interface Clause : Struct {
         const val FUNCTOR = CLAUSE_FUNCTOR
 
         /**
+         * The tag marking clauses whose body must be stored and executed as it is, i.e. without being
+         * [normalized] when entering a theory. It is meant for built-in definitions relying on the solver running a
+         * variable goal as the term it is bound to, e.g. `call(G) :- ensure_executable(G), G`.
+         */
+        const val VERBATIM_BODY_TAG = "verbatim-body"
+
+        /**
          * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Goal] otherwise.
          * @throws IllegalArgumentException if [head] is `null` and [body] is empty
          */
@@ -214,6 +221,8 @@ interface Clause : Struct {
                 override fun defaultValue(term: Term): Boolean = true
 
                 override fun visitNumeric(term: Numeric): Boolean = false
+
+                override fun visitRef(term: Ref): Boolean = false
 
                 override fun visitStruct(term: Struct): Boolean =
                     when {
