@@ -40,6 +40,7 @@ class SyntaxNodeVisitorSpec :
         test("default-dispatch/reaches-every-node-kind") {
             val operators = OperatorTables.of(op("+", Associativity.YFX, 500))
             val theory = testParser.parseTheory(lex("f([a], {b}, (c), 1, X, P(a)). a + b."), operators).root
-            KindsVisitor.visit(theory) shouldBe "struct(list(atom), block(atom), atom, number, var, pattern(atom)) op(atom, atom)"
+            KindsVisitor.visit(theory) shouldBe
+                "struct(list(atom), block(atom), atom, number, var, pattern(atom)) op(atom, atom)"
         }
     })

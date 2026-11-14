@@ -35,7 +35,11 @@ class PatternDslSpec :
 
         test("metarules") {
             logicProgramming {
-                rule { varOf("P")("X") `if` varOf("Q")("X") }.shouldBeInstanceOf<Rule>().head.shouldBeInstanceOf<Pattern>()
+                rule {
+                    varOf(
+                        "P",
+                    )("X") `if` varOf("Q")("X")
+                }.shouldBeInstanceOf<Rule>().head.shouldBeInstanceOf<Pattern>()
                 factOf(varOf("P")("a")).shouldBeInstanceOf<Fact>().head.shouldBeInstanceOf<Pattern>()
             }
         }
