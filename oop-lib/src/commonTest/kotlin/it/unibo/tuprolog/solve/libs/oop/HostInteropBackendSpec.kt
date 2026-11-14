@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalJsExport::class)
-
 package it.unibo.tuprolog.solve.libs.oop
 
 import io.kotest.core.spec.style.FunSpec
@@ -21,60 +19,6 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.library.Library
 import it.unibo.tuprolog.solve.library.Runtime
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
-
-/** A host class reachable on every platform: by reflection on the JVM, by its exported members on JS. */
-@JsExport
-class Counter {
-    var count: Int = 0
-
-    fun increment(by: Int): Int {
-        count += by
-        return count
-    }
-}
-
-/** An opaque handle of a foreign object, e.g. a Python one, that only [ForeignBackend] reaches. */
-class ForeignHandle(
-    val id: String,
-)
-
-/** A backend for [ForeignHandle]s, standing for a bridge to another runtime: it records what it is asked. */
-class ForeignBackend(
-    private val reply: String = "foreign",
-) : HostInteropBackend {
-    val calls = mutableListOf<String>()
-
-    // its objects, and its types, which it creates objects of
-    override fun supports(receiver: ObjectRef): Boolean =
-        receiver.value is ForeignHandle || (receiver as? TypeRef)?.type == ForeignHandle::class
-
-    override fun invoke(
-        receiver: ObjectRef,
-        method: String,
-        arguments: kotlin.collections.List<Term>,
-        converter: TermToObjectConverter,
-    ): Result {
-        calls += method
-        return Result.Value("$reply:${(receiver.value as ForeignHandle).id}.$method/${arguments.size}")
-    }
-
-    override fun assign(
-        receiver: ObjectRef,
-        property: String,
-        value: Term,
-        converter: TermToObjectConverter,
-    ) {
-        calls += "$property:="
-    }
-
-    override fun create(
-        type: ObjectRef,
-        arguments: kotlin.collections.List<Term>,
-        converter: TermToObjectConverter,
-    ): Result = Result.Value(ForeignHandle("new"))
-}
 
 private fun solverWith(library: Library) = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(library))
 

@@ -12,11 +12,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.setTag
 
-private class TheoryStoreCase(
-    val id: String,
-    val store: (Clause) -> Theory,
-)
-
 /**
  * Clauses entering a theory have their goal positions normalized, e.g. `p(X) :- X` is stored as `p(X) :- call(X)`,
  * unless they are tagged as [Clause.VERBATIM_BODY_TAG] (as built-in definitions such as `call/1` are).

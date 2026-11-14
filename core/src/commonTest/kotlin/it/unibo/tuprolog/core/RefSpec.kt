@@ -18,37 +18,6 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.utils.setTag
 
-private class RejectedPayloadCase(
-    val id: String,
-    val payload: () -> Term,
-)
-
-private class RefFactoryCase(
-    val id: String,
-    val build: (Any) -> Ref,
-)
-
-private class RefOrderCase(
-    val id: String,
-    val smaller: () -> Term,
-    val greater: () -> Term,
-)
-
-private data class HostValue(
-    val content: String,
-)
-
-private class SecretHolder {
-    override fun toString(): String = "s3cr3t"
-}
-
-private class TestObjectRef(
-    value: Any,
-    tags: Map<String, Any> = emptyMap(),
-) : ObjectRef(value, tags) {
-    override fun copyWithTags(tags: Map<String, Any>): ObjectRef = TestObjectRef(value, tags)
-}
-
 class RefSpec :
     FunSpec({
         val rejectedPayloads =

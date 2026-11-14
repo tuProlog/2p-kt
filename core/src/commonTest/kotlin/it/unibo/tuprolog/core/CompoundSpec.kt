@@ -10,17 +10,6 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.StructUtils
 
-private class CompoundTermCase(
-    val id: String,
-    val term: Term,
-    val isCompound: Boolean,
-)
-
-private class InvalidFunctorCase(
-    val id: String,
-    val functor: Any,
-)
-
 class CompoundSpec :
     FunSpec({
         withTests(nameFn = { "of/dispatches-to-struct-of/vararg/${it.id}" }, StructUtils.mixedStructCases) { case ->

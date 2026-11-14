@@ -21,22 +21,6 @@ private val g = Atom.of("g")
 
 private fun f(vararg args: Term) = Struct.of("f", *args)
 
-/** Fresh variables per case. */
-@Suppress("ktlint:standard:property-naming")
-private class MetaVars {
-    val P = Var.of("P")
-    val Q = Var.of("Q")
-    val X = Var.of("X")
-    val Y = Var.of("Y")
-}
-
-/** A unification, and the bindings it must yield (`null` if it must fail). */
-private class MetaUnification(
-    val id: String,
-    val terms: MetaVars.() -> Pair<Term, Term>,
-    val bindings: (MetaVars.() -> Map<Var, Term>)?,
-)
-
 private val unifications =
     listOf(
         MetaUnification("mr-54/pattern-with-struct-binds-functor", { Pattern.of(P, a) to f(a) }, { mapOf(P to f) }),
@@ -56,14 +40,6 @@ private val unifications =
         ),
     )
 
-/** A unification of `P(a)` with `Q(a)`, then bindings of their functor variables, which must yield [expected]. */
-private class AliasedFunctors(
-    val id: String,
-    val then: MetaVars.() -> Pair<Term, Term>,
-    // what P must become, or `null` if the bindings must be rejected
-    val expected: Term?,
-)
-
 private val aliased =
     listOf(
         AliasedFunctors("mr-62/binding-one-binds-both", { Q to f }, f),
@@ -81,7 +57,7 @@ class MetaVariableUnificationSpec :
     FunSpec({
         for (engine in EngineCase.strict) {
             withTests(nameFn = { "${engine.id}/${it.id}" }, unifications) { case ->
-                val vars = MetaVars()
+                val vars = PatternVars()
                 val (lhs, rhs) = case.terms(vars)
                 for ((left, right) in listOf(lhs to rhs, rhs to lhs)) {
                     val mgu = engine().mgu(left, right)
@@ -96,7 +72,7 @@ class MetaVariableUnificationSpec :
             }
 
             test("${engine.id}/mr-57/patterns-relate-their-functors") {
-                val v = MetaVars()
+                val v = PatternVars()
                 val mgu = engine().mgu(Pattern.of(v.P, a), Pattern.of(v.Q, a))
                 mgu.isSuccess.shouldBeTrue()
                 // one functor variable is bound to the other, both remain functor variables
@@ -106,7 +82,7 @@ class MetaVariableUnificationSpec :
             }
 
             withTests(nameFn = { "${engine.id}/${it.id}" }, aliased) { case ->
-                val v = MetaVars()
+                val v = PatternVars()
                 val first = engine().mgu(Pattern.of(v.P, a), Pattern.of(v.Q, a))
                 first.isSuccess.shouldBeTrue()
                 val (lhs, rhs) = case.then(v)
@@ -124,7 +100,7 @@ class MetaVariableUnificationSpec :
             }
 
             test("${engine.id}/mr-66/applying-the-result-yields-a-struct") {
-                val v = MetaVars()
+                val v = PatternVars()
                 val pattern = Pattern.of(v.P, v.X)
                 val mgu = engine().mgu(pattern, f(a))
                 val applied = pattern.apply(mgu)

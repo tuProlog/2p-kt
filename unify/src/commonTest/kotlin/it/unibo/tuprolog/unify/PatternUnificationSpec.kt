@@ -16,7 +16,6 @@ import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.testutils.EngineCase
 
 private val a = Atom.of("a")
@@ -24,33 +23,6 @@ private val b = Atom.of("b")
 private val p = Atom.of("p")
 
 private fun f(vararg args: Term) = Struct.of("f", *args)
-
-/** Fresh variables per case. */
-@Suppress("ktlint:standard:property-naming")
-private class Vars {
-    val P = Var.of("P")
-    val Q = Var.of("Q")
-    val X = Var.of("X")
-    val Y = Var.of("Y")
-    val Z = Var.of("Z")
-}
-
-private class UnifiableCase(
-    val id: String,
-    val terms: Vars.() -> Pair<Term, Term>,
-)
-
-private class NonUnifiableCase(
-    val id: String,
-    val terms: Vars.() -> Pair<Term, Term>,
-)
-
-/** Two consecutive unifications: the second one, in the context of the first's result, must fail. */
-private class DelayedCase(
-    val id: String,
-    val first: Vars.() -> Pair<Term, Term>,
-    val second: Vars.() -> Pair<Term, Term>,
-)
 
 private val unifiable =
     listOf(
@@ -112,20 +84,20 @@ class PatternUnificationSpec :
     FunSpec({
         for (engine in EngineCase.strict) {
             withTests(nameFn = { "${engine.id}/unifiable/${it.id}" }, unifiable) { case ->
-                val (lhs, rhs) = case.terms(Vars())
+                val (lhs, rhs) = case.terms(PatternVars())
                 val mgu = engine().mgu(lhs, rhs)
                 mgu.isSuccess.shouldBeTrue()
                 lhs.apply(mgu) shouldBe rhs.apply(mgu)
             }
 
             withTests(nameFn = { "${engine.id}/non-unifiable/${it.id}" }, nonUnifiable) { case ->
-                val (lhs, rhs) = case.terms(Vars())
+                val (lhs, rhs) = case.terms(PatternVars())
                 engine().mgu(lhs, rhs).isFailed.shouldBeTrue()
                 engine().mgu(rhs, lhs).isFailed.shouldBeTrue()
             }
 
             withTests(nameFn = { "${engine.id}/delayed/${it.id}" }, delayed) { case ->
-                val vars = Vars()
+                val vars = PatternVars()
                 val (lhs1, rhs1) = case.first(vars)
                 val (lhs2, rhs2) = case.second(vars)
                 val first = engine().mgu(lhs1, rhs1)
@@ -135,41 +107,41 @@ class PatternUnificationSpec :
             }
 
             test("${engine.id}/result-carries-functor-variables") {
-                val v = Vars()
+                val v = PatternVars()
                 val mgu = engine().mgu(Struct.of("g", Pattern.of(v.P, v.X), v.Z), Struct.of("g", v.Y, v.P))
                 mgu.functorVariables shouldContain v.P
                 engine().mgu(Pattern.of(v.P, v.X), Pattern.of(v.P, v.X)).functorVariables shouldContain v.P
             }
 
             test("${engine.id}/binds-functor-to-atom") {
-                val v = Vars()
+                val v = PatternVars()
                 val mgu = engine().mgu(Pattern.of(v.P, v.X), Struct.of("p", a))
                 mgu[v.P] shouldBe p
                 mgu[v.X] shouldBe a
             }
 
             test("${engine.id}/aliased-functors-stay-a-pattern") {
-                val v = Vars()
+                val v = PatternVars()
                 val mgu = engine().mgu(Pattern.of(v.P, v.X), Pattern.of(v.Q, a))
                 Pattern.of(v.P, v.X).apply(mgu).shouldBeInstanceOf<Pattern>()
                 engine(mgu).mgu(v.Q, p).isSuccess.shouldBeTrue()
             }
 
             test("${engine.id}/bound-pattern-resolves-to-struct") {
-                val v = Vars()
+                val v = PatternVars()
                 val mgu = engine().mgu(f(v.Y, v.Q), f(Pattern.of(v.Q, a), p))
                 mgu[v.Y] shouldBe Struct.of("p", a)
             }
 
             test("${engine.id}/occurs-check-sees-pattern-arguments") {
-                val v = Vars()
+                val v = PatternVars()
                 engine().mgu(v.X, Pattern.of(v.P, v.X), occurCheckEnabled = true).isFailed.shouldBeTrue()
                 engine().mgu(v.X, Pattern.of(v.P, f(v.X)), occurCheckEnabled = true).isFailed.shouldBeTrue()
             }
         }
 
         test("incremental/delayed-functor-binding-fails") {
-            val v = Vars()
+            val v = PatternVars()
             val store = HashMapStore()
             val unificator = Unificator.default as IncrementalUnificator
             unificator.unifyInto(store, Pattern.of(v.P, v.X), Pattern.of(v.Q, a)).shouldBeTrue()
@@ -177,7 +149,7 @@ class PatternUnificationSpec :
         }
 
         test("incremental/delayed-functor-binding-to-atom-succeeds") {
-            val v = Vars()
+            val v = PatternVars()
             val store = HashMapStore()
             val unificator = Unificator.default as IncrementalUnificator
             unificator.unifyInto(store, Pattern.of(v.P, v.X), Pattern.of(v.Q, a)).shouldBeTrue()
@@ -185,7 +157,7 @@ class PatternUnificationSpec :
         }
 
         test("index-key/pattern-is-any-of-its-arity") {
-            val v = Vars()
+            val v = PatternVars()
             IndexKey.strict(Pattern.of(v.P, a, b)) shouldBe IndexKey.AnyOfArity(2)
             IndexKey.strict(Pattern.of(v.P, a)).isExact.shouldBeFalse()
         }
@@ -199,25 +171,3 @@ class PatternUnificationSpec :
             IndexKey.strict(NullRef()) shouldNotBe IndexKey.strict(Atom.of("null"))
         }
     })
-
-/** A [BindingStore] over a map. */
-private class HashMapStore : BindingStore {
-    private val bindings = HashMap<Var, Term>()
-
-    private val functorVariables = HashSet<Var>()
-
-    override fun isFunctorVariable(variable: Var): Boolean = variable in functorVariables
-
-    override fun constrainFunctor(variable: Var) {
-        functorVariables.add(variable)
-    }
-
-    override fun get(variable: Var): Term? = bindings[variable]
-
-    override fun bind(
-        variable: Var,
-        term: Term,
-    ) {
-        bindings[variable] = term
-    }
-}

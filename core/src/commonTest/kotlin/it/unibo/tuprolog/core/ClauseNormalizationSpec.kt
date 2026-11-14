@@ -8,17 +8,6 @@ import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.utils.setTag
 
-private class NormalizationCase(
-    val id: String,
-    /** Builds the original clause and the expected normalized one, sharing their variables. */
-    val clauses: () -> Pair<Clause, Clause>,
-)
-
-private class UnchangedCase(
-    val id: String,
-    val clause: () -> Clause,
-)
-
 class ClauseNormalizationSpec :
     FunSpec({
         fun call(goal: Term) = Struct.of("call", goal)

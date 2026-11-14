@@ -5,13 +5,6 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.examples.solve.MetaRulesExample
 
-private class ExpectedAnswers(
-    val id: String,
-    val lesson: Int,
-    val query: String,
-    val answers: List<String>,
-)
-
 private val expected =
     listOf(
         ExpectedAnswers("enumerate", 0, "F(X)", listOf("F = f, X = 1", "F = g, X = 2", "F = h, X = 3")),

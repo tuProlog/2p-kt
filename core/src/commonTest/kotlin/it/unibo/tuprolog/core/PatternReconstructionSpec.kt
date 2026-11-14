@@ -6,15 +6,6 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import io.kotest.matchers.types.shouldBeSameInstanceAs
-import kotlin.reflect.KClass
-
-/** Instantiating the functor of a pattern to [functor], with [args], must yield an instance of [type]. */
-private class Reconstruction(
-    val id: String,
-    val functor: String,
-    val args: () -> kotlin.collections.List<Term>,
-    val type: KClass<out Term>,
-)
 
 private val a = Atom.of("a")
 private val b = Atom.of("b")

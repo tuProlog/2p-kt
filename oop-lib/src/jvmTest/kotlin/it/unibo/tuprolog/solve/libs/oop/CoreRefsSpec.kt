@@ -12,31 +12,13 @@ import it.unibo.tuprolog.core.NullRef
 import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Struct
-import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.Solver
 import it.unibo.tuprolog.solve.library.Runtime
-import kotlin.reflect.KClass
 
 private fun solve(goal: Struct): Solution =
     Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib)).solveOnce(goal)
-
-/** A host object whose method returns a logic term. */
-class TermSource {
-    fun term(): Term = Struct.of("f", Atom.of("a"))
-
-    fun typeName(type: KClass<*>): String = type.simpleName!!
-}
-
-private class KindCase(
-    val id: String,
-    val ref: Term,
-    val ref1: Boolean,
-    val objectRef: Boolean,
-    val nullRef: Boolean,
-    val typeRef: Boolean,
-)
 
 private val kindCases =
     listOf(

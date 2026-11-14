@@ -16,17 +16,6 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator
 
-private class TheoryKind(
-    val id: String,
-    val of: (List<Clause>) -> Theory,
-)
-
-private val kinds =
-    listOf(
-        TheoryKind("frozen") { Theory.indexedOf(Unificator.default, it) },
-        TheoryKind("mutable") { MutableTheory.indexedOf(Unificator.default, it) },
-    )
-
 private fun p(vararg args: Term) = Struct.of("p", *args)
 
 private fun q(vararg args: Term) = Struct.of("q", *args)
@@ -41,11 +30,6 @@ private fun positions(
     original: List<Clause>,
     found: List<Clause>,
 ) = found.map { clause -> original.indexOfFirst { it === clause } }
-
-private class Scenario(
-    val id: String,
-    val check: (TheoryKind) -> Unit,
-)
 
 /** Pattern-headed clauses (metarules) in theories: stored, indexed and retrieved in their insertion order. */
 class PatternHeadedClauseSpec :
@@ -167,7 +151,7 @@ class PatternHeadedClauseSpec :
 
         withTests(nameFn = {
             "${it.second.id}/${it.first.id}"
-        }, scenarios.flatMap { s -> kinds.map { s to it } }) { (scenario, kind) ->
+        }, scenarios.flatMap { s -> TheoryKind.all.map { s to it } }) { (scenario, kind) ->
             scenario.check(kind)
         }
 

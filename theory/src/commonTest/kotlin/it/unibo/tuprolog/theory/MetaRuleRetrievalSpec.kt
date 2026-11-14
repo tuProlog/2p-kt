@@ -16,17 +16,6 @@ import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator
 
-private class RetrievalKind(
-    val id: String,
-    val of: (List<Clause>) -> Theory,
-)
-
-private val retrievalKinds =
-    listOf(
-        RetrievalKind("frozen") { Theory.indexedOf(Unificator.default, it) },
-        RetrievalKind("mutable") { MutableTheory.indexedOf(Unificator.default, it) },
-    )
-
 private fun status(arg: Int) = Fact.of(Struct.of("status", Integer.of(arg)))
 
 private fun metarule(guard: String) =
@@ -82,19 +71,19 @@ private fun Theory.shouldAgreeWithScans() {
  */
 class MetaRuleRetrievalSpec :
     FunSpec({
-        withTests(nameFn = { "mr-50-51/indexes-agree-with-scans/${it.id}" }, retrievalKinds) { kind ->
+        withTests(nameFn = { "mr-50-51/indexes-agree-with-scans/${it.id}" }, TheoryKind.all) { kind ->
             val theory = kind.of(fixture())
             // the first lookups build the indexes the second ones use
             repeat(2) { theory.shouldAgreeWithScans() }
         }
 
-        withTests(nameFn = { "mr-48-49/declaration-order/${it.id}" }, retrievalKinds) { kind ->
+        withTests(nameFn = { "mr-48-49/declaration-order/${it.id}" }, TheoryKind.all) { kind ->
             val clauses = fixture()
             val found = kind.of(clauses).lookup(Struct.of("status", Integer.of(5)))
             found.map { clause -> clauses.indexOfFirst { it === clause } } shouldBe listOf(4, 10, 22, 23)
         }
 
-        withTests(nameFn = { "mr-52/updates-agree-with-scans/${it.id}" }, retrievalKinds) { kind ->
+        withTests(nameFn = { "mr-52/updates-agree-with-scans/${it.id}" }, TheoryKind.all) { kind ->
             var theory = kind.of(fixture())
             theory.shouldAgreeWithScans()
             theory = theory.assertA(metarule("first")).assertZ(status(5)).assertZ(metarule("last"))
@@ -108,7 +97,7 @@ class MetaRuleRetrievalSpec :
         }
 
         test("mr-53/frozen-and-mutable-theories-agree") {
-            val (frozen, mutable) = retrievalKinds.map { it.of(fixture()) }
+            val (frozen, mutable) = TheoryKind.all.map { it.of(fixture()) }
             for (query in queries) {
                 val head = query()
                 withClue("$head") {

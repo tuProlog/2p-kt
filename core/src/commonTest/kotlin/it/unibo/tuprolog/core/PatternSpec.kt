@@ -17,17 +17,6 @@ import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.utils.setTag
 
-private class PatternFactoryCase(
-    val id: String,
-    val build: (Var, kotlin.collections.List<Term>) -> Compound,
-)
-
-private class OrderCase(
-    val id: String,
-    val smaller: () -> Term,
-    val greater: () -> Term,
-)
-
 class PatternSpec :
     FunSpec({
         val a = Atom.of("a")
