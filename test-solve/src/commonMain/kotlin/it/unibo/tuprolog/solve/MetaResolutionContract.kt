@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve
 
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
@@ -65,7 +66,8 @@ fun metaResolutionContract(
 
     scenario("meta-resolution/metarules-do-not-extend-library-predicates") {
         val solver = solverFactory.solverOf("P(A, B) :- true.", "P(A) :- true.")
-        solver.valuesOf("(X = 1 ; X = 2)", "X") shouldBe listOf(1, 2).map { it.toTerm() }
+        // in any order, as concurrent solvers may find them: what matters is that there are no others
+        solver.valuesOf("(X = 1 ; X = 2)", "X") shouldContainExactlyInAnyOrder listOf(1, 2).map { it.toTerm() }
         solver.valuesOf("once(X = 1)", "X") shouldBe listOf(1.toTerm())
     }
 
@@ -110,4 +112,6 @@ fun metaResolutionContract(
     }
 }
 
-private fun Int.toTerm(): Term = it.unibo.tuprolog.core.Integer.of(this)
+private fun Int.toTerm(): Term =
+    it.unibo.tuprolog.core.Integer
+        .of(this)
