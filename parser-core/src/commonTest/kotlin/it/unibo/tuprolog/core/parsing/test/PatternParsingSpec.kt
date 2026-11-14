@@ -70,4 +70,28 @@ class PatternParsingSpec :
             indicator.isWellFormed shouldBe true
             indicator.isConcrete shouldBe false
         }
+
+        test("mr-77/variable-functor-query-is-a-pattern") {
+            parser.parseCompound("F(X)").shouldBeInstanceOf<Pattern>()
+        }
+
+        test("mr-78/pattern-headed-clause") {
+            val rule = parser.parseClause("P(X) :- q(X)").shouldBeInstanceOf<Rule>()
+            rule.head.shouldBeInstanceOf<Pattern>()
+            rule.body.shouldBeInstanceOf<Struct>()
+        }
+
+        test("mr-79/variable-functor-body-goal") {
+            val rule = parser.parseClause("p(X) :- Q(X)").shouldBeInstanceOf<Rule>()
+            rule.head.shouldBeInstanceOf<Struct>()
+            val goal = rule.body.shouldBeInstanceOf<Pattern>()
+            goal[0] shouldBeSameInstanceAs rule.head[0]
+        }
+
+        test("mr-80/arguments-keep-their-order-and-identity") {
+            val pattern = parser.parseCompound("F(X, Y, X)").shouldBeInstanceOf<Pattern>()
+            pattern.args.map { (it as Var).name } shouldBe listOf("X", "Y", "X")
+            pattern[0] shouldBeSameInstanceAs pattern[2]
+            (pattern[0] === pattern[1]) shouldBe false
+        }
     })
