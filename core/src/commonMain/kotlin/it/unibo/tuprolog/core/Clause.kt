@@ -169,7 +169,7 @@ interface Clause : Struct {
          * [normalized] when entering a theory. It is meant for built-in definitions relying on the solver running a
          * variable goal as the term it is bound to, e.g. `call(G) :- ensure_executable(G), G`.
          */
-        const val VERBATIM_BODY_TAG = "verbatim-body"
+        const val VERBATIM_BODY_TAG = "it.unibo.tuprolog.core.Clause.verbatim-body"
 
         /**
          * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Goal] otherwise.

@@ -10,7 +10,7 @@ import kotlin.js.JsName
 import kotlin.jvm.JvmName
 
 /** The tag under which a [Substitution] returned by a [Unificator] lists its [functorVariables]. */
-const val FUNCTOR_VARIABLES_TAG = "functor-variables"
+const val FUNCTOR_VARIABLES_TAG = "it.unibo.tuprolog.unify.functor-variables"
 
 /**
  * The *functor variables* of this substitution: variables standing for the functor of some [Pattern], which can only be
