@@ -1,9 +1,9 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.primitive.TypeTester
+import it.unibo.tuprolog.core.Compound as CompoundTerm
 
 object Compound : TypeTester<ExecutionContext>("compound") {
     override val help: String =
@@ -29,5 +29,5 @@ object Compound : TypeTester<ExecutionContext>("compound") {
         ```
         """.trimIndent()
 
-    override fun testType(term: Term): Boolean = term is Struct && term.arity > 0
+    override fun testType(term: Term): Boolean = term is CompoundTerm && term.arity > 0
 }

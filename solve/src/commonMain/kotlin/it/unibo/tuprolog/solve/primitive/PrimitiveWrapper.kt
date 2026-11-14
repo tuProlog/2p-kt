@@ -342,7 +342,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCompound(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
-                !arg.isStruct || arg.isAtom -> throw TypeError.forArgument(
+                !arg.isCompound || arg.isAtom -> throw TypeError.forArgument(
                     context,
                     signature,
                     TypeError.Expected.COMPOUND,
