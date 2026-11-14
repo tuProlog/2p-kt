@@ -38,6 +38,16 @@ private val regressions =
         TermCase("partial-list") { consOf(intOf(1), varOf("T")) },
         TermCase("empty-list") { emptyLogicList },
         TermCase("nested") { structOf("g", logicListOf(atomOf("a"), varOf("X")), structOf("f", varOf("X"))) },
+        TermCase("pattern") { patternOf(varOf("P"), varOf("X"), atomOf("a")) },
+        TermCase("nested-patterns") { structOf("f", patternOf(varOf("P"), patternOf(varOf("Q"), varOf("P")))) },
+        TermCase("chain-metarule") {
+            ruleOf(
+                patternOf(varOf("P"), varOf("A"), varOf("B")),
+                patternOf(varOf("Q"), varOf("A"), varOf("C")),
+                patternOf(varOf("R"), varOf("C"), varOf("B")),
+            )
+        },
+        TermCase("goal-with-pattern") { goalOf(patternOf(varOf("P"), atomOf("a")), atomOf("b")) },
     )
 
 class TermSerializationPropertiesSpec :

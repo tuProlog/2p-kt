@@ -25,6 +25,19 @@ private val representations =
         ) {
             goalOf(structOf("dynamic", indicatorOf("counter", 1)))
         },
+        Representation("pattern", "{\"fun\": {\"var\": \"P\"}, \"args\": [\"a\", {\"var\": \"X\"}]}") {
+            patternOf(varOf("P"), atomOf("a"), varOf("X"))
+        },
+        Representation(
+            "metarule",
+            "{\"head\": {\"fun\": {\"var\": \"P\"}, \"args\": [{\"var\": \"X\"}]}, " +
+                "\"body\": {\"fun\": {\"var\": \"Q\"}, \"args\": [{\"var\": \"X\"}]}}",
+        ) {
+            ruleOf(patternOf(varOf("P"), varOf("X")), patternOf(varOf("Q"), varOf("X")))
+        },
+        Representation("variable-indicator", "{\"name\": {\"var\": \"P\"}, \"arity\": 2}") {
+            indicatorOf(varOf("P"), intOf(2))
+        },
     )
 
 class TermDeserializerSpec :
