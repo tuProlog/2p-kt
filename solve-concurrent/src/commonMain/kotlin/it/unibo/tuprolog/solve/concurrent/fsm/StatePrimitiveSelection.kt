@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent.fsm
 
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.solve.exception.ResolutionException
@@ -41,6 +42,16 @@ data class StatePrimitiveSelection(
                             context = context,
                             procedure = context.procedure!!.extractSignature(),
                             variable = goal.castToVar(),
+                        ),
+                    )
+                }
+                // a call whose functor is still a variable: meta-resolution policies are not supported here
+                goal is Pattern -> {
+                    exceptionalState(
+                        InstantiationError.forGoal(
+                            context = context,
+                            procedure = context.procedure?.extractSignature() ?: Signature("?-", 1),
+                            variable = goal.functor,
                         ),
                     )
                 }

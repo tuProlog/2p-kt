@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent.fsm
 
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
@@ -168,6 +169,12 @@ data class StateRuleSelection(
      */
     private fun Theory.selectClauses(goal: Struct): Sequence<Rule> =
         candidates(Rule.of(goal, Var.anonymous())).mapNotNull { candidate ->
+            // metarules do not extend library predicates, as no clause can: checked only for metarules
+            if (candidate.head is Pattern &&
+                goal.extractSignature().toIndicator() in context.libraries.asTheory(context.unificator)
+            ) {
+                return@mapNotNull null
+            }
             val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
             val mgu = context.unificator.mgu(Rule.of(goal, rule.body), rule)
             if (mgu.isSuccess) MatchedRule(rule, mgu.castToUnifier()) else null
