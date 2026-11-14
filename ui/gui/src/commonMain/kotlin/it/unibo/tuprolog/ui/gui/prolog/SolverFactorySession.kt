@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.ui.gui.prolog
 
-import it.unibo.tuprolog.core.parsing.parseAsStruct
+import it.unibo.tuprolog.core.parsing.parseAsCompound
 import it.unibo.tuprolog.core.parsing.parseAsTerm
 import it.unibo.tuprolog.solve.MutableSolver
 import it.unibo.tuprolog.solve.Solution
@@ -57,7 +57,7 @@ open class SolverFactorySession(
             request.query
                 .trim()
                 .removeSuffix(".")
-                .parseAsStruct(solver.operators)
+                .parseAsCompound(solver.operators)
         val plainOptions =
             if (request.timeout.inWholeMilliseconds == 0L) {
                 SolveOptions.allLazily()

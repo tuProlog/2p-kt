@@ -7,7 +7,7 @@ import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
 import it.unibo.tuprolog.Info
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.TermFormatter
 import it.unibo.tuprolog.core.format
 import it.unibo.tuprolog.core.parsing.ParseException
@@ -31,7 +31,7 @@ import kotlin.time.Duration.Companion.milliseconds
  * Run with no subcommand, it starts an interactive Prolog read-eval-print loop: it builds a
  * [it.unibo.tuprolog.solve.Solver] (see [getSolver]), repeatedly prompts the user for a dot-terminated query
  * with `?-` (see [AbstractTuPrologCommand.readQuery]), parses it with
- * [it.unibo.tuprolog.core.Struct.Companion.parse], solves it, and prints the resulting solutions -- until the
+ * [it.unibo.tuprolog.core.parsing.parse], solves it, and prints the resulting solutions -- until the
  * standard input stream is closed, at which point it prints a farewell message and exits.
  *
  * Supported options (see the corresponding property for details): `-T`/`--theory` (repeatable, one or more
@@ -119,7 +119,7 @@ class TuPrologCmd(
             var query: String? = readQuery()
             while (query != null) {
                 try {
-                    val goal = Struct.parse(query, solver.operators)
+                    val goal = Compound.parse(query, solver.operators)
                     val solutions = solver.solve(goal, this.getTimeout()).timed()
                     printSolutions(
                         solutions,
