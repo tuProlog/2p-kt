@@ -64,10 +64,10 @@ class ConcurrentSolverConformanceSpec :
                 disabled =
                     setOf(
                         "meta-resolution/concrete-call-selects-metarules-in-order",
-                        "meta-resolution/enumerate-user-predicates-of-the-arity",
-                        "meta-resolution/enumerate-respects-cut-and-negation",
-                        "meta-resolution/enumerate-sees-dynamic-predicates",
-                        "meta-resolution/enumerate-chain-metarule",
+                        "meta-resolution/policy-functors-tried-in-order",
+                        "meta-resolution/policy-respects-cut-and-negation",
+                        "meta-resolution/policy-sees-the-current-knowledge-bases",
+                        "meta-resolution/policy-runs-chain-metarules",
                         "meta-resolution/custom-policy",
                     ),
             ),

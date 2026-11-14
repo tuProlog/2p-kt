@@ -23,11 +23,17 @@ private fun Solver.valuesOf(
 
 private val TIMEOUT = kotlin.time.Duration.parse("10s")
 
-private fun enumerating(limit: Int = SolveOptions.ALL_SOLUTIONS) =
-    SolveOptions
-        .allLazilyWithTimeout(TIMEOUT)
-        .setMetaResolution(MetaResolutionPolicy.ENUMERATE)
-        .let { if (limit == SolveOptions.ALL_SOLUTIONS) it else it.setLimit(limit) }
+/** Options choosing the functors of calls whose functor is unbound with [policy]. */
+private fun choosing(
+    policy: MetaResolutionPolicy,
+    limit: Int = SolveOptions.ALL_SOLUTIONS,
+) = SolveOptions
+    .allLazilyWithTimeout(TIMEOUT)
+    .setMetaResolution(policy)
+    .let { if (limit == SolveOptions.ALL_SOLUTIONS) it else it.setLimit(limit) }
+
+/** A policy trying the [functors], in order. */
+private fun among(vararg functors: String) = MetaResolutionPolicy { _, _ -> functors.asSequence().map { Atom.of(it) } }
 
 /**
  * Pattern-headed rules (metarules) run natively: concrete calls select them, interleaved with concrete clauses, binding
@@ -77,27 +83,37 @@ fun metaResolutionContract(
         solution.shouldBeInstanceOf<Solution.Yes>()
     }
 
-    scenario("meta-resolution/enumerate-user-predicates-of-the-arity") {
+    scenario("meta-resolution/policy-functors-tried-in-order") {
         val solver = solverFactory.solverOf("q(1).", "s(1, 2).", "r(2).", "q(3).")
-        solver.valuesOf("Q(X)", "Q", enumerating()) shouldBe listOf("q", "q", "r").map { Atom.of(it) }
-        solver.valuesOf("Q(X)", "X", enumerating()) shouldBe listOf(1, 3, 2).map { it.toTerm() }
+        solver.valuesOf("Q(X)", "Q", choosing(among("q", "r"))) shouldBe listOf("q", "q", "r").map { Atom.of(it) }
+        solver.valuesOf("Q(X)", "X", choosing(among("q", "r"))) shouldBe listOf(1, 3, 2).map { it.toTerm() }
     }
 
-    scenario("meta-resolution/enumerate-respects-cut-and-negation") {
+    scenario("meta-resolution/policy-respects-cut-and-negation") {
         val solver = solverFactory.solverOf("q(1).", "r(2).")
-        solver.valuesOf("Q(X), !", "Q", enumerating()) shouldBe listOf(Atom.of("q"))
-        solver.valuesOf("\\+ Q(5)", "Q", enumerating()) shouldBe listOf(null)
-        solver.valuesOf("\\+ Q(2)", "Q", enumerating()) shouldBe emptyList()
+        solver.valuesOf("Q(X), !", "Q", choosing(among("q", "r"))) shouldBe listOf(Atom.of("q"))
+        solver.valuesOf("\\+ Q(5)", "Q", choosing(among("q", "r"))) shouldBe listOf(null)
+        solver.valuesOf("\\+ Q(2)", "Q", choosing(among("q", "r"))) shouldBe emptyList()
     }
 
-    scenario("meta-resolution/enumerate-sees-dynamic-predicates") {
+    scenario("meta-resolution/policy-sees-the-current-knowledge-bases") {
         val solver = solverFactory.solverOf("q(1).")
-        solver.valuesOf("assertz(t(9)), Q(X)", "Q", enumerating()) shouldBe listOf("q", "t").map { Atom.of(it) }
+        // the arity-1 predicates of the dynamic knowledge base, as the policy sees it when the call runs
+        val dynamic =
+            MetaResolutionPolicy { goal, context ->
+                context.dynamicKb.clauses
+                    .mapNotNull { it.head?.asStruct() }
+                    .filter { it.arity == goal.arity }
+                    .map { Atom.of(it.functor) }
+                    .asSequence()
+            }
+        solver.valuesOf("assertz(t(9)), Q(X)", "Q", choosing(dynamic)) shouldBe listOf(Atom.of("t"))
     }
 
-    scenario("meta-resolution/enumerate-chain-metarule") {
+    scenario("meta-resolution/policy-runs-chain-metarules") {
         val solver = solverFactory.solverOf("edge(a, b).", "edge(b, c).", "P(A, B) :- Q(A, C), R(C, B).")
-        solver.valuesOf("edge(a, Y)", "Y", enumerating(limit = 2)) shouldBe listOf("b", "c").map { Atom.of(it) }
+        solver.valuesOf("edge(a, Y)", "Y", choosing(among("edge"), limit = 2)) shouldBe
+            listOf("b", "c").map { Atom.of(it) }
     }
 
     scenario("meta-resolution/custom-policy") {
