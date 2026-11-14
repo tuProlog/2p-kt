@@ -168,7 +168,7 @@ class AliasSpec :
                 (bInstanceAlias.implementation in solver.staticKb).shouldBeTrue()
                 solver.dynamicKb.size shouldBe 0L
 
-                val aliasQuery1 = bInstanceAlias.implementation.head
+                val aliasQuery1 = bInstanceAlias.implementation.head.castToStruct()
                 assertSolutionEquals(
                     listOf(aliasQuery1.yes()),
                     solver.solve(aliasQuery1).toList(),
@@ -182,7 +182,7 @@ class AliasSpec :
                 (bTypeAlias.implementation in solver.staticKb).shouldBeTrue()
                 solver.dynamicKb.size shouldBe 0L
 
-                val aliasQuery2 = bTypeAlias.implementation.head
+                val aliasQuery2 = bTypeAlias.implementation.head.castToStruct()
                 assertSolutionEquals(
                     listOf(aliasQuery2.yes()),
                     solver.solve(aliasQuery2).toList(),

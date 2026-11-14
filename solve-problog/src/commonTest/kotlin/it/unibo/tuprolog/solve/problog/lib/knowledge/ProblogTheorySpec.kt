@@ -19,7 +19,12 @@ private fun p(n: Int) = Struct.of("p", Integer.of(n))
 
 /** The heads of [theory]'s clauses, without the explanation argument the mapping adds. */
 private fun heads(theory: Theory): List<String> =
-    theory.clauses.map { clause -> clause.head!!.let { Struct.of(it.functor, it.args.dropLast(1)) }.toString() }
+    theory.clauses.map { clause ->
+        clause.head!!
+            .castToStruct()
+            .let { Struct.of(it.functor, it.args.dropLast(1)) }
+            .toString()
+    }
 
 private class Kind(
     val id: String,

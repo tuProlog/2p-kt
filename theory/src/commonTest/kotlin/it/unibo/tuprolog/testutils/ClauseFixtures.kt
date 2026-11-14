@@ -4,6 +4,7 @@ import io.kotest.assertions.fail
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Goal
@@ -197,8 +198,8 @@ internal object ClauseFixtures {
 
     /** Creates a Map containing for each structurallyEquals Clause.head the clauses ordered (according to [clauses] iteration order),
      * constructing the overall partial ordering */
-    private fun partialOrderingHeadClauseMap(clauses: Iterable<Clause>): Map<Struct?, Iterable<Clause>> =
-        mutableMapOf<Struct?, Iterable<Clause>>()
+    private fun partialOrderingHeadClauseMap(clauses: Iterable<Clause>): Map<Compound?, Iterable<Clause>> =
+        mutableMapOf<Compound?, Iterable<Clause>>()
             .also { resultMap ->
                 clauses.forEachStructurallyEqualsHead(
                     resultMap,
@@ -209,9 +210,9 @@ internal object ClauseFixtures {
 
     /** Utility function to iterate over clauses with partial ordering map, doing actions on found or missing entry */
     private inline fun Iterable<Clause>.forEachStructurallyEqualsHead(
-        partialOrderingMap: MutableMap<Struct?, Iterable<Clause>>,
-        onPresentEntry: (Clause, MutableMap.MutableEntry<Struct?, Iterable<Clause>>) -> Unit,
-        onMissingEntry: (Clause, MutableMap<Struct?, Iterable<Clause>>) -> Unit,
+        partialOrderingMap: MutableMap<Compound?, Iterable<Clause>>,
+        onPresentEntry: (Clause, MutableMap.MutableEntry<Compound?, Iterable<Clause>>) -> Unit,
+        onMissingEntry: (Clause, MutableMap<Compound?, Iterable<Clause>>) -> Unit,
     ) {
         forEach { clause ->
             partialOrderingMap.entries
