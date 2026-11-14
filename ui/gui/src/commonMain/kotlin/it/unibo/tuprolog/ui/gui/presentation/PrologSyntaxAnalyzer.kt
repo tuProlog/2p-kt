@@ -82,6 +82,7 @@ object PrologSyntaxAnalyzer {
                 -> SemanticCategory.ATOM
                 SemanticRole.VARIABLE,
                 SemanticRole.ANONYMOUS_VARIABLE,
+                SemanticRole.FUNCTOR_VARIABLE,
                 -> SemanticCategory.VARIABLE
                 SemanticRole.INTEGER_LITERAL,
                 SemanticRole.REAL_LITERAL,
