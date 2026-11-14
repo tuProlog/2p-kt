@@ -5,13 +5,12 @@ package it.unibo.tuprolog.solve.libs.oop
 import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Term
-import it.unibo.tuprolog.utils.Optional
 import kotlin.jvm.JvmName
 
 /*
- * Reflective operations on the references of the core: invoking members of, and assigning properties of, the object
- * an [ObjectRef] wraps, or the static and companion-object members of the type a [TypeRef] wraps. A [NullRef] has
- * no members: operations on it throw a [NullPointerException].
+ * Operations on the references of the core: invoking members of, and assigning properties of, the object an
+ * [ObjectRef] wraps, or the static and companion-object members of the type a [TypeRef] wraps, through the first
+ * [HostInteropBackend] supporting them. A [NullRef] has no members: operations on it throw a [NullPointerException].
  */
 
 /** Invokes the member named [methodName] of the host value of this reference, with [arguments]. */
@@ -19,16 +18,17 @@ fun Ref.invoke(
     objectConverter: TermToObjectConverter,
     methodName: String,
     arguments: List<Term>,
-): Result =
-    when (this) {
-        is TypeRef ->
-            when (val companion = type.companionObjectRef) {
-                is Optional.Some<out Any> -> companion.value.invoke(objectConverter, methodName, arguments)
-                else -> type.invoke(objectConverter, methodName, arguments, null)
-            }
-        is ObjectRef -> value.invoke(objectConverter, methodName, arguments)
-        else -> throw NullPointerException("Cannot invoke $methodName on $this")
-    }
+): Result = invoke(OOPLib.backends, objectConverter, methodName, arguments)
+
+internal fun Ref.invoke(
+    backends: List<HostInteropBackend>,
+    objectConverter: TermToObjectConverter,
+    methodName: String,
+    arguments: List<Term>,
+): Result {
+    val receiver = receiver { "Cannot invoke $methodName on $this" }
+    return backends.of(receiver).invoke(receiver, methodName, arguments, objectConverter)
+}
 
 /** @see invoke */
 fun Ref.invoke(
@@ -80,16 +80,16 @@ fun Ref.assign(
     objectConverter: TermToObjectConverter,
     propertyName: String,
     value: Term,
+): Boolean = assign(OOPLib.backends, objectConverter, propertyName, value)
+
+internal fun Ref.assign(
+    backends: List<HostInteropBackend>,
+    objectConverter: TermToObjectConverter,
+    propertyName: String,
+    value: Term,
 ): Boolean {
-    when (this) {
-        is TypeRef ->
-            when (val companion = type.companionObjectRef) {
-                is Optional.Some<out Any> -> companion.value.assign(objectConverter, propertyName, value)
-                else -> type.assign(objectConverter, propertyName, value, null)
-            }
-        is ObjectRef -> this.value.assign(objectConverter, propertyName, value)
-        else -> throw NullPointerException("Cannot assign $propertyName on $this")
-    }
+    val receiver = receiver { "Cannot assign $propertyName on $this" }
+    backends.of(receiver).assign(receiver, propertyName, value, objectConverter)
     return true
 }
 
@@ -103,7 +103,20 @@ fun Ref.assign(
 fun TypeRef.create(
     objectConverter: TermToObjectConverter,
     arguments: List<Term>,
-): Result = type.create(objectConverter, arguments)
+): Result = create(OOPLib.backends, objectConverter, arguments)
+
+internal fun TypeRef.create(
+    backends: List<HostInteropBackend>,
+    objectConverter: TermToObjectConverter,
+    arguments: List<Term>,
+): Result = backends.of(this).create(this, arguments, objectConverter)
+
+// null references have no members: they never reach a backend
+private inline fun Ref.receiver(message: () -> String): ObjectRef =
+    this as? ObjectRef ?: throw NullPointerException(message())
+
+private fun List<HostInteropBackend>.of(receiver: ObjectRef): HostInteropBackend =
+    firstOrNull { it.supports(receiver) } ?: platformBackend
 
 /** @see create */
 fun TypeRef.create(

@@ -53,7 +53,7 @@ abstract class AbstractInvoke(
         method: Struct,
         resultTerm: Term,
     ): Substitution =
-        when (val result = ref.invoke(termToObjectConverter, method.functor, method.args)) {
+        when (val result = ref.invoke(hostBackends, termToObjectConverter, method.functor, method.args)) {
             is Result.Value -> mgu(resultTerm, result.getInvocationResult())
             else -> Substitution.failed()
         }

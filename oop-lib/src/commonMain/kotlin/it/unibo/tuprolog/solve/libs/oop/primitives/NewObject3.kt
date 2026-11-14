@@ -63,7 +63,7 @@ object NewObject3 : TernaryRelation.Functional<ExecutionContext>("new_object") {
         return catchingOopExceptions {
             val type = getArgumentAsTypeRef(0)
             val arguments = (second as List).toArray()
-            val objectReference = type?.create(termToObjectConverter, *arguments)?.asRef()
+            val objectReference = type?.create(hostBackends, termToObjectConverter, arguments.asList())?.asRef()
             objectReference?.let { mgu(third, it) } ?: Substitution.failed()
         }
     }

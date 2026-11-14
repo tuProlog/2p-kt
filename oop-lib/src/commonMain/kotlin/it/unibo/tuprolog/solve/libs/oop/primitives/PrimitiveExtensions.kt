@@ -13,8 +13,10 @@ import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.exception.error.TypeError
+import it.unibo.tuprolog.solve.libs.oop.HostInteropBackend
 import it.unibo.tuprolog.solve.libs.oop.OOP.CAST_OPERATOR
 import it.unibo.tuprolog.solve.libs.oop.OOP.DEALIASING_OPERATOR
+import it.unibo.tuprolog.solve.libs.oop.OOPLib
 import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
@@ -201,3 +203,7 @@ inline fun <C : ExecutionContext, Req : Solve.Request<C>, R> Req.catchingOopExce
  */
 val <C : ExecutionContext> Solve.Request<C>.termToObjectConverter: TermToObjectConverter
     get() = TermToObjectConverter.of { findRefFromAliasOrNull(it) }
+
+/** The backends injected into the OOP library of the solver of this request (see [OOPLib.withBackends]). */
+internal val <C : ExecutionContext> Solve.Request<C>.hostBackends: kotlin.collections.List<HostInteropBackend>
+    get() = (context.libraries[OOPLib.alias] as? OOPLib.WithBackends)?.backends ?: OOPLib.backends

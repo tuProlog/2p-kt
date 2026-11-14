@@ -66,7 +66,7 @@ object Assign : TernaryRelation.Predicative<ExecutionContext>("assign") {
                     third
                 }
 
-            ref.assign(termToObjectConverter, (second as Atom).value, value)
+            ref.assign(hostBackends, termToObjectConverter, (second as Atom).value, value)
         }
     }
 }
