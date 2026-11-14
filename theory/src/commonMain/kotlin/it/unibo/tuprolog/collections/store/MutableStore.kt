@@ -8,6 +8,11 @@ import it.unibo.tuprolog.unify.Unificator
  * in and the one it was removed in; a lookup only sees the entries alive at the generation current when it started.
  * Removal only marks entries, which are physically dropped later, when they outnumber the live ones.
  *
+ * As in FrozenStore, a clause whose head is a pattern belongs to every procedure of its arity (sharing its entry) and to
+ * the procedure of `wildcards` for that arity; lookups by pattern heads go through a procedure of all the clauses of
+ * their arity (`byArity`), built on the first such lookup and kept up to date afterwards; removals by concrete heads only
+ * remove clauses with concrete heads.
+ *
  * Lookups capture (array, from, to) views of the deques they read. Deques only ever write outside the range of
  * existing views (they grow at both ends, and compaction or growth allocates a new array), so lookups are lazy and
  * stay valid while the store changes, without copying anything.
@@ -24,6 +29,8 @@ internal class MutableStore(
     private var dead = 0
     private var customHeadKeys = 0
     private val procedures = HashMap<ProcedureKey?, MutableProcedure>()
+    private val wildcards = HashMap<Int, MutableProcedure>()
+    private val byArity = HashMap<Int, MutableProcedure>()
 
     /** Number of live clauses. */
     override var size: Int = 0
@@ -36,8 +43,15 @@ internal class MutableStore(
     ) {
         val entry = Entry(clause, if (atStart) --lowestOrder else ++highestOrder, ++generation)
         if (atStart) all.addFirst(entry) else all.addLast(entry)
-        val key = procedureKeyOf(clause)
-        procedures.getOrPut(key) { MutableProcedure(unificator) }.add(entry, atStart)
+        if (clause.hasPatternHead) {
+            val arity = clause.head!!.arity
+            wildcards.getOrPut(arity) { MutableProcedure(unificator) }.add(entry, atStart)
+            for ((key, procedure) in procedures) if (key != null && key.arity == arity) procedure.add(entry, atStart)
+        } else {
+            val key = procedureKeyOf(clause)
+            procedures.getOrPut(key) { newProcedure(key) }.add(entry, atStart)
+        }
+        if (byArity.isNotEmpty()) clause.head?.let { byArity[it.arity] }?.add(entry, atStart)
         size++
         if (unificator.hasCustomHeadKey(clause)) customHeadKeys++
     }
@@ -53,17 +67,37 @@ internal class MutableStore(
         }
     }
 
+    /** A new procedure for [key], holding the live pattern-headed clauses of its arity. */
+    private fun newProcedure(key: ProcedureKey?): MutableProcedure {
+        val procedure = MutableProcedure(unificator)
+        key
+            ?.let { wildcards[it.arity] }
+            ?.entries
+            ?.alive()
+            ?.forEach { procedure.add(it, false) }
+        return procedure
+    }
+
+    private fun needsScan(query: Clause): Boolean = customHeadKeys > 0 || unificator.hasCustomHeadKey(query)
+
+    private fun arityProcedure(arity: Int): MutableProcedure =
+        byArity.getOrPut(arity) {
+            MutableProcedure(unificator).also { procedure ->
+                all.alive().forEach { if (it.clause.head?.arity == arity) procedure.add(it, false) }
+            }
+        }
+
     /** The entries whose keys agree with [query]'s, and whose clause satisfies [accept], as of now, lazily. */
     private fun entries(
         query: Clause,
         accept: (Clause) -> Boolean,
     ): Sequence<Entry> {
-        if (customHeadKeys > 0 || unificator.hasCustomHeadKey(query)) {
+        if (needsScan(query)) {
             val view = all.view()
             val generation = generation
             return Sequence { matchingEntries(view, EMPTY_VIEW, generation, accept) }
         }
-        val procedure = procedures[procedureKeyOf(query)] ?: return emptySequence()
+        val procedure = procedureFor(query) ?: return emptySequence()
         val (first, second) = procedure.candidates(query)
         if (first.size == 0 && second.size == 0) return emptySequence()
         val generation = generation
@@ -76,13 +110,29 @@ internal class MutableStore(
         }
     }
 
+    /** The procedure holding the candidates for [query], which has a concrete head (or none). */
+    private fun procedureFor(query: Clause): MutableProcedure? =
+        if (query.hasPatternHead) {
+            arityProcedure(query.head!!.arity)
+        } else {
+            procedures[procedureKeyOf(query)] ?: query.head?.let { wildcards[it.arity] }
+        }
+
     /** The entries matching [query], as of now, lazily. */
     private fun matchingEntries(query: Clause): Sequence<Entry> = entries(query) { unificator.match(query, it) }
+
+    /** The entries matching [query] which removals remove: only those with a concrete head, if [query]'s is. */
+    private fun removableEntries(query: Clause): Sequence<Entry> =
+        if (query.hasPatternHead || wildcards.isEmpty()) {
+            matchingEntries(query)
+        } else {
+            entries(query) { !it.hasPatternHead && unificator.match(query, it) }
+        }
 
     /** The clauses matching [query] as of this call (logical update view), lazily. */
     override fun matching(query: Clause): Sequence<Clause> {
         // no head argument to filter on (zero arity): the same scan as FrozenProcedure.matching, with no Entry layer
-        if (query.indexableHead() == null && customHeadKeys == 0 && !unificator.hasCustomHeadKey(query)) {
+        if (query.indexableHead() == null && !needsScan(query)) {
             val view = procedures[procedureKeyOf(query)]?.entries?.view() ?: return emptySequence()
             val generation = generation
             return Sequence { view.visibleAt(generation) { it.clause } }.filter { unificator.match(query, it) }
@@ -111,26 +161,46 @@ internal class MutableStore(
         size--
         if (unificator.hasCustomHeadKey(entry.clause)) customHeadKeys--
         dead++
-        val key = procedureKeyOf(entry.clause)
-        val procedure = procedures[key]!!
-        procedure.removed(entry)
-        if (procedure.live == 0) procedures.remove(key)
+        if (entry.clause.hasPatternHead) {
+            val arity = entry.clause.head!!.arity
+            removed(wildcards, arity, entry)
+            for (key in procedures.keys.filter { it != null && it.arity == arity }) removed(procedures, key, entry)
+        } else {
+            removed(procedures, procedureKeyOf(entry.clause), entry)
+        }
+        if (byArity.isNotEmpty()) entry.clause.head?.let { if (it.arity in byArity) removed(byArity, it.arity, entry) }
         if (dead > COMPACTION_SLACK && dead > size) {
             all = EntryDeque.of(all.alive())
             dead = 0
         }
     }
 
+    /** Records that [entry] was removed from the procedure of [procedures] for [key], dropping it once empty. */
+    private fun <K> removed(
+        procedures: MutableMap<K, MutableProcedure>,
+        key: K,
+        entry: Entry,
+    ) {
+        val procedure = procedures[key]!!
+        procedure.removed(entry)
+        if (procedure.live == 0) procedures.remove(key)
+    }
+
     /**
      * Removes the first clause matching [query] (and satisfying [filter]), returning it, or `null` if none matches.
+     * If [query]'s head is concrete, only clauses with concrete heads are removed.
      */
     fun removeFirst(
         query: Clause,
         filter: (Clause) -> Boolean = { true },
-    ): Clause? = matchingEntries(query).firstOrNull { filter(it.clause) }?.also { remove(it) }?.clause
+    ): Clause? = removableEntries(query).firstOrNull { filter(it.clause) }?.also { remove(it) }?.clause
 
-    /** Removes all clauses matching [query], returning them (empty if none matches). */
-    fun removeAll(query: Clause): List<Clause> = matchingEntries(query).toList().onEach { remove(it) }.map { it.clause }
+    /**
+     * Removes all clauses matching [query], returning them (empty if none matches). If [query]'s head is concrete,
+     * only clauses with concrete heads are removed.
+     */
+    fun removeAll(query: Clause): List<Clause> =
+        removableEntries(query).toList().onEach { remove(it) }.map { it.clause }
 
     private companion object {
         const val COMPACTION_SLACK = 16

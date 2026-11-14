@@ -22,7 +22,7 @@ internal class MutableProcedure(
     private fun keyOf(
         entry: Entry,
         steps: IntArray,
-    ): IndexKey = unificator.keyAt(entry.clause.concreteHead()!!, steps)
+    ): IndexKey = unificator.keyAt(entry.clause.head!!, steps)
 
     fun add(
         entry: Entry,

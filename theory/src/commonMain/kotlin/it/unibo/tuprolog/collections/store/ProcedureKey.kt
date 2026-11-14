@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.collections.store
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.unify.IndexKey
 import it.unibo.tuprolog.unify.Unificator
 
@@ -11,18 +11,16 @@ internal data class ProcedureKey(
     val arity: Int,
 )
 
-/** The key of the procedure [clause] belongs to, `null` for directives. */
-internal fun procedureKeyOf(clause: Clause): ProcedureKey? =
-    clause.concreteHead()?.let { ProcedureKey(it.functor, it.arity) }
-
 /**
- * The head of [this] clause, which must have a concrete functor, or `null` for directives.
- * shortcut: Pattern heads (stored or queried) throw until procedures support variable functors (wildcard buckets).
+ * The key of the procedure [clause] belongs to, `null` for directives. Not meant for clauses whose head is a [Pattern]
+ * (see [hasPatternHead]): they belong to every procedure of their arity.
  */
-internal fun Clause.concreteHead(): Struct? =
-    head?.let {
-        it.asStruct() ?: throw UnsupportedOperationException("Clauses whose head has a variable functor: $this")
-    }
+internal fun procedureKeyOf(clause: Clause): ProcedureKey? =
+    clause.head?.let { ProcedureKey(it.castToStruct().functor, it.arity) }
+
+/** Whether the head of this clause is a [Pattern], i.e. it has a variable functor. */
+internal val Clause.hasPatternHead: Boolean
+    get() = head is Pattern
 
 // shortcut: custom head keys use store scans; add head-key indexes if these lookups become hot.
 internal fun Unificator.hasCustomHeadKey(clause: Clause): Boolean =
