@@ -76,8 +76,7 @@ class ForeignBackend(
     ): Result = Result.Value(ForeignHandle("new"))
 }
 
-private fun solverWith(library: Library) =
-    Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(library))
+private fun solverWith(library: Library) = Solver.prolog.solverWithDefaultBuiltins(otherLibraries = Runtime.of(library))
 
 private fun Solver.answer(
     goal: Struct,
@@ -122,14 +121,18 @@ class HostInteropBackendSpec :
         test("injected-backend-assigns-and-creates") {
             val backend = ForeignBackend()
             val solver = solverWith(OOPLib.withBackends(backend))
-            solver.solveOnce(Struct.of("assign", Ref.of(ForeignHandle("h")), Atom.of("name"), Atom.of("x"))).isYes shouldBe
+            solver
+                .solveOnce(
+                    Struct.of("assign", Ref.of(ForeignHandle("h")), Atom.of("name"), Atom.of("x")),
+                ).isYes shouldBe
                 true
             backend.calls shouldBe listOf("name:=")
             val created = Var.of("C")
-            solver.answer(
-                Struct.of("new_object", TypeRef.of(ForeignHandle::class), List.empty(), created),
-                created,
-            ).shouldBeInstanceOf<ObjectRef>()
+            solver
+                .answer(
+                    Struct.of("new_object", TypeRef.of(ForeignHandle::class), List.empty(), created),
+                    created,
+                ).shouldBeInstanceOf<ObjectRef>()
         }
 
         test("backends-are-tried-in-order") {
