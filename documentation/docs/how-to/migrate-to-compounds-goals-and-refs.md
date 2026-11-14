@@ -27,7 +27,7 @@ Clause bodies are now normalized when clauses enter theories: variables in goal 
 | `Solution.yes/no/halt(query: Struct, ...)` | take `Compound` | none |
 | `ConcurrentSolver.solveConcurrently(goal: Struct, ...)` | takes `Compound` | none |
 
-Calls whose functor is an unbound variable raise an instantiation error, unless a `MetaResolutionPolicy` is set: see
+Calls whose functor is an unbound variable, such as `F(X)`, unify with the heads of the clauses of their arity: see
 [Metarules](../reference/solver-api.md#metarules).
 
 ## The OOP library

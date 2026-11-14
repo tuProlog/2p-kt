@@ -76,8 +76,9 @@ interface SolveOptions {
     val branchScheduler: BranchScheduler?
 
     /**
-     * The policy choosing the functors of calls whose functor is unbound, e.g. `Q(a)`, or `null` (the default) to raise
-     * an instantiation error on such calls. Only Prolog solvers support policies: the others always raise that error.
+     * The policy choosing the functors of calls whose functor is unbound, e.g. `Q(a)`, or `null` (the default) to bind
+     * them by unifying such calls with the heads of the user clauses of their arity. Only Prolog solvers support
+     * policies: the others always unify.
      */
     @JsName("metaResolution")
     val metaResolution: MetaResolutionPolicy?

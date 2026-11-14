@@ -284,27 +284,40 @@ See [Errors and exceptions](errors-and-exceptions.md) for `ResolutionException` 
 
 ## Metarules
 
-`:solve-prolog` resolves *metarules*, i.e. rules whose heads are [`Pattern`s](term-hierarchy.md#pattern), natively:
+Goals whose functors are variables, i.e. [`Pattern`s](term-hierarchy.md#pattern) such as `F(X)`, and *metarules*,
+i.e. rules whose heads are patterns, resolve natively, by unification, as any other goal:
 
 ```prolog
-P(X) :- base(P, X).
-p(1).
-base(p, 2).
+f(1).
+g(2).
+stored(likes, alice, pizza).
+P(X, Y) :- stored(P, X, Y).
+compose(grandparent, parent, parent).
+P(X, Y) :- compose(P, Q, R), Q(X, Z), R(Z, Y).
 ```
 
-- A call `p(X)` selects the clauses of `p/1` and the metarules of arity 1, in the order they were added to the theory,
-  binding `P` to `p`: here `X = 2`, then `X = 1`. The body runs with `P` bound, so `P(Y)` there calls `p(Y)`.
-- Metarules never extend library predicates (control constructs included), as no clause can.
-- A call whose functor is an unbound variable, such as `Q(a)` in `P(X) :- Q(X)`, raises an instantiation error,
-  unless a `MetaResolutionPolicy` (`it.unibo.tuprolog.solve.search`) is set via `SolveOptions.setMetaResolution`.
-  The policy lists the functors to try: each is bound to the variable in turn, on backtracking, through a call of
-  `'$select_functor'(Functor, Arity)` that interceptors see, and then the call runs as usual.
-  `MetaResolutionPolicy.ENUMERATE` tries the predicates of the call's arity defined in the static, then in the dynamic
-  knowledge base; any lambda `(goal, context) -> Sequence<Atom>` is a policy too.
+- A goal `F(X)` unifies with the heads of the clauses of arity 1 of the knowledge bases, concrete or patterns, in the
+  order of the theory, binding `F`: here `F = f, X = 1`, then `F = g, X = 2`. No option is needed. Library
+  predicates, control constructs included, are no candidates.
+- A concrete goal `likes(alice, X)` selects the clauses of `likes/2` and the metarules of arity 2, in the order of the
+  theory, binding `P = likes`. The body runs with `P` bound, so a body goal `P(A, B)` would call `likes(A, B)`, and `F(alice, X)`
+  enumerates the relations the metarule defines (`F = likes, X = pizza`).
+- Functors bound by a body goal select the procedures of the later ones: `grandparent(alice, X)` binds `Q` and `R` to
+  `parent` through `compose/3`, then calls `parent/2` twice.
+- Metarules never extend library predicates, as no clause can, but they apply to every user predicate of their arity,
+  including the ones their bodies call: a binary metarule guarded by a binary fact, e.g.
+  `P(X, Y) :- view(P, E), E(X, Y)`, defines `view/2` too, and calling `view(edge, E)` calls the metarule again,
+  forever. Guard metarules with predicates of another arity, as `stored/3` and `compose/3` above, or use limits and
+  timeouts.
+- Built-ins running or inspecting goals accept patterns: `findall/3`, `bagof/3`, `setof/3`, `\+/1`, `clause/2`,
+  `retract/1`. A functor bound to anything but an atom makes the goal non-callable: `F = 1, F(X)` raises a type error.
+- A `MetaResolutionPolicy` (`it.unibo.tuprolog.solve.search`), set via `SolveOptions.setMetaResolution`, replaces
+  unification for unbound functors: it lists the functors to try, each bound in turn, on backtracking, through a call
+  of `'$select_functor'(Functor, Arity)` that interceptors see. `MetaResolutionPolicy.ENUMERATE` tries the predicates
+  of the call's arity defined in the knowledge bases; any lambda `(goal, context) -> Sequence<Atom>` is a policy too.
 
-Enumeration makes chain metarules such as `P(A, B) :- Q(A, C), R(C, B)` runnable, but the search may not terminate:
-use limits or timeouts. The concurrent solver runs metarules called by concrete calls, but supports no policy: calls
-whose functor is unbound raise an instantiation error.
+The concurrent solver resolves patterns and metarules the same way, finding solutions in no particular order, but
+supports no policy.
 
 ## `ExecutionContextAware`
 
