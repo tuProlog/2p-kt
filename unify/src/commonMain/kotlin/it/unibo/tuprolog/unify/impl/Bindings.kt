@@ -29,16 +29,11 @@ internal class Bindings(
      * variables. Functor variables are tracked as representatives: see [UnificationRun].
      */
     fun isFunctorVariable(variable: Var): Boolean =
-        variable in baseFunctorVariables ||
-            (
-                if (store !=
-                    null
-                ) {
-                    store.isFunctorVariable(variable)
-                } else {
-                    localFunctorVariables?.contains(variable) == true
-                }
-            )
+        when {
+            variable in baseFunctorVariables -> true
+            store != null -> store.isFunctorVariable(variable)
+            else -> localFunctorVariables?.contains(variable) == true
+        }
 
     /** Makes the unbound representative [variable] a functor variable. */
     fun constrainFunctor(variable: Var) {

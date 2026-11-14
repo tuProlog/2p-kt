@@ -70,7 +70,11 @@ internal class UnificationRun(
     private fun constrainFunctor(variable: Var): Boolean {
         val representative = bindings.representative(variable)
         if (representative !is Var) return representative.isAtom
-        val value = bindings[representative] ?: return true.also { bindings.constrainFunctor(representative) }
+        val value =
+            bindings[representative] ?: return true.also {
+                // constraining it again would only grow the trail of the bindings
+                if (!bindings.isFunctorVariable(representative)) bindings.constrainFunctor(representative)
+            }
         return value.isAtom
     }
 

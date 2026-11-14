@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.unify
 
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Substitution.Companion.empty
 import it.unibo.tuprolog.core.Substitution.Companion.failed
@@ -162,15 +163,23 @@ abstract class AbstractUnificator(
 
     /**
      * The functor variables of [context], of [substitutions], and of the patterns in [terms]: they can only be bound to
-     * atoms or variables (see [functorVariables]).
+     * atoms or variables (see [functorVariables]). `null` if there is none, as with no pattern around: then no set is
+     * allocated, and none is needed, as only functor variables make other variables functor variables.
      */
     private fun functorVariablesOf(
         terms: Sequence<Term>,
         substitutions: Sequence<Substitution> = emptySequence(),
-    ): MutableSet<Var> {
-        val result = context.functorVariables.toMutableSet()
-        for (substitution in substitutions) result.addAll(substitution.functorVariables)
-        for (term in terms) forEachPatternFunctor(term) { result.add(it) }
+    ): MutableSet<Var>? {
+        var result: MutableSet<Var>? = null
+
+        fun add(variables: Collection<Var>) {
+            if (variables.isNotEmpty()) (result ?: HashSet<Var>().also { result = it }).addAll(variables)
+        }
+        add(context.functorVariables)
+        for (substitution in substitutions) add(substitution.functorVariables)
+        if (Pattern.anyCreated) {
+            for (term in terms) forEachPatternFunctor(term) { (result ?: HashSet<Var>().also { result = it }).add(it) }
+        }
         return result
     }
 
@@ -178,7 +187,7 @@ abstract class AbstractUnificator(
         request: Request,
         equations: MutableList<Equation>,
         occurCheckEnabled: Boolean,
-        functorVariables: MutableSet<Var>,
+        functorVariables: MutableSet<Var>?,
     ): Substitution {
         var changed = true
 
@@ -234,7 +243,9 @@ abstract class AbstractUnificator(
 
         return handleResult(
             request,
-            equations.filter { it.isAssignment }.toSubstitution().withFunctorVariables(functorVariables),
+            equations.filter { it.isAssignment }.toSubstitution().let { result ->
+                functorVariables?.let { result.withFunctorVariables(it) } ?: result
+            },
         )
     }
 
@@ -245,9 +256,9 @@ abstract class AbstractUnificator(
     private fun bindFunctorVariable(
         variable: Var,
         term: Term,
-        functorVariables: MutableSet<Var>,
+        functorVariables: MutableSet<Var>?,
     ): Boolean {
-        if (functorVariables.isEmpty()) return true
+        if (functorVariables.isNullOrEmpty()) return true
         if (term.isVar) {
             if (variable in functorVariables || term in functorVariables) {
                 functorVariables.add(variable)
@@ -285,7 +296,7 @@ abstract class AbstractUnificator(
                 substitution1.values.asSequence() + substitution2.values.asSequence(),
                 sequenceOf(substitution1, substitution2),
             )
-        if (!occurCheckEnabled && functorVariables.isEmpty()) {
+        if (!occurCheckEnabled && functorVariables == null) {
             val quickMerge = context + substitution1 + substitution2
             if (quickMerge.isSuccess) {
                 return quickMerge

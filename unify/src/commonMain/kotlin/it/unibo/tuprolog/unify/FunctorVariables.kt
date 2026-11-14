@@ -38,16 +38,22 @@ internal inline fun forEachPatternFunctor(
     action: (Var) -> Unit,
 ) {
     if (!Pattern.anyCreated || term is Var || term.isGround) return
-    val pending = ArrayList<Term>()
-    pending.add(term)
-    while (pending.isNotEmpty()) {
-        val current = pending.removeAt(pending.lastIndex)
+    // allocated only for terms with more than one non-ground compound to visit: most terms have no pattern at all
+    var pending: ArrayList<Term>? = null
+    var current: Term? = term
+    while (current != null) {
         if (current is Pattern) action(current.functor)
-        val compound = current.asCompound() ?: continue
-        for (i in compound.arity - 1 downTo 0) {
-            val arg = compound[i]
-            if (arg !is Var && !arg.isGround) pending.add(arg)
+        var next: Term? = null
+        val compound = current.asCompound()
+        if (compound != null) {
+            for (i in compound.arity - 1 downTo 0) {
+                val arg = compound[i]
+                if (arg is Var || arg.isGround) continue
+                if (next != null) (pending ?: ArrayList<Term>().also { pending = it }).add(next)
+                next = arg
+            }
         }
+        current = next ?: pending?.let { if (it.isEmpty()) null else it.removeAt(it.lastIndex) }
     }
 }
 
