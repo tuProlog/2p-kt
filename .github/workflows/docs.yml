@@ -42,7 +42,7 @@ jobs:
       - name: Install MkDocs Material
         run: pip install mkdocs-material
       - name: Build documentation site
-        uses: DanySK/build-check-deploy-gradle-action@4.0.51
+        uses: DanySK/build-check-deploy-gradle-action@4.0.52
         with:
           retries-on-failure: '2'
           # the log feeds the CI summary's documentation warnings
