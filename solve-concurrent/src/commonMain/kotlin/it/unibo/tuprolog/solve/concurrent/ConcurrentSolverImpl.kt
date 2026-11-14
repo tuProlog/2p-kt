@@ -14,6 +14,7 @@ import it.unibo.tuprolog.solve.concurrent.fsm.State
 import it.unibo.tuprolog.solve.concurrent.fsm.StateGoalSelection
 import it.unibo.tuprolog.solve.concurrent.fsm.toGoals
 import it.unibo.tuprolog.solve.exception.Warning
+import it.unibo.tuprolog.solve.exception.error.SystemError
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
@@ -23,6 +24,7 @@ import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ReceiveChannel
@@ -85,9 +87,20 @@ internal open class ConcurrentSolverImpl(
             if (state is EndState) {
                 handle.publishSolutionAndTerminateResolutionIfNeed(state.solution, this)
             } else {
-                for (it in state.next()) {
-                    handleAsyncStateTransition(it, handle)
-                    yield()
+                // an unexpected error ends the resolution with a halt: escaping, it would leave the solutions unended.
+                // Successors are produced lazily (they may be infinitely many), so the iteration is guarded too
+                try {
+                    for (it in state.next()) {
+                        handleAsyncStateTransition(it, handle)
+                        yield()
+                    }
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (
+                    @Suppress("TooGenericExceptionCaught") e: Exception,
+                ) {
+                    val error = SystemError.forUncaughtException(state.context, e)
+                    handle.publishSolutionAndTerminateResolutionIfNeed(Solution.halt(state.context.query, error), this)
                 }
             }
         }
