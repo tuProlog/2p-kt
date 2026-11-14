@@ -275,8 +275,10 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedClause(index: Int): Solve.Request<C> {
             ensuringArgumentIsInstantiated(index)
-            ensuringArgumentIsStruct(index)
             val candidate = arguments[index]
+            // a pattern is a head, standing for the clauses of every procedure of its arity
+            if (candidate.isPattern) return this
+            ensuringArgumentIsStruct(index)
             return when {
                 candidate.isClause -> {
                     if (!candidate.castToClause().isWellFormed) {

@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -20,7 +22,8 @@ abstract class AbstractCollectionOf(
         third: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
-        ensuringArgumentIsCallable(1)
+        // patterns are callable: their functors are bound by the resolution
+        if (second !is Pattern) ensuringArgumentIsCallable(1)
         // the iterated goal of V1^V2^...^G is G, with the variables of every Vi existentially quantified
         val uninteresting = mutableSetOf<Var>()
         var goal = second
@@ -30,7 +33,7 @@ abstract class AbstractCollectionOf(
         }
         val iterated =
             when (goal) {
-                is Struct -> goal
+                is Compound -> goal
                 is Var -> throw InstantiationError.forArgument(context, signature, goal, 1)
                 else -> throw TypeError.forArgument(context, signature, TypeError.Expected.CALLABLE, goal, 1)
             }

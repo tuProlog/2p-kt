@@ -1,6 +1,8 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Rule
+import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -41,14 +43,17 @@ object Clause : BinaryRelation.WithoutSideEffects<ExecutionContext>("clause") {
         second: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(0)
-        ensuringArgumentIsStruct(0)
-        if (!second.isVar) {
+        // a pattern head inspects the clauses of every procedure of its arity, none of them protected library ones
+        if (first !is Pattern) ensuringArgumentIsStruct(0)
+        if (!second.isVar && second !is Pattern) {
             ensuringArgumentIsCallable(1)
         }
-        val head = first.castToStruct()
-        val headSignature = head.extractSignature()
-        if (context.libraries.hasProtected(headSignature)) {
-            throw PermissionError.of(context, signature, ACCESS, PRIVATE_PROCEDURE, headSignature.toIndicator())
+        val head = first.castToCompound()
+        if (head is Struct) {
+            val headSignature = head.extractSignature()
+            if (context.libraries.hasProtected(headSignature)) {
+                throw PermissionError.of(context, signature, ACCESS, PRIVATE_PROCEDURE, headSignature.toIndicator())
+            }
         }
         val template = Rule.of(head, second)
         // unifying each fresh copy with the template filters clauses too: index candidates are enough (#1019)
