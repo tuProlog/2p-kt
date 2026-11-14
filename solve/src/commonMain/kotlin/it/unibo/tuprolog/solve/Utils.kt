@@ -3,6 +3,7 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.Operator
@@ -103,3 +104,11 @@ fun runtimeOf(
     item1: AbstractWrapper<*>,
     vararg items: AbstractWrapper<*>,
 ): Runtime = libraryOf(alias, item1, *items).toRuntime()
+
+/**
+ * This compound if it is a [Goal] already, or its goal (`:- this`, carrying the tags of this compound) otherwise: goals
+ * are never wrapped again.
+ */
+@JsName("compoundToGoal")
+fun Compound.toGoal(): Goal =
+    this as? Goal ?: Goal.of(this).let { if (tags.isEmpty()) it else it.replaceTags(tags).castToGoal() }

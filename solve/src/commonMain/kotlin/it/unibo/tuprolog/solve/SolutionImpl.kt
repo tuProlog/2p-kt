@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -7,11 +9,21 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.exception.ResolutionException
 import kotlin.jvm.JvmStatic
 
-/** A class representing a solution to a goal */
+/**
+ * A class representing a solution to a goal. It keeps [call] as given, a [Goal] or the [Compound] whose goal is the
+ * [query], so that the many solutions of primitives (for their [Struct] calls) wrap them only when [query] is read.
+ */
 internal sealed class SolutionImpl(
-    override val query: Struct,
+    protected val call: Compound,
     override val tags: Map<String, Any>,
 ) : Solution {
+    override val query: Goal
+        get() = call.toGoal()
+
+    // what the query asks to solve, the same for a call and for its goal
+    private val body: Term
+        get() = if (call is Goal) call.body else call
+
     override val isYes: Boolean
         get() = false
 
@@ -30,14 +42,14 @@ internal sealed class SolutionImpl(
 
         other as SolutionImpl
 
-        if (query != other.query) return false
+        if (body != other.body) return false
         if (substitution != other.substitution) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = query.hashCode()
+        var result = body.hashCode()
         result = 31 * result + substitution.hashCode()
         return result
     }
@@ -48,7 +60,7 @@ internal sealed class SolutionImpl(
 
     /** A class representing the successful solution */
     class YesImpl(
-        query: Struct,
+        query: Compound,
         /** The successful substitution applied finding the solution */
         override val substitution: Substitution.Unifier = Substitution.empty(),
         tags: Map<String, Any> = emptyMap(),
@@ -64,15 +76,15 @@ internal sealed class SolutionImpl(
             noVarargSignatureCheck(signature)
         }
 
-        /** The Struct representing the solution */
-        override val solvedQuery: Struct by lazy { substitution.applyTo(query) as Struct }
+        /** The goal representing the solution */
+        override val solvedQuery: Goal by lazy { substitution.applyTo(this.query) as Goal }
 
         override fun replaceTags(tags: Map<String, Any>): YesImpl =
             if (tags === this.tags) {
                 this
             } else {
                 YesImpl(
-                    query,
+                    call,
                     substitution,
                     tags,
                 )
@@ -82,7 +94,7 @@ internal sealed class SolutionImpl(
             get() = true
 
         override fun copy(
-            query: Struct,
+            query: Compound,
             substitution: Substitution.Unifier,
         ) = YesImpl(query, substitution, tags)
 
@@ -92,7 +104,7 @@ internal sealed class SolutionImpl(
             copy(
                 substitution =
                     substitution.retaining(
-                        query.variables
+                        call.variables
                             .filterNot {
                                 it.isAnonymous || (hideWildcardVariables && it.isWildcard)
                             }.toSet(),
@@ -110,7 +122,7 @@ internal sealed class SolutionImpl(
 
     /** A class representing a failed solution */
     class NoImpl(
-        query: Struct,
+        query: Compound,
         tags: Map<String, Any> = emptyMap(),
     ) : SolutionImpl(query, tags),
         Solution.No {
@@ -128,12 +140,12 @@ internal sealed class SolutionImpl(
         override val solvedQuery: Nothing?
             get() = null
 
-        override fun replaceTags(tags: Map<String, Any>): NoImpl = if (tags === this.tags) this else NoImpl(query, tags)
+        override fun replaceTags(tags: Map<String, Any>): NoImpl = if (tags === this.tags) this else NoImpl(call, tags)
 
         override val isNo: Boolean
             get() = true
 
-        override fun copy(query: Struct) = NoImpl(query, tags)
+        override fun copy(query: Compound) = NoImpl(query, tags)
 
         override fun toString(): String = "No(query=$query)"
 
@@ -142,7 +154,7 @@ internal sealed class SolutionImpl(
 
     /** A class representing a failed (halted) solution because of an exception */
     class HaltImpl(
-        query: Struct,
+        query: Compound,
         /** The exception that made the resolution to halt */
         override val exception: ResolutionException,
         tags: Map<String, Any> = emptyMap(),
@@ -162,7 +174,7 @@ internal sealed class SolutionImpl(
                 this
             } else {
                 HaltImpl(
-                    query,
+                    call,
                     exception,
                     tags,
                 )
@@ -194,7 +206,7 @@ internal sealed class SolutionImpl(
             get() = true
 
         override fun copy(
-            query: Struct,
+            query: Compound,
             exception: ResolutionException,
         ) = HaltImpl(query, exception, tags)
 

@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -24,9 +26,12 @@ import kotlin.jvm.JvmStatic
 sealed interface Solution :
     Taggable<Solution>,
     Castable<Solution> {
-    /** The original goal to which this solution refers */
+    /**
+     * The original goal to which this solution refers. Solutions built from a [Compound] (e.g. those of primitives,
+     * for their [Struct] calls) refer to the [Goal] of that compound.
+     */
     @JsName("query")
-    val query: Struct
+    val query: Goal
 
     /** The substitution that has been applied to find the solution, or a failed substitution */
     @JsName("substitution")
@@ -36,9 +41,9 @@ sealed interface Solution :
     @JsName("exception")
     val exception: ResolutionException?
 
-    /** The [Struct] representing the solution, or `null` in case of a non-successful solution */
+    /** The [query] with [substitution] applied, or `null` in case of a non-successful solution */
     @JsName("solvedQuery")
-    val solvedQuery: Struct?
+    val solvedQuery: Goal?
 
     /** Whether this is a [Yes] (successful) solution */
     @JsName("isYes")
@@ -151,14 +156,14 @@ sealed interface Solution :
         override val substitution: Substitution.Unifier
 
         /** The [query], with [substitution] applied to it. */
-        override val solvedQuery: Struct
+        override val solvedQuery: Goal
 
         override fun replaceTags(tags: Map<String, Any>): Yes
 
         /** Returns a [Yes] solution identical to this one, except for the explicitly-provided arguments. */
         @JsName("copy")
         fun copy(
-            query: Struct = this.query,
+            query: Compound = this.query,
             substitution: Substitution.Unifier = this.substitution,
         ): Yes
 
@@ -179,7 +184,7 @@ sealed interface Solution :
 
         /** Returns a [No] solution identical to this one, except for the explicitly-provided [query]. */
         @JsName("copy")
-        fun copy(query: Struct = this.query): No
+        fun copy(query: Compound = this.query): No
 
         override fun cleanUp(hideWildcardVariables: Boolean): No
 
@@ -196,7 +201,7 @@ sealed interface Solution :
         /** Returns a [Halt] solution identical to this one, except for the explicitly-provided arguments. */
         @JsName("copy")
         fun copy(
-            query: Struct = this.query,
+            query: Compound = this.query,
             exception: ResolutionException = this.exception,
         ): Halt
 
@@ -210,7 +215,7 @@ sealed interface Solution :
         @JvmStatic
         @JsName("yes")
         fun yes(
-            query: Struct,
+            query: Compound,
             substitution: Substitution.Unifier = Substitution.empty(),
         ): Yes = SolutionImpl.YesImpl(query, substitution)
 
@@ -226,7 +231,7 @@ sealed interface Solution :
         /** Creates a failed ([No]) solution for [query]. */
         @JvmStatic
         @JsName("no")
-        fun no(query: Struct): No = SolutionImpl.NoImpl(query)
+        fun no(query: Compound): No = SolutionImpl.NoImpl(query)
 
         /** Same as [no], but building the query out of [signature] and [arguments]. */
         @JvmStatic
@@ -240,7 +245,7 @@ sealed interface Solution :
         @JvmStatic
         @JsName("halt")
         fun halt(
-            query: Struct,
+            query: Compound,
             exception: ResolutionException,
         ): Halt = SolutionImpl.HaltImpl(query, exception)
 

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.prolog.machine
 
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -52,7 +53,8 @@ import it.unibo.tuprolog.unify.Unificator
  */
 internal class PrologMachine(
     root: PrologExecutionContext,
-    private val query: Struct,
+    // solutions refer to it, whereas the machine runs its body
+    private val query: Goal,
     private val scheduler: BranchScheduler? = null,
     private val onWorld: (PrologExecutionContext) -> Unit,
 ) : Iterator<Solution> {
@@ -98,7 +100,7 @@ internal class PrologMachine(
     private var bindings = Bindings()
     private val choices = ArrayList<Choice>()
     private val rootFrame = Frame(null, null, 0, 0, 0, null, 0)
-    private var cont: Cont? = goals(query, rootFrame, null)
+    private var cont: Cont? = goals(query.body, rootFrame, null)
     private var location = Location.SELECT
     private var finished = false
 
@@ -759,7 +761,7 @@ internal class PrologMachine(
         val goal = selectedGoal
         val context =
             CallContext(world, frame.called, { substitution(frame, goal, rest) }) {
-                generateSequence(frame) { it.parent }.map { it.called ?: Struct.of("?-", query) }.toList()
+                generateSequence(frame) { it.parent }.map { it.called ?: Struct.of("?-", query.body) }.toList()
             }
         return if (pinned) context.pin() else context
     }

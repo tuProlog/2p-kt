@@ -141,6 +141,8 @@ private fun <C : ExecutionContext> Solve.Request<C>.findRefFromAliasOrNull(alias
         .filterIsInstance<Solution.Yes>()
         .firstOrNull()
         ?.solvedQuery
+        ?.body
+        ?.castToStruct()
         ?.get(1)
         ?.castTo()
 }

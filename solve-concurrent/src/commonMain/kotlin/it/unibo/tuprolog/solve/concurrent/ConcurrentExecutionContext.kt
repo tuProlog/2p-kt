@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -65,7 +66,7 @@ data class ConcurrentExecutionContext(
     override val outputChannels: OutputStore = OutputStore.fromStandard(),
     override val customData: CustomDataStore = CustomDataStore.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
-    val query: Struct = Truth.TRUE,
+    val query: Goal = Goal.of(Truth.TRUE),
     val goals: Cursor<out Term> = Cursor.empty(),
     val rule: Rule? = null,
     val primitive: Solve.Response? = null,
@@ -122,7 +123,7 @@ data class ConcurrentExecutionContext(
     override val logicStackTrace: KtList<Struct> by lazy {
         pathToRoot
             .filter { it.isActivationRecord }
-            .map { it.procedure ?: Struct.of("?-", query) }
+            .map { it.procedure ?: Struct.of("?-", query.body) }
             .toList()
     }
 

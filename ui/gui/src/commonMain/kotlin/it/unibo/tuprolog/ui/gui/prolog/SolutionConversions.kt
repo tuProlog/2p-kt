@@ -60,7 +60,7 @@ internal fun Solution.toStep(
                         if (groundQueriesHaveBooleanSolution && query.variables.none()) {
                             null
                         } else {
-                            formatter.format(solvedQuery)
+                            formatter.format(solvedQuery.body)
                         },
                     metadata = features.toSolutionMetadata(),
                     time = time,

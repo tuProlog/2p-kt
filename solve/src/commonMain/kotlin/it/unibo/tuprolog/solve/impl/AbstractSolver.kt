@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.impl
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -187,13 +188,13 @@ abstract class AbstractSolver<E : ExecutionContext>(
         get() = currentContext.operators
 
     final override fun solve(
-        goal: Struct,
+        goal: Goal,
         options: SolveOptions,
     ): SolutionStream = openStream(goal) { solutions(goal, options) }
 
     /** The solutions of [goal], post-processed according to the flags and [options]. */
     private fun solutions(
-        goal: Struct,
+        goal: Goal,
         options: SolveOptions,
     ): Sequence<Solution> {
         var solutionSequence =
@@ -221,7 +222,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
      * solutions; solvers that can check during resolution override it.
      */
     protected open fun openStream(
-        goal: Struct,
+        goal: Goal,
         solutions: () -> Sequence<Solution>,
     ): SolutionStream =
         IteratorSolutionStream(solutions().iterator()) {
@@ -229,7 +230,7 @@ abstract class AbstractSolver<E : ExecutionContext>(
         }
 
     protected abstract fun solveImpl(
-        goal: Struct,
+        goal: Goal,
         options: SolveOptions,
     ): Sequence<Solution>
 
