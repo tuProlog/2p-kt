@@ -4,6 +4,7 @@ import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.BindingStore
+import it.unibo.tuprolog.unify.functorVariables
 
 /**
  * The variable bindings of one unification run: the bindings established during the run, layered over [base] ones
@@ -18,6 +19,37 @@ internal class Bindings(
     private val store: BindingStore? = null,
 ) {
     private var local: MutableMap<Var, Term>? = null
+
+    private val baseFunctorVariables: Set<Var> = base.functorVariables
+
+    private var localFunctorVariables: MutableSet<Var>? = null
+
+    /**
+     * Whether the unbound representative [variable] is a functor variable, i.e. it can only be bound to atoms or
+     * variables. Functor variables are tracked as representatives: see [UnificationRun].
+     */
+    fun isFunctorVariable(variable: Var): Boolean =
+        variable in baseFunctorVariables ||
+            (
+                if (store !=
+                    null
+                ) {
+                    store.isFunctorVariable(variable)
+                } else {
+                    localFunctorVariables?.contains(variable) == true
+                }
+            )
+
+    /** Makes the unbound representative [variable] a functor variable. */
+    fun constrainFunctor(variable: Var) {
+        if (isFunctorVariable(variable)) return
+        if (store != null) return store.constrainFunctor(variable)
+        (localFunctorVariables ?: HashSet<Var>().also { localFunctorVariables = it }).add(variable)
+    }
+
+    /** The functor variables of [base], plus the ones made such during the run (unless they go to a store). */
+    val functorVariables: Set<Var>
+        get() = localFunctorVariables?.let { baseFunctorVariables + it } ?: baseFunctorVariables
 
     operator fun get(variable: Var): Term? =
         (if (store != null) store[variable] else local?.get(variable)) ?: base[variable]

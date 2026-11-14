@@ -346,6 +346,8 @@ sealed class Equation(
                         Comparison(lhsStruct, rhsStruct)
                     }
                 }
+                lhs.isCompound && rhs.isCompound && lhs.castToCompound().arity != rhs.castToCompound().arity ->
+                    Contradiction(lhs, rhs)
                 else -> Comparison(lhs, rhs)
             }
 
@@ -452,6 +454,19 @@ sealed class Equation(
                     val rhsStruct = rhs.castToStruct()
                     if (lhsStruct.arity == rhsStruct.arity && lhsStruct.functor == rhsStruct.functor) {
                         lhsStruct.argsSequence.zip(rhsStruct.argsSequence).flatMap { allOf(it, equalityChecker) }
+                    } else {
+                        sequenceOf(of(lhs, rhs, equalityChecker))
+                    }
+                }
+                (lhs.isPattern || rhs.isPattern) && lhs.isCompound && rhs.isCompound -> {
+                    val lhsCompound = lhs.castToCompound()
+                    val rhsCompound = rhs.castToCompound()
+                    if (lhsCompound.arity == rhsCompound.arity) {
+                        sequenceOf(of(lhsCompound.functorTerm, rhsCompound.functorTerm, equalityChecker)) +
+                            lhsCompound.argsSequence
+                                .zip(
+                                    rhsCompound.argsSequence,
+                                ).flatMap { allOf(it, equalityChecker) }
                     } else {
                         sequenceOf(of(lhs, rhs, equalityChecker))
                     }

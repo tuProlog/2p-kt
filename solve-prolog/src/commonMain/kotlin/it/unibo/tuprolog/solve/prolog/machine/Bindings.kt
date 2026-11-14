@@ -8,6 +8,7 @@ import it.unibo.tuprolog.unify.BindingStore
 import it.unibo.tuprolog.unify.CachedUnificator
 import it.unibo.tuprolog.unify.IncrementalUnificator
 import it.unibo.tuprolog.unify.Unificator
+import it.unibo.tuprolog.unify.functorVariables
 
 /**
  * The bindings of a [PrologMachine] (#1010): a mutable map from variables to terms, with a trail recording each binding
@@ -22,7 +23,16 @@ import it.unibo.tuprolog.unify.Unificator
  */
 internal class Bindings : BindingStore {
     private val values = HashMap<Var, Term>()
-    private val trail = ArrayList<Var>()
+
+    // the variables bound, in order, and the functor variables made such (as FunctorVariable entries)
+    private val trail = ArrayList<Any>()
+
+    // only ever allocated if some pattern takes part in the resolution
+    private var functorVariables: MutableSet<Var>? = null
+
+    private class FunctorVariable(
+        val variable: Var,
+    )
 
     // whether some value holds an opaque term: one that is not ground but shows no variables (e.g. ProbLog's
     // explanations), which only Term.apply can resolve
@@ -33,6 +43,7 @@ internal class Bindings : BindingStore {
         Bindings().also {
             it.values.putAll(values)
             it.trail.addAll(trail)
+            it.functorVariables = functorVariables?.let(::HashSet)
             it.opaque = opaque
         }
 
@@ -53,6 +64,13 @@ internal class Bindings : BindingStore {
         values[variable] = term
         trail.add(variable)
         if (!opaque && !term.isGround) opaque = term.hasOpaqueSubterm()
+    }
+
+    override fun isFunctorVariable(variable: Var): Boolean = functorVariables?.contains(variable) == true
+
+    override fun constrainFunctor(variable: Var) {
+        (functorVariables ?: HashSet<Var>().also { functorVariables = it }).add(variable)
+        trail.add(FunctorVariable(variable))
     }
 
     /**
@@ -85,6 +103,10 @@ internal class Bindings : BindingStore {
         unifier: Substitution.Unifier,
         unificator: Unificator,
     ): Boolean {
+        for (functor in unifier.functorVariables) {
+            val current = deref(functor)
+            if (current is Var && !isFunctorVariable(current)) constrainFunctor(current)
+        }
         for ((variable, value) in unifier) {
             val current = deref(variable)
             if (current is Var) {
@@ -99,7 +121,12 @@ internal class Bindings : BindingStore {
 
     /** Removes the bindings made since [mark]. */
     fun undo(mark: Int) {
-        while (trail.size > mark) values.remove(trail.removeAt(trail.lastIndex))
+        while (trail.size > mark) {
+            when (val entry = trail.removeAt(trail.lastIndex)) {
+                is FunctorVariable -> functorVariables?.remove(entry.variable)
+                else -> values.remove(entry)
+            }
+        }
     }
 
     /** [term], or the value it is bound to if a variable, following chains of bound variables. */

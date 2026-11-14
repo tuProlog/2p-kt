@@ -77,7 +77,7 @@ abstract class AbstractWorklistUnificator(
             } else {
                 val bindings = Bindings(Substitution.empty())
                 for ((variable, term) in context) bindings[variable] = term
-                SubstitutionMaterializer(bindings).materialize()
+                SubstitutionMaterializer(bindings).materialize().withFunctorVariables(context.functorVariables)
             }
         }
 
@@ -146,8 +146,7 @@ abstract class AbstractWorklistUnificator(
                 occurCheckEnabled,
                 MguRequest(term1, term2, occurCheckEnabled),
             )
-        run.push(term1, term2)
-        return run.unifyPending()
+        return run.start(term1, term2) && run.unifyPending()
     }
 
     override fun mgu(
@@ -156,8 +155,9 @@ abstract class AbstractWorklistUnificator(
         occurCheckEnabled: Boolean,
     ): Substitution {
         val request = MguRequest(term1, term2, occurCheckEnabled)
-        val run = newRun(context, request) ?: return handleResult(request, Substitution.failed())
-        run.push(term1, term2)
+        val run =
+            newRun(context, request)?.takeIf { it.start(term1, term2) }
+                ?: return handleResult(request, Substitution.failed())
         return handleResult(request, run.solve())
     }
 
