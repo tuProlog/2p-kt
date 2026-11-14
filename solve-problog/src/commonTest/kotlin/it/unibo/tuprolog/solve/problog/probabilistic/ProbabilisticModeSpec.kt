@@ -43,7 +43,7 @@ class ProbabilisticModeSpec :
 
             4 shouldBe solutions.size
             solutions.forEach {
-                query shouldBe it.solvedQuery
+                query shouldBe it.solvedQuery?.body
                 it.probability shouldBe 1.0
             }
         }
@@ -55,7 +55,7 @@ class ProbabilisticModeSpec :
             val solutions = solver.solve(query, solveOptions).toList()
 
             1 shouldBe solutions.size
-            query shouldBe solutions[0].solvedQuery
+            query shouldBe solutions[0].solvedQuery?.body
             val probability = solutions[0].probability
             withClue(
                 "probability $probability is not 0.9744",

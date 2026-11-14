@@ -39,7 +39,7 @@ public class ExampleProbLogSolverJavaSpec {
         while (si.hasNext()) {
             Solution solution = si.next();
             if (solution.isYes()) {
-                System.out.printf("yes: %s with probability %g\n", solution.getSolvedQuery(), getProbability(solution));
+                System.out.printf("yes: %s with probability %g\n", solution.getSolvedQuery().getBody(), getProbability(solution));
             }
         }
     }

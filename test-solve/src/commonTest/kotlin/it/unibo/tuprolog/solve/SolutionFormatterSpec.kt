@@ -2,6 +2,7 @@ package it.unibo.tuprolog.solve
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
@@ -42,6 +43,15 @@ class SolutionFormatterSpec :
                 }
 
             formatter.format(solution) shouldBe "yes: 2 is 1 + 1\n    X = 2"
+        }
+
+        test("a goal query's yes solution shows the solved call, not the goal") {
+            val solution =
+                with(scope) {
+                    Solution.yes(Goal.of(nonGroundQuery), Substitution.of(mapOf(varOf("X") to Integer.of(2))))
+                }
+
+            SolutionFormatter.of().format(solution) shouldBe "yes: 2 is 1 + 1\n    X = 2"
         }
 
         test("groundQueriesHaveBooleanSolution does not affect no or halt solutions") {

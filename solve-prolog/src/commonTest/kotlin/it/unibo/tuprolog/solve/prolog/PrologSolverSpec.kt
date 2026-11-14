@@ -58,6 +58,7 @@ import it.unibo.tuprolog.solve.flags.RealPrecisionMode
 import it.unibo.tuprolog.solve.flagsContract
 import it.unibo.tuprolog.solve.floatContract
 import it.unibo.tuprolog.solve.functorContract
+import it.unibo.tuprolog.solve.goalQueryContract
 import it.unibo.tuprolog.solve.ifThenContract
 import it.unibo.tuprolog.solve.ifThenElseContract
 import it.unibo.tuprolog.solve.integerContract
@@ -160,6 +161,7 @@ internal fun prologSolverContracts(factory: SolverFactory) =
         include(retractContract(factory))
         include(setOfContract(factory))
         include(solutionPresentationContract(factory))
+        include(goalQueryContract(factory))
         include(solverContract(factory, ensureExecutable, ensureExecutable, ensureExecutable))
         include(solverConstructionContract<PrologSolver, MutablePrologSolver>(factory, DefaultBuiltins))
         include(stackTraceContract(factory))

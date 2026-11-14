@@ -58,7 +58,7 @@ class ExamplePrologSolverSpec :
             // Yes(query=f(X_2), substitution={X_2=c})
 
             for (solution in solutions) {
-                println(solution.query) // f(X_2), f(X_2), f(X_2)
+                println(solution.query.body) // f(X_2), f(X_2), f(X_2)
                 println(solution.isYes) // true, true, true
                 println(solution.substitution) // {X_2=a}, {X_2=b}, {X_2=c}
             }
@@ -85,7 +85,7 @@ class ExamplePrologSolverSpec :
             val i = solutions.iterator()
             while (i.hasNext()) {
                 val solution = i.next()
-                println(solution.query) // f(X_2), f(X_2), f(X_2)
+                println(solution.query.body) // f(X_2), f(X_2), f(X_2)
                 println(solution.isYes) // true, true, true
                 println(solution.substitution) // {X_2=a}, {X_2=b}, {X_2=c}
             }
@@ -107,7 +107,7 @@ class ExamplePrologSolverSpec :
             val solutions = prolog.solve(goal, SolveOptions.allLazilyWithTimeout(1.milliseconds))
 
             for (solution in solutions) {
-                println(solution.query) // f(X_2)
+                println(solution.query.body) // f(X_2)
                 println(solution.isHalt) // true
                 println(solution.exception) // it.unibo.tuprolog.solve.exception.TimeOutException
             }
