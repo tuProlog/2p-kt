@@ -4,6 +4,7 @@ import it.unibo.tuprolog.solve.impl.SolveOptionsImpl
 import it.unibo.tuprolog.solve.intercept.TransitionInterceptor
 import it.unibo.tuprolog.solve.search.BranchScheduler
 import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
+import it.unibo.tuprolog.solve.search.MetaResolutionPolicy
 import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 import it.unibo.tuprolog.utils.time.Chronometer
 import it.unibo.tuprolog.utils.time.ChronometerFactory
@@ -75,6 +76,13 @@ interface SolveOptions {
     val branchScheduler: BranchScheduler?
 
     /**
+     * The policy choosing the functors of calls whose functor is unbound, e.g. `Q(a)`, or `null` (the default) to raise
+     * an instantiation error on such calls. Only Prolog solvers support policies: the others always raise that error.
+     */
+    @JsName("metaResolution")
+    val metaResolution: MetaResolutionPolicy?
+
+    /**
      * The maximum number of solutions to produce, or [ALL_SOLUTIONS] (i.e. `-1`) for no cap.
      * @see isLimited
      */
@@ -121,6 +129,10 @@ interface SolveOptions {
     /** Returns a copy of these options with [branchScheduler] set to [value]. */
     @JsName("setBranchScheduler")
     fun setBranchScheduler(value: BranchScheduler?): SolveOptions
+
+    /** Returns a copy of these options with [metaResolution] set to [value]. */
+    @JsName("setMetaResolution")
+    fun setMetaResolution(value: MetaResolutionPolicy?): SolveOptions
 
     /**
      * Creates the [Chronometer] of a new resolution, started now, from [chronometerFactory] (or
