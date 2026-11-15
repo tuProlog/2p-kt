@@ -100,15 +100,17 @@ internal sealed class SolutionImpl(
 
         override fun toString(): String = "Yes(query=$query, substitution=$substitution)"
 
+        // keeps call as it is: copy would wrap it into the query, a Goal
         override fun cleanUp(hideWildcardVariables: Boolean): Solution.Yes =
-            copy(
-                substitution =
-                    substitution.retaining(
-                        call.variables
-                            .filterNot {
-                                it.isAnonymous || (hideWildcardVariables && it.isWildcard)
-                            }.toSet(),
-                    ),
+            YesImpl(
+                call,
+                substitution.retaining(
+                    call.variables
+                        .filterNot {
+                            it.isAnonymous || (hideWildcardVariables && it.isWildcard)
+                        }.toSet(),
+                ),
+                tags,
             )
 
         // Named distinctly from cleanUp (rather than an overload on Substitution.Unifier) to avoid any
