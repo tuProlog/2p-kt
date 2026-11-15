@@ -315,9 +315,28 @@ P(X, Y) :- compose(P, Q, R), Q(X, Z), R(Z, Y).
 - Built-ins running or inspecting goals accept patterns: `findall/3`, `bagof/3`, `setof/3`, `\+/1`, `clause/2`,
   `retract/1`. A functor bound to anything but an atom makes the goal non-callable: `F = 1, F(X)` raises a type error.
 - A `MetaResolutionPolicy` (`it.unibo.tuprolog.solve.search`), set via `SolveOptions.setMetaResolution`, replaces
-  unification for unbound functors: it lists the functors to try, each bound in turn, on backtracking, through a call
-  of `'$select_functor'(Functor, Arity)` that interceptors see. Any lambda `(goal, context) -> Sequence<Atom>` is a
-  policy, e.g. one restricting or ordering the candidate predicates of an inductive learner.
+  unification for unbound functors (see below).
+
+### Meta-resolution policies
+
+A `MetaResolutionPolicy` chooses the functors to try for a goal whose functor is unbound, instead of unifying it with
+the clauses of its arity, e.g. to restrict or order the candidate predicates of an inductive learner. Any lambda
+`(goal, context) -> Sequence<Atom>` is a policy: `goal` is the `Pattern` being called, with the current bindings
+applied, and `context` gives access to the knowledge bases.
+
+```kotlin
+val solver = Solver.prolog.solverWithDefaultBuiltins(staticKb = Theory.parse("q(1). r(2)."))
+val onlyR = MetaResolutionPolicy { _, _ -> sequenceOf(Atom.of("r")) }
+solver.solve(Compound.parse("Q(X)"), SolveOptions.allLazily().setMetaResolution(onlyR)).toList()
+// one solution: Q = r, X = 2 (q/1 is never tried)
+```
+
+- The goal becomes a call of `'$select_functor'(Functor, Arity)`, which interceptors see, binding the functor to each
+  candidate in turn, on backtracking, and then the goal again, as an ordinary call.
+- Candidates are tried once each, even if the policy repeats them.
+- A candidate without clauses fails, or raises an existence error, as the `unknown` flag says.
+- Candidates are ordinary calls, so metarules apply to them too, and the search may not terminate if they call
+  themselves back: use limits and timeouts.
 
 The concurrent solver resolves patterns and metarules the same way, finding solutions in no particular order, but
 supports no policy.
