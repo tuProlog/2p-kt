@@ -17,6 +17,11 @@ internal class PatternImpl(
     tags: Map<String, Any> = emptyMap(),
 ) : TermImpl(tags),
     Pattern {
+    // concrete, rather than the interface defaults: on hot paths, a chain of defaults is too deep to inline
+    override fun getArgAt(index: Int): Term = args[index]
+
+    override operator fun get(index: Int): Term = args[index]
+
     init {
         if (!anyCreated) anyCreated = true
     }

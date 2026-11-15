@@ -15,6 +15,11 @@ internal abstract class AbstractStruct(
     tags: Map<String, Any> = emptyMap(),
 ) : TermImpl(tags),
     Struct {
+    // concrete, rather than the interface defaults: on hot paths, a chain of defaults is too deep to inline
+    override fun getArgAt(index: Int): Term = args[index]
+
+    override operator fun get(index: Int): Term = args[index]
+
     // Caches below are plain fields filled on first use (racy single-check idiom, as in String.hashCode): their
     // values are immutable, so a race just computes them twice. Unlike `by lazy`, they cost no extra object.
 
