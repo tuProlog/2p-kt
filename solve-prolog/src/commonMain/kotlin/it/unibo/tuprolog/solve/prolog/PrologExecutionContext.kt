@@ -13,18 +13,12 @@ import it.unibo.tuprolog.solve.data.CustomDataStore
 import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.prolog.machine.Cancellation
-import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
-import it.unibo.tuprolog.solve.search.MetaResolutionPolicy
-import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 import it.unibo.tuprolog.solve.sideffects.SideEffect
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.time.Chronometer
-import it.unibo.tuprolog.utils.time.ChronometerFactory
-import kotlin.time.Duration
 import kotlin.collections.List as KtList
 
 /**
@@ -34,12 +28,8 @@ import kotlin.collections.List as KtList
  * solver. What a primitive sees is a read-only view of it ([ReadOnlyExecutionContext]), with the call's [procedure],
  * [substitution] and [logicStackTrace] ([it.unibo.tuprolog.solve.prolog.machine.CallContext]).
  *
- * - [chronometer]: the resolution's chronometer (see [it.unibo.tuprolog.solve.Durable.chronometer]).
- * - [counters]: the resolution's opt-in [ResolutionCounters] (see [it.unibo.tuprolog.solve.SolveOptions.counters]).
- * - [interception], [ruleSelection], [goalSelection], [metaResolution]: the resolution's opt-in interceptor and
- *   selection policies (see [it.unibo.tuprolog.solve.SolveOptions]), or `null` for none.
- * - [cancellation]: the [Cancellation] of the `SolutionStream` this resolution answers or is nested in, or `null`; the
- *   solvers this context creates share it.
+ * What the resolution fixes once and never changes (its [chronometer], [counters], interceptor, selection policies and
+ * cancellation) is grouped in its [settings].
  */
 internal data class PrologExecutionContext(
     override val procedure: Struct? = null,
@@ -53,14 +43,14 @@ internal data class PrologExecutionContext(
     override val outputChannels: OutputStore = OutputStore.fromStandard(),
     override val customData: CustomDataStore = CustomDataStore.empty(),
     override val substitution: Substitution.Unifier = Substitution.empty(),
-    override val chronometer: Chronometer = ChronometerFactory.default.create(Duration.INFINITE),
-    override val counters: ResolutionCounters? = null,
-    val interception: Interception? = null,
-    val ruleSelection: RuleSelectionPolicy? = null,
-    val goalSelection: GoalSelectionPolicy? = null,
-    val metaResolution: MetaResolutionPolicy? = null,
-    val cancellation: Cancellation? = null,
+    val settings: ResolutionSettings = ResolutionSettings(),
 ) : ExecutionContext {
+    override val chronometer: Chronometer
+        get() = settings.chronometer
+
+    override val counters: ResolutionCounters?
+        get() = settings.counters
+
     override val logicStackTrace: KtList<Struct>
         get() = listOfNotNull(procedure)
 
@@ -82,7 +72,7 @@ internal data class PrologExecutionContext(
             inputChannels,
             outputChannels,
             trustKb = true,
-        ).also { it.inheritedCancellation = cancellation }
+        ).also { it.inheritedCancellation = settings.cancellation }
 
     override fun createMutableSolver(
         unificator: Unificator,
@@ -102,7 +92,7 @@ internal data class PrologExecutionContext(
             inputChannels,
             outputChannels,
             trustKb = true,
-        ).also { it.inheritedCancellation = cancellation }
+        ).also { it.inheritedCancellation = settings.cancellation }
 
     override fun update(
         unificator: Unificator,

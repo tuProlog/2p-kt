@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.prolog
 
 import it.unibo.tuprolog.core.Compound
-import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolutionStream
@@ -107,9 +106,7 @@ internal abstract class AbstractPrologSolver(
         options: SolveOptions,
     ): Sequence<Solution> {
         currentContext =
-            // every argument given, so that the constructor with defaults (too big to inline) is not called
             PrologExecutionContext(
-                procedure = null,
                 unificator = unificator,
                 libraries = libraries,
                 flags = flags,
@@ -119,14 +116,16 @@ internal abstract class AbstractPrologSolver(
                 inputChannels = inputChannels,
                 outputChannels = outputChannels,
                 customData = currentContext.customData,
-                substitution = Substitution.empty(),
-                chronometer = options.createChronometer(),
-                counters = options.counters,
-                interception = options.interceptor?.let(::Interception),
-                ruleSelection = options.ruleSelection,
-                goalSelection = options.goalSelection,
-                metaResolution = options.metaResolution,
-                cancellation = starting?.cancellation ?: inheritedCancellation,
+                settings =
+                    ResolutionSettings(
+                        chronometer = options.createChronometer(),
+                        counters = options.counters,
+                        interception = options.interceptor?.let(::Interception),
+                        ruleSelection = options.ruleSelection,
+                        goalSelection = options.goalSelection,
+                        metaResolution = options.metaResolution,
+                        cancellation = starting?.cancellation ?: inheritedCancellation,
+                    ),
             )
         val machine = PrologMachine(currentContext, goal, options.branchScheduler) { currentContext = it }
         starting?.machine = machine
