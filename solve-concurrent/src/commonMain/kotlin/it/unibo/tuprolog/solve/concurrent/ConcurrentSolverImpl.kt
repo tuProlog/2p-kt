@@ -1,7 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
 import it.unibo.tuprolog.core.Compound
-import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
@@ -19,7 +18,6 @@ import it.unibo.tuprolog.solve.flags.FlagStore
 import it.unibo.tuprolog.solve.getAllOperators
 import it.unibo.tuprolog.solve.impl.AbstractSolver
 import it.unibo.tuprolog.solve.library.Runtime
-import it.unibo.tuprolog.solve.toGoal
 import it.unibo.tuprolog.solve.toOperatorSet
 import it.unibo.tuprolog.theory.MutableTheory
 import it.unibo.tuprolog.theory.Theory
@@ -132,12 +130,12 @@ internal open class ConcurrentSolverImpl(
     }
 
     private fun initialState(
-        goal: Goal,
+        goal: Compound,
         options: SolveOptions,
     ): State {
         currentContext =
             ConcurrentExecutionContext(
-                goals = goal.body.toGoals(),
+                goals = goal.toGoals(),
                 step = 1,
                 query = goal,
                 libraries = libraries,
@@ -158,7 +156,7 @@ internal open class ConcurrentSolverImpl(
         options: SolveOptions,
     ): ReceiveChannel<Solution> {
         val channel = KtChannel<Solution>(KtChannel.UNLIMITED)
-        val initialState = initialState(goal.toGoal(), options)
+        val initialState = initialState(goal, options)
         val handle = ConcurrentResolutionHandle(options, channel)
         val resolutionScope = createScope()
         resolutionScope.launch {
@@ -168,7 +166,7 @@ internal open class ConcurrentSolverImpl(
     }
 
     override fun solveImpl(
-        goal: Goal,
+        goal: Compound,
         options: SolveOptions,
     ): Sequence<Solution> = solveConcurrently(goal, options).toSequence().ensureAtMostOneNegative()
 

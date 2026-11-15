@@ -22,7 +22,7 @@ Clause bodies are now normalized when clauses enter theories: variables in goal 
 
 | Before | Now | What to do |
 |---|---|---|
-| `Solver.solve(goal: Struct, options)`, abstract | `solve(goal: Goal, options)`, abstract; the other overloads take `Compound` | solver implementations override the `Goal` overload; callers keep passing `Struct`s |
+| `Solver.solve(goal: Struct, options)`, abstract | `solve(goal: Compound, options)`, abstract; every `solve*` method has a `Goal` overload (JS name `solveGoal*`) unwrapping the body | solver implementations override the `Compound` overload; callers keep passing `Struct`s |
 | `Solution.query: Struct`, `Solution.Yes.solvedQuery: Struct` | `Goal` | read `query.body` / `solvedQuery.body` for the call; equality between solutions is unchanged |
 | `Solution.yes/no/halt(query: Struct, ...)` | take `Compound` | none |
 | `ConcurrentSolver.solveConcurrently(goal: Struct, ...)` | takes `Compound` | none |

@@ -8,13 +8,16 @@ implementation modules `:solve-prolog`, `:solve-concurrent`, and `:solve-problog
 ## `Solver`
 
 ```kotlin
---8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solver.kt:17:83"
+--8<-- "solve/src/commonMain/kotlin/it/unibo/tuprolog/solve/Solver.kt:18:95"
 ```
 
-Solvers solve `Goal`s, i.e. headless clauses `:- Body`: `solve(goal: Goal, options)` is the one method solvers
-implement, and runs `goal.body`. Every other overload takes any `Compound` (a `Struct` such as `p(X)`, a `Pattern`, or
-a `Goal`) and solves its goal: `:- p(X)` for `p(X)`, the goal itself for a `Goal`, which is never wrapped again.
-Solutions refer to that `Goal` as their `query`.
+Solvers solve `Compound`s (a `Struct` such as `p(X)`, or a `Pattern` such as `F(X)`): `solve(goal: Compound, options)`
+is the one method solvers implement, and they track goals as `Compound`s internally. Every `solve*` method also has an
+overload taking a `Goal` (a headless clause `:- Body`), which unwraps `goal.body` and forwards it to the corresponding
+overload taking a `Compound` (a body that is not a `Compound`, e.g. a variable, is called via `call/1`, raising the
+error it deserves). On JS, the overloads taking a `Compound` keep their names (`solve`, `solveOnceWithOptions`, ...),
+while those taking a `Goal` are named `solveGoal`, `solveGoalOnceWithOptions`, and so on. For uniformity, solutions always refer to the `Goal`
+of what was solved (`:- p(X)` for `p(X)`) as their `query`.
 
 Two families of methods trigger resolution:
 

@@ -25,7 +25,6 @@ import it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.toProbConfigT
 import it.unibo.tuprolog.solve.problog.lib.rules.Prob
 import it.unibo.tuprolog.solve.setBinaryDecisionDiagram
 import it.unibo.tuprolog.solve.setProbability
-import it.unibo.tuprolog.solve.toGoal
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 import kotlin.time.Duration
@@ -34,7 +33,7 @@ internal open class ProblogSolver(
     private val solver: Solver,
 ) : Solver by solver {
     private fun solveNonProbabilistically(
-        goal: Goal,
+        goal: Compound,
         options: SolveOptions,
     ): SolutionStream {
         val anonVar = Var.anonymous()
@@ -45,7 +44,7 @@ internal open class ProblogSolver(
                         ProbSetConfig.functor,
                         options.toProbConfigTerm(),
                     ),
-                    Struct.of(Prob.functor, anonVar, goal.body),
+                    Struct.of(Prob.functor, anonVar, goal),
                 ),
                 options,
             ).mapSolutions {
@@ -62,7 +61,7 @@ internal open class ProblogSolver(
     }
 
     private fun solveProbabilistically(
-        goal: Goal,
+        goal: Compound,
         options: SolveOptions,
     ): SolutionStream {
         val probabilityVar = Var.of("Prob")
@@ -72,7 +71,7 @@ internal open class ProblogSolver(
                 Struct.of(
                     ProbQuery.functor,
                     probabilityVar,
-                    goal.body,
+                    goal,
                     options.toProbConfigTerm(),
                     bddVar,
                 ),
@@ -121,7 +120,7 @@ internal open class ProblogSolver(
     }
 
     override fun solve(
-        goal: Goal,
+        goal: Compound,
         options: SolveOptions,
     ): SolutionStream =
         if (!options.isProbabilistic) {
@@ -129,11 +128,6 @@ internal open class ProblogSolver(
         } else {
             solveProbabilistically(goal, options)
         }
-
-    override fun solve(
-        goal: Compound,
-        options: SolveOptions,
-    ): SolutionStream = solve(goal.toGoal(), options)
 
     override fun solve(
         goal: Compound,
@@ -178,6 +172,55 @@ internal open class ProblogSolver(
         goal: Compound,
         options: SolveOptions,
     ): Solution = solve(goal, options.setLimit(1)).use { it.first() }
+
+    // the overloads taking goals forward to the ones above, rather than to solver
+    override fun solve(
+        goal: Goal,
+        options: SolveOptions,
+    ): SolutionStream = super<Solver>.solve(goal, options)
+
+    override fun solve(
+        goal: Goal,
+        timeout: Duration,
+    ): SolutionStream = super<Solver>.solve(goal, timeout)
+
+    override fun solve(goal: Goal): SolutionStream = super<Solver>.solve(goal)
+
+    @Deprecated(
+        "Call solve(goal, timeout).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, timeout).toList()"),
+    )
+    override fun solveList(
+        goal: Goal,
+        timeout: Duration,
+    ): List<Solution> = solve(goal, timeout).toList()
+
+    @Deprecated(
+        "Call solve(goal).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal).toList()"),
+    )
+    override fun solveList(goal: Goal): List<Solution> = solve(goal).toList()
+
+    @Deprecated(
+        "Call solve(goal, options).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, options).toList()"),
+    )
+    override fun solveList(
+        goal: Goal,
+        options: SolveOptions,
+    ): List<Solution> = solve(goal, options).toList()
+
+    override fun solveOnce(
+        goal: Goal,
+        timeout: Duration,
+    ): Solution = super<Solver>.solveOnce(goal, timeout)
+
+    override fun solveOnce(goal: Goal): Solution = super<Solver>.solveOnce(goal)
+
+    override fun solveOnce(
+        goal: Goal,
+        options: SolveOptions,
+    ): Solution = super<Solver>.solveOnce(goal, options)
 
     override fun copy(
         unificator: Unificator,

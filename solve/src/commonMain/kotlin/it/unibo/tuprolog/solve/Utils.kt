@@ -105,12 +105,8 @@ fun runtimeOf(
     vararg items: AbstractWrapper<*>,
 ): Runtime = libraryOf(alias, item1, *items).toRuntime()
 
-/**
- * This compound if it is a [Goal] already, or its goal (`:- this`, carrying the tags of this compound) otherwise: goals
- * are never wrapped again.
- */
-@JsName("compoundToGoal")
-fun Compound.toGoal(): Goal =
+/** This compound if it is a [Goal] already, or its goal (`:- this`, carrying the tags of this compound) otherwise. */
+internal fun Compound.toGoal(): Goal =
     this as? Goal ?: Goal.of(this).let { if (tags.isEmpty()) it else it.replaceTags(tags).castToGoal() }
 
 /**
