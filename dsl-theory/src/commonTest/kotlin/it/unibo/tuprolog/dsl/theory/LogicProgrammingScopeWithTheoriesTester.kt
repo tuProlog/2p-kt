@@ -13,7 +13,7 @@ class LogicProgrammingScopeWithTheoriesTester<S : BaseLogicProgrammingScope<*>>(
         theory.size shouldBe 3
         (factOf(structOf("f", varOf("X"))) in theory).shouldBeTrue()
         (ruleOf(structOf("f", varOf("X")), atomOf("a")) in theory).shouldBeTrue()
-        (directiveOf(structOf("f", varOf("X"))) in theory).shouldBeTrue()
+        (goalOf(structOf("f", varOf("X"))) in theory).shouldBeTrue()
         val rules = theory.rules.toList()
         rules.size shouldBe 2
         assertStructurallyEquals(rules[0].head, rules[1].head)

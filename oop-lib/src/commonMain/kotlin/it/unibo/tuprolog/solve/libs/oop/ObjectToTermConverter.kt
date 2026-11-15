@@ -9,7 +9,7 @@ import kotlin.jvm.JvmStatic
  * [TermToObjectConverter] -- e.g. as needed to turn the return value of a reflectively invoked
  * method ([Ref.invoke]) back into something a Prolog computation can unify against.
  *
- * The [default] implementation maps `null` to [ObjectRef.NULL], [String] to [it.unibo.tuprolog.core.Atom],
+ * The [default] implementation maps `null` to [NullRef.instance], [String] to [it.unibo.tuprolog.core.Atom],
  * any [Number] to [it.unibo.tuprolog.core.Integer] or [it.unibo.tuprolog.core.Real], single [Char]s to
  * one-letter atoms, [Boolean] to [it.unibo.tuprolog.core.Truth], and everything else to an
  * [ObjectRef] wrapping the value as-is.

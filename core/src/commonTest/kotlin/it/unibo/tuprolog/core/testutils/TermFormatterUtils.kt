@@ -4,10 +4,10 @@ import io.kotest.assertions.withClue
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
@@ -100,7 +100,7 @@ object TermFormatterUtils {
                 ),
                 FormatCase(
                     "directive",
-                    Directive.of(
+                    Goal.of(
                         Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B")),
                     ),
                     "':-'((A, B, A1, B1))",
@@ -235,7 +235,7 @@ object TermFormatterUtils {
                 ),
                 FormatCase(
                     "directive",
-                    Directive.of(
+                    Goal.of(
                         Tuple.of(Var.of("A"), Var.of("B"), Var.of("A"), Var.of("B")),
                     ),
                     ":- A, B, A1, B1",

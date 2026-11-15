@@ -6,6 +6,7 @@ enum class SyntaxKind {
     REAL,
     VARIABLE,
     STRUCTURE,
+    PATTERN,
     LIST,
     BLOCK,
     PARENTHESIZED_EXPRESSION,

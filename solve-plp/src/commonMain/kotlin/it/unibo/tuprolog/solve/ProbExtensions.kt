@@ -33,7 +33,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 private const val PROBABILITY_TAG = "it.unibo.tuprolog.solve.probability"
-private const val BINARY_DECISION_DIAGRAM_TAG = "it.unibo.tuprolog.solve.bdd"
+private const val BINARY_DECISION_DIAGRAM_TAG = "it.unibo.tuprolog.solve.binary-decision-diagram"
 
 private const val PROBABILISTIC_OPTION_TAG =
     "it.unibo.tuprolog.solve.options.probabilistic"

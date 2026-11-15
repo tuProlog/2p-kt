@@ -26,8 +26,8 @@ class ProblogSolverApiSpec :
 
         test("solve-list/collects-every-solution") {
             val solver = solver("0.6::h.")
-            (solver.solve(h).toList().map { it.query }) shouldBe listOf(h)
-            (solver.solve(h, 1.seconds).toList().map { it.query }) shouldBe listOf(h)
+            (solver.solve(h).toList().map { it.query.body }) shouldBe listOf(h)
+            (solver.solve(h, 1.seconds).toList().map { it.query.body }) shouldBe listOf(h)
             (solver.solve(h, probabilistic).toList().map { it.probability }) shouldBe listOf(0.6)
         }
 

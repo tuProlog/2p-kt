@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 
 class ClauseManipulationSpec :
     FunSpec({
-        val directive = Directive.of(Atom.of("a"), Atom.of("b")) // :- a, b.
+        val directive = Goal.of(Atom.of("a"), Atom.of("b")) // :- a, b.
 
         val fact = Fact.of(Struct.of("f", Integer.ONE)) // f(1).
 
@@ -77,14 +77,14 @@ class ClauseManipulationSpec :
 
         test("set-body") {
             val otherBody = Tuple.of(Integer.ONE, Integer.of(2), Integer.of(3))
-            directive.setBody(otherBody) shouldBe Directive.of(otherBody)
+            directive.setBody(otherBody) shouldBe Goal.of(otherBody)
             rule.setBody(otherBody) shouldBe Rule.of(rule.head, otherBody)
             fact.setBody(otherBody) shouldBe Rule.of(fact.head, otherBody)
         }
 
         test("set-body-items1") {
             val otherBody = Var.of("X")
-            directive.setBodyItems(otherBody) shouldBe Directive.of(otherBody)
+            directive.setBodyItems(otherBody) shouldBe Goal.of(otherBody)
             rule.setBodyItems(otherBody) shouldBe Rule.of(rule.head, otherBody)
             fact.setBodyItems(otherBody) shouldBe Rule.of(fact.head, otherBody)
         }
@@ -92,7 +92,7 @@ class ClauseManipulationSpec :
         test("set-body-items-n") {
             Scope.empty {
                 val otherBody = tupleOf(varOf("X"), varOf("Y"))
-                directive.setBodyItems(varOf("X"), varOf("Y")) shouldBe directiveOf(otherBody)
+                directive.setBodyItems(varOf("X"), varOf("Y")) shouldBe goalOf(otherBody)
                 rule.setBodyItems(varOf("X"), varOf("Y")) shouldBe ruleOf(rule.head, otherBody)
                 fact.setBodyItems(varOf("X"), varOf("Y")) shouldBe ruleOf(fact.head, otherBody)
             }
@@ -100,7 +100,7 @@ class ClauseManipulationSpec :
 
         test("add-last-body-item") {
             val otherBody = Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
-            directive.addLastBodyItem(otherBody.unfoldedSequence.last()) shouldBe Directive.of(otherBody)
+            directive.addLastBodyItem(otherBody.unfoldedSequence.last()) shouldBe Goal.of(otherBody)
             rule.addLastBodyItem(otherBody.unfoldedSequence.last()) shouldBe Rule.of(rule.head, otherBody)
             fact.addLastBodyItem(otherBody.unfoldedSequence.last()) shouldBe
                 Rule.of(fact.head, Truth.TRUE, otherBody.unfoldedSequence.last())
@@ -108,7 +108,7 @@ class ClauseManipulationSpec :
 
         test("append-body-item") {
             val otherBody = Tuple.of(Atom.of("a"), Atom.of("b"), Atom.of("c"))
-            directive.appendBodyItem(otherBody.unfoldedSequence.last()) shouldBe Directive.of(otherBody)
+            directive.appendBodyItem(otherBody.unfoldedSequence.last()) shouldBe Goal.of(otherBody)
             rule.appendBodyItem(otherBody.unfoldedSequence.last()) shouldBe Rule.of(rule.head, otherBody)
             fact.appendBodyItem(otherBody.unfoldedSequence.last()) shouldBe
                 Rule.of(fact.head, Truth.TRUE, otherBody.unfoldedSequence.last())
@@ -116,14 +116,14 @@ class ClauseManipulationSpec :
 
         test("add-first-body-item") {
             val otherBody = Tuple.of(Atom.of("c"), Atom.of("a"), Atom.of("b"))
-            directive.addFirstBodyItem(otherBody.left) shouldBe Directive.of(otherBody)
+            directive.addFirstBodyItem(otherBody.left) shouldBe Goal.of(otherBody)
             rule.addFirstBodyItem(otherBody.left) shouldBe Rule.of(rule.head, otherBody)
             fact.addFirstBodyItem(otherBody.left) shouldBe Rule.of(fact.head, otherBody.left, Truth.TRUE)
         }
 
         test("insert-body-item") {
             val otherBody = Tuple.of(Atom.of("c"), Atom.of("a"), Atom.of("b"))
-            directive.insertBodyItem(0, otherBody.left) shouldBe Directive.of(otherBody)
+            directive.insertBodyItem(0, otherBody.left) shouldBe Goal.of(otherBody)
             rule.insertBodyItem(0, otherBody.left) shouldBe Rule.of(rule.head, otherBody)
             fact.insertBodyItem(0, otherBody.left) shouldBe Rule.of(fact.head, otherBody.left, Truth.TRUE)
         }

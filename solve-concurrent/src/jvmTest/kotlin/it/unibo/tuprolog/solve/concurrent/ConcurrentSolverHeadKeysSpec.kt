@@ -3,8 +3,8 @@ package it.unibo.tuprolog.solve.concurrent
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.AbstractWorklistUnificator
@@ -22,7 +22,7 @@ class ConcurrentSolverHeadKeysSpec :
             val solver =
                 ConcurrentSolverFactory.solverWithDefaultBuiltins(
                     unificator = unificator,
-                    staticKb = Theory.of(unificator, Directive.of(Atom.of("init")), Fact.of(goal)),
+                    staticKb = Theory.of(unificator, Goal.of(Atom.of("init")), Fact.of(goal)),
                 )
             solver.solveOnce(goal).isYes shouldBe true
         }

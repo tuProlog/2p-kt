@@ -136,6 +136,74 @@ interface Scope {
         args: List<Term>,
     ): Struct
 
+    /** Creates a [Compound] with the given [functor] and [args]. See [Compound.of]. */
+    @JsName("compoundOf")
+    fun compoundOf(
+        functor: Any,
+        vararg args: Term,
+    ): Compound
+
+    /** Creates a [Compound] with the given [functor] and [args]. See [Compound.of]. */
+    @JsName("compoundOfSequence")
+    fun compoundOf(
+        functor: Any,
+        args: Sequence<Term>,
+    ): Compound
+
+    /** Creates a [Compound] with the given [functor] and [args]. See [Compound.of]. */
+    @JsName("compoundOfIterable")
+    fun compoundOf(
+        functor: Any,
+        args: Iterable<Term>,
+    ): Compound
+
+    /** Creates a [Compound] with the given [functor] and [args]. See [Compound.of]. */
+    @JsName("compoundOfList")
+    fun compoundOf(
+        functor: Any,
+        args: List<Term>,
+    ): Compound
+
+    /** Wraps the host [value] into a [Ref] ([NullRef] if `null`). See [Ref.of]. */
+    @JsName("refOf")
+    fun refOf(value: Any?): Ref
+
+    /** Wraps the non-null host [value] into an [ObjectRef]. See [ObjectRef.of]. */
+    @JsName("objectRefOf")
+    fun objectRefOf(value: Any): ObjectRef
+
+    /** Creates a [NullRef]. See [NullRef.invoke]. */
+    @JsName("nullRefOf")
+    fun nullRefOf(): NullRef
+
+    /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
+    @JsName("patternOf")
+    fun patternOf(
+        functor: Var,
+        vararg args: Term,
+    ): Pattern
+
+    /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
+    @JsName("patternOfSequence")
+    fun patternOf(
+        functor: Var,
+        args: Sequence<Term>,
+    ): Pattern
+
+    /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
+    @JsName("patternOfIterable")
+    fun patternOf(
+        functor: Var,
+        args: Iterable<Term>,
+    ): Pattern
+
+    /** Creates a [Pattern] with the given [functor] and [args]. See [Pattern.of]. */
+    @JsName("patternOfList")
+    fun patternOf(
+        functor: Var,
+        args: List<Term>,
+    ): Pattern
+
     /** Creates a [Tuple] out of [terms]. See [Tuple.of]. */
     @JsName("tupleOf")
     fun tupleOf(vararg terms: Term): Tuple
@@ -195,27 +263,27 @@ interface Scope {
 
     /** Creates a [Fact] with the given [head]. See [Fact.of]. */
     @JsName("factOf")
-    fun factOf(head: Struct): Fact
+    fun factOf(head: Compound): Fact
 
     /** Creates a [Rule] with the given [head] and body. See [Rule.of]. */
     @JsName("ruleOf")
     fun ruleOf(
-        head: Struct,
+        head: Compound,
         body1: Term,
         vararg body: Term,
     ): Rule
 
-    /** Creates a [Directive] with the given body. See [Directive.of]. */
-    @JsName("directiveOf")
-    fun directiveOf(
+    /** Creates a [Goal] with the given body. See [Goal.of]. */
+    @JsName("goalOf")
+    fun goalOf(
         body1: Term,
         vararg body: Term,
-    ): Directive
+    ): Goal
 
     /** Creates a [Clause] with the given (possibly `null`) [head] and body. See [Clause.of]. */
     @JsName("clauseOf")
     fun clauseOf(
-        head: Struct?,
+        head: Compound?,
         vararg body: Term,
     ): Clause
 
@@ -231,6 +299,13 @@ interface Scope {
     fun indicatorOf(
         name: Term,
         arity: Term,
+    ): Indicator
+
+    /** Creates a (non-concrete) [Indicator] with the given variable [name] and [arity]. See [Indicator.of]. */
+    @JsName("indicatorOfVarInt")
+    fun indicatorOf(
+        name: Var,
+        arity: Int,
     ): Indicator
 
     /** Creates an [Indicator] with the given [name] and [arity]. See [Indicator.of]. */

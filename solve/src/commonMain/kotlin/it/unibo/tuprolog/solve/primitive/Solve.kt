@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.primitive
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
@@ -224,7 +225,7 @@ sealed class Solve {
          */
         @JsName("solve")
         fun solve(
-            goal: Struct,
+            goal: Compound,
             limit: Duration = Duration.INFINITE,
         ): SolutionStream =
             subSolver().solve(

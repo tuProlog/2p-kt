@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.collections.store
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.unify.IndexKey
 import it.unibo.tuprolog.unify.Unificator
 
@@ -16,7 +16,7 @@ import it.unibo.tuprolog.unify.Unificator
  */
 internal class KeyFilter private constructor(
     private val unificator: Unificator,
-    private val head: Struct,
+    private val head: Compound,
     // whether the first candidate was already selected by an index
     private var seen: Boolean,
 ) {

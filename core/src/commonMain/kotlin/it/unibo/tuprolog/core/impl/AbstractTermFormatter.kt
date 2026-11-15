@@ -4,12 +4,13 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.List
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Recursive
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -56,6 +57,12 @@ internal abstract class AbstractTermFormatter(
                     "$functor$args"
                 }
             }.plusTagsOf(term)
+
+    override fun visitPattern(term: Pattern): String {
+        val functor = term.functor.accept(childFormatter())
+        val args = term.argsSequence.joinToString(", ", "(", ")") { it.accept(childFormatter()) }
+        return "$functor$args".plusTagsOf(term)
+    }
 
     private fun isNumberedVar(term: Struct): Boolean =
         term.functor == "\$VAR" &&
@@ -136,7 +143,7 @@ internal abstract class AbstractTermFormatter(
 
     override fun visitFact(term: Fact): String = visitRule(term)
 
-    override fun visitDirective(term: Directive): String = visitStruct(term)
+    override fun visitGoal(term: Goal): String = visitStruct(term)
 
     protected open fun itemFormatter(): TermFormatter = this
 

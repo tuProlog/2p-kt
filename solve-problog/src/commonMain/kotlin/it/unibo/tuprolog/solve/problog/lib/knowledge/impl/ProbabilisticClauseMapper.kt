@@ -66,7 +66,7 @@ internal object ProbabilisticClauseMapper : ClauseMapper {
 
         // Remove anonymous variables
         val anonVariablesFix = Rule.of(headTerm, bodyTerm).withoutAnonymousVars()
-        headTerm = anonVariablesFix.head
+        headTerm = anonVariablesFix.head.castToStruct()
         bodyTerm = anonVariablesFix.body
 
         // Probabilistic term of this rule

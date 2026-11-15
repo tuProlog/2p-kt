@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.Solver
@@ -61,7 +61,7 @@ interface ConcurrentSolver : Solver {
      */
     @JsName("solveConcurrently")
     fun solveConcurrently(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): ReceiveChannel<Solution>
 

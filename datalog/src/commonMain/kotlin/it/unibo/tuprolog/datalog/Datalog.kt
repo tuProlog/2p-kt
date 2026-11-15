@@ -52,7 +52,7 @@ private val Clause.bodyLiterals: List<Struct>
  * goal in [Clause.bodyItems], each normalised to a [Struct] via [asLiteral].
  */
 val Clause.literals: List<Struct>
-    get() = (head?.let { listOf(it) } ?: emptyList()) + bodyLiterals
+    get() = (head?.let { listOf(it.asLiteral(ofClause = this)) } ?: emptyList()) + bodyLiterals
 
 /** The body literals of this [Clause] that are negated, i.e. for which [isNegated] holds. */
 val Clause.negatedBodyLiterals: List<Struct>

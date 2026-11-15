@@ -16,14 +16,27 @@ private class Representation(
 private val representations =
     listOf(
         Representation("directive", "{\"body\": {\"fun\": \"initialization\", \"args\": [\"main\"]}}") {
-            directiveOf(structOf("initialization", atomOf("main")))
+            goalOf(structOf("initialization", atomOf("main")))
         },
         Representation("indicator", "{\"name\": \"counter\", \"arity\": 1}") { indicatorOf("counter", 1) },
         Representation(
             "directive-on-an-indicator",
             "{\"body\": {\"fun\": \"dynamic\", \"args\": [{\"name\": \"counter\", \"arity\": 1}]}}",
         ) {
-            directiveOf(structOf("dynamic", indicatorOf("counter", 1)))
+            goalOf(structOf("dynamic", indicatorOf("counter", 1)))
+        },
+        Representation("pattern", "{\"fun\": {\"var\": \"P\"}, \"args\": [\"a\", {\"var\": \"X\"}]}") {
+            patternOf(varOf("P"), atomOf("a"), varOf("X"))
+        },
+        Representation(
+            "metarule",
+            "{\"head\": {\"fun\": {\"var\": \"P\"}, \"args\": [{\"var\": \"X\"}]}, " +
+                "\"body\": {\"fun\": {\"var\": \"Q\"}, \"args\": [{\"var\": \"X\"}]}}",
+        ) {
+            ruleOf(patternOf(varOf("P"), varOf("X")), patternOf(varOf("Q"), varOf("X")))
+        },
+        Representation("variable-indicator", "{\"name\": {\"var\": \"P\"}, \"arity\": 2}") {
+            indicatorOf(varOf("P"), intOf(2))
         },
     )
 

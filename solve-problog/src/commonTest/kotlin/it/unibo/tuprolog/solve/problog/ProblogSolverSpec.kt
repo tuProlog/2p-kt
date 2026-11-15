@@ -30,6 +30,7 @@ import it.unibo.tuprolog.solve.failContract
 import it.unibo.tuprolog.solve.findAllContract
 import it.unibo.tuprolog.solve.floatContract
 import it.unibo.tuprolog.solve.functorContract
+import it.unibo.tuprolog.solve.goalQueryContract
 import it.unibo.tuprolog.solve.ifThenContract
 import it.unibo.tuprolog.solve.ifThenElseContract
 import it.unibo.tuprolog.solve.integerContract
@@ -192,6 +193,7 @@ class ProblogSolverSpec :
         include(retractContract(ProblogSolverFactory))
         include(setOfContract(ProblogSolverFactory))
         include(solutionPresentationContract(ProblogSolverFactory))
+        include(goalQueryContract(ProblogSolverFactory))
         include(
             solverContract(
                 ProblogSolverFactory,

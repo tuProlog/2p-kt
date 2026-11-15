@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve.problog
 
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Tuple
@@ -31,7 +33,7 @@ internal open class ProblogSolver(
     private val solver: Solver,
 ) : Solver by solver {
     private fun solveNonProbabilistically(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): SolutionStream {
         val anonVar = Var.anonymous()
@@ -59,7 +61,7 @@ internal open class ProblogSolver(
     }
 
     private fun solveProbabilistically(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): SolutionStream {
         val probabilityVar = Var.of("Prob")
@@ -118,7 +120,7 @@ internal open class ProblogSolver(
     }
 
     override fun solve(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): SolutionStream =
         if (!options.isProbabilistic) {
@@ -128,11 +130,11 @@ internal open class ProblogSolver(
         }
 
     override fun solve(
-        goal: Struct,
+        goal: Compound,
         timeout: Duration,
     ): SolutionStream = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
-    override fun solve(goal: Struct): SolutionStream = solve(goal, SolveOptions.DEFAULT)
+    override fun solve(goal: Compound): SolutionStream = solve(goal, SolveOptions.DEFAULT)
 
     // overridden so that the delegation to solver does not bypass the probabilistic solve above
     @Deprecated(
@@ -140,7 +142,7 @@ internal open class ProblogSolver(
         ReplaceWith("solve(goal, timeout).toList()"),
     )
     override fun solveList(
-        goal: Struct,
+        goal: Compound,
         timeout: Duration,
     ): List<Solution> = solve(goal, timeout).toList()
 
@@ -148,28 +150,77 @@ internal open class ProblogSolver(
         "Call solve(goal).toList() instead, which also closes the SolutionStream",
         ReplaceWith("solve(goal).toList()"),
     )
-    override fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
+    override fun solveList(goal: Compound): List<Solution> = solve(goal).toList()
 
     @Deprecated(
         "Call solve(goal, options).toList() instead, which also closes the SolutionStream",
         ReplaceWith("solve(goal, options).toList()"),
     )
     override fun solveList(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): List<Solution> = solve(goal, options).toList()
 
     override fun solveOnce(
-        goal: Struct,
+        goal: Compound,
         timeout: Duration,
     ): Solution = solveOnce(goal, SolveOptions.someLazilyWithTimeout(1, timeout))
 
-    override fun solveOnce(goal: Struct): Solution = solveOnce(goal, SolveOptions.someLazily(1))
+    override fun solveOnce(goal: Compound): Solution = solveOnce(goal, SolveOptions.someLazily(1))
 
     override fun solveOnce(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): Solution = solve(goal, options.setLimit(1)).use { it.first() }
+
+    // the overloads taking goals forward to the ones above, rather than to solver
+    override fun solve(
+        goal: Goal,
+        options: SolveOptions,
+    ): SolutionStream = super<Solver>.solve(goal, options)
+
+    override fun solve(
+        goal: Goal,
+        timeout: Duration,
+    ): SolutionStream = super<Solver>.solve(goal, timeout)
+
+    override fun solve(goal: Goal): SolutionStream = super<Solver>.solve(goal)
+
+    @Deprecated(
+        "Call solve(goal, timeout).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, timeout).toList()"),
+    )
+    override fun solveList(
+        goal: Goal,
+        timeout: Duration,
+    ): List<Solution> = solve(goal, timeout).toList()
+
+    @Deprecated(
+        "Call solve(goal).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal).toList()"),
+    )
+    override fun solveList(goal: Goal): List<Solution> = solve(goal).toList()
+
+    @Deprecated(
+        "Call solve(goal, options).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, options).toList()"),
+    )
+    override fun solveList(
+        goal: Goal,
+        options: SolveOptions,
+    ): List<Solution> = solve(goal, options).toList()
+
+    override fun solveOnce(
+        goal: Goal,
+        timeout: Duration,
+    ): Solution = super<Solver>.solveOnce(goal, timeout)
+
+    override fun solveOnce(goal: Goal): Solution = super<Solver>.solveOnce(goal)
+
+    override fun solveOnce(
+        goal: Goal,
+        options: SolveOptions,
+    ): Solution = super<Solver>.solveOnce(goal, options)
 
     override fun copy(
         unificator: Unificator,

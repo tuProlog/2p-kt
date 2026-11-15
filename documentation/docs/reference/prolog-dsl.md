@@ -35,8 +35,10 @@ strings, terms) is auto-converted to a `Term` via `Termificator`:
 ```
 
 Other builders: `structOf(functor, *args)`, `logicListOf(*items)`/`logicList(*items, tail = ...)`, `tupleOf(*items)`,
-`blockOf(*items)`, `consOf(head, tail)`, `factOf(term)`, `directiveOf(term, *terms)`, and `rule { }` / `fact { }` /
-`directive { }` / `clause { }`, which build the corresponding `Clause` from the lambda's result.
+`blockOf(*items)`, `consOf(head, tail)`, `factOf(term)`, `goalOf(term, *terms)`, `patternOf(functor, *args)`, and
+`rule { }` / `fact { }` / `directive { }` (a `Goal`) / `clause { }`, which build the corresponding `Clause` from the
+lambda's result. Invoking a variable builds a `Pattern`: `P("X", "a")` is `P(X, a)`, e.g. the head of the metarule
+`rule { P("X") impliedBy Q("X") }` (whereas `"P"("X")` is the `Struct` `'P'(X)`).
 
 `LogicProgrammingScopeWithOperators` supplies infix builders mirroring Prolog operators, e.g. `a equalsTo b` (`=`),
 `a greaterThan b` (`>`), `a and b` (`,`), `a or b` (`;`), `a then b` (`->`), `x `is` y`, and `head `if` body`

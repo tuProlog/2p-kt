@@ -11,6 +11,7 @@ import it.unibo.tuprolog.parser.impl.tree.ListNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.NumberNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.OperatorExpressionNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.ParenthesizedExpressionNodeImpl
+import it.unibo.tuprolog.parser.impl.tree.PatternNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.StructureNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.TheoryNodeImpl
 import it.unibo.tuprolog.parser.impl.tree.VariableNodeImpl
@@ -368,7 +369,7 @@ internal class PrologGrammar(
                 cursor.peek().kind == TokenKind.LEFT_PARENTHESIS -> parseParenthesizedOrExplicitOperator()
                 cursor.peek().kind == TokenKind.LEFT_BRACKET -> parseListOrEmptyList()
                 cursor.peek().kind == TokenKind.LEFT_BRACE -> parseBlockOrEmptyBlock()
-                cursor.peek().kind == TokenKind.VARIABLE -> parseVariable()
+                cursor.peek().kind == TokenKind.VARIABLE -> parseVariableOrPattern()
                 cursor.peek().kind == TokenKind.SINGLE_QUOTED_ATOM -> parseQuotedAtomStructure()
                 cursor.peek().kind == TokenKind.DOUBLE_QUOTED_TEXT -> parseDoubleQuotedStructure()
                 cursor.peek().kind == TokenKind.CUT -> parseCut()
@@ -466,15 +467,34 @@ internal class PrologGrammar(
             )
         }
 
-    private fun parseVariable(): VariableNode =
+    /** A variable, or a pattern if the variable is followed by arguments, e.g. `P(X, Y)`. */
+    private fun parseVariableOrPattern(): TermNode =
+        rule("variable or pattern") {
+            if (cursor.peek(1).kind != TokenKind.LEFT_PARENTHESIS) return@rule parseVariable()
+            val functor = parseVariable(asFunctor = true)
+            val arguments = parseArguments()
+            val tokenRange = range(functor.tokenId, arguments.closing.id)
+            PatternNodeImpl(
+                span = span(tokenRange),
+                tokenRange = tokenRange,
+                functor = functor,
+                arguments = arguments.items,
+            )
+        }
+
+    private fun parseVariable(asFunctor: Boolean = false): VariableNode =
         rule("variable") {
             val token = expect(TokenKind.VARIABLE)
             val name = (token.payload as TokenPayload.Name).value
             val anonymous = name == "_"
             annotate(
                 token,
-                if (anonymous) SemanticRole.ANONYMOUS_VARIABLE else SemanticRole.VARIABLE,
-                SyntaxKind.VARIABLE,
+                when {
+                    asFunctor -> SemanticRole.FUNCTOR_VARIABLE
+                    anonymous -> SemanticRole.ANONYMOUS_VARIABLE
+                    else -> SemanticRole.VARIABLE
+                },
+                if (asFunctor) SyntaxKind.PATTERN else SyntaxKind.VARIABLE,
             )
             val tokenRange = range(token.id, token.id)
             VariableNodeImpl(

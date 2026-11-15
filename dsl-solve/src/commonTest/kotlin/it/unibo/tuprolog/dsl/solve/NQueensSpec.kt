@@ -44,8 +44,11 @@ class NQueensSpec :
 
                 solve("solution"(n, (1..n).map { it and "Y$it" }))
                     .filterIsInstance<Solution.Yes>()
-                    .map { it.solvedQuery[1].castToRecursive() }
-                    .map { it.toList() }
+                    .map {
+                        it.solvedQuery.body
+                            .castToStruct()[1]
+                            .castToRecursive()
+                    }.map { it.toList() }
                     .map { list ->
                         list
                             .map { it as Tuple }

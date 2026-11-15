@@ -74,7 +74,7 @@ internal object TestUtils {
                         !solutions.any { sol ->
                             val solution =
                                 ExpectedSolution(
-                                    sol.solvedQuery,
+                                    sol.solvedQuery.body.castToStruct(),
                                     sol.probability,
                                 )
                             currentActual = solution

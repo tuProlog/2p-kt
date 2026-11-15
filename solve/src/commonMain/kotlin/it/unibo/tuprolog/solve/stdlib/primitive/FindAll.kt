@@ -38,11 +38,12 @@ object FindAll : AbstractCollectingPrimitive("findall") {
         third: Term,
     ): Sequence<Substitution> {
         ensuringArgumentIsInstantiated(1)
-        ensuringArgumentIsCallable(1)
+        // patterns are callable: their functors are bound by the resolution
+        if (!second.isPattern) ensuringArgumentIsCallable(1)
         if (third !is Var && !(third.isList && (third.castToList().isWellFormed || third.castToList().last is Var))) {
             throw TypeError.forArgument(context, signature, TypeError.Expected.LIST, third, 2)
         }
-        val solutions = computeIntermediateSolutions(second.castToStruct())
+        val solutions = computeIntermediateSolutions(second.castToCompound())
         val mapped = solutions.map { first[it.substitution].freshCopy() }
         return sequenceOf(mgu(third, LogicList.of(mapped)))
     }

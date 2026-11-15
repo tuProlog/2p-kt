@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.solve.prolog.machine
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.stdlib.primitive.EnsureExecutable
@@ -16,9 +17,9 @@ internal fun Term.unfoldGoals(): Sequence<Term> =
  * callability check `call/1` runs first ([EnsureExecutable]), which [it.unibo.tuprolog.solve.ResolutionCounters] don't
  * count: the machine runs them as library predicates, other engines natively, and the counts must not depend on that.
  */
-internal val Struct?.isControlConstruct: Boolean
+internal val Compound?.isControlConstruct: Boolean
     get() =
-        this != null &&
+        this is Struct &&
             when (functor) {
                 "call" -> true
                 ",", ";", "->" -> arity == 2

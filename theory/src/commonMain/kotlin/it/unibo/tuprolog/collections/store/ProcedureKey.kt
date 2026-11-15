@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.collections.store
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.unify.IndexKey
 import it.unibo.tuprolog.unify.Unificator
 
@@ -10,8 +11,17 @@ internal data class ProcedureKey(
     val arity: Int,
 )
 
-/** The key of the procedure [clause] belongs to, `null` for directives. */
-internal fun procedureKeyOf(clause: Clause): ProcedureKey? = clause.head?.let { ProcedureKey(it.functor, it.arity) }
+/**
+ * The key of the procedure [clause] belongs to, `null` for directives. Not meant for clauses whose head is a [Pattern]
+ * (see [hasPatternHead]): they belong to every procedure of their arity.
+ */
+internal fun procedureKeyOf(clause: Clause): ProcedureKey? =
+    clause.head?.let { ProcedureKey(it.functor as String, it.arity) }
+
+/** Whether the head of this clause is a [Pattern], i.e. it has a variable functor. */
+internal val Clause.hasPatternHead: Boolean
+    // a property rather than a type check: failed checks against interfaces are slow on the JVM
+    get() = head?.isPattern == true
 
 // shortcut: custom head keys use store scans; add head-key indexes if these lookups become hot.
 internal fun Unificator.hasCustomHeadKey(clause: Clause): Boolean =

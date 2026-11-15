@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.concurrent
 
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolveOptions
 import kotlinx.coroutines.CoroutineScope
@@ -75,7 +75,7 @@ data class ConcurrentResolutionHandle(
         get() = solutionChannel.isClosedForSend
 
     /** Publishes a [Solution.no] for [goal] onto [solutionChannel]. */
-    suspend fun publishNoSolution(goal: Struct) {
+    suspend fun publishNoSolution(goal: Compound) {
         solutionChannel.send(Solution.no(goal))
     }
 
@@ -89,7 +89,7 @@ data class ConcurrentResolutionHandle(
      * @return `true` if [solutionChannel] was actually closed by this call, `false` if it was already closed.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun closeSolutionChannelWithNoSolutionIfNeeded(goal: Struct): Boolean {
+    suspend fun closeSolutionChannelWithNoSolutionIfNeeded(goal: Compound): Boolean {
         if (!isSolutionChannelClosed) {
             if (solutionCounter.value == 0) {
                 publishNoSolution(goal)

@@ -6,6 +6,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.ObjectRef
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.logicProgramming
@@ -33,7 +35,7 @@ internal fun invocationCases(
     fun testMethodInvocation(
         cases: List<TestDatum>,
         detectorCreator: () -> OverloadDetector = OverloadDetector.Companion::create,
-        refCreator: (OverloadDetector) -> Ref = ObjectRef.Companion::of,
+        refCreator: (OverloadDetector) -> Ref = Ref.Companion::of,
         case2Term: (TestDatum) -> Term,
     ) = logicProgramming {
         val solver = solverFactory.solverWithDefaultBuiltins(otherLibraries = Runtime.of(OOPLib))
@@ -78,7 +80,7 @@ internal fun invocationCases(
                 ?.substitution
                 ?.get(R)
                 ?.let { it as ObjectRef }
-                ?.`object`
+                ?.value
         ) shouldBe obj.toList()
         obj.toList() shouldBe (cases.filterNot { it.isFailed }.map { it.converted!! })
         obj.recordings shouldBe (cases.filterNot { it.isFailed }.map { it.converted!! to it.type })

@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Rule
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.ExecutionContext
@@ -44,7 +44,7 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
         val clause: Clause =
             when (first) {
                 is Clause -> first
-                is Struct -> Rule.of(first, Var.anonymous())
+                is Compound -> Rule.of(first, Var.anonymous())
                 else -> return sequenceOf(ensuringArgumentIsCallable(0).replyFail())
             }
         ensuringClauseProcedureHasPermission(clause, PermissionError.Operation.MODIFY)
@@ -54,7 +54,7 @@ object Retract : UnaryPredicate<ExecutionContext>("retract") {
             val substitution =
                 when (first) {
                     is Clause -> mgu(first, candidate)
-                    else -> mgu(Rule.of(first.castToStruct(), candidate.body), candidate)
+                    else -> mgu(Rule.of(first.castToCompound(), candidate.body), candidate)
                 }
             if (substitution.isSuccess) {
                 replySuccess(substitution.castToUnifier()) {

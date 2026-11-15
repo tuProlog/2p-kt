@@ -58,7 +58,6 @@ object Type : BinaryRelation.Functional<ExecutionContext>("type") {
                     Substitution.failed()
                 }
                 first is Var -> {
-                    ensuringArgumentIsAtom(1)
                     ensuringArgumentIsTypeRef(1)
                     mgu(first, Atom.of((second as TypeRef).type.fullName))
                 }

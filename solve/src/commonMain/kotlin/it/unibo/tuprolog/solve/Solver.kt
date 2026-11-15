@@ -1,5 +1,7 @@
 package it.unibo.tuprolog.solve
 
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.solve.channel.InputChannel
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -14,7 +16,7 @@ import kotlin.jvm.JvmStatic
 import kotlin.time.Duration
 
 /**
- * General type for logic solvers, i.e. any entity capable of solving some logic query -- provided as a [Struct] --
+ * General type for logic solvers, i.e. any entity capable of solving some logic query -- provided as a [Goal] --
  * according to some logic, implementing one or more inference rule, via some resolution strategy.
  *
  * A [Solver] is deliberately strategy-agnostic: this module defines no resolution algorithm at all, only the
@@ -46,18 +48,30 @@ interface Solver : ExecutionContextAware {
     /** Shorthand for [solve] with `options` set to [SolveOptions.allLazilyWithTimeout] of [timeout]. */
     @JsName("solveWithTimeout")
     fun solve(
-        goal: Struct,
+        goal: Compound,
         timeout: Duration,
     ): SolutionStream = solve(goal, SolveOptions.allLazilyWithTimeout(timeout))
 
+    /** Solves the [Goal.body] of [goal], as the overload taking a [Compound] does. */
+    @JsName("solveGoalWithTimeout")
+    fun solve(
+        goal: Goal,
+        timeout: Duration,
+    ): SolutionStream = solve(goal.callable, timeout)
+
     /** Shorthand for [solve] with [SolveOptions.DEFAULT] (i.e. all solutions, lazily, without a timeout). */
     @JsName("solve")
-    fun solve(goal: Struct): SolutionStream = solve(goal, SolveOptions.DEFAULT)
+    fun solve(goal: Compound): SolutionStream = solve(goal, SolveOptions.DEFAULT)
+
+    /** Solves the [Goal.body] of [goal], as the overload taking a [Compound] does. */
+    @JsName("solveGoal")
+    fun solve(goal: Goal): SolutionStream = solve(goal.callable)
 
     /**
      * Solves [goal], returning its (possibly infinite) solutions, computed according to `options`, as a
      * [SolutionStream]: a single-pass [Sequence] that can be cancelled, and that should be closed once no more
-     * solutions are needed, e.g. through `use { }`, to release what the resolution holds (#1010).
+     * solutions are needed, e.g. through `use { }`, to release what the resolution holds (#1010). Every solution refers
+     * to the [Goal] of [goal] (`:- goal`) as its [Solution.query].
      *
      * Whether solutions are computed as the stream is consumed, or eagerly ahead of time, depends on
      * [SolveOptions.isLazy]; how many solutions are produced is capped by [SolveOptions.limit], and the overall
@@ -66,9 +80,19 @@ interface Solver : ExecutionContextAware {
      */
     @JsName("solveWithOptions")
     fun solve(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): SolutionStream
+
+    /**
+     * Solves the [Goal.body] of [goal], as the overload taking a [Compound] does. Like the other overloads taking a
+     * [Goal], it calls a body that is not a [Compound] via `call/1`, which raises the error it deserves.
+     */
+    @JsName("solveGoalWithOptions")
+    fun solve(
+        goal: Goal,
+        options: SolveOptions,
+    ): SolutionStream = solve(goal.callable, options)
 
     /** Every solution of [goal] within [timeout], as a [List]. */
     @Deprecated(
@@ -77,7 +101,18 @@ interface Solver : ExecutionContextAware {
     )
     @JsName("solveListWithTimeout")
     fun solveList(
-        goal: Struct,
+        goal: Compound,
+        timeout: Duration,
+    ): List<Solution> = solve(goal, timeout).toList()
+
+    /** Every solution of the [Goal.body] of [goal] within [timeout], as a [List]. */
+    @Deprecated(
+        "Call solve(goal, timeout).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, timeout).toList()"),
+    )
+    @JsName("solveGoalListWithTimeout")
+    fun solveList(
+        goal: Goal,
         timeout: Duration,
     ): List<Solution> = solve(goal, timeout).toList()
 
@@ -87,7 +122,15 @@ interface Solver : ExecutionContextAware {
         ReplaceWith("solve(goal).toList()"),
     )
     @JsName("solveList")
-    fun solveList(goal: Struct): List<Solution> = solve(goal).toList()
+    fun solveList(goal: Compound): List<Solution> = solve(goal).toList()
+
+    /** Every solution of the [Goal.body] of [goal], as a [List]. */
+    @Deprecated(
+        "Call solve(goal).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal).toList()"),
+    )
+    @JsName("solveGoalList")
+    fun solveList(goal: Goal): List<Solution> = solve(goal).toList()
 
     /** Every solution of [goal] computed according to [options], as a [List]. */
     @Deprecated(
@@ -96,20 +139,42 @@ interface Solver : ExecutionContextAware {
     )
     @JsName("solveListWithOptions")
     fun solveList(
-        goal: Struct,
+        goal: Compound,
+        options: SolveOptions,
+    ): List<Solution> = solve(goal, options).toList()
+
+    /** Every solution of the [Goal.body] of [goal] computed according to [options], as a [List]. */
+    @Deprecated(
+        "Call solve(goal, options).toList() instead, which also closes the SolutionStream",
+        ReplaceWith("solve(goal, options).toList()"),
+    )
+    @JsName("solveGoalListWithOptions")
+    fun solveList(
+        goal: Goal,
         options: SolveOptions,
     ): List<Solution> = solve(goal, options).toList()
 
     /** Shorthand for [solveOnce] with a timeout, and a limit of `1` solution. */
     @JsName("solveOnceWithTimeout")
     fun solveOnce(
-        goal: Struct,
+        goal: Compound,
         timeout: Duration,
     ): Solution = solveOnce(goal, SolveOptions.someLazilyWithTimeout(1, timeout))
 
+    /** Solves the [Goal.body] of [goal] once, as the overload taking a [Compound] does. */
+    @JsName("solveGoalOnceWithTimeout")
+    fun solveOnce(
+        goal: Goal,
+        timeout: Duration,
+    ): Solution = solveOnce(goal.callable, timeout)
+
     /** Shorthand for [solveOnce] with [SolveOptions.someLazily] of `1`. */
     @JsName("solveOnce")
-    fun solveOnce(goal: Struct): Solution = solveOnce(goal, SolveOptions.someLazily(1))
+    fun solveOnce(goal: Compound): Solution = solveOnce(goal, SolveOptions.someLazily(1))
+
+    /** Solves the [Goal.body] of [goal] once, as the overload taking a [Compound] does. */
+    @JsName("solveGoalOnce")
+    fun solveOnce(goal: Goal): Solution = solveOnce(goal.callable)
 
     /**
      * Solves [goal] and eagerly returns its first [Solution] only, regardless of `options`' [SolveOptions.limit]
@@ -117,9 +182,16 @@ interface Solver : ExecutionContextAware {
      */
     @JsName("solveOnceWithOptions")
     fun solveOnce(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): Solution = solve(goal, options.setLimit(1)).use { it.first() }
+
+    /** Solves the [Goal.body] of [goal] once, as the overload taking a [Compound] does. */
+    @JsName("solveGoalOnceWithOptions")
+    fun solveOnce(
+        goal: Goal,
+        options: SolveOptions,
+    ): Solution = solveOnce(goal.callable, options)
 
     /**
      * Creates a new [Solver], sharing the same resolution strategy as this one, but with every explicitly-provided
@@ -163,3 +235,7 @@ interface Solver : ExecutionContextAware {
         val concurrent: SolverFactory by lazy { concurrentSolverFactory() }
     }
 }
+
+// what solving a goal amounts to: its body, called via call/1 if it is not a Compound (e.g. a variable)
+private val Goal.callable: Compound
+    get() = body as? Compound ?: Struct.of("call", body)

@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.serialize
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import java.math.BigDecimal
@@ -64,7 +64,7 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
 
     // a directive has a body but no head
     private fun deobjectifyClause(value: Map<*, *>): Term {
-        val head = value["head"]?.let { deobjectify(it) as? Struct ?: throw DeobjectificationException(value) }
+        val head = value["head"]?.let { deobjectify(it) as? Compound ?: throw DeobjectificationException(value) }
         val body = value["body"]?.let { deobjectify(it) }
         return when {
             body == null -> scope.factOf(head ?: throw DeobjectificationException(value))
@@ -112,14 +112,17 @@ internal class JvmTermDeobjectifier : TermDeobjectifier {
 
     @Suppress("ThrowsCount")
     private fun deobjectifyStructure(value: Map<*, *>): Term {
-        val name = value["fun"] as? String ?: throw DeobjectificationException(value)
-        val args = value["args"] as? List<*> ?: throw DeobjectificationException(value)
-        return scope.structOf(
-            name,
-            args.map {
+        val functor = value["fun"]
+        val args =
+            (value["args"] as? List<*> ?: throw DeobjectificationException(value)).map {
                 deobjectify(it ?: throw DeobjectificationException(value))
-            },
-        )
+            }
+        return when (functor) {
+            is String -> scope.structOf(functor, args)
+            // a pattern, whose functor is a variable
+            is Map<*, *> -> scope.patternOf(deobjectifyVariable(functor).castToVar(), args)
+            else -> throw DeobjectificationException(value)
+        }
     }
 
     private fun deobjectifyVariable(value: Map<*, *>): Term {

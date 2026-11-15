@@ -2,8 +2,8 @@ package it.unibo.tuprolog.solve.directives
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Rule
@@ -94,7 +94,7 @@ class ClausePartitioner(
     private val defaultClauses: MutableTheory by lazy { if (staticByDefault) _staticClauses else _dynamicClauses }
 
     override fun onSetFlag(
-        directive: Directive,
+        directive: Goal,
         name: Term,
         value: Term,
     ) {
@@ -105,7 +105,7 @@ class ClausePartitioner(
     }
 
     override fun onOperator(
-        directive: Directive,
+        directive: Goal,
         priority: Term,
         specifier: Term,
         name: Term,
@@ -126,7 +126,7 @@ class ClausePartitioner(
     }
 
     override fun onLoad(
-        directive: Directive,
+        directive: Goal,
         goal: Term,
     ) {
         onDirective(directive)
@@ -136,7 +136,7 @@ class ClausePartitioner(
     }
 
     override fun onSolve(
-        directive: Directive,
+        directive: Goal,
         goal: Term,
     ) {
         onDirective(directive)
@@ -146,7 +146,7 @@ class ClausePartitioner(
     }
 
     override fun onStatic(
-        directive: Directive,
+        directive: Goal,
         indicator: Indicator,
     ) {
         onDirective(directive)
@@ -156,7 +156,7 @@ class ClausePartitioner(
     }
 
     override fun onDynamic(
-        directive: Directive,
+        directive: Goal,
         indicator: Indicator,
     ) {
         onDirective(directive)
@@ -166,19 +166,20 @@ class ClausePartitioner(
     }
 
     override fun onDirectiveMatchingPattern(
-        directive: Directive,
+        directive: Goal,
         pattern: Term,
         unifier: Substitution.Unifier,
     ) {
         onDirective(directive)
     }
 
-    override fun onDirective(directive: Directive) {
+    override fun onDirective(directive: Goal) {
         onClause(directive)
     }
 
     override fun onRule(rule: Rule) {
-        when (rule.head.extractSignature()) {
+        // a Pattern head has no signature: such rules go to the default clauses, which decide whether to accept them
+        when (rule.head.asStruct()?.extractSignature()) {
             in dynamicSignatures -> _dynamicClauses.assertZ(rule)
             in staticSignatures -> _staticClauses.assertZ(rule)
             else -> defaultClauses.assertZ(rule)

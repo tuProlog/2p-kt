@@ -55,11 +55,12 @@ actual fun KClass<*>.allSupertypes(strict: Boolean): Sequence<KClass<*>> = throw
 actual val KCallable<*>.formalParameterTypes: List<KClass<*>>
     get() = throw TODO_EXCEPTION
 
+// JS has no packages: the simple name is the full name
 actual val KClass<*>.fullName: String
-    get() = throw TODO_EXCEPTION
+    get() = simpleName ?: js.name
 
 actual val KClass<*>.name: String
-    get() = throw TODO_EXCEPTION
+    get() = fullName
 
 actual fun KCallable<*>.pretty(): String = throw TODO_EXCEPTION
 
@@ -75,3 +76,11 @@ actual fun overloadSelector(
     type: KClass<*>,
     termToObjectConverter: TermToObjectConverter,
 ): OverloadSelector = throw TODO_EXCEPTION
+
+private val canonicalTypes = mutableMapOf<KClass<*>, KClass<*>>()
+
+internal actual val KClass<*>.canonical: KClass<*>
+    get() = canonicalTypes.getOrPut(this) { this }
+
+internal actual val platformBackend: HostInteropBackend
+    get() = JsBackend

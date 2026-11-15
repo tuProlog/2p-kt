@@ -51,7 +51,7 @@ class LibraryImplSpec :
 
             (
                 case.raw.theory.rules
-                    .map { it.head.extractSignature() } + case.raw.primitives.keys
+                    .map { it.head.castToStruct().extractSignature() } + case.raw.primitives.keys
             ).forEach { signature -> (signature in libraryInstance).shouldBeTrue() }
 
             (Signature("ciao", 3) in libraryInstance).shouldBeFalse()
@@ -86,7 +86,7 @@ class LibraryImplSpec :
 
             (
                 case.raw.theory.rules
-                    .map { it.head.extractSignature() } + Signature("ciao", 3)
+                    .map { it.head.castToStruct().extractSignature() } + Signature("ciao", 3)
             ).forEach {
                 libraryInstance.hasPrimitive(it).shouldBeFalse()
             }
@@ -97,7 +97,7 @@ class LibraryImplSpec :
 
             (
                 case.raw.theory.rules
-                    .map { it.head.extractSignature() } + case.raw.primitives.keys
+                    .map { it.head.castToStruct().extractSignature() } + case.raw.primitives.keys
             ).forEach { signature -> libraryInstance.hasProtected(signature).shouldBeTrue() }
 
             libraryInstance.hasProtected(Signature("ciao", 3)).shouldBeFalse()

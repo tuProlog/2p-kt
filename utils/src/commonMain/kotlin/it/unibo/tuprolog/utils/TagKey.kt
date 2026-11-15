@@ -7,12 +7,13 @@ import kotlin.js.JsName
  * be read and written without casts, while still being stored, and propagated, as an ordinary tag:
  *
  * ```kotlin
- * val Source = TagKey<String>("source")
+ * val Source = TagKey<String>("org.example.Loading.source")
  * val theory = Theory.empty().withTag(Source, "file.pl")
  * theory[Source] // "file.pl"
  * ```
  *
- * Keys are equal when their names are, whatever their type parameter: use distinct names for distinct metadata.
+ * Keys are equal when their names are, whatever their type parameter: use distinct names for distinct metadata, named
+ * as [Taggable] recommends.
  */
 data class TagKey<T : Any>(
     val name: String,

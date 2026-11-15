@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.dsl
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -36,12 +37,12 @@ interface BaseLogicProgrammingScope<S : BaseLogicProgrammingScope<S>> : Scope {
     @JsName("convertToSpecificSubTypeOfTerm")
     fun <T : Term> Any.toSpecificSubTypeOfTerm(
         type: KClass<T>,
-        converter: (Struct) -> T,
+        converter: (Compound) -> T,
     ): T {
         val t = toTerm()
         return when {
             type.isInstance(t) -> t as T
-            t is Struct -> converter(t)
+            t is Compound -> converter(t)
             else -> raiseErrorConvertingTo(type)
         }
     }

@@ -1,10 +1,14 @@
 package it.unibo.tuprolog.unify.impl
 
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.UnificationRequest
+import it.unibo.tuprolog.unify.forEachPatternFunctor
+import it.unibo.tuprolog.unify.functorVariables
 
 /**
  * The mutable state of one [it.unibo.tuprolog.unify.AbstractWorklistUnificator] call: a stack of pairs of terms still
@@ -14,6 +18,13 @@ import it.unibo.tuprolog.unify.UnificationRequest
  *
  * Without occurs-check, bindings may be cyclic: then, compound terms reached through bindings are compared once
  * per pair of instances, which bounds the work on rational terms.
+ *
+ * Functor variables, i.e. variables standing for the functor of a [Pattern], can only be bound to atoms or variables,
+ * also across runs. They are tracked in the [bindings] as representatives of their classes of aliased variables:
+ * the functors of the patterns in the terms to unify (or in the values of substitutions to merge) become such when the
+ * run starts, and binding a functor variable to another variable makes the latter (the new representative) one too.
+ * So, it suffices to check the representative when a class gets bound to a term. While no pattern exists at all (see
+ * [Pattern.anyCreated]), none of this is done.
  */
 internal class UnificationRun(
     private val hooks: UnificationHooks,
@@ -38,10 +49,42 @@ internal class UnificationRun(
     }
 
     /**
+     * Pushes [lhs] and [rhs], the terms to unify, after making the functors of their patterns functor variables.
+     * Returns `false` if some of them is already bound to something else than an atom.
+     */
+    fun start(
+        lhs: Term,
+        rhs: Term,
+    ): Boolean {
+        if (!constrainFunctorsIn(lhs) || !constrainFunctorsIn(rhs)) return false
+        push(lhs, rhs)
+        return true
+    }
+
+    private fun constrainFunctorsIn(term: Term): Boolean {
+        forEachPatternFunctor(term) { if (!constrainFunctor(it)) return false }
+        return true
+    }
+
+    /** Makes the class of [variable] one of functor variables, unless it is bound to something else than an atom. */
+    private fun constrainFunctor(variable: Var): Boolean {
+        val representative = bindings.representative(variable)
+        if (representative !is Var) return representative.isAtom
+        val value =
+            bindings[representative] ?: return true.also {
+                // constraining it again would only grow the trail of the bindings
+                if (!bindings.isFunctorVariable(representative)) bindings.constrainFunctor(representative)
+            }
+        return value.isAtom
+    }
+
+    /**
      * Adds the bindings of [substitution]: a variable not bound yet gets bound right away, whereas a variable already
      * bound gets its two values pushed as a pair to unify. Returns `false` if occurs-check rejects a binding.
      */
     fun merge(substitution: Substitution): Boolean {
+        for (functor in substitution.functorVariables) if (!constrainFunctor(functor)) return false
+        for (term in substitution.values) if (!constrainFunctorsIn(term)) return false
         for ((variable, term) in substitution) {
             val representative = bindings.representative(variable)
             if (representative is Var && bindings[representative] == null) {
@@ -94,7 +137,8 @@ internal class UnificationRun(
             lhs is Var -> (rhs is Var && hooks.checkTermsEquality(lhs, rhs)) || bind(lhs, rhs)
             rhs is Var -> bind(rhs, lhs)
             lhs.isConstant || rhs.isConstant -> lhs.isConstant && rhs.isConstant && hooks.checkTermsEquality(lhs, rhs)
-            else -> decompose(lhs.castToStruct(), rhs.castToStruct(), lhsRepresentative, rhsRepresentative)
+            lhs is Struct && rhs is Struct -> decompose(lhs, rhs, lhsRepresentative, rhsRepresentative)
+            else -> decomposePatterns(lhs.castToCompound(), rhs.castToCompound(), lhsRepresentative, rhsRepresentative)
         }
     }
 
@@ -114,17 +158,55 @@ internal class UnificationRun(
         return true
     }
 
+    /** Decomposes two compound terms, at least one being a [Pattern], functors included. */
+    private fun decomposePatterns(
+        lhs: Compound,
+        rhs: Compound,
+        lhsRepresentative: Term,
+        rhsRepresentative: Term,
+    ): Boolean {
+        if (lhs.arity != rhs.arity) return false
+        // patterns reached through bindings were met when their bindings were made, but those of a base may not be
+        if (lhs is Pattern && !constrainFunctor(lhs.functor)) return false
+        if (rhs is Pattern && !constrainFunctor(rhs.functor)) return false
+        if (!occursCheck && (lhsRepresentative is Var || rhsRepresentative is Var) && !firstComparison(lhs, rhs)) {
+            return true
+        }
+        for (i in lhs.arity - 1 downTo 0) push(lhs[i], rhs[i])
+        // pushed last, so functors are unified first
+        push(lhs.functorTerm, rhs.functorTerm)
+        return true
+    }
+
     private fun firstComparison(
-        lhs: Struct,
-        rhs: Struct,
+        lhs: Compound,
+        rhs: Compound,
     ): Boolean = (compared ?: HashSet<ComparedPair>().also { compared = it }).add(ComparedPair(lhs, rhs))
 
+    /** Binds the unbound representative [variable] to [term], unless it is a functor variable and [term] cannot be. */
     private fun bind(
         variable: Var,
         term: Term,
     ): Boolean {
+        if (Pattern.anyCreated && !functorConstraintAllows(variable, term)) return false
         if (occursCheck && term !is Var && bindings.occurs(variable, term)) return false
         bindings[variable] = term
         return true
+    }
+
+    /**
+     * Whether [variable] may be bound to [term]: a functor variable only to atoms or variables, which become functor
+     * variables too. Out of [bind], which stays small enough to be inlined.
+     */
+    private fun functorConstraintAllows(
+        variable: Var,
+        term: Term,
+    ): Boolean {
+        if (!bindings.isFunctorVariable(variable)) return true
+        if (term is Var) {
+            bindings.constrainFunctor(term)
+            return true
+        }
+        return term.isAtom
     }
 }

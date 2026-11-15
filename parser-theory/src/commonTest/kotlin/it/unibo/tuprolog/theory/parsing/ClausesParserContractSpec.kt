@@ -19,15 +19,15 @@ import it.unibo.tuprolog.unify.Unificator
 
 class ClausesParserContractSpec :
     FunSpec({
-        fun Iterable<Clause>.functors(): List<String> = map { (it as Fact).head.functor }
+        fun Iterable<Clause>.functors(): List<String> = map { (it as Fact).head.castToStruct().functor }
 
-        fun Sequence<Clause>.functors(): List<String> = map { (it as Fact).head.functor }.toList()
+        fun Sequence<Clause>.functors(): List<String> = map { (it as Fact).head.castToStruct().functor }.toList()
 
-        fun Iterable<Clause>.singleHead(): Struct = (single() as Fact).head
+        fun Iterable<Clause>.singleHead(): Struct = (single() as Fact).head.castToStruct()
 
-        fun Sequence<Clause>.singleHead(): Struct = (single() as Fact).head
+        fun Sequence<Clause>.singleHead(): Struct = (single() as Fact).head.castToStruct()
 
-        fun Theory.singleHead(): Struct = (single() as Fact).head
+        fun Theory.singleHead(): Struct = (single() as Fact).head.castToStruct()
 
         test("factories-expose-the-requested-default-operators") {
             val custom = Operator("++", Specifier.YFX, 500)

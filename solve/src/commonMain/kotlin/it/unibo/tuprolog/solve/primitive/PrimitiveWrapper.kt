@@ -227,7 +227,8 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
             clause: Clause,
             operation: PermissionError.Operation,
         ): Solve.Request<C> {
-            val headSignature: Signature? = clause.head?.extractSignature()
+            // a Pattern head denotes no specific procedure, hence it has no signature to check permissions against
+            val headSignature: Signature? = clause.head?.asStruct()?.extractSignature()
             return ensuringProcedureHasPermission(headSignature, operation)
         }
 
@@ -274,8 +275,10 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         @JvmStatic
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsWellFormedClause(index: Int): Solve.Request<C> {
             ensuringArgumentIsInstantiated(index)
-            ensuringArgumentIsStruct(index)
             val candidate = arguments[index]
+            // a pattern is a head, standing for the clauses of every procedure of its arity
+            if (candidate.isPattern) return this
+            ensuringArgumentIsStruct(index)
             return when {
                 candidate.isClause -> {
                     if (!candidate.castToClause().isWellFormed) {
@@ -341,7 +344,7 @@ abstract class PrimitiveWrapper<C : ExecutionContext> : AbstractWrapper<Primitiv
         fun <C : ExecutionContext> Solve.Request<C>.ensuringArgumentIsCompound(index: Int): Solve.Request<C> {
             val arg = arguments[index]
             return when {
-                !arg.isStruct || arg.isAtom -> throw TypeError.forArgument(
+                !arg.isCompound || arg.isAtom -> throw TypeError.forArgument(
                     context,
                     signature,
                     TypeError.Expected.COMPOUND,

@@ -2,7 +2,6 @@ package it.unibo.tuprolog.examples.benchmarks.theory
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Rule
@@ -34,7 +33,8 @@ object TheoryWorkloads {
 
     fun standard(size: Int): List<Clause> =
         buildList(3 * size + 1) {
-            add(Directive.of(Struct.of("dynamic", Struct.of("/", Atom.of("p"), Integer.of(3)))))
+            // Clause.of, not Goal.of: the same sources must build against refs predating the Goal type
+            add(Clause.of(null, Struct.of("dynamic", Struct.of("/", Atom.of("p"), Integer.of(3)))))
             for (i in 0 until size) add(p(i))
             for (i in 0 until size) add(q(i))
             repeat(size) { add(r()) }

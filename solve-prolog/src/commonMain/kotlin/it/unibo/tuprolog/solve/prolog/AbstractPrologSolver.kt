@@ -1,6 +1,6 @@
 package it.unibo.tuprolog.solve.prolog
 
-import it.unibo.tuprolog.core.Struct
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.operators.OperatorSet
 import it.unibo.tuprolog.solve.Solution
 import it.unibo.tuprolog.solve.SolutionStream
@@ -102,7 +102,7 @@ internal abstract class AbstractPrologSolver(
      * flags and channels and from [options], and answers it with a fresh [PrologMachine].
      */
     final override fun solveImpl(
-        goal: Struct,
+        goal: Compound,
         options: SolveOptions,
     ): Sequence<Solution> {
         currentContext =
@@ -116,12 +116,16 @@ internal abstract class AbstractPrologSolver(
                 inputChannels = inputChannels,
                 outputChannels = outputChannels,
                 customData = currentContext.customData,
-                chronometer = options.createChronometer(),
-                counters = options.counters,
-                interception = options.interceptor?.let(::Interception),
-                ruleSelection = options.ruleSelection,
-                goalSelection = options.goalSelection,
-                cancellation = starting?.cancellation ?: inheritedCancellation,
+                settings =
+                    ResolutionSettings(
+                        chronometer = options.createChronometer(),
+                        counters = options.counters,
+                        interception = options.interceptor?.let(::Interception),
+                        ruleSelection = options.ruleSelection,
+                        goalSelection = options.goalSelection,
+                        metaResolution = options.metaResolution,
+                        cancellation = starting?.cancellation ?: inheritedCancellation,
+                    ),
             )
         val machine = PrologMachine(currentContext, goal, options.branchScheduler) { currentContext = it }
         starting?.machine = machine
@@ -130,7 +134,7 @@ internal abstract class AbstractPrologSolver(
 
     // the machine checks the cancellation at every step, and nested resolutions share it
     final override fun openStream(
-        goal: Struct,
+        goal: Compound,
         solutions: () -> Sequence<Solution>,
     ): SolutionStream {
         val stream = PrologSolutionStream(Cancellation(inheritedCancellation))

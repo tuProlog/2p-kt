@@ -17,7 +17,7 @@ internal object ProbSetConfig : UnaryPredicate.NonBacktrackable<ExecutionContext
 ) {
     private val CONFIG_FLAG = "${this.functor}_flag"
     private val CONFIG_TERM_NAME = "${this.functor}_term"
-    private val CONFIG_TERM_TAG = "it.unibo.tuprolog.solve.probability${this.functor}_tag"
+    private const val CONFIG_TERM_TAG = "it.unibo.tuprolog.solve.problog.lib.primitive.ProbSetConfig.config-term"
 
     override fun Solve.Request<ExecutionContext>.computeOne(first: Term): Solve.Response {
         ensuringArgumentIsInstantiated(0)

@@ -21,4 +21,15 @@ interface BindingStore {
         variable: Var,
         term: Term,
     )
+
+    /**
+     * Whether [variable] is a *functor variable*, i.e. it stands for the functor of a [it.unibo.tuprolog.core.Pattern],
+     * hence it can only be bound to atoms or variables. Only asked about unbound variables.
+     */
+    @JsName("isFunctorVariable")
+    fun isFunctorVariable(variable: Var): Boolean
+
+    /** Makes the unbound [variable] a functor variable: like bindings, to be undone on backtracking. */
+    @JsName("constrainFunctor")
+    fun constrainFunctor(variable: Var)
 }

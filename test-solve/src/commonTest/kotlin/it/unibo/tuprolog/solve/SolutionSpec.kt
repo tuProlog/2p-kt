@@ -5,11 +5,15 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withTests
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Goal
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Truth
+import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.testutils.SolutionUtils.aQuery
 import it.unibo.tuprolog.solve.testutils.SolutionUtils.aSubstitution
 import it.unibo.tuprolog.solve.testutils.SolutionUtils.anException
@@ -42,7 +46,7 @@ class SolutionSpec :
         test("yes-solution-contains-inserted-data") {
             val toBeTested = Solution.yes(aQuery, aSubstitution)
 
-            toBeTested.query shouldBe aQuery
+            toBeTested.query shouldBe Goal.of(aQuery)
             toBeTested.substitution shouldBe aSubstitution
         }
 
@@ -55,15 +59,15 @@ class SolutionSpec :
         test("yes-solution-computes-solved-query-applying-substitution-to-query") {
             val toBeTested = Solution.yes(aQuery, aSubstitution)
 
-            toBeTested.solvedQuery shouldBe theQuerySolved
+            toBeTested.solvedQuery shouldBe Goal.of(theQuerySolved)
         }
 
         test("yes-solution-secondary-constructor-works-as-expected") {
             val toBeTested = Solution.yes(querySignature, queryArgList, aSubstitution)
 
-            toBeTested.query shouldBe aQuery
+            toBeTested.query shouldBe Goal.of(aQuery)
             toBeTested.substitution shouldBe aSubstitution
-            toBeTested.solvedQuery shouldBe theQuerySolved
+            toBeTested.solvedQuery shouldBe Goal.of(theQuerySolved)
         }
 
         test("yes-solution-secondary-constructor-complains-if-arity-doesnt-match-arguments-count") {
@@ -86,7 +90,7 @@ class SolutionSpec :
         }
 
         test("no-solution-contains-inserted-data") {
-            Solution.no(aQuery).query shouldBe aQuery
+            Solution.no(aQuery).query shouldBe Goal.of(aQuery)
         }
 
         test("no-solution-solution-always-null") {
@@ -100,7 +104,7 @@ class SolutionSpec :
         test("no-solution-secondary-constructor-works-as-expected") {
             val toBeTested = Solution.no(querySignature, queryArgList)
 
-            toBeTested.query shouldBe aQuery
+            toBeTested.query shouldBe Goal.of(aQuery)
         }
 
         test("no-solution-secondary-constructor-complains-if-arity-doesnt-match-arguments-count") {
@@ -119,7 +123,7 @@ class SolutionSpec :
         test("halt-solution-contains-inserted-data") {
             val toBeTested = Solution.halt(aQuery, anException)
 
-            toBeTested.query shouldBe aQuery
+            toBeTested.query shouldBe Goal.of(aQuery)
             toBeTested.exception shouldBe anException
         }
 
@@ -134,7 +138,7 @@ class SolutionSpec :
         test("halt-solution-secondary-constructor-works-as-expected") {
             val toBeTested = Solution.halt(querySignature, queryArgList, anException)
 
-            toBeTested.query shouldBe aQuery
+            toBeTested.query shouldBe Goal.of(aQuery)
         }
 
         test("halt-solution-secondary-constructor-complains-if-arity-doesnt-match-arguments-count") {
@@ -202,5 +206,60 @@ class SolutionSpec :
             val solution = case.solution()
             (solution.whenIs<String>(otherwise = { "otherwise" })) shouldBe "otherwise"
             shouldThrow<IllegalStateException> { solution.whenIs<String>() }
+        }
+
+        test("compound-queries-become-goals") {
+            val x = Var.of("X")
+            val call = Struct.of("p", x)
+            Solution.yes(call).query shouldBe Goal.of(call)
+            Solution.no(call).query shouldBe Goal.of(call)
+            Solution.halt(call, anException).query shouldBe Goal.of(call)
+        }
+
+        test("goal-queries-are-not-wrapped-again") {
+            val goal = Goal.of(Struct.of("p", Var.of("X")))
+            Solution.yes(goal).query shouldBeSameInstanceAs goal
+            Solution.no(goal).query shouldBeSameInstanceAs goal
+        }
+
+        test("solved-query-is-a-goal") {
+            val x = Var.of("X")
+            val solution = Solution.yes(Struct.of("p", x), Substitution.of(x, Atom.of("a")))
+            solution.solvedQuery shouldBe Goal.of(Struct.of("p", Atom.of("a")))
+        }
+
+        test("solved-pattern-query-is-a-concrete-goal") {
+            val f = Var.of("F")
+            val x = Var.of("X")
+            val solution = Solution.yes(Pattern.of(f, x), Substitution.of(mapOf(f to Atom.of("p"), x to Atom.of("a"))))
+            solution.solvedQuery shouldBe Goal.of(Struct.of("p", Atom.of("a")))
+        }
+
+        test("solutions-of-a-call-and-of-its-goal-are-equal") {
+            val x = Var.of("X")
+            val call = Struct.of("p", x)
+            val substitution = Substitution.of(x, Atom.of("a"))
+            val ofCall = Solution.yes(call, substitution)
+            val ofGoal = Solution.yes(Goal.of(call), substitution)
+            ofCall shouldBe ofGoal
+            ofCall.hashCode() shouldBe ofGoal.hashCode()
+            Solution.no(call) shouldBe Solution.no(Goal.of(call))
+        }
+
+        test("copies-take-compound-queries") {
+            val call = Struct.of("q", Var.of("Y"))
+            Solution.yes(Atom.of("p")).copy(query = call).query shouldBe Goal.of(call)
+            Solution.no(Atom.of("p")).copy(query = call).query shouldBe Goal.of(call)
+        }
+
+        test("clean-up-keeps-the-variables-of-the-goal") {
+            val x = Var.of("X")
+            val y = Var.of("Y")
+            val solution =
+                Solution.yes(
+                    Goal.of(Struct.of("p", x)),
+                    Substitution.of(mapOf(x to Atom.of("a"), y to Atom.of("b"))),
+                )
+            solution.cleanUp(hideWildcardVariables = false).substitution shouldBe Substitution.of(x, Atom.of("a"))
         }
     })

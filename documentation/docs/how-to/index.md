@@ -15,3 +15,5 @@ you want to accomplish and need the steps to do it. Each guide stands alone — 
    bases and clause collections.
 7. [Use the I/O library](use-io-lib.md) — load `:io-lib`, configure channels, and drive ISO stream predicates.
 8. [Deploy the Web IDE](deploy-the-web-ide.md) — use the hosted copy, or self-host it from a release or source.
+9. [Migrate to compounds, goals and references](migrate-to-compounds-goals-and-refs.md) — adapt code written
+   before patterns, goals and core references.

@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.unify
 
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Term
 import org.gciatto.kt.math.BigInteger
 import kotlin.js.JsName
@@ -49,13 +50,20 @@ sealed class IndexKey {
     }
 
     /**
-     * Any compound term with the given [arity], whatever its functor: reserved for future patterns, i.e. structures
-     * whose functor is a variable. Indexes treat it like [Wildcard].
+     * Any compound term with the given [arity], whatever its functor: the key of [it.unibo.tuprolog.core.Pattern]s,
+     * i.e. compound terms whose functor is a variable. Indexes treat it like [Wildcard].
      */
     data class AnyOfArity(
         val arity: Int,
     ) : IndexKey() {
         override val isExact: Boolean get() = false
+    }
+
+    /** A reference to a host value, as equal as [Ref]s are (by identity, for [it.unibo.tuprolog.core.ObjectRef]s). */
+    data class OfRef(
+        val ref: Ref,
+    ) : IndexKey() {
+        override val isExact: Boolean get() = true
     }
 
     /** Any term: variables, and whatever a unificator does not want indexed. */
@@ -74,6 +82,8 @@ sealed class IndexKey {
                 term.isInteger -> OfInteger(term.castToInteger().value)
                 term.isReal -> OfNumber(term.castToReal().value.toDouble())
                 term.isStruct -> term.castToStruct().let { OfStruct(it.functor, it.arity) }
+                term.isPattern -> AnyOfArity(term.castToPattern().arity)
+                term.isRef -> OfRef(term.castToRef())
                 else -> Wildcard
             }
 

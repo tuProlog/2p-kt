@@ -72,7 +72,7 @@ class StructSpec :
 
         structsOf("block", { it.args.size == 1 && Block.FUNCTOR == it.functor }) { Block.of(it.args) }
 
-        structsOf("directive", { it.args.size == 1 && Clause.FUNCTOR == it.functor }) { Directive.of(it.args.first()) }
+        structsOf("directive", { it.args.size == 1 && Clause.FUNCTOR == it.functor }) { Goal.of(it.args.first()) }
 
         structsOf("atom", { it.args.isEmpty() }) { Atom.of(it.functor) }
 

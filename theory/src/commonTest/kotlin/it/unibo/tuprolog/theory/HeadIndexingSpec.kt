@@ -5,8 +5,8 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.AbstractWorklistUnificator
 import it.unibo.tuprolog.unify.IndexKey
@@ -51,7 +51,7 @@ class HeadIndexingSpec :
             val upper = Fact.of(Atom.of("Foo"))
             val lower = Fact.of(Atom.of("foo"))
             val other = Fact.of(Atom.of("bar"))
-            val directive = Directive.of(Atom.of("init"))
+            val directive = Goal.of(Atom.of("init"))
             var theory = case.build(unificator, listOf(upper, other, directive, lower, upper))
             unificator.match(lower, upper) shouldBe true
             val snapshot = theory[lower]

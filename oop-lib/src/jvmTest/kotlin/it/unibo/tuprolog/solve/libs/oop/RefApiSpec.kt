@@ -9,6 +9,9 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.ObjectRef
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
@@ -56,13 +59,13 @@ class RefApiSpec :
         withTests(nameFn = { "invoke/${it.id}" }, invokeWays) { way ->
             val builder = StringBuilder()
             val result = way.invoke(ObjectRef.of(builder), "append", listOf(Atom.of("x")))
-            (result.asObjectRef()?.`object`).shouldBeSameInstanceAs(builder)
+            (result.asRef()?.value).shouldBeSameInstanceAs(builder)
             builder.toString() shouldBe "x"
         }
 
         withTests(nameFn = { "create/${it.id}" }, createWays) { way ->
             val result = way.create(TypeRef.of(StringBuilder::class), listOf(Atom.of("x")))
-            (result.asObjectRef()?.`object`.toString()) shouldBe "x"
+            (result.asRef()?.value.toString()) shouldBe "x"
         }
 
         test("assign/sets-an-object-property") {
@@ -90,8 +93,8 @@ class RefApiSpec :
                 ObjectRef
                     .of(ArrayList<Any>())
                     .invoke("clear")
-                    .asObjectRef()
-                    ?.`object`
+                    .asRef()
+                    ?.value
             ).shouldBeSameInstanceAs(Unit)
         }
 
@@ -102,12 +105,12 @@ class RefApiSpec :
             none.asNone() shouldBeSameInstanceAs none
             none.asValue().shouldBeNull()
             none.toTerm().shouldBeNull()
-            none.asObjectRef().shouldBeNull()
+            none.asRef().shouldBeNull()
         }
 
         withTests(
-            nameFn = { "reference-terms-are-constants/${it.first}" },
-            listOf("null" to ObjectRef.NULL, "type" to TypeRef.of(String::class)),
+            nameFn = { "reference-terms-are-constants-not-atoms/${it.first}" },
+            listOf("null" to NullRef.instance, "type" to TypeRef.of(String::class)),
         ) { (_, ref) ->
             val visitor =
                 object : TermVisitor<String> {
@@ -118,7 +121,7 @@ class RefApiSpec :
             ref.freshCopy() shouldBeSameInstanceAs ref
             ref.freshCopy(Scope.empty()) shouldBeSameInstanceAs ref
             ref.asConstant() shouldBeSameInstanceAs ref
-            (ref.`as`<Atom>()) shouldBeSameInstanceAs ref
-            ref.accept(visitor) shouldBe "atom"
+            ref.isAtom.shouldBeFalse()
+            ref.accept(visitor) shouldBe "term"
         }
     })

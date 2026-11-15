@@ -2,11 +2,11 @@ package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.collections.ClauseDeque
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.unify.Unificator
 import it.unibo.tuprolog.utils.Taggable
@@ -125,11 +125,11 @@ interface Theory :
 
     /** Whether some rule of this theory has a head unifying with [head]; equivalent to `contains(Rule.of(head, _))`. */
     @JsName("containsHead")
-    operator fun contains(head: Struct): Boolean
+    operator fun contains(head: Compound): Boolean
 
     /**
      * Checks if clauses exist in this theory having the specified [indicator] as head.
-     * @throws IllegalArgumentException if [indicator] is not [well-formed][Indicator.isWellFormed]
+     * @throws IllegalArgumentException if [indicator] is not [concrete][Indicator.isConcrete]
      */
     @JsName("containsIndicator")
     operator fun contains(indicator: Indicator): Boolean
@@ -139,11 +139,11 @@ interface Theory :
 
     /** The [Rule]s of this theory whose head unifies with [head] (whatever their body), lazily, in order. */
     @JsName("getByHead")
-    operator fun get(head: Struct): Sequence<Rule>
+    operator fun get(head: Compound): Sequence<Rule>
 
     /**
      * Retrieves all the [Rule]s in this theory having the specified [indicator] as head.
-     * @throws IllegalArgumentException if [indicator] is not [well-formed][Indicator.isWellFormed]
+     * @throws IllegalArgumentException if [indicator] is not [concrete][Indicator.isConcrete]
      */
     @JsName("getByIndicator")
     operator fun get(indicator: Indicator): Sequence<Rule>
@@ -157,7 +157,7 @@ interface Theory :
 
     /** Returns a [Theory] with the [Fact] built from [struct] inserted before all other clauses of this one */
     @JsName("assertAFact")
-    fun assertA(struct: Struct): Theory = assertA(Fact.of(struct))
+    fun assertA(struct: Compound): Theory = assertA(Fact.of(struct))
 
     /**
      * Returns a [Theory] with the given [clauses] inserted, in order, before all other clauses of this one.
@@ -182,7 +182,7 @@ interface Theory :
 
     /** Returns a [Theory] with the [Fact] built from [struct] inserted after all other clauses of this one */
     @JsName("assertZFact")
-    fun assertZ(struct: Struct): Theory = assertZ(Fact.of(struct))
+    fun assertZ(struct: Compound): Theory = assertZ(Fact.of(struct))
 
     /**
      * Returns a [Theory] with the given [clauses] inserted, in order, after all other clauses of this one.
@@ -226,7 +226,7 @@ interface Theory :
 
     /** Tries to delete a clause whose head unifies against the given [head]; equivalent to `retract(Rule.of(head, _))` */
     @JsName("retractByHead")
-    fun retract(head: Struct): RetractResult<Theory> = retract(Rule.of(head, Var.anonymous()))
+    fun retract(head: Compound): RetractResult<Theory> = retract(Rule.of(head, Var.anonymous()))
 
     /**
      * Tries to delete all the clauses in this theory unifying with the given [clause], returning a
@@ -238,12 +238,12 @@ interface Theory :
 
     /** Tries to delete all the clauses whose head unifies against the given [head]; equivalent to `retractAll(Rule.of(head, _))` */
     @JsName("retractAllByHead")
-    fun retractAll(head: Struct): RetractResult<Theory> = retractAll(Rule.of(head, Var.anonymous()))
+    fun retractAll(head: Compound): RetractResult<Theory> = retractAll(Rule.of(head, Var.anonymous()))
 
     /**
      * Removes from this theory all the clauses whose head has the given [indicator] as functor/arity, mirroring
      * ISO Prolog's `abolish/1`.
-     * @throws IllegalArgumentException if [indicator] is not [well-formed][Indicator.isWellFormed]
+     * @throws IllegalArgumentException if [indicator] is not [concrete][Indicator.isConcrete]
      */
     @JsName("abolish")
     fun abolish(indicator: Indicator): Theory

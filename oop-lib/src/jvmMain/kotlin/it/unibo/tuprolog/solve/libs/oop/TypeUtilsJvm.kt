@@ -172,3 +172,11 @@ actual fun overloadSelector(
     type: KClass<*>,
     termToObjectConverter: TermToObjectConverter,
 ): OverloadSelector = OverloadSelectorImpl(type, termToObjectConverter)
+
+private val canonicalTypes = java.util.concurrent.ConcurrentHashMap<KClass<*>, KClass<*>>()
+
+internal actual val KClass<*>.canonical: KClass<*>
+    get() = canonicalTypes.putIfAbsent(this, this) ?: this
+
+internal actual val platformBackend: HostInteropBackend
+    get() = ReflectionBackend

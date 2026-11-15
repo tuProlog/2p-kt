@@ -45,7 +45,7 @@ class SubstitutionsMetadataSpec :
                 "fact-of-list" to { Fact.of(List.of(X)) },
                 "fact-of-block" to { Fact.of(Block.of(X)) },
                 "fact-of-tuple" to { Fact.of(Tuple.of(X, X)) },
-                "directive" to { Directive.of(Struct.of("h", X), Tuple.of(X, X)) },
+                "directive" to { Goal.of(Struct.of("h", X), Tuple.of(X, X)) },
                 "rule" to { Rule.of(Struct.of("h", X), Tuple.of(X, X)) },
             )
 

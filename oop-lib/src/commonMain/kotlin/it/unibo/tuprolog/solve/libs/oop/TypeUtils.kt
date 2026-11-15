@@ -250,3 +250,10 @@ internal fun KClass<*>.create(
     val constructorRef = OverloadSelector.of(this, objectConverter).findConstructor(arguments)
     return constructorRef.callWithPrologArguments(objectConverter, arguments)
 }
+
+/**
+ * The first [KClass] equal to this one asked for so far: [TypeRef]s wrap it, so that they are equal when their types
+ * are, as references compare their payloads by identity, whereas equal [KClass]es may be distinct objects (e.g.
+ * `Boolean::class` and the class of `java.lang.Boolean`).
+ */
+internal expect val KClass<*>.canonical: KClass<*>

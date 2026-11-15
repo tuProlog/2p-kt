@@ -98,7 +98,7 @@ class StructImplSpec :
 
         detects("is-rule", { it.functor == Clause.FUNCTOR && it.arity == 2 }) { it.isRule }
 
-        detects("is-directive", { it.functor == Clause.FUNCTOR && it.arity == 1 }) { it.isDirective }
+        detects("is-directive", { it.functor == Clause.FUNCTOR && it.arity == 1 }) { it.isGoal }
 
         detects("is-fact", { it.functor == Clause.FUNCTOR && it.arity == 2 && it.args.last().isTrue }) { it.isFact }
 

@@ -8,8 +8,8 @@ package it.unibo.tuprolog.examples
 
 import io.kotest.core.spec.style.FunSpec
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
@@ -58,7 +58,7 @@ class ExamplePrologSolverSpec :
             // Yes(query=f(X_2), substitution={X_2=c})
 
             for (solution in solutions) {
-                println(solution.query) // f(X_2), f(X_2), f(X_2)
+                println(solution.query.body) // f(X_2), f(X_2), f(X_2)
                 println(solution.isYes) // true, true, true
                 println(solution.substitution) // {X_2=a}, {X_2=b}, {X_2=c}
             }
@@ -85,7 +85,7 @@ class ExamplePrologSolverSpec :
             val i = solutions.iterator()
             while (i.hasNext()) {
                 val solution = i.next()
-                println(solution.query) // f(X_2), f(X_2), f(X_2)
+                println(solution.query.body) // f(X_2), f(X_2), f(X_2)
                 println(solution.isYes) // true, true, true
                 println(solution.substitution) // {X_2=a}, {X_2=b}, {X_2=c}
             }
@@ -107,7 +107,7 @@ class ExamplePrologSolverSpec :
             val solutions = prolog.solve(goal, SolveOptions.allLazilyWithTimeout(1.milliseconds))
 
             for (solution in solutions) {
-                println(solution.query) // f(X_2)
+                println(solution.query.body) // f(X_2)
                 println(solution.isHalt) // true
                 println(solution.exception) // it.unibo.tuprolog.solve.exception.TimeOutException
             }
@@ -253,7 +253,7 @@ class ExamplePrologSolverSpec :
                 Theory.of(
                     Fact.of(Struct.of("f", Atom.of("a"))), // f(a).
                     Fact.of(Struct.of("f", Atom.of("b"))), // f(b).
-                    Directive.of(Struct.of("dynamic", Indicator.of("g", 1))), // :- dynamic(g/1).
+                    Goal.of(Struct.of("dynamic", Indicator.of("g", 1))), // :- dynamic(g/1).
                     Fact.of(Struct.of("g", Integer.of(1))), // g(1).
                     Fact.of(Struct.of("g", Integer.of(2))), // g(2).
                 )

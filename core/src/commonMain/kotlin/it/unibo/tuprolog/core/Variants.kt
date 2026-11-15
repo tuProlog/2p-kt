@@ -27,6 +27,17 @@ fun Term.isVariantOf(other: Term): Boolean {
                 val r = right.castToVar()
                 if (forward.getOrPut(l) { r } != r || backward.getOrPut(r) { l } != l) return false
             }
+            left.isPattern && right.isPattern -> {
+                val l = left.castToPattern()
+                val r = right.castToPattern()
+                if (l.arity != r.arity) return false
+                pending.addLast(l.functor)
+                pending.addLast(r.functor)
+                for (i in 0 until l.arity) {
+                    pending.addLast(l.getArgAt(i))
+                    pending.addLast(r.getArgAt(i))
+                }
+            }
             left.isStruct && right.isStruct -> {
                 val l = left.castToStruct()
                 val r = right.castToStruct()
@@ -57,6 +68,13 @@ fun Term.variantHashCode(): Int {
         hash = 31 * hash +
             when {
                 term.isVar -> variables.getOrPut(term.castToVar()) { variables.size }
+                term.isPattern -> {
+                    val pattern = term.castToPattern()
+                    for (i in pattern.arity - 1 downTo 0) pending.addLast(pattern.getArgAt(i))
+                    pending.addLast(pattern.functor)
+                    // marks a pattern node, so that P(a) and its flattened items hash differently
+                    -pattern.arity
+                }
                 term.isStruct -> {
                     val struct = term.castToStruct()
                     for (i in struct.arity - 1 downTo 0) pending.addLast(struct.getArgAt(i))

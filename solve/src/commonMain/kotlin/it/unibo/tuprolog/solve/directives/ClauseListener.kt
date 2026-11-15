@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve.directives
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Rule
 import kotlin.js.JsName
 
@@ -14,11 +14,11 @@ import kotlin.js.JsName
  * @see ClausePartitioner
  */
 interface ClauseListener {
-    /** Invoked when [listen]ing a [Directive] (a `:- Goal` clause). */
+    /** Invoked when [listen]ing a [Goal] (a `:- Goal` clause). */
     @JsName("onDirective")
-    fun onDirective(directive: Directive)
+    fun onDirective(directive: Goal)
 
-    /** Invoked when [listen]ing a [Rule] (a clause with a non-empty body, other than a [Directive]). */
+    /** Invoked when [listen]ing a [Rule] (a clause with a non-empty body, other than a [Goal]). */
     @JsName("onRule")
     fun onRule(rule: Rule)
 
@@ -26,7 +26,7 @@ interface ClauseListener {
     @JsName("onFact")
     fun onFact(fact: Fact)
 
-    /** Invoked when [listen]ing any [Clause] that is neither a [Directive], [Fact], nor [Rule]. */
+    /** Invoked when [listen]ing any [Clause] that is neither a [Goal], [Fact], nor [Rule]. */
     @JsName("onClause")
     fun onClause(clause: Clause)
 
@@ -34,7 +34,7 @@ interface ClauseListener {
     @JsName("listen")
     fun listen(clause: Clause) {
         when (clause) {
-            is Directive -> onDirective(clause)
+            is Goal -> onDirective(clause)
             is Fact -> onFact(clause)
             is Rule -> onRule(clause)
             else -> onClause(clause)

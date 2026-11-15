@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Constant
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -48,10 +49,10 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
         """.trimIndent()
 
     private fun Solve.Request<ExecutionContext>.decompose(
-        first: Struct,
+        first: Compound,
         second: Term,
     ): Substitution {
-        val decomposed = LogicList.of(Atom.of(first.functor), *first.args.toTypedArray())
+        val decomposed = LogicList.of(first.functorTerm, *first.args.toTypedArray())
         return mgu(second, decomposed)
     }
 
@@ -84,7 +85,7 @@ object Univ : BinaryRelation.Functional<ExecutionContext>("=..") {
         second: Term,
     ): Substitution =
         when (first) {
-            is Struct -> {
+            is Compound -> {
                 when (second) {
                     is LogicList -> decompose(first, second)
                     is Var -> decompose(first, second)

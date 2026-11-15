@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.solve.stdlib.primitive
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Integer
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -42,7 +42,7 @@ object Arg : TernaryRelation.WithoutSideEffects<ExecutionContext>("arg") {
         ensuringArgumentIsInstantiated(1)
             .ensuringArgumentIsCompound(1)
             .run {
-                val compound = second as Struct
+                val compound = second as Compound
                 return when (first) {
                     is Var -> {
                         compound.argsSequence

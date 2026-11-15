@@ -6,6 +6,7 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.dsl.logicProgramming
@@ -52,8 +53,8 @@ class CreationSpec :
                 is Solution.Yes ->
                     solver.solveOnce(query).substitution[X]?.let {
                         it.shouldBeInstanceOf<ObjectRef>()
-                        (it.`object`::class) shouldBe detectorType
-                        (it.`object` as? ConstructorOverloadDetector)?.args.shouldBe<Pair<*, *>?>(
+                        (it.value::class) shouldBe detectorType
+                        (it.value as? ConstructorOverloadDetector)?.args.shouldBe<Pair<*, *>?>(
                             case.converted to case.type,
                         )
                     } ?: fail("Missing variable assignment in $solution: $X")

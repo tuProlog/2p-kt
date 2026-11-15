@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.theory
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -18,14 +19,14 @@ internal abstract class AbstractTheory(
 
     override fun contains(clause: Clause): Boolean = get(clause).any()
 
-    override fun contains(head: Struct): Boolean = contains(Rule.of(head, Var.anonymous()))
+    override fun contains(head: Compound): Boolean = contains(Rule.of(head, Var.anonymous()))
 
     override fun contains(indicator: Indicator): Boolean = get(indicator).any()
 
-    override fun get(head: Struct): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it.castToRule() }
+    override fun get(head: Compound): Sequence<Rule> = get(Rule.of(head, Var.anonymous())).map { it.castToRule() }
 
     override fun get(indicator: Indicator): Sequence<Rule> {
-        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
+        require(indicator.isConcrete) { "The provided indicator is not well formed and concrete: $indicator" }
 
         return get(
             Rule.of(
@@ -36,7 +37,7 @@ internal abstract class AbstractTheory(
     }
 
     override fun abolish(indicator: Indicator): Theory {
-        require(indicator.isWellFormed) { "The provided indicator is not well formed: $indicator" }
+        require(indicator.isConcrete) { "The provided indicator is not well formed and concrete: $indicator" }
 
         return retractAll(Struct.template(indicator.indicatedName!!, indicator.indicatedArity!!)).theory
     }

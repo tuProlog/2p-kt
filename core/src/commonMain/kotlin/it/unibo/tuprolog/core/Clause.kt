@@ -6,19 +6,19 @@ import kotlin.jvm.JvmStatic
 
 /**
  * A logic clause, i.e. a [Struct] with functor `:-`, representing either a [Rule] (`head :- body`, [head]
- * non-`null`) or a [Directive] (`:- body`, [head] `null`). A theory (see `:theory`) is, at its core, a
+ * non-`null`) or a [Goal] (`:- body`, [head] `null`). A theory (see `:theory`) is, at its core, a
  * sequence of [Clause]s.
  *
  * [Clause.of] is the general entry point for building either kind, dispatching on whether [head] is `null`;
- * reach for [Rule.of], [Fact.of], or [Directive.of] directly when the desired kind is already known.
+ * reach for [Rule.of], [Fact.of], or [Goal.of] directly when the desired kind is already known.
  */
 interface Clause : Struct {
     override val functor: String
         get() = CLAUSE_FUNCTOR
 
-    /** The head of this clause, or `null` if this is a [Directive]. */
+    /** The head of this clause, or `null` if this is a [Goal]. */
     @JsName("head")
-    val head: Struct?
+    val head: Compound?
 
     /** The body of this clause: a single goal, or a right-nested [Tuple] of goals if there is more than one. */
     @JsName("body")
@@ -29,8 +29,8 @@ interface Clause : Struct {
      *
      * A [Clause] is well-formed if and only if:
      * - its [head] is neither a [Numeric] nor a [Var] (when non-`null`);
-     * - its [body] is not a [Numeric], nor does it contain one as a direct argument of a `, `/2, `;`/2, or
-     *   `->`/2 structure (see [notableFunctors]).
+     * - its [body] is not a [Numeric] nor a [Ref], nor does it contain one as a direct argument of a `, `/2, `;`/2,
+     *   or `->`/2 structure (see [notableFunctors]).
      */
     @JsName("isWellFormed")
     val isWellFormed: Boolean
@@ -47,7 +47,7 @@ interface Clause : Struct {
     override val isFact: Boolean
         get() = head !== null && body.isTrue
 
-    override val isDirective: Boolean
+    override val isGoal: Boolean
         get() = head === null
 
     override fun freshCopy(): Clause
@@ -77,7 +77,7 @@ interface Clause : Struct {
 
     /** Creates a novel [Rule] which is a copy of the current [Clause], except that [head] is set to [head]. */
     @JsName("setHead")
-    fun setHead(head: Struct): Rule
+    fun setHead(head: Compound): Rule
 
     /** Creates a novel [Clause] which is a copy of the current one, except that [body] is set to [body]. */
     @JsName("setBody")
@@ -165,30 +165,37 @@ interface Clause : Struct {
         const val FUNCTOR = CLAUSE_FUNCTOR
 
         /**
-         * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Directive] otherwise.
+         * The tag marking clauses whose body must be stored and executed as it is, i.e. without being
+         * [normalized] when entering a theory. It is meant for built-in definitions relying on the solver running a
+         * variable goal as the term it is bound to, e.g. `call(G) :- ensure_executable(G), G`.
+         */
+        const val VERBATIM_BODY_TAG = "it.unibo.tuprolog.core.Clause.verbatim-body"
+
+        /**
+         * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Goal] otherwise.
          * @throws IllegalArgumentException if [head] is `null` and [body] is empty
          */
         @JvmStatic
         @JsName("of")
         fun of(
-            head: Struct? = null,
+            head: Compound? = null,
             vararg body: Term,
         ): Clause = of(head, body.asList())
 
         /**
-         * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Directive] otherwise.
+         * Creates a [Clause]: a [Rule] if [head] is non-`null`, a [Goal] otherwise.
          * @throws IllegalArgumentException if [head] is `null` and [body] is empty
          */
         @JvmStatic
         @JsName("ofIterable")
         fun of(
-            head: Struct? = null,
+            head: Compound? = null,
             body: Iterable<Term>,
         ): Clause =
             when (head) {
                 null -> {
                     require(body.any()) { "If Clause head is null, at least one body element, is required" }
-                    Directive.of(body.asIterable())
+                    Goal.of(body.asIterable())
                 }
                 else -> Rule.of(head, body)
             }
@@ -197,7 +204,7 @@ interface Clause : Struct {
         @JvmStatic
         @JsName("ofSequence")
         fun of(
-            head: Struct? = null,
+            head: Compound? = null,
             body: Sequence<Term>,
         ): Clause = of(head, body.asIterable())
 
@@ -214,6 +221,8 @@ interface Clause : Struct {
                 override fun defaultValue(term: Term): Boolean = true
 
                 override fun visitNumeric(term: Numeric): Boolean = false
+
+                override fun visitRef(term: Ref): Boolean = false
 
                 override fun visitStruct(term: Struct): Boolean =
                     when {

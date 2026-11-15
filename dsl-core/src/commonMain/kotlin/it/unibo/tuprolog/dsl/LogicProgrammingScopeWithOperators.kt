@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.dsl
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -205,8 +206,8 @@ interface LogicProgrammingScopeWithOperators<S : LogicProgrammingScopeWithOperat
     @JsName("anyImpliedBy")
     infix fun Any.impliedBy(other: Any): Rule =
         when (val t = this.toTerm()) {
-            is Struct -> ruleOf(t, other.toTerm())
-            else -> raiseErrorConvertingTo(Struct::class)
+            is Compound -> ruleOf(t, other.toTerm())
+            else -> raiseErrorConvertingTo(Compound::class)
         }
 
     /**

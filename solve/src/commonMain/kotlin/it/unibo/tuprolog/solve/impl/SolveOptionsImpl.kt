@@ -5,6 +5,7 @@ import it.unibo.tuprolog.solve.SolveOptions
 import it.unibo.tuprolog.solve.intercept.TransitionInterceptor
 import it.unibo.tuprolog.solve.search.BranchScheduler
 import it.unibo.tuprolog.solve.search.GoalSelectionPolicy
+import it.unibo.tuprolog.solve.search.MetaResolutionPolicy
 import it.unibo.tuprolog.solve.search.RuleSelectionPolicy
 import it.unibo.tuprolog.utils.time.ChronometerFactory
 import kotlin.time.Duration
@@ -20,6 +21,7 @@ internal data class SolveOptionsImpl(
     override val ruleSelection: RuleSelectionPolicy? = null,
     override val goalSelection: GoalSelectionPolicy? = null,
     override val branchScheduler: BranchScheduler? = null,
+    override val metaResolution: MetaResolutionPolicy? = null,
 ) : SolveOptions {
     init {
         require(!timeout.isNegative()) { "Invalid timeout: $timeout" }
@@ -41,6 +43,8 @@ internal data class SolveOptionsImpl(
     override fun setGoalSelection(value: GoalSelectionPolicy?): SolveOptions = copy(goalSelection = value)
 
     override fun setBranchScheduler(value: BranchScheduler?): SolveOptions = copy(branchScheduler = value)
+
+    override fun setMetaResolution(value: MetaResolutionPolicy?): SolveOptions = copy(metaResolution = value)
 
     override fun setLimit(value: Int): SolveOptions = copy(limit = value)
 

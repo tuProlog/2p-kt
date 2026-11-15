@@ -24,6 +24,14 @@ private val config = PropTestConfig(seed = 1010L, iterations = 500)
 private class MapStore : BindingStore {
     val bindings = LinkedHashMap<Var, Term>()
 
+    private val functorVariables = HashSet<Var>()
+
+    override fun isFunctorVariable(variable: Var): Boolean = variable in functorVariables
+
+    override fun constrainFunctor(variable: Var) {
+        functorVariables.add(variable)
+    }
+
     override fun get(variable: Var): Term? = bindings[variable]
 
     override fun bind(

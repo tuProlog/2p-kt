@@ -4,11 +4,13 @@ package it.unibo.tuprolog.core.parsing
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Constant
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Real
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
@@ -107,6 +109,76 @@ fun String.parseAsStruct(operators: OperatorSet): Struct = defaultParser.parseSt
  */
 @JsName("parseStringAsStruct")
 fun String.parseAsStruct(): Struct = defaultParser.parseStruct(this)
+
+/**
+ * Parses [input] as a compound term using [operators].
+ *
+ * @throws ParseException if parsing or type checking fails
+ */
+@JsName("parseCompoundWithOperators")
+fun Compound.Companion.parse(
+    input: String,
+    operators: OperatorSet,
+): Compound = defaultParser.parseCompound(input, operators)
+
+/**
+ * Parses [input] as a compound term.
+ *
+ * @throws ParseException if parsing or type checking fails
+ */
+@JsName("parseCompound")
+fun Compound.Companion.parse(input: String): Compound = defaultParser.parseCompound(input)
+
+/**
+ * Parses this string as a compound term using [operators].
+ *
+ * @throws ParseException if parsing or type checking fails
+ */
+@JsName("parseStringAsCompoundWithOperators")
+fun String.parseAsCompound(operators: OperatorSet): Compound = defaultParser.parseCompound(this, operators)
+
+/**
+ * Parses this string as a compound term.
+ *
+ * @throws ParseException if parsing or type checking fails
+ */
+@JsName("parseStringAsCompound")
+fun String.parseAsCompound(): Compound = defaultParser.parseCompound(this)
+
+/**
+ * Parses [input] as a pattern using [operators].
+ *
+ * @throws ParseException if parsing or type checking fails
+ */
+@JsName("parsePatternWithOperators")
+fun Pattern.Companion.parse(
+    input: String,
+    operators: OperatorSet,
+): Pattern = defaultParser.parsePattern(input, operators)
+
+/**
+ * Parses [input] as a pattern.
+ *
+ * @throws ParseException if parsing or type checking fails
+ */
+@JsName("parsePattern")
+fun Pattern.Companion.parse(input: String): Pattern = defaultParser.parsePattern(input)
+
+/**
+ * Parses this string as a pattern using [operators].
+ *
+ * @throws ParseException if parsing or type checking fails
+ */
+@JsName("parseStringAsPatternWithOperators")
+fun String.parseAsPattern(operators: OperatorSet): Pattern = defaultParser.parsePattern(this, operators)
+
+/**
+ * Parses this string as a pattern.
+ *
+ * @throws ParseException if parsing or type checking fails
+ */
+@JsName("parseStringAsPattern")
+fun String.parseAsPattern(): Pattern = defaultParser.parsePattern(this)
 
 /**
  * Parses [input] as a constant using [operators].
@@ -428,32 +500,32 @@ fun String.parseAsFact(): Fact = defaultParser.parseFact(this)
  *
  * @throws ParseException if parsing or type checking fails
  */
-@JsName("parseDirectiveWithOperators")
-fun Directive.Companion.parse(
+@JsName("parseGoalWithOperators")
+fun Goal.Companion.parse(
     input: String,
     operators: OperatorSet,
-): Directive = defaultParser.parseDirective(input, operators)
+): Goal = defaultParser.parseGoal(input, operators)
 
 /**
  * Parses [input] as a directive.
  *
  * @throws ParseException if parsing or type checking fails
  */
-@JsName("parseDirective")
-fun Directive.Companion.parse(input: String): Directive = defaultParser.parseDirective(input)
+@JsName("parseGoal")
+fun Goal.Companion.parse(input: String): Goal = defaultParser.parseGoal(input)
 
 /**
  * Parses this string as a directive using [operators].
  *
  * @throws ParseException if parsing or type checking fails
  */
-@JsName("parseStringAsDirectiveWithOperators")
-fun String.parseAsDirective(operators: OperatorSet): Directive = defaultParser.parseDirective(this, operators)
+@JsName("parseStringAsGoalWithOperators")
+fun String.parseAsGoal(operators: OperatorSet): Goal = defaultParser.parseGoal(this, operators)
 
 /**
  * Parses this string as a directive.
  *
  * @throws ParseException if parsing or type checking fails
  */
-@JsName("parseStringAsDirective")
-fun String.parseAsDirective(): Directive = defaultParser.parseDirective(this)
+@JsName("parseStringAsGoal")
+fun String.parseAsGoal(): Goal = defaultParser.parseGoal(this)

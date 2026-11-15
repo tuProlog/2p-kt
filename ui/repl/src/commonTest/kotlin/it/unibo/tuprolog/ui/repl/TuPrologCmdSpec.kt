@@ -53,6 +53,12 @@ private val solveCases =
         ),
         RunCase("parse-error-goes-to-stderr", listOf("solve", "foo(."), stderr = listOf("# ")),
         RunCase(
+            "pattern-query-is-solved",
+            listOf("solve", "Q(X)."),
+            // no clause unifies with it: it fails, rather than being rejected as a syntax error
+            stdout = listOf("no."),
+        ),
+        RunCase(
             "empty-query-is-a-usage-error",
             listOf("solve", ""),
             stderr = listOf("query must not be empty"),
@@ -82,6 +88,12 @@ private val loopCases =
             stdout = listOf("X = 1", "no.", "# goodbye."),
         ),
         RunCase("multiline-query", emptyList(), stdin = "X =\n1.\n", stdout = listOf("X = 1")),
+        RunCase(
+            "pattern-query-is-solved",
+            emptyList(),
+            stdin = "Q(X).\n",
+            stdout = listOf("no."),
+        ),
         RunCase(
             "parse-error-does-not-stop-the-loop",
             emptyList(),

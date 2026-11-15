@@ -68,6 +68,26 @@ class IndicatorImplSpec :
             indicator.isWellFormed.shouldBeFalse()
         }
 
+        indicators("is-concrete", IndicatorUtils.wellFormedIndicatorCases) { _, indicator ->
+            indicator.isConcrete.shouldBeTrue()
+        }
+
+        indicators("variable-name/is-well-formed", IndicatorUtils.variableNameIndicatorCases) { _, indicator ->
+            indicator.isWellFormed.shouldBeTrue()
+        }
+
+        indicators("variable-name/is-not-concrete", IndicatorUtils.variableNameIndicatorCases) { _, indicator ->
+            indicator.isConcrete.shouldBeFalse()
+        }
+
+        indicators("variable-name/indicated-name-null", IndicatorUtils.variableNameIndicatorCases) { _, indicator ->
+            indicator.indicatedName shouldBe null
+        }
+
+        indicators("is-not-concrete", nonWellFormedIndicatorCases) { _, indicator ->
+            indicator.isConcrete.shouldBeFalse()
+        }
+
         indicators("fresh-copy-is-itself", IndicatorUtils.mixedIndicatorCases.filter { it.isGround }) { _, indicator ->
             ConstantUtils.assertFreshCopyIsItself(indicator)
         }

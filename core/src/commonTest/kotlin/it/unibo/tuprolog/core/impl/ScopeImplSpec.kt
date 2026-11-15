@@ -13,8 +13,8 @@ import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Rule
@@ -27,8 +27,8 @@ import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
 import it.unibo.tuprolog.core.testutils.AtomUtils
 import it.unibo.tuprolog.core.testutils.BlockUtils
 import it.unibo.tuprolog.core.testutils.ConsUtils
-import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.FactUtils
+import it.unibo.tuprolog.core.testutils.GoalUtils
 import it.unibo.tuprolog.core.testutils.IndicatorUtils
 import it.unibo.tuprolog.core.testutils.IntegerUtils
 import it.unibo.tuprolog.core.testutils.RealUtils
@@ -209,8 +209,8 @@ class ScopeImplSpec :
             )
         }
 
-        withTests(nameFn = { "directive-of/${it.id}" }, DirectiveUtils.mixedDirectiveCases) { case ->
-            assertEqualities(Directive.of(case.body), ScopeImpl(ScopeUtils.emptyScope).directiveOf(case.body))
+        withTests(nameFn = { "directive-of/${it.id}" }, GoalUtils.mixedGoalCases) { case ->
+            assertEqualities(Goal.of(case.body), ScopeImpl(ScopeUtils.emptyScope).goalOf(case.body))
         }
 
         withTests(nameFn = { "clause-of/rule/${it.id}" }, RuleUtils.mixedRuleCases) { case ->
@@ -220,7 +220,7 @@ class ScopeImplSpec :
             )
         }
 
-        withTests(nameFn = { "clause-of/directive/${it.id}" }, DirectiveUtils.mixedDirectiveCases) { case ->
+        withTests(nameFn = { "clause-of/directive/${it.id}" }, GoalUtils.mixedGoalCases) { case ->
             assertEqualities(Clause.of(null, case.body), ScopeImpl(ScopeUtils.emptyScope).clauseOf(null, case.body))
         }
 

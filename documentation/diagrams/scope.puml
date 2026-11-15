@@ -13,6 +13,11 @@ interface Scope {
     + atomOf(value: String): Atom
     + structOf(functor: String, vararg args: Term): Struct
     + structOf(functor: String, args: Sequence<Term>): Struct
+    + compoundOf(functor: Any, vararg args: Term): Compound
+    + patternOf(functor: Var, vararg args: Term): Pattern
+    + refOf(value: Any?): Ref
+    + objectRefOf(value: Any): ObjectRef
+    + nullRefOf(): NullRef
     + tupleOf(vararg terms: Term): Tuple
     + tupleOf(terms: Iterable<Term>): Tuple
     + listOf(vararg terms: Term): List
@@ -22,10 +27,10 @@ interface Scope {
     + listFrom(terms: Iterable<Term>, last: Term? = null): List
     + setOf(vararg terms: Term): LogicSet
     + setOf(terms: Iterable<Term>): LogicSet
-    + factOf(head: Struct): Fact
-    + ruleOf(head: Struct, body1: Term, vararg body: Term): Rule
-    + directiveOf(body1: Term, vararg body: Term): Directive
-    + clauseOf(head: Struct?, vararg body: Term): Clause
+    + factOf(head: Compound): Fact
+    + ruleOf(head: Compound, body1: Term, vararg body: Term): Rule
+    + goalOf(body1: Term, vararg body: Term): Goal
+    + clauseOf(head: Compound?, vararg body: Term): Clause
     + consOf(head: Term, tail: Term): Cons
     + indicatorOf(name: Term, arity: Term): Indicator
     + indicatorOf(name: String, arity: Int): Indicator

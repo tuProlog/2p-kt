@@ -1,11 +1,11 @@
 package it.unibo.tuprolog.solve.problog.lib.knowledge
 
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.solve.problog.lib.knowledge.impl.MappedProblogTheory
 import it.unibo.tuprolog.theory.MutableTheory
@@ -46,7 +46,7 @@ interface ProblogTheory : Theory {
 
     override fun assertA(clause: Clause): ProblogTheory
 
-    override fun assertA(struct: Struct): ProblogTheory = assertA(Fact.of(struct))
+    override fun assertA(struct: Compound): ProblogTheory = assertA(Fact.of(struct))
 
     override fun assertA(clauses: Iterable<Clause>): ProblogTheory
 
@@ -54,7 +54,7 @@ interface ProblogTheory : Theory {
 
     override fun assertZ(clause: Clause): ProblogTheory
 
-    override fun assertZ(struct: Struct): ProblogTheory = assertZ(Fact.of(struct))
+    override fun assertZ(struct: Compound): ProblogTheory = assertZ(Fact.of(struct))
 
     override fun assertZ(clauses: Iterable<Clause>): ProblogTheory
 
@@ -66,11 +66,11 @@ interface ProblogTheory : Theory {
 
     override fun retract(clauses: Sequence<Clause>): RetractResult<ProblogTheory>
 
-    override fun retract(head: Struct): RetractResult<ProblogTheory> = retract(Rule.of(head, Var.anonymous()))
+    override fun retract(head: Compound): RetractResult<ProblogTheory> = retract(Rule.of(head, Var.anonymous()))
 
     override fun retractAll(clause: Clause): RetractResult<ProblogTheory>
 
-    override fun retractAll(head: Struct): RetractResult<ProblogTheory> = retractAll(Rule.of(head, Var.anonymous()))
+    override fun retractAll(head: Compound): RetractResult<ProblogTheory> = retractAll(Rule.of(head, Var.anonymous()))
 
     override fun abolish(indicator: Indicator): ProblogTheory
 

@@ -51,6 +51,7 @@ interface SyntaxNodeVisitor<T> {
             is NumberNode -> visitNumber(node)
             is VariableNode -> visitVariable(node)
             is StructureNode -> visitStructure(node)
+            is PatternNode -> visitPattern(node)
             is ListNode -> visitList(node)
             is BlockNode -> visitBlock(node)
             is ParenthesizedExpressionNode -> visitParenthesizedExpression(node)
@@ -68,6 +69,9 @@ interface SyntaxNodeVisitor<T> {
 
     /** Visits an atom or compound structure. */
     fun visitStructure(node: StructureNode): T
+
+    /** Visits a compound term whose functor is a variable. */
+    fun visitPattern(node: PatternNode): T
 
     /** Visits a non-empty list. */
     fun visitList(node: ListNode): T

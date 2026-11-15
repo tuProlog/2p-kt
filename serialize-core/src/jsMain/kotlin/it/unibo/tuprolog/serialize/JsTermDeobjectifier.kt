@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.serialize
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
 
@@ -63,7 +63,7 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
     private fun deobjectifyClause(value: dynamic): Term {
         var head = value["head"]
         if (head != null) {
-            head = deobjectify(head) as? Struct ?: throw DeobjectificationException(value)
+            head = deobjectify(head) as? Compound ?: throw DeobjectificationException(value)
         }
         var body = value["body"]
         if (body != null) {
@@ -110,14 +110,21 @@ internal class JsTermDeobjectifier : TermDeobjectifier {
 
     @Suppress("UseCheckOrError", "ThrowsCount")
     private fun deobjectifyStructure(value: dynamic): Term {
-        val name = value["fun"] as? String ?: throw DeobjectificationException(value)
-        val args = value["args"] as? Array<*> ?: throw DeobjectificationException(value)
-        return scope.structOf(
-            name,
-            args.map {
+        val functor: Any? = value["fun"]
+        val args =
+            (value["args"] as? Array<*> ?: throw DeobjectificationException(value)).map {
                 deobjectify(it ?: throw DeobjectificationException(value))
-            },
-        )
+            }
+        return when {
+            functor is String -> scope.structOf(functor, args)
+            // a pattern, whose functor is a variable
+            functor != null &&
+                hasProperty(
+                    functor,
+                    "var",
+                ) -> scope.patternOf(deobjectifyVariable(functor).castToVar(), args)
+            else -> throw DeobjectificationException(value)
+        }
     }
 
     private fun deobjectifyVariable(value: dynamic): Term {

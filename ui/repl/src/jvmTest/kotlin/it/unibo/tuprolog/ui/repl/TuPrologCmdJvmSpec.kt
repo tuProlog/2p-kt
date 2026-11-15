@@ -53,4 +53,32 @@ class TuPrologCmdJvmSpec :
                 stdout = listOf("Successfully loaded library `prolog.oop"),
             )
         }
+
+        test("e2e/variable-functor-queries-enumerate-predicates") {
+            val file = theoryFile("f(1).\ng(2).\nh(3).\n")
+            val result = repl().test(listOf("-T", file, "solve", "F(X)."), stdin = ";\n;\n")
+            result.shouldShow(stdout = listOf("F = f", "X = 1", "F = g", "X = 2", "F = h", "X = 3"))
+            result.stderr shouldBe ""
+        }
+
+        test("e2e/metarules-define-virtual-predicates") {
+            val file =
+                theoryFile(
+                    "stored(parent, alice, bob).\nstored(likes, alice, pizza).\nP(X, Y) :- stored(P, X, Y).\n",
+                )
+            repl().test(listOf("-T", file, "solve", "F(alice, X)."), stdin = ";\n").shouldShow(
+                stdout = listOf("F = parent", "X = bob", "F = likes", "X = pizza"),
+            )
+        }
+
+        test("e2e/chain-metarules-compose-relations") {
+            val file =
+                theoryFile(
+                    "parent(alice, bob).\nparent(bob, charlie).\ncompose(grandparent, parent, parent).\n" +
+                        "P(X, Y) :- compose(P, Q, R), Q(X, Z), R(Z, Y).\n",
+                )
+            repl().test(listOf("-T", file, "solve", "grandparent(alice, X).")).shouldShow(
+                stdout = listOf("X = charlie"),
+            )
+        }
     })

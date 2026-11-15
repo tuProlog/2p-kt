@@ -21,7 +21,7 @@ class LogicProgrammingScopeWithTheoriesSpec :
                         theory(
                             { factOf(structOf("f", varOf("X"))) },
                             { ruleOf(structOf("f", varOf("X")), atomOf("a")) },
-                            { directiveOf(structOf("f", varOf("X"))) },
+                            { goalOf(structOf("f", varOf("X"))) },
                         )
                     theory.shouldBeInstanceOf<Theory>()
                     theory.shouldNotBeInstanceOf<MutableTheory>()
@@ -35,7 +35,7 @@ class LogicProgrammingScopeWithTheoriesSpec :
                         mutableTheory(
                             { factOf(structOf("f", varOf("X"))) },
                             { ruleOf(structOf("f", varOf("X")), atomOf("a")) },
-                            { directiveOf(structOf("f", varOf("X"))) },
+                            { goalOf(structOf("f", varOf("X"))) },
                         )
                     theory.shouldBeInstanceOf<Theory>()
                     theory.shouldBeInstanceOf<MutableTheory>()

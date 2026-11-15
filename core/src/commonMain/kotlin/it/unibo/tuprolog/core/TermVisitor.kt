@@ -5,7 +5,7 @@ import kotlin.js.JsName
 /**
  * The Visitor-pattern counterpart of the [Term] hierarchy (see [Term.accept]). Each `visitX` method has a
  * default implementation delegating to the `visitY` method of its immediate supertype `Y` in the hierarchy
- * (e.g. [visitAtom] delegates to [visitStruct], which delegates to [visitTerm], which delegates to
+ * (e.g. [visitAtom] delegates to [visitStruct], which delegates to [visitCompound], then to [visitTerm], then to
  * [defaultValue]), so implementers only need to override the methods for the specific sub-types they care
  * about, letting everything else fall back sensibly. [defaultValue] is the only method that must be
  * implemented.
@@ -34,8 +34,14 @@ interface TermVisitor<T> {
     @JsName("visitConstant")
     fun visitConstant(term: Constant): T = visitTerm(term)
 
+    @JsName("visitCompound")
+    fun visitCompound(term: Compound): T = visitTerm(term)
+
+    @JsName("visitPattern")
+    fun visitPattern(term: Pattern): T = visitCompound(term)
+
     @JsName("visitStruct")
-    fun visitStruct(term: Struct): T = visitTerm(term)
+    fun visitStruct(term: Struct): T = visitCompound(term)
 
     @JsName("visitCollection")
     fun visitCollection(term: Recursive): T = visitStruct(term)
@@ -45,6 +51,15 @@ interface TermVisitor<T> {
 
     @JsName("visitTruth")
     fun visitTruth(term: Truth): T = visitAtom(term)
+
+    @JsName("visitRef")
+    fun visitRef(term: Ref): T = visitConstant(term)
+
+    @JsName("visitObjectRef")
+    fun visitObjectRef(term: ObjectRef): T = visitRef(term)
+
+    @JsName("visitNullRef")
+    fun visitNullRef(term: NullRef): T = visitRef(term)
 
     @JsName("visitNumeric")
     fun visitNumeric(term: Numeric): T = visitConstant(term)
@@ -88,6 +103,6 @@ interface TermVisitor<T> {
     @JsName("visitFact")
     fun visitFact(term: Fact): T = visitRule(term)
 
-    @JsName("visitDirective")
-    fun visitDirective(term: Directive): T = visitClause(term)
+    @JsName("visitGoal")
+    fun visitGoal(term: Goal): T = visitClause(term)
 }

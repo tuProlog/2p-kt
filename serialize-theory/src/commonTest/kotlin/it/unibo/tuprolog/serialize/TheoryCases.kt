@@ -237,9 +237,9 @@ val theoryCases =
             "directives-among-facts",
             {
                 listOf(
-                    clause { directiveOf(structOf("dynamic", indicatorOf("counter", 1))) },
+                    clause { goalOf(structOf("dynamic", indicatorOf("counter", 1))) },
                     clause { factOf(structOf("counter", intOf(0))) },
-                    clause { directiveOf(structOf("write", atomOf("hello")), atomOf("nl")) },
+                    clause { goalOf(structOf("write", atomOf("hello")), atomOf("nl")) },
                 )
             },
             """

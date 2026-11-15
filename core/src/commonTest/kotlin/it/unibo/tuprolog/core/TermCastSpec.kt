@@ -27,7 +27,7 @@ class TermCastSpec :
                 CastableTermCase("block", Block.of(Integer.ZERO, Real.ZERO)),
                 CastableTermCase("tuple", Tuple.of(Integer.ZERO, Real.ZERO)),
                 CastableTermCase("indicator", Indicator.of("a", 2)),
-                CastableTermCase("directive", Directive.of(Atom.of("b"))),
+                CastableTermCase("directive", Goal.of(Atom.of("b"))),
                 CastableTermCase("rule", Rule.of(Atom.of("c"), Atom.of("d"))),
                 CastableTermCase("fact", Fact.of(Atom.of("e"))),
                 CastableTermCase("fail", Truth.FAIL),
@@ -42,7 +42,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -65,7 +65,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -88,7 +88,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldNotBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -111,7 +111,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldNotBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -134,7 +134,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldNotBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -157,7 +157,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldNotBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -180,7 +180,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -203,7 +203,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldNotBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldNotBeNull()
                     term.asFact().shouldBeNull()
@@ -226,7 +226,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldNotBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -249,7 +249,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldNotBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldNotBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -272,7 +272,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -295,7 +295,7 @@ class TermCastSpec :
                     term.asClause().shouldBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -318,7 +318,7 @@ class TermCastSpec :
                     term.asClause().shouldNotBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -341,7 +341,7 @@ class TermCastSpec :
                     term.asClause().shouldNotBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldBeNull()
+                    term.asGoal().shouldBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldNotBeNull()
@@ -359,12 +359,12 @@ class TermCastSpec :
                     term.asVar().shouldBeNull()
                 }
 
-                override fun visitDirective(term: Directive) {
+                override fun visitGoal(term: Goal) {
                     term.asAtom().shouldBeNull()
                     term.asClause().shouldNotBeNull()
                     term.asCons().shouldBeNull()
                     term.asConstant().shouldBeNull()
-                    term.asDirective().shouldNotBeNull()
+                    term.asGoal().shouldNotBeNull()
                     term.asEmptyList().shouldBeNull()
                     term.asEmptyBlock().shouldBeNull()
                     term.asFact().shouldBeNull()
@@ -392,7 +392,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -415,7 +415,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -438,7 +438,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     term.castToConstant().shouldNotBeNull()
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -461,7 +461,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     term.castToConstant().shouldNotBeNull()
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -484,7 +484,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     term.castToConstant().shouldNotBeNull()
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -507,7 +507,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     term.castToConstant().shouldNotBeNull()
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -530,7 +530,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -553,7 +553,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     term.castToConstant().shouldNotBeNull()
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     term.castToEmptyBlock().shouldNotBeNull()
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -576,7 +576,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     term.castToCons().shouldNotBeNull()
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -599,7 +599,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     term.castToConstant().shouldNotBeNull()
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     term.castToEmptyList().shouldNotBeNull()
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -622,7 +622,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -645,7 +645,7 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToClause() }
                     shouldThrow<ClassCastException> { term.castToCons() }
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -668,7 +668,7 @@ class TermCastSpec :
                     term.castToClause().shouldNotBeNull()
                     shouldThrow<ClassCastException> { term.castToCons() }
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -691,7 +691,7 @@ class TermCastSpec :
                     term.castToClause().shouldNotBeNull()
                     shouldThrow<ClassCastException> { term.castToCons() }
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    shouldThrow<ClassCastException> { term.castToDirective() }
+                    shouldThrow<ClassCastException> { term.castToGoal() }
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     term.castToFact().shouldNotBeNull()
@@ -709,12 +709,12 @@ class TermCastSpec :
                     shouldThrow<ClassCastException> { term.castToVar() }
                 }
 
-                override fun visitDirective(term: Directive) {
+                override fun visitGoal(term: Goal) {
                     shouldThrow<ClassCastException> { term.castToAtom() }
                     term.castToClause().shouldNotBeNull()
                     shouldThrow<ClassCastException> { term.castToCons() }
                     shouldThrow<ClassCastException> { term.castToConstant() }
-                    term.castToDirective().shouldNotBeNull()
+                    term.castToGoal().shouldNotBeNull()
                     shouldThrow<ClassCastException> { term.castToEmptyList() }
                     shouldThrow<ClassCastException> { term.castToEmptyBlock() }
                     shouldThrow<ClassCastException> { term.castToFact() }
@@ -840,11 +840,11 @@ class TermCastSpec :
                     (term.`as`<Fact>()) shouldBeSameInstanceAs term
                 }
 
-                override fun visitDirective(term: Directive) {
-                    term.castToDirective() shouldBeSameInstanceAs term
-                    term.asDirective() shouldBeSameInstanceAs term
-                    (term.castTo<Directive>()) shouldBeSameInstanceAs term
-                    (term.`as`<Directive>()) shouldBeSameInstanceAs term
+                override fun visitGoal(term: Goal) {
+                    term.castToGoal() shouldBeSameInstanceAs term
+                    term.asGoal() shouldBeSameInstanceAs term
+                    (term.castTo<Goal>()) shouldBeSameInstanceAs term
+                    (term.`as`<Goal>()) shouldBeSameInstanceAs term
                 }
             }
 

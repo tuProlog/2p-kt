@@ -10,7 +10,7 @@ interface Rule
 
 interface Fact {
   + body: Term **= Truth.of(true)**
-  + {static} of(head: Struct): Fact
+  + {static} of(head: Compound): Fact
 }
 
 Struct <|-- Clause

@@ -20,7 +20,7 @@ import kotlin.collections.List as KtList
  * A [Struct] is characterised by a [functor] and a given (non-negative) amount of [args], namely [arity].
  * Each argument can be a [Term] of any sort.
  *
- * Most other non-atomic, non-variable terms in this hierarchy ([Clause], [Rule], [Fact], [Directive], [List],
+ * Most other non-atomic, non-variable terms in this hierarchy ([Clause], [Rule], [Fact], [Goal], [List],
  * [Cons], [Tuple], [Block], [Indicator], and even 0-arity [Atom]s) are, under the hood, just a [Struct] with
  * a conventional [functor] and a folding convention for its arguments. This lets code written generically
  * against [Struct] (e.g. pattern-matching on [functor]/[arity], or walking [args]) work uniformly across all
@@ -32,7 +32,7 @@ import kotlin.collections.List as KtList
  * directly (e.g. [Tuple.of], [Cons.of]) when the sub-type is already known, or for the DSL builders in
  * `:dsl-core`/[Scope] when building many related terms with shared variables.
  */
-interface Struct : Term {
+interface Struct : Compound {
     override val isStruct: Boolean
         get() = true
 
@@ -40,7 +40,7 @@ interface Struct : Term {
         get() =
             CLAUSE_FUNCTOR == functor &&
                 when (arity) {
-                    2 -> getArgAt(0).isStruct
+                    2 -> getArgAt(0).isCompound
                     1 -> true
                     else -> false
                 }
@@ -48,7 +48,7 @@ interface Struct : Term {
     override val isRule: Boolean
         get() = isClause && arity == 2
 
-    override val isDirective: Boolean
+    override val isGoal: Boolean
         get() = isClause && arity == 1
 
     override val isFact: Boolean
@@ -147,8 +147,13 @@ interface Struct : Term {
     /**
      * The functor of this [Struct].
      */
-    @JsName("functor")
-    val functor: String
+    override val functor: String
+
+    /**
+     * The functor of this [Struct], as an [Atom].
+     */
+    override val functorTerm: Atom
+        get() = Atom.of(functor)
 
     /**
      * Returns `true` if and only if [functor] matches [Struct.WELL_FORMED_FUNCTOR_PATTERN].
@@ -157,63 +162,22 @@ interface Struct : Term {
     val isFunctorWellFormed: Boolean
 
     /**
-     * The total amount of arguments of this [Struct].
-     * This is equal to the length of [args].
-     */
-    @JsName("arity")
-    val arity: Int
-        get() = args.size
-
-    /**
      * The indicator corresponding to this [Struct], i.e. [functor]/[arity].
      */
-    @JsName("indicator")
-    val indicator: Indicator
+    override val indicator: Indicator
         get() = Indicator.of(functor, arity)
-
-    /**
-     * List of arguments of this [Struct].
-     */
-    @JsName("argsList")
-    val args: KtList<Term>
-
-    /**
-     * Sequence of arguments of this [Struct].
-     */
-    @JsName("argsSequence")
-    val argsSequence: Sequence<Term>
-        get() = args.asSequence()
-
-    /**
-     * Gets the [index]-th argument if this [Struct].
-     * @param index is the index the argument which should be retrieved
-     * @throws IndexOutOfBoundsException if [index] is lower than 0 or greater or equal to [arity]
-     * @return the [Term] having position [index] in [args]
-     */
-    @JsName("getArgAt")
-    fun getArgAt(index: Int): Term = args[index]
 
     /**
      * Creates a novel [Struct] which is a copy of the current one, except that its [args] are replaced by [args].
      * @return a new [Struct], whose [functor] equals the current one, and whose arguments are [args]
      */
-    @JsName("setArgs")
-    fun setArgs(vararg args: Term): Struct
+    override fun setArgs(vararg args: Term): Struct
 
     /** @see setArgs */
-    @JsName("setArgsIterable")
-    fun setArgs(args: Iterable<Term>): Struct
+    override fun setArgs(args: Iterable<Term>): Struct
 
     /** @see setArgs */
-    @JsName("setArgsSequence")
-    fun setArgs(args: Sequence<Term>): Struct
-
-    /**
-     * Alias for [getArgAt].
-     * In Kotlin, this method enables the syntax `struct[index]`.
-     */
-    @JsName("get")
-    operator fun get(index: Int): Term = getArgAt(index)
+    override fun setArgs(args: Sequence<Term>): Struct
 
     companion object {
         /**
@@ -349,7 +313,7 @@ interface Struct : Term {
          * This implies that, whenever possible, the creation of the new [Struct] may be delegated to:
          * - [Cons.of]
          * - [Rule.of]
-         * - [Directive.of]
+         * - [Goal.of]
          * - [Tuple.of]
          * - [Indicator.of]
          * - [Block.of]
@@ -367,12 +331,12 @@ interface Struct : Term {
         ): Struct =
             when {
                 args.size == 2 && CONS_FUNCTOR == functor -> Cons.of(args.first(), args.last())
-                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first().isStruct ->
-                    Rule.of(args.first().castToStruct(), args.last())
+                args.size == 2 && CLAUSE_FUNCTOR == functor && args.first().isCompound ->
+                    Rule.of(args.first().castToCompound(), args.last())
                 args.size == 2 && TUPLE_FUNCTOR == functor -> Tuple.of(args)
                 args.size == 2 && INDICATOR_FUNCTOR == functor -> Indicator.of(args.first(), args.last())
                 args.size == 1 && BLOCK_FUNCTOR == functor -> Block.of(args)
-                args.size == 1 && CLAUSE_FUNCTOR == functor -> Directive.of(args.first())
+                args.size == 1 && CLAUSE_FUNCTOR == functor -> Goal.of(args.first())
                 args.isEmpty() -> Atom.of(functor)
                 else -> StructImpl(functor, args, emptyMap())
             }
@@ -383,7 +347,7 @@ interface Struct : Term {
          * This implies that, whenever possible, the creation of the new [Struct] may be delegated to:
          * - [Cons.of]
          * - [Rule.of]
-         * - [Directive.of]
+         * - [Goal.of]
          * - [Tuple.of]
          * - [Indicator.of]
          * - [Block.of]
@@ -406,7 +370,7 @@ interface Struct : Term {
          * This implies that, whenever possible, the creation of the new [Struct] may be delegated to:
          * - [Cons.of]
          * - [Rule.of]
-         * - [Directive.of]
+         * - [Goal.of]
          * - [Tuple.of]
          * - [Indicator.of]
          * - [Block.of]
@@ -429,7 +393,7 @@ interface Struct : Term {
          * This implies that, whenever possible, the creation of the new [Struct] may be delegated to:
          * - [Cons.of]
          * - [Rule.of]
-         * - [Directive.of]
+         * - [Goal.of]
          * - [Tuple.of]
          * - [Indicator.of]
          * - [Block.of]

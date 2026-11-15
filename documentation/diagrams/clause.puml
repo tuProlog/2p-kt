@@ -5,26 +5,26 @@ skinparam shadowing false
 interface Struct
 
 interface Clause {
-  + head: Struct?
+  + head: Compound?
   + body: Term
   + isWellFormed: Boolean
-  + {static} of(head: Struct?, **varargs** body: Term): Clause
+  + {static} of(head: Compound?, **varargs** body: Term): Clause
 }
 interface Rule {
-  + head: Struct
+  + head: Compound
   + body: Term
-  + {static} of(head: Struct, **varargs** body: Term): Rule
+  + {static} of(head: Compound, **varargs** body: Term): Rule
 }
-interface Directive {
-  + head: Struct? **= null**
-  + {static} of(**varargs** body: Term): Directive
+interface Goal {
+  + head: Nothing? **= null**
+  + {static} of(**varargs** body: Term): Goal
 }
 interface Fact {
   + body: Term **= Truth.of(true)**
-  + {static} of(head: Struct): Fact
+  + {static} of(head: Compound): Fact
 }
 Struct <|-- Clause
 Clause <|-- Rule
-Clause <|-- Directive
+Clause <|-- Goal
 Rule <|-- Fact
 @enduml

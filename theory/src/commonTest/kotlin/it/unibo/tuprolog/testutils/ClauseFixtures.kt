@@ -4,15 +4,17 @@ import io.kotest.assertions.fail
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Empty
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Tuple
 import it.unibo.tuprolog.core.Var
+import it.unibo.tuprolog.core.normalized
 import it.unibo.tuprolog.unify.Unificator.Companion.matches
 
 /**
@@ -34,7 +36,7 @@ internal object ClauseFixtures {
         val expected: List<C>,
     )
 
-    /** Contains some well-formed rules */
+    /** Contains some well-formed rules, normalized as theories store them */
     internal val ruleCases =
         listOf(
             ClauseCase("fact-true", Fact.of(Truth.TRUE)),
@@ -68,7 +70,7 @@ internal object ClauseFixtures {
                 Rule.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
             ),
             ClauseCase("rule-a-of-a-if-anonymous", Rule.of(Struct.of("a", Atom.of("a")), Var.anonymous())),
-        )
+        ).map { ClauseCase(it.id, it.clause.normalized().castToRule()) }
 
     internal val rules = ruleCases.map { it.clause }
 
@@ -93,75 +95,75 @@ internal object ClauseFixtures {
             matchingQuery("a-of-any", Rule.of(Struct.of("a", Var.anonymous()), Var.anonymous()), rules),
         )
 
-    /** Contains some well-formed directives */
+    /** Contains some well-formed directives, normalized as theories store them */
     internal val directiveCases =
         listOf(
-            ClauseCase("directive-true", Directive.of(Truth.TRUE)),
-            ClauseCase("directive-fail", Directive.of(Truth.FAIL)),
-            ClauseCase("directive-a", Directive.of(Atom.of("a"))),
-            ClauseCase("directive-other", Directive.of(Atom.of("other"))),
-            ClauseCase("directive-a-of-other", Directive.of(Struct.of("a", Atom.of("other")))),
-            ClauseCase("directive-other-of-1", Directive.of(Struct.of("other", Integer.of(1)))),
-            ClauseCase("directive-a-and-other", Directive.of(Atom.of("a"), Atom.of("other"))),
-            ClauseCase("directive-a-of-other-and-a", Directive.of(Struct.of("a", Atom.of("other")), Atom.of("a"))),
+            ClauseCase("directive-true", Goal.of(Truth.TRUE)),
+            ClauseCase("directive-fail", Goal.of(Truth.FAIL)),
+            ClauseCase("directive-a", Goal.of(Atom.of("a"))),
+            ClauseCase("directive-other", Goal.of(Atom.of("other"))),
+            ClauseCase("directive-a-of-other", Goal.of(Struct.of("a", Atom.of("other")))),
+            ClauseCase("directive-other-of-1", Goal.of(Struct.of("other", Integer.of(1)))),
+            ClauseCase("directive-a-and-other", Goal.of(Atom.of("a"), Atom.of("other"))),
+            ClauseCase("directive-a-of-other-and-a", Goal.of(Struct.of("a", Atom.of("other")), Atom.of("a"))),
             ClauseCase(
                 "directive-f-of-a-b-of-x-do-something-else",
-                Directive.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
+                Goal.of(Struct.of("f", Atom.of("a"), Struct.of("b", Var.of("X")), Atom.of("do_something_else"))),
             ),
             ClauseCase(
                 "directive-a-of-22-and-anonymous",
-                Directive.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
+                Goal.of(Struct.of("a", Integer.of(22)), Var.anonymous()),
             ),
             ClauseCase(
                 "directive-f-of-a-and-variable",
-                Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+                Goal.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
             ),
             ClauseCase(
                 "directive-f-of-a-and-variable-again",
-                Directive.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
+                Goal.of(Struct.of("f", Atom.of("a")), Var.of("Variable")),
             ),
             ClauseCase(
                 "directive-a-of-anonymous-and-b-of-anonymous",
-                Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+                Goal.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
             ),
             ClauseCase(
                 "directive-a-of-a-and-empty-block",
-                Directive.of(Struct.of("a", Atom.of("a")), Empty.block()),
+                Goal.of(Struct.of("a", Atom.of("a")), Empty.block()),
             ),
             ClauseCase(
                 "directive-a-of-a-and-other-of-anonymous",
-                Directive.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
+                Goal.of(Struct.of("a", Atom.of("a")), Struct.of("other", Var.anonymous())),
             ),
             ClauseCase(
                 "directive-a-of-a-and-a-of-anonymous",
-                Directive.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
+                Goal.of(Struct.of("a", Atom.of("a")), Struct.of("a", Var.anonymous())),
             ),
             ClauseCase(
                 "directive-a-of-a-and-anonymous",
-                Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
+                Goal.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
             ),
-        )
+        ).map { ClauseCase(it.id, it.clause.normalized().castToGoal()) }
 
     internal val directives = directiveCases.map { it.clause }
 
     /** Contains queries and results crafted watching [directives] collection (NOTE: any modifications must be reviewed by hand)*/
     internal val directiveQueryCases =
         listOf(
-            QueryCase("directive-true", Directive.of(Truth.TRUE), listOf(Directive.of(Truth.TRUE))),
-            QueryCase("directive-empty-list", Directive.of(Empty.list()), emptyList()),
+            QueryCase("directive-true", Goal.of(Truth.TRUE), listOf(Goal.of(Truth.TRUE))),
+            QueryCase("directive-empty-list", Goal.of(Empty.list()), emptyList()),
             QueryCase(
                 "directive-a-of-a-and-any",
-                Directive.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
+                Goal.of(Struct.of("a", Atom.of("a")), Var.anonymous()),
                 directives.takeLast(5),
             ),
             matchingQuery(
                 "directive-any-and-a-of-other",
-                Directive.of(Var.anonymous(), Struct.of("a", Atom.of("other"))),
+                Goal.of(Var.anonymous(), Struct.of("a", Atom.of("other"))),
                 directives,
             ),
             matchingQuery(
                 "directive-a-of-any-and-b-of-any",
-                Directive.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
+                Goal.of(Struct.of("a", Var.anonymous()), Struct.of("b", Var.anonymous())),
                 directives,
             ),
         )
@@ -197,8 +199,8 @@ internal object ClauseFixtures {
 
     /** Creates a Map containing for each structurallyEquals Clause.head the clauses ordered (according to [clauses] iteration order),
      * constructing the overall partial ordering */
-    private fun partialOrderingHeadClauseMap(clauses: Iterable<Clause>): Map<Struct?, Iterable<Clause>> =
-        mutableMapOf<Struct?, Iterable<Clause>>()
+    private fun partialOrderingHeadClauseMap(clauses: Iterable<Clause>): Map<Compound?, Iterable<Clause>> =
+        mutableMapOf<Compound?, Iterable<Clause>>()
             .also { resultMap ->
                 clauses.forEachStructurallyEqualsHead(
                     resultMap,
@@ -209,15 +211,15 @@ internal object ClauseFixtures {
 
     /** Utility function to iterate over clauses with partial ordering map, doing actions on found or missing entry */
     private inline fun Iterable<Clause>.forEachStructurallyEqualsHead(
-        partialOrderingMap: MutableMap<Struct?, Iterable<Clause>>,
-        onPresentEntry: (Clause, MutableMap.MutableEntry<Struct?, Iterable<Clause>>) -> Unit,
-        onMissingEntry: (Clause, MutableMap<Struct?, Iterable<Clause>>) -> Unit,
+        partialOrderingMap: MutableMap<Compound?, Iterable<Clause>>,
+        onPresentEntry: (Clause, MutableMap.MutableEntry<Compound?, Iterable<Clause>>) -> Unit,
+        onMissingEntry: (Clause, MutableMap<Compound?, Iterable<Clause>>) -> Unit,
     ) {
         forEach { clause ->
             partialOrderingMap.entries
                 .find { (clauseHead, _) ->
                     clauseHead?.let { clause is Rule && it structurallyEquals clause.head }
-                        ?: clause.isDirective
+                        ?: clause.isGoal
                 }?.also { onPresentEntry(clause, it) } ?: onMissingEntry(clause, partialOrderingMap)
         }
     }

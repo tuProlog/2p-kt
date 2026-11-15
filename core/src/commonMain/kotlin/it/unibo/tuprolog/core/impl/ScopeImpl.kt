@@ -3,15 +3,20 @@ package it.unibo.tuprolog.core.impl
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Block
 import it.unibo.tuprolog.core.Clause
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Cons
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.EmptyBlock
 import it.unibo.tuprolog.core.EmptyList
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Indicator
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
 import it.unibo.tuprolog.core.Numeric
+import it.unibo.tuprolog.core.ObjectRef
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Scope
 import it.unibo.tuprolog.core.Struct
@@ -135,21 +140,67 @@ internal class ScopeImpl(
         args: List<Term>,
     ): Struct = Struct.of(functor, args)
 
-    override fun factOf(head: Struct): Fact = Fact.of(head)
+    override fun compoundOf(
+        functor: Any,
+        vararg args: Term,
+    ): Compound = Compound.of(functor, *args)
+
+    override fun compoundOf(
+        functor: Any,
+        args: Sequence<Term>,
+    ): Compound = Compound.of(functor, args)
+
+    override fun compoundOf(
+        functor: Any,
+        args: Iterable<Term>,
+    ): Compound = Compound.of(functor, args)
+
+    override fun compoundOf(
+        functor: Any,
+        args: List<Term>,
+    ): Compound = Compound.of(functor, args)
+
+    override fun refOf(value: Any?): Ref = Ref.of(value)
+
+    override fun objectRefOf(value: Any): ObjectRef = ObjectRef.of(value)
+
+    override fun nullRefOf(): NullRef = NullRef()
+
+    override fun patternOf(
+        functor: Var,
+        vararg args: Term,
+    ): Pattern = Pattern.of(functor, *args)
+
+    override fun patternOf(
+        functor: Var,
+        args: Sequence<Term>,
+    ): Pattern = Pattern.of(functor, args)
+
+    override fun patternOf(
+        functor: Var,
+        args: Iterable<Term>,
+    ): Pattern = Pattern.of(functor, args)
+
+    override fun patternOf(
+        functor: Var,
+        args: List<Term>,
+    ): Pattern = Pattern.of(functor, args)
+
+    override fun factOf(head: Compound): Fact = Fact.of(head)
 
     override fun ruleOf(
-        head: Struct,
+        head: Compound,
         body1: Term,
         vararg body: Term,
     ): Rule = Rule.of(head, body1, *body)
 
-    override fun directiveOf(
+    override fun goalOf(
         body1: Term,
         vararg body: Term,
-    ): Directive = Directive.of(body1, *body)
+    ): Goal = Goal.of(body1, *body)
 
     override fun clauseOf(
-        head: Struct?,
+        head: Compound?,
         vararg body: Term,
     ): Clause = Clause.of(head, *body)
 
@@ -165,6 +216,11 @@ internal class ScopeImpl(
 
     override fun indicatorOf(
         name: String,
+        arity: Int,
+    ): Indicator = Indicator.of(name, arity)
+
+    override fun indicatorOf(
+        name: Var,
         arity: Int,
     ): Indicator = Indicator.of(name, arity)
 

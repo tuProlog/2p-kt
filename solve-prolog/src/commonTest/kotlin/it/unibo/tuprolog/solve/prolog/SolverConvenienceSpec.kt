@@ -5,8 +5,8 @@ import io.kotest.datatest.withTests
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldNotBeSameInstanceAs
 import it.unibo.tuprolog.core.Atom
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
@@ -58,7 +58,7 @@ class SolverConvenienceSpec :
             val solver =
                 Solver.prolog.solverWithDefaultBuiltins(
                     unificator = unificator,
-                    staticKb = Theory.of(unificator, Directive.of(Atom.of("init")), Fact.of(goal)),
+                    staticKb = Theory.of(unificator, Goal.of(Atom.of("init")), Fact.of(goal)),
                 )
             solver.solveOnce(goal).isYes shouldBe true
         }

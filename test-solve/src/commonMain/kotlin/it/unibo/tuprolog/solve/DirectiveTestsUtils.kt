@@ -1,8 +1,8 @@
 package it.unibo.tuprolog.solve
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.dsl.theory.LogicProgrammingScope
 import it.unibo.tuprolog.dsl.theory.logicProgramming
 import it.unibo.tuprolog.solve.channel.OutputChannel
@@ -42,7 +42,7 @@ object DirectiveTestsUtils {
     fun dynamicDirective(
         functor: String,
         arity: Int,
-    ): Sequence<Directive> =
+    ): Sequence<Goal> =
         logicProgramming {
             sequenceOf(
                 directive { "dynamic"(functor / arity) },
@@ -53,7 +53,7 @@ object DirectiveTestsUtils {
     fun staticDirective(
         functor: String,
         arity: Int,
-    ): Sequence<Directive> =
+    ): Sequence<Goal> =
         logicProgramming {
             sequenceOf(
                 directive { "static"(functor / arity) },

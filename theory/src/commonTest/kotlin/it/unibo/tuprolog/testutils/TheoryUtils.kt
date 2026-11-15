@@ -2,8 +2,8 @@ package it.unibo.tuprolog.testutils
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
 import it.unibo.tuprolog.core.Fact
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Integer
 import it.unibo.tuprolog.core.Numeric
 import it.unibo.tuprolog.core.Real
@@ -58,7 +58,7 @@ internal object TheoryUtils {
                 "rule-with-integer-in-body",
                 Clause.of(Struct.of("test", Var.anonymous()), Struct.of("b", Var.anonymous()), Integer.of(1)),
             ),
-            ClauseCase("directive-with-real", Directive.of(Atom.of("execute_this"), Real.of(1.5))),
+            ClauseCase("directive-with-real", Goal.of(Atom.of("execute_this"), Real.of(1.5))),
             ClauseCase(
                 "rule-with-real-in-body",
                 Rule.of(Struct.of("f2", Atom.of("a")), Atom.of("do_something"), Numeric.of(1.5f)),

@@ -1,7 +1,7 @@
 package it.unibo.tuprolog.collections
 
 import it.unibo.tuprolog.core.Clause
-import it.unibo.tuprolog.core.Directive
+import it.unibo.tuprolog.core.Goal
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.isVariantOf
 import it.unibo.tuprolog.unify.UnificationAware
@@ -49,10 +49,10 @@ interface ClauseCollection :
     val rules: Iterable<Rule>
         get() = clauses.asSequence().mapNotNull { it.asRule() }.asIterable()
 
-    /** All the [Directive]s in this collection, in iteration order. */
+    /** All the [Goal]s in this collection, in iteration order. */
     @JsName("directives")
-    val directives: Iterable<Directive>
-        get() = clauses.asSequence().mapNotNull { it.asDirective() }.asIterable()
+    val directives: Iterable<Goal>
+        get() = clauses.asSequence().mapNotNull { it.asGoal() }.asIterable()
 
     /** The clauses unifying with [clause], lazily, in iteration order. */
     @JsName("get")

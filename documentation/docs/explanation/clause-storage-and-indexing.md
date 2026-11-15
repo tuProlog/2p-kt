@@ -113,6 +113,20 @@ Sets and maps identify clauses up to variable renaming (`Term.isVariantOf`), tag
 separate hash structure, variant checks go through the same indexes: a variant of `c` necessarily unifies with `c`,
 so it is searched among the clauses matching `c`.
 
+## Pattern-headed clauses
+
+A clause whose head is a `Pattern`, such as the metarule `P(X) :- Q(X)`, unifies with the heads of every procedure of
+its arity. Rather than merging procedures at every lookup, both stores add such a clause, by reference, to every
+procedure of its arity, at its place in the global order, and to a per-arity procedure serving the symbols that have
+no procedure of their own (a procedure created later starts from it). Lookups by concrete heads thus run as in
+theories without metarules, through the same argument indexes; only adding or removing metarules pays for them, by
+updating every procedure of their arity.
+
+Lookups by pattern heads (`P(a)`) consider all the clauses of their arity, through a procedure holding them all, with
+argument indexes of its own: it is built by the first such lookup, then kept up to date, so theories never queried
+by patterns never build it. Patterns are not exact index keys (their functor is a variable), so the argument indexes
+never exclude a clause because of them.
+
 ## The logical update view
 
 ISO Prolog prescribes the *logical update view* for dynamic predicates [[ISO/IEC 13211-1, 7.5.4](#references)]: a

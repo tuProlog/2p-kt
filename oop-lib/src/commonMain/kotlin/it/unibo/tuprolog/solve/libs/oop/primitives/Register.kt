@@ -1,10 +1,10 @@
 package it.unibo.tuprolog.solve.libs.oop.primitives
 
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.ExecutionContext
 import it.unibo.tuprolog.solve.exception.error.InstantiationError
-import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.rules.Alias
 import it.unibo.tuprolog.solve.primitive.BinaryRelation
 import it.unibo.tuprolog.solve.primitive.Solve

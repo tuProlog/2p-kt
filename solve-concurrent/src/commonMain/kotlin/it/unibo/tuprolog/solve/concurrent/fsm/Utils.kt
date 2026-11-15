@@ -9,6 +9,7 @@ import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.solve.Signature
 import it.unibo.tuprolog.solve.concurrent.ConcurrentExecutionContext
 import it.unibo.tuprolog.solve.primitive.Solve
+import it.unibo.tuprolog.solve.toCallable
 import it.unibo.tuprolog.utils.Cursor
 import it.unibo.tuprolog.utils.cursor
 import kotlin.jvm.JvmName
@@ -52,7 +53,7 @@ fun Term.toGoals(): Cursor<out Term> =
  * when a goal is not last-call-optimizable, so it gets its own stack frame to backtrack into.
  */
 fun ConcurrentExecutionContext.createChild(inferProcedureFromGoals: Boolean = true): ConcurrentExecutionContext {
-    val currentGoal = this.currentGoal!!.castToStruct()
+    val currentGoal = this.currentGoal!!.castToCompound().toCallable()
 
     return copy(
         goals = currentGoal.toGoals(),
@@ -69,7 +70,7 @@ fun ConcurrentExecutionContext.createChild(inferProcedureFromGoals: Boolean = tr
  * reusing the current stack frame rather than growing the chain of [ConcurrentExecutionContext.parent]s.
  */
 fun ConcurrentExecutionContext.replaceWithChild(inferProcedureFromGoals: Boolean = true): ConcurrentExecutionContext {
-    val currentGoal = this.currentGoal!!.castToStruct()
+    val currentGoal = this.currentGoal!!.castToCompound().toCallable()
 
     return copy(
         goals = currentGoal.toGoals(),

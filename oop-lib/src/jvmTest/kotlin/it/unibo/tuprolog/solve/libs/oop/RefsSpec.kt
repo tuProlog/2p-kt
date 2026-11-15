@@ -8,6 +8,8 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -21,7 +23,7 @@ class RefsSpec :
         fun testMethodInvocation(
             cases: List<TestDatum>,
             detectorCreator: () -> OverloadDetector = OverloadDetector.Companion::create,
-            refCreator: (OverloadDetector) -> Ref = ObjectRef.Companion::of,
+            refCreator: (OverloadDetector) -> Ref = Ref.Companion::of,
             case2Term: (TestDatum) -> Term,
         ) {
             val obj = detectorCreator()
@@ -31,7 +33,7 @@ class RefsSpec :
                     val result = ref.invoke("call", case2Term(case))
                     case.isFailed.shouldBeFalse()
                     result.shouldBeInstanceOf<Result.Value>()
-                    result.asObjectRef().`object` shouldBe case.string
+                    result.asRef().value shouldBe case.string
                     result.toTerm() shouldBe Atom.of(case.string)
                 } catch (e: OopRuntimeException) {
                     (case.term.let { it is Var || it is NullRef }).shouldBeTrue()
@@ -44,7 +46,7 @@ class RefsSpec :
             val expectedSize = cases.size - cases.count { it.isFailed }
             result.toTerm() shouldBe Integer.of(expectedSize)
             result = ref.invoke("toList")
-            val list = result.asObjectRef()?.`object` as List<*>
+            val list = result.asRef()?.value as List<*>
             list shouldBe (cases.filterNot { it.isFailed }.map { it.converted!! })
             obj.recordings shouldBe (cases.filterNot { it.isFailed }.map { it.converted!! to it.type })
         }
@@ -59,8 +61,8 @@ class RefsSpec :
                 val result = ref.create(case2Term(case))
                 case.isFailed.shouldBeFalse()
                 result.shouldBeInstanceOf<Result.Value>()
-                result.asObjectRef().`object`.shouldBeInstanceOf<ConstructorOverloadDetector>()
-                val constructorOverloadDetector = result.asObjectRef().`object` as ConstructorOverloadDetector
+                result.asRef().value.shouldBeInstanceOf<ConstructorOverloadDetector>()
+                val constructorOverloadDetector = result.asRef().value as ConstructorOverloadDetector
                 constructorOverloadDetector.args shouldBe (case.converted to case.type)
             } catch (e: OopRuntimeException) {
                 (case.term.let { it is Var || it is NullRef }).shouldBeTrue()

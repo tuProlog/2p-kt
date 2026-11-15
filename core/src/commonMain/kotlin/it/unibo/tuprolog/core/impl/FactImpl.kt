@@ -1,14 +1,14 @@
 package it.unibo.tuprolog.core.impl
 
+import it.unibo.tuprolog.core.Compound
 import it.unibo.tuprolog.core.Fact
 import it.unibo.tuprolog.core.Scope
-import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.TermVisitor
 import it.unibo.tuprolog.core.Truth
 
 internal class FactImpl(
-    override val head: Struct,
+    override val head: Compound,
     tags: Map<String, Any> = emptyMap(),
 ) : RuleImpl(head, Truth.TRUE, tags),
     Fact {

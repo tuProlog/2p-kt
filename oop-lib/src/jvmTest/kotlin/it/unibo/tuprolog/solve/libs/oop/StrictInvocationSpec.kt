@@ -1,6 +1,7 @@
 package it.unibo.tuprolog.solve.libs.oop
 
 import io.kotest.core.spec.style.FunSpec
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.solve.libs.oop.primitives.InvokeStrict
 
 class StrictInvocationSpec :

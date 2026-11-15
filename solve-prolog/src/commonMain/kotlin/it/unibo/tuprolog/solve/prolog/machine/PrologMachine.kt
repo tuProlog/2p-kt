@@ -1,5 +1,9 @@
 package it.unibo.tuprolog.solve.prolog.machine
 
+import it.unibo.tuprolog.core.Atom
+import it.unibo.tuprolog.core.Compound
+import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Rule
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Substitution
@@ -30,6 +34,7 @@ import it.unibo.tuprolog.solve.prolog.ReadOnlyExecutionContext
 import it.unibo.tuprolog.solve.search.Branch
 import it.unibo.tuprolog.solve.search.BranchScheduler
 import it.unibo.tuprolog.solve.stdlib.magic.MagicCut
+import it.unibo.tuprolog.solve.toCallable
 import it.unibo.tuprolog.theory.Theory
 import it.unibo.tuprolog.unify.Unificator
 
@@ -52,12 +57,14 @@ import it.unibo.tuprolog.unify.Unificator
  */
 internal class PrologMachine(
     root: PrologExecutionContext,
-    private val query: Struct,
+    // solutions refer to it, whereas the machine runs its body
+    private val query: Compound,
     private val scheduler: BranchScheduler? = null,
     private val onWorld: (PrologExecutionContext) -> Unit,
 ) : Iterator<Solution> {
     private class Frame(
-        val procedure: Struct?,
+        // a pattern for calls whose functor was unbound
+        val procedure: Compound?,
         val parent: Frame?,
         val depth: Int,
         // choice points below this index existed before the call: a cut in the call keeps them
@@ -69,9 +76,13 @@ internal class PrologMachine(
         // whether [procedure] was resolved when called (primitives); otherwise its bindings are in [bindings]
         val resolved: Boolean = true,
     ) {
-        val transparent: Boolean = procedure != null && procedure.arity == 2 && procedure.functor in TRANSPARENT
+        val transparent: Boolean = procedure is Struct && procedure.arity == 2 && procedure.functor in TRANSPARENT
 
-        val isCatch: Boolean = procedure != null && procedure.arity == 3 && procedure.functor == "catch"
+        val isCatch: Boolean = procedure is Struct && procedure.arity == 3 && procedure.functor == "catch"
+
+        // the signature of [procedure], in errors raised by its body
+        val signature: Signature
+            get() = (procedure as? Struct)?.extractSignature() ?: QUERY
     }
 
     // a goal to run in a frame, or the end of the frame (goal == null), then the rest
@@ -95,6 +106,9 @@ internal class PrologMachine(
     private enum class Location { SELECT, BACKTRACK }
 
     private var world: PrologExecutionContext = root.copy(customData = root.customData.preservePersistent())
+
+    // fixed for the whole resolution, unlike world, which side effects replace
+    private val settings = root.settings
     private var bindings = Bindings()
     private val choices = ArrayList<Choice>()
     private val rootFrame = Frame(null, null, 0, 0, 0, null, 0)
@@ -140,7 +154,7 @@ internal class PrologMachine(
     }
 
     init {
-        require(!frontierMode || world.interception == null) {
+        require(!frontierMode || settings.interception == null) {
             "A branch scheduler other than depth-first cannot be combined with an interceptor"
         }
         onWorld(world)
@@ -163,12 +177,12 @@ internal class PrologMachine(
 
     private fun run(): Solution? {
         if (resumed) {
-            world.chronometer.restart()
+            settings.chronometer.restart()
             resumed = false
         }
         while (true) {
-            if (world.cancellation?.isCancelled == true) return cancelled()
-            if (world.chronometer.leap()) return timeOut()
+            if (settings.cancellation?.isCancelled == true) return cancelled()
+            if (settings.chronometer.leap()) return timeOut()
             val solution =
                 when (location) {
                     Location.SELECT -> select().also { if (it == null && frontierMode) suspend() }
@@ -223,7 +237,7 @@ internal class PrologMachine(
     }
 
     private fun answer(): Solution {
-        if (world.chronometer.checkNow()) return timeOut()
+        if (settings.chronometer.checkNow()) return timeOut()
         if (choices.isEmpty() && frontier.isEmpty()) finished = true else location = Location.BACKTRACK
         resumed = true
         return Solution.yes(query, querySubstitution())
@@ -231,7 +245,7 @@ internal class PrologMachine(
 
     // the EXIT port of [frame]'s call, if traced
     private fun exit(frame: Frame): Solution? =
-        when (val decision = world.interception?.exit(frame.invocation, ::bound) { view(frame) }) {
+        when (val decision = settings.interception?.exit(frame.invocation, ::bound) { view(frame) }) {
             is Decision.Fail -> null.also { location = Location.BACKTRACK }
             is Decision.Halt -> haltOn(decision, frame)
             is Decision.Retry -> retry(frame)
@@ -242,7 +256,7 @@ internal class PrologMachine(
 
     // the goal the policy chooses among the frame's goals, moved to the front of the continuation
     private fun selectGoal(current: Cont): Cont {
-        val policy = world.goalSelection ?: return current
+        val policy = settings.goalSelection ?: return current
         val frame = current.frame
         val run = generateSequence(current) { it.next }.takeWhile { it.frame === frame && it.goal != null }.toList()
         if (run.size < 2) return current
@@ -260,11 +274,13 @@ internal class PrologMachine(
         rest: Cont?,
     ): Solution? {
         if (goal is Var) {
-            val procedure = frame.procedure?.extractSignature() ?: QUERY
+            val procedure = frame.signature
             return raise(InstantiationError.forGoal(context(frame), procedure, goal), frame)
         }
+        // a property rather than a type check, run at each call: failed checks against interfaces are slow on the JVM
+        if (goal.isPattern) return callPattern(goal.castToPattern(), frame, rest)
         if (goal !is Struct) {
-            val procedure = frame.procedure?.extractSignature() ?: QUERY
+            val procedure = frame.signature
             return raise(TypeError.forGoal(context(frame), procedure, TypeError.Expected.CALLABLE, goal), frame)
         }
         rejection(goal)?.let { return unsupported(it, frame) }
@@ -292,7 +308,7 @@ internal class PrologMachine(
         frame: Frame,
         rest: Cont?,
     ): Solution? {
-        val interception = world.interception
+        val interception = settings.interception
         if (interception == null || goal.isControlConstruct) return null
         return when (val decision = interception.call(invocation, bound(goal), frame.depth + 1) { view(frame) }) {
             is Decision.Continue -> null
@@ -310,13 +326,23 @@ internal class PrologMachine(
         frame: Frame,
         rest: Cont?,
     ): Solution? {
-        val invocation = world.interception?.nextId() ?: 0
+        val invocation = settings.interception?.nextId() ?: 0
         intercept(goal, invocation, frame, rest)?.let { return it.orNull() }
         // counters first: they're usually off, and telling a control construct compares the functor's string
-        world.counters?.let { if (!goal.isControlConstruct) it.countInference(frame.depth + 1) }
+        settings.counters?.let { if (!goal.isControlConstruct) it.countInference(frame.depth + 1) }
         val callee = Frame(goal, frame, frame.depth + 1, choices.size, bindings.mark, rest, invocation)
         val primitive = world.libraries.primitives[signature] ?: error("Inconsistent primitive lookup for $signature")
-        return try {
+        return runPrimitive(primitive, goal, signature, callee, rest)
+    }
+
+    private fun runPrimitive(
+        primitive: Primitive,
+        goal: Struct,
+        signature: Signature,
+        callee: Frame,
+        rest: Cont?,
+    ): Solution? =
+        try {
             val request =
                 Solve.Request(
                     signature,
@@ -346,6 +372,45 @@ internal class PrologMachine(
         } catch (error: ResolutionException) {
             raise(error.updateLastContext(context(callee.skipThrow())), callee)
         }
+
+    /**
+     * A call whose functor is a variable: an ordinary call once the variable is bound to an atom; otherwise, a call
+     * unifying with the clauses of its arity (see [callRules]) or, with a [MetaResolutionPolicy], a call of
+     * `'$select_functor'(Functor, Arity)`, binding the functor to each candidate of the policy in turn, then [goal]
+     * again.
+     */
+    private fun callPattern(
+        goal: Pattern,
+        frame: Frame,
+        rest: Cont?,
+    ): Solution? {
+        val functor = bindings.deref(goal.functor)
+        if (functor is Atom) return call(Struct.of(functor.value, goal.args), frame, rest)
+        val procedure = frame.signature
+        if (functor !is Var) {
+            return raise(TypeError.forGoal(context(frame), procedure, TypeError.Expected.CALLABLE, functor), frame)
+        }
+        // without a policy, the functor is bound by unifying the goal with the heads of the clauses of its arity. It is
+        // constrained once for the call, rather than by each unification with a candidate, undone after it
+        val policy =
+            settings.metaResolution ?: return callRules(
+                goal.also { if (!bindings.isFunctorVariable(functor)) bindings.constrainFunctor(functor) },
+                frame,
+                rest,
+            )
+        val selector = Struct.of(SELECT_FUNCTOR.name, functor, Integer.of(goal.arity))
+        val invocation = settings.interception?.nextId() ?: 0
+        intercept(selector, invocation, frame, rest)?.let { return it.orNull() }
+        val then = Cont(goal, frame, rest)
+        val callee = Frame(selector, frame, frame.depth + 1, choices.size, bindings.mark, then, invocation)
+        val pattern = bindings.resolve(goal) as? Pattern ?: goal
+        val select =
+            Primitive { request ->
+                policy.candidates(pattern, request.context).distinct().map {
+                    request.replySuccess(Substitution.of(functor, it))
+                }
+            }
+        return runPrimitive(select, selector, SELECT_FUNCTOR, callee, then)
     }
 
     private fun Frame.skipThrow(): Frame =
@@ -356,7 +421,7 @@ internal class PrologMachine(
         callee: Frame,
         rest: Cont?,
     ): Solution? {
-        world.counters?.let { if (!callee.procedure.isControlConstruct) it.countAlternative() }
+        settings.counters?.let { if (!callee.procedure.isControlConstruct) it.countAlternative() }
         if (response.sideEffects.isNotEmpty()) {
             world = world.apply(response.sideEffects)
             onWorld(world)
@@ -384,27 +449,47 @@ internal class PrologMachine(
             return
         }
         choices.add(choice)
-        world.counters?.let { if (!choice.frame.procedure.isControlConstruct) it.countChoicePoint(open = choices.size) }
+        settings.counters?.let {
+            if (!choice.frame.procedure.isControlConstruct) {
+                it.countChoicePoint(
+                    open = choices.size,
+                )
+            }
+        }
     }
 
+    /**
+     * The call of [goal], through the clauses whose heads unify with it. A [Pattern] goal, whose functor is unbound,
+     * unifies with the clauses of its arity of the knowledge bases: library predicates are no candidates, and it fails,
+     * rather than raising existence errors, if there is none.
+     */
     private fun callRules(
-        goal: Struct,
+        goal: Compound,
         frame: Frame,
         rest: Cont?,
     ): Solution? {
-        val invocation = world.interception?.nextId() ?: 0
-        intercept(goal, invocation, frame, rest)?.let { return it.orNull() }
-        world.counters?.let { if (!goal.isControlConstruct) it.countInference(frame.depth + 1) }
+        val invocation = settings.interception?.nextId() ?: 0
+        intercept(goal.toCallable(), invocation, frame, rest)?.let { return it.orNull() }
+        settings.counters?.let { if (!goal.isControlConstruct) it.countInference(frame.depth + 1) }
         // an incremental unificator unifies the goal as is, under the bindings; any other one needs it resolved
         val incremental = unificator.incremental != null
-        val called = if (incremental) goal else bound(goal)
+        val called = if (incremental) goal else bindings.resolve(goal) as Compound
         val probe = indexProbe(called)
-        val sources = sequenceOf(world.libraries.asTheory(unificator), world.staticKb, world.dynamicKb)
+        val sources =
+            if (goal is Struct) {
+                sequenceOf(world.libraries.asTheory(unificator), world.staticKb, world.dynamicKb)
+            } else {
+                sequenceOf(world.staticKb, world.dynamicKb)
+            }
         val candidates = sources.flatMap { it.selectClauses(called, probe) }
-        val ordered = world.ruleSelection?.order(bound(goal), candidates, view(frame, pinned = false)) ?: candidates
+        val selection = settings.ruleSelection
+        val ordered = selection?.order(resolved(goal), candidates, view(frame, pinned = false)) ?: candidates
         val alternatives = ordered.iterator()
-        if (!alternatives.hasNext()) return missingProcedure(sources, goal.extractSignature(), frame)
-        val tail = isTailCall(goal, frame, rest)
+        if (!alternatives.hasNext()) {
+            if (goal !is Struct) return null.also { location = Location.BACKTRACK }
+            return missingProcedure(sources, goal.extractSignature(), frame)
+        }
+        val tail = goal is Struct && isTailCall(goal, frame, rest)
         val callee =
             Frame(
                 called,
@@ -531,7 +616,7 @@ internal class PrologMachine(
     ): Boolean {
         val procedure = frame.procedure ?: return false
         return rest?.frame !== frame &&
-            world.interception == null &&
+            settings.interception == null &&
             world.flags[LastCallOptimization] == LastCallOptimization.ON &&
             procedure.functor == goal.functor &&
             procedure.arity == goal.arity &&
@@ -543,7 +628,7 @@ internal class PrologMachine(
         callee: Frame,
         rest: Cont?,
     ): Solution? {
-        world.counters?.let { if (!callee.procedure.isControlConstruct) it.countAlternative() }
+        settings.counters?.let { if (!callee.procedure.isControlConstruct) it.countAlternative() }
         val rule = if (alternative is MatchedRule) alternative.rule else alternative
         val unified =
             if (alternative is MatchedRule) {
@@ -556,7 +641,7 @@ internal class PrologMachine(
             return null
         }
         val body = prepare(rule.body)
-        val next = if (world.interception != null) Cont(null, callee, rest) else rest
+        val next = if (settings.interception != null) Cont(null, callee, rest) else rest
         cont = goals(body, callee, next)
         return null
     }
@@ -581,13 +666,13 @@ internal class PrologMachine(
         while (true) {
             val choice = choices.lastOrNull()
             if (choice == null) {
-                (world.interception?.backtrack(null) { view(rootFrame) } as? Decision.Halt)?.let {
+                (settings.interception?.backtrack(null) { view(rootFrame) } as? Decision.Halt)?.let {
                     return haltOn(it, rootFrame)
                 }
                 finished = true
                 return Solution.no(query)
             }
-            when (val decision = world.interception?.backtrack(choice.frame.invocation) { view(choice.frame) }) {
+            when (val decision = settings.interception?.backtrack(choice.frame.invocation) { view(choice.frame) }) {
                 is Decision.Fail -> {
                     dropChoice()
                     continue
@@ -630,7 +715,7 @@ internal class PrologMachine(
             // the catcher is found without undoing anything, so that an EXCEPTION port can still retry its call
             val catcher = generateSequence(frame) { it.parent }.filter { it.isCatch }.firstOrNull { it.catches(ball) }
             if (catcher != null) {
-                world.interception?.exception(error, catcher.invocation) { view(catcher) }?.let {
+                settings.interception?.exception(error, catcher.invocation) { view(catcher) }?.let {
                     return onException(it, frame)
                 }
                 bindings.undo(catcher.trailMark)
@@ -643,7 +728,7 @@ internal class PrologMachine(
             }
         }
         val public = if (error is MessageError) SystemError.forUncaughtError(error) else error
-        world.interception?.exception(public, null) { view(frame) }?.let { return onException(it, frame) }
+        settings.interception?.exception(public, null) { view(frame) }?.let { return onException(it, frame) }
         return halt(public)
     }
 
@@ -657,7 +742,7 @@ internal class PrologMachine(
     ): Solution? =
         when (decision) {
             is Decision.Retry -> {
-                val id = world.interception!!.retried
+                val id = settings.interception!!.retried
                 retry(generateSequence(frame) { it.parent }.first { it.invocation == id })
             }
             else -> haltOn(decision as Decision.Halt, frame)
@@ -701,14 +786,13 @@ internal class PrologMachine(
         }
 
     // [goal] with its arguments dereferenced one level, so that clause indexes see their principal symbols
-    private fun indexProbe(goal: Struct): Rule {
+    private fun indexProbe(goal: Compound): Rule {
         val args = goal.args
         val probe =
             if (args.none { it is Var && bindings[it] != null }) {
                 goal
             } else {
-                Struct.of(
-                    goal.functor,
+                goal.setArgs(
                     args.map(bindings::deref),
                 )
             }
@@ -766,7 +850,10 @@ internal class PrologMachine(
 
     // the frame's procedure, resolved
     private val Frame.called: Struct?
-        get() = if (resolved) procedure else procedure?.let(::bound)
+        get() = procedure?.let { if (resolved) it.toCallable() else resolved(it) }
+
+    // [goal], resolved, as a [Struct]
+    private fun resolved(goal: Compound): Struct = (bindings.resolve(goal) as Compound).toCallable()
 
     private fun view(
         frame: Frame,
@@ -780,10 +867,17 @@ internal class PrologMachine(
      * otherwise, each comes with its mgu.
      */
     private fun Theory.selectClauses(
-        goal: Struct,
+        goal: Compound,
         probe: Rule,
     ): Sequence<Rule> =
         candidates(probe).mapNotNull { candidate ->
+            // metarules do not extend library predicates, as no clause can: checked only for metarules
+            if (candidate.head?.isPattern == true &&
+                goal is Struct &&
+                world.libraries.hasRule(goal.extractSignature())
+            ) {
+                return@mapNotNull null
+            }
             val rule = candidate.freshCopy().asRule() ?: return@mapNotNull null
             // the whole clause is unified, so that a unificator sees the tags of the clause itself too
             val clause = Rule.of(goal, rule.body)
@@ -802,6 +896,8 @@ internal class PrologMachine(
         val TRANSPARENT = setOf(",", ";", "->")
 
         val QUERY = Signature("?-", 1)
+
+        val SELECT_FUNCTOR = Signature("\$select_functor", 2)
 
         // a CALL decision that replaced the call without producing a solution
         val REFUSED: Solution = Solution.no(Struct.of("refused"))

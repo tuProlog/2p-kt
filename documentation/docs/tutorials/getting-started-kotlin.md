@@ -99,7 +99,7 @@ and `joseph`, in that order — one line per way `ancestor(abraham, X)` can be p
 Every `Solution` is one of three sealed subtypes:
 
 - `Solution.Yes` — the goal succeeded; `substitution` holds the variable bindings, `solvedQuery` the instantiated
-  goal;
+  goal (a `Goal`: `solvedQuery.body` is the solved call);
 - `Solution.No` — the goal failed; no bindings;
 - `Solution.Halt` — resolution was aborted by an exception (`halt/1`, an uncaught error, a timeout...).
 

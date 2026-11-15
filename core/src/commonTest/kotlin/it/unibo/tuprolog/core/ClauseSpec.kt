@@ -8,8 +8,8 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.shouldBe
 import it.unibo.tuprolog.core.testutils.AssertionUtils.assertEqualities
-import it.unibo.tuprolog.core.testutils.DirectiveUtils
 import it.unibo.tuprolog.core.testutils.FactUtils
+import it.unibo.tuprolog.core.testutils.GoalUtils
 import it.unibo.tuprolog.core.testutils.RuleUtils
 
 private class ClauseCase(
@@ -17,12 +17,12 @@ private class ClauseCase(
     val head: Struct?,
     val body: Term,
 ) {
-    val expected: Clause get() = head?.let { Rule.of(it, body) } ?: Directive.of(body)
+    val expected: Clause get() = head?.let { Rule.of(it, body) } ?: Goal.of(body)
 }
 
 private fun clauseCases(
     rules: kotlin.collections.List<RuleUtils.RuleCase>,
-    directives: kotlin.collections.List<DirectiveUtils.DirectiveCase>,
+    directives: kotlin.collections.List<GoalUtils.GoalCase>,
 ) = rules.map { ClauseCase("rule/${it.id}", it.head, it.body) } +
     directives.map { ClauseCase("directive/${it.id}", null, it.body) }
 
@@ -46,7 +46,7 @@ class ClauseSpec :
                 else -> term
             }
 
-        val mixedClauseCases = clauseCases(RuleUtils.mixedRuleCases, DirectiveUtils.mixedDirectiveCases)
+        val mixedClauseCases = clauseCases(RuleUtils.mixedRuleCases, GoalUtils.mixedGoalCases)
 
         val wellFormedClauseCases = mixedClauseCases.filter { it.expected.isWellFormed }
 
@@ -66,7 +66,7 @@ class ClauseSpec :
             val directiveFirstPart = Atom.of("hello")
             val directiveSecondPart = Atom.of("world")
 
-            val correctInstance = Directive.of(Tuple.wrapIfNeeded(directiveFirstPart, directiveSecondPart))
+            val correctInstance = Goal.of(Tuple.wrapIfNeeded(directiveFirstPart, directiveSecondPart))
             val toBeTested = Clause.of(null, directiveFirstPart, directiveSecondPart)
 
             assertEqualities(correctInstance, toBeTested)
@@ -82,7 +82,7 @@ class ClauseSpec :
 
         withTests(
             nameFn = { "body-well-formed-visitor/${it.id}" },
-            clauseCases(RuleUtils.wellFormedRuleCases, DirectiveUtils.wellFormedDirectiveCases),
+            clauseCases(RuleUtils.wellFormedRuleCases, GoalUtils.wellFormedGoalCases),
         ) { case ->
             val clause = case.expected
             withClue("${clause.body} bodyWellFormedVisitor should return true") {
@@ -92,7 +92,7 @@ class ClauseSpec :
 
         withTests(
             nameFn = { "body-not-well-formed-visitor/${it.id}" },
-            clauseCases(RuleUtils.nonWellFormedRuleCases, DirectiveUtils.nonWellFormedDirectiveCases),
+            clauseCases(RuleUtils.nonWellFormedRuleCases, GoalUtils.nonWellFormedGoalCases),
         ) { case ->
             val clause = case.expected
             withClue("${clause.body} bodyWellFormedVisitor should return false") {
@@ -140,7 +140,7 @@ class ClauseSpec :
         }
 
         test("of-sequence/without-head-is-a-directive") {
-            Clause.of(null, sequenceOf(Atom.of("a"))).isDirective.shouldBeTrue()
+            Clause.of(null, sequenceOf(Atom.of("a"))).isGoal.shouldBeTrue()
         }
 
         test("of-sequence/with-head-is-a-rule") {

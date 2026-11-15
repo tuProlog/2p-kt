@@ -2,14 +2,14 @@ package it.unibo.tuprolog.solve.libs.oop.impl
 
 import it.unibo.tuprolog.core.Atom
 import it.unibo.tuprolog.core.Integer
+import it.unibo.tuprolog.core.NullRef
+import it.unibo.tuprolog.core.ObjectRef
 import it.unibo.tuprolog.core.Real
+import it.unibo.tuprolog.core.Ref
 import it.unibo.tuprolog.core.Struct
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Truth
 import it.unibo.tuprolog.core.Var
-import it.unibo.tuprolog.solve.libs.oop.NullRef
-import it.unibo.tuprolog.solve.libs.oop.ObjectRef
-import it.unibo.tuprolog.solve.libs.oop.Ref
 import it.unibo.tuprolog.solve.libs.oop.TermToObjectConverter
 import it.unibo.tuprolog.solve.libs.oop.TypeFactory
 import it.unibo.tuprolog.solve.libs.oop.TypeRef
@@ -42,8 +42,8 @@ internal class TermToObjectConverterImpl(
                 }
             }
             is ObjectRef -> {
-                if (term.`object`::class isSubtypeOf type) {
-                    term.`object`
+                if (term.value::class isSubtypeOf type) {
+                    term.value
                 } else {
                     throw TermToObjectConversionException(term, type)
                 }
@@ -160,7 +160,7 @@ internal class TermToObjectConverterImpl(
     private fun admissibleTypesByPriority(term: Term): Sequence<KClass<*>> =
         when (term) {
             is NullRef, is Var -> sequenceOf(Nothing::class)
-            is ObjectRef -> sequenceOf(term.`object`::class)
+            is ObjectRef -> sequenceOf(term.value::class)
             is Truth -> sequenceOf(Boolean::class, String::class)
             is Atom -> {
                 var admissible = sequenceOf<KClass<*>>(String::class)
