@@ -27,20 +27,32 @@ internal fun Bindings.occurs(
             val value = this[current] ?: continue
             val seen = visited ?: HashSet<Var>().also { visited = it }
             if (seen.add(current)) pending.add(value)
-        } else if (current is Compound) {
-            for (i in 0 until current.arity) {
-                val arg = current[i]
-                if (arg is Var && arg == variable) return true
-            }
-            // last argument first, so that list spines are visited with a constant amount of pending terms
-            for (i in current.arity - 1 downTo 0) {
-                val arg = current[i]
-                if (arg is Var || (arg is Compound && arg.arity > 0)) pending.add(arg)
-            }
-            // a property rather than a type check: failed checks against interfaces are slow on the JVM
-            if (current.isPattern) pending.add(current.castToPattern().functor)
+        } else if (current is Compound && pending.pushArgumentsOf(current, variable)) {
+            return true
         }
     }
+    return false
+}
+
+/**
+ * Pushes the arguments of [compound] worth visiting (and the functor of a pattern), unless [variable] is one of them:
+ * then, returns `true`. Out of [occurs], which stays small enough to be inlined.
+ */
+private fun ArrayList<Term>.pushArgumentsOf(
+    compound: Compound,
+    variable: Var,
+): Boolean {
+    for (i in 0 until compound.arity) {
+        val arg = compound[i]
+        if (arg is Var && arg == variable) return true
+    }
+    // last argument first, so that list spines are visited with a constant amount of pending terms
+    for (i in compound.arity - 1 downTo 0) {
+        val arg = compound[i]
+        if (arg is Var || (arg is Compound && arg.arity > 0)) add(arg)
+    }
+    // a property rather than a type check: failed checks against interfaces are slow on the JVM
+    if (compound.isPattern) add(compound.castToPattern().functor)
     return false
 }
 

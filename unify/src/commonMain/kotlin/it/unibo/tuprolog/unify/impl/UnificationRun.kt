@@ -188,15 +188,25 @@ internal class UnificationRun(
         variable: Var,
         term: Term,
     ): Boolean {
-        if (Pattern.anyCreated && bindings.isFunctorVariable(variable)) {
-            if (term is Var) {
-                bindings.constrainFunctor(term)
-            } else if (!term.isAtom) {
-                return false
-            }
-        }
+        if (Pattern.anyCreated && !functorConstraintAllows(variable, term)) return false
         if (occursCheck && term !is Var && bindings.occurs(variable, term)) return false
         bindings[variable] = term
         return true
+    }
+
+    /**
+     * Whether [variable] may be bound to [term]: a functor variable only to atoms or variables, which become functor
+     * variables too. Out of [bind], which stays small enough to be inlined.
+     */
+    private fun functorConstraintAllows(
+        variable: Var,
+        term: Term,
+    ): Boolean {
+        if (!bindings.isFunctorVariable(variable)) return true
+        if (term is Var) {
+            bindings.constrainFunctor(term)
+            return true
+        }
+        return term.isAtom
     }
 }
