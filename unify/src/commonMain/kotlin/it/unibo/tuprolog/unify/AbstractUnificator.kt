@@ -162,26 +162,47 @@ abstract class AbstractUnificator(
     ): Equation = equation
 
     /**
-     * The functor variables of [context], of [substitutions], and of the patterns in [terms]: they can only be bound to
-     * atoms or variables (see [functorVariables]). `null` if there is none, as with no pattern around: then no set is
-     * allocated, and none is needed, as only functor variables make other variables functor variables.
+     * The functor variables of [context], of the substitutions, and of the patterns in the terms: they can only be bound
+     * to atoms or variables (see [functorVariables]). `null` if there is none, as with no pattern around: then nothing is
+     * allocated, as only functor variables make other variables functor variables.
      */
     private fun functorVariablesOf(
-        terms: Sequence<Term>,
-        substitutions: Sequence<Substitution> = emptySequence(),
-    ): MutableSet<Var>? {
-        var result: MutableSet<Var>? = null
+        lhs: Term,
+        rhs: Term,
+    ): MutableSet<Var>? =
+        if (!Pattern.anyCreated && context.functorVariables.isEmpty()) {
+            null
+        } else {
+            FunctorVariablesCollector()
+                .apply {
+                    add(context.functorVariables)
+                    addPatternsIn(lhs)
+                    addPatternsIn(rhs)
+                }.result
+        }
 
-        fun add(variables: Collection<Var>) {
-            if (variables.isNotEmpty()) (result ?: HashSet<Var>().also { result = it }).addAll(variables)
+    /** @see functorVariablesOf */
+    private fun functorVariablesOf(
+        substitution1: Substitution,
+        substitution2: Substitution,
+    ): MutableSet<Var>? =
+        if (
+            !Pattern.anyCreated &&
+            context.functorVariables.isEmpty() &&
+            substitution1.functorVariables.isEmpty() &&
+            substitution2.functorVariables.isEmpty()
+        ) {
+            null
+        } else {
+            FunctorVariablesCollector()
+                .apply {
+                    add(context.functorVariables)
+                    add(substitution1.functorVariables)
+                    add(substitution2.functorVariables)
+                    for (term in substitution1.values) addPatternsIn(term)
+                    for (term in substitution2.values) addPatternsIn(term)
+                }.result
         }
-        add(context.functorVariables)
-        for (substitution in substitutions) add(substitution.functorVariables)
-        if (Pattern.anyCreated) {
-            for (term in terms) forEachPatternFunctor(term) { (result ?: HashSet<Var>().also { result = it }).add(it) }
-        }
-        return result
-    }
 
     private fun mgu(
         request: Request,
@@ -276,7 +297,7 @@ abstract class AbstractUnificator(
     ): Substitution {
         if (context.isFailed) return failed()
         val equations = newDeque(contextEquations.asSequence() + equationsFor(term1, term2))
-        val functorVariables = functorVariablesOf(sequenceOf(term1, term2))
+        val functorVariables = functorVariablesOf(term1, term2)
         return mgu(Request.Mgu(term1, term2, occurCheckEnabled), equations, occurCheckEnabled, functorVariables)
     }
 
@@ -292,10 +313,7 @@ abstract class AbstractUnificator(
     ): Substitution {
         if (context.isFailed || substitution1.isFailed || substitution2.isFailed) return failed()
         val functorVariables =
-            functorVariablesOf(
-                substitution1.values.asSequence() + substitution2.values.asSequence(),
-                sequenceOf(substitution1, substitution2),
-            )
+            functorVariablesOf(substitution1, substitution2)
         if (!occurCheckEnabled && functorVariables == null) {
             val quickMerge = context + substitution1 + substitution2
             if (quickMerge.isSuccess) {

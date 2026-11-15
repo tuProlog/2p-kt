@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.unify.impl
 
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.core.Var
@@ -20,7 +21,8 @@ internal class Bindings(
 ) {
     private var local: MutableMap<Var, Term>? = null
 
-    private val baseFunctorVariables: Set<Var> = base.functorVariables
+    // only substitutions involving patterns have functor variables
+    private val baseFunctorVariables: Set<Var> = if (Pattern.anyCreated) base.functorVariables else emptySet()
 
     private var localFunctorVariables: MutableSet<Var>? = null
 

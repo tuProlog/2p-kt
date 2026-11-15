@@ -1,5 +1,6 @@
 package it.unibo.tuprolog.unify
 
+import it.unibo.tuprolog.core.Pattern
 import it.unibo.tuprolog.core.Substitution
 import it.unibo.tuprolog.core.Term
 import it.unibo.tuprolog.unify.impl.Bindings
@@ -77,7 +78,10 @@ abstract class AbstractWorklistUnificator(
             } else {
                 val bindings = Bindings(Substitution.empty())
                 for ((variable, term) in context) bindings[variable] = term
-                SubstitutionMaterializer(bindings).materialize().withFunctorVariables(context.functorVariables)
+                SubstitutionMaterializer(bindings).materialize().let { result ->
+                    // only substitutions involving patterns have functor variables
+                    if (Pattern.anyCreated) result.withFunctorVariables(context.functorVariables) else result
+                }
             }
         }
 

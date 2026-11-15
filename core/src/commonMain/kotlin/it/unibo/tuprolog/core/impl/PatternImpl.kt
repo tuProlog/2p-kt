@@ -10,7 +10,6 @@ import it.unibo.tuprolog.core.Var
 import it.unibo.tuprolog.core.exception.SubstitutionApplicationException
 import it.unibo.tuprolog.utils.itemWiseHashCode
 import it.unibo.tuprolog.utils.setTags
-import kotlin.concurrent.Volatile
 
 internal class PatternImpl(
     override val functor: Var,
@@ -80,8 +79,9 @@ internal class PatternImpl(
     override fun <T> accept(visitor: TermVisitor<T>): T = visitor.visitPattern(this)
 
     companion object {
-        // a process-wide hint, never affecting results: while false, no term contains a pattern
-        @Volatile
+        // a process-wide hint, never affecting results: while false, no term contains a pattern. Not volatile, as it is
+        // read at every unification: it is set before the first pattern exists, and any thread receiving a pattern
+        // through a safe publication sees it set too
         var anyCreated: Boolean = false
             private set
     }
