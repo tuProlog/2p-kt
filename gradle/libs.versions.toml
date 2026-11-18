@@ -40,7 +40,7 @@ jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", ver
 jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
-clikt = "com.github.ajalt.clikt:clikt:5.1.0"
+clikt = "com.github.ajalt.clikt:clikt:5.2.1"
 batik-transcoder = "org.apache.xmlgraphics:batik-transcoder:1.20"
 batik-codec = "org.apache.xmlgraphics:batik-codec:1.20"
 assertj-swing = "org.assertj:assertj-swing:3.17.1"
