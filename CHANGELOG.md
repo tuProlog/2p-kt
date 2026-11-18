@@ -1,3 +1,19 @@
+## [4.0.4](https://github.com/tuProlog/2p-kt/compare/4.0.3...4.0.4) (2026-11-18)
+
+### Dependency updates
+
+* **deps:** update dependency com.google.devtools.ksp to v2.3.14 ([#1117](https://github.com/tuProlog/2p-kt/issues/1117)) ([01da0ce](https://github.com/tuProlog/2p-kt/commit/01da0cea9368e4f6c8b3ea197c1083a384b6f6a5))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.159 ([#1122](https://github.com/tuProlog/2p-kt/issues/1122)) ([1c305bb](https://github.com/tuProlog/2p-kt/commit/1c305bbe99941c00ad03d3c6ae6c155549395ab2))
+* **deps:** update plugin org.danilopianini.gradle-pre-commit-git-hooks to v2.1.31 ([#1120](https://github.com/tuProlog/2p-kt/issues/1120)) ([9972122](https://github.com/tuProlog/2p-kt/commit/9972122d93b0205944c13cae39414caf7b2d5dfa))
+
+### Bug Fixes
+
+* **deps:** update dependency com.fifesoft:rsyntaxtextarea to v4.0.2 ([#1124](https://github.com/tuProlog/2p-kt/issues/1124)) ([ca7a9f0](https://github.com/tuProlog/2p-kt/commit/ca7a9f01b232ad6c93d0bbc8ae59d08c73e16f6d))
+
+### Build and continuous integration
+
+* **deps:** update danysk/build-check-deploy-gradle-action action to v4.0.52 ([#1118](https://github.com/tuProlog/2p-kt/issues/1118)) ([a4df930](https://github.com/tuProlog/2p-kt/commit/a4df930f3835fdd086921c489517a9ae07c21777))
+
 ## [4.0.3](https://github.com/tuProlog/2p-kt/compare/4.0.2...4.0.3) (2026-11-13)
 
 ### Bug Fixes
