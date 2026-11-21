@@ -1,3 +1,13 @@
+## [4.0.5](https://github.com/tuProlog/2p-kt/compare/4.0.4...4.0.5) (2026-11-21)
+
+### Dependency updates
+
+* **deps:** update ktmpp to v6.1.5 ([#1127](https://github.com/tuProlog/2p-kt/issues/1127)) ([43415cb](https://github.com/tuProlog/2p-kt/commit/43415cbfc8ba8890ab66e17018ff25be83f162a6))
+
+### Bug Fixes
+
+* **deps:** update dependency com.github.ajalt.clikt:clikt to v5.2.1 ([#1123](https://github.com/tuProlog/2p-kt/issues/1123)) ([e9138de](https://github.com/tuProlog/2p-kt/commit/e9138de6a3444bd707b93511ba49741e8d1a0538))
+
 ## [4.0.4](https://github.com/tuProlog/2p-kt/compare/4.0.3...4.0.4) (2026-11-18)
 
 ### Dependency updates
